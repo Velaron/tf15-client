@@ -1,4 +1,4 @@
 [submodule "mainui"]
 	path = mainui
 	url = https://github.com/Aimless-Wanderer/mainui_tf
-	branch = tfc
+	branch = master
