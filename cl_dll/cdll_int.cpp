@@ -376,7 +376,7 @@ Called when a director event message was received
 
 void DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf )
 {
-	 gHUD.m_Spectator.DirectorMessage( iSize, pbuf );
+	gHUD.m_Spectator.DirectorMessage( iSize, pbuf );
 }
 
 void DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs )

@@ -15,7 +15,7 @@
 #define MAINUI_DLLNAME "cl_dlls/menu.so"
 #endif
 
-#define GAMEMENUEXPORTS_INTERFACE_VERSION "GameMenuExports"
+#define GAMEMENUEXPORTS_INTERFACE_VERSION "GameMenuExports001"
 
 class IGameMenuExports : public IBaseInterface
 {
