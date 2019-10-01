@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#include "interface.h"
+#include "../common/interface.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: Exports a set of functions for the GameUI interface to interact with the game client

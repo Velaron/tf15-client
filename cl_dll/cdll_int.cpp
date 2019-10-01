@@ -40,7 +40,7 @@ cl_enginefunc_t gEngfuncs;
 CHud gHUD;
 mobile_engfuncs_t *gMobileEngfuncs = NULL;
 
-#include "game_menu_int.h"
+#include "IGameMenuExports.h"
 HINTERFACEMODULE g_hMainUIModule = NULL;
 IGameMenuExports *g_pMainUI = NULL;
 
