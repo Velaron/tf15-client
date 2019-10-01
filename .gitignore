@@ -24,3 +24,6 @@ cmake_install.cmake
 *.includes
 *.creator
 *.user
+.waf-*
+.lock*
+*.pyc

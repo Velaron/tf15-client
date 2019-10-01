@@ -38,10 +38,8 @@ typedef int ( *pfnUserMsgHook )( const char *pszName, int iSize, void *pbuf );
 #include "../engine/cdll_int.h"
 #include "../dlls/cdll_dll.h"
 
-#ifndef __MSC_VER
-#ifndef _cdecl
+#if !defined(_WIN32)
 #define _cdecl
-#endif
 #endif
 #include "exportdef.h"
 #include <string.h>

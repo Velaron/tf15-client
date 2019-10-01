@@ -32,7 +32,6 @@ project (HLSDK-XASH3D)
 #--------------
 # USER DEFINES \
 ################\
-option(64BIT "Allow 64 Bit builds" OFF)
 option(USE_VGUI "Enable VGUI1. UNDONE" OFF)
 option(USE_VGUI2 "Enable VGUI2. UNDONE" OFF)
 option(USE_VOICEMGR "Enable VOICE MANAGER." OFF)
@@ -85,6 +84,11 @@ if(${CMAKE_VERSION} VERSION_LESS "3.0.2")
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${arg}")
 		endforeach()
 	endmacro()
+endif()
+
+if(NOT MSVC)
+	add_compile_options(-Wempty-body) # GCC/Clang flag
+	add_compile_options(-Wreturn-type) # GCC/Clang flag
 endif()
 
 if(BUILD_CLIENT)

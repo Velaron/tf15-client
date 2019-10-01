@@ -1733,8 +1733,8 @@ void CSaveRestoreBuffer::BufferRewind( int size )
 extern "C" {
 unsigned _rotr( unsigned val, int shift )
 {
-	register unsigned lobit;	/* non-zero means lo bit set */
-	register unsigned num = val;	/* number to rotate */
+	unsigned lobit;	/* non-zero means lo bit set */
+	unsigned num = val;	/* number to rotate */
 
 	shift &= 0x1f;			/* modulo 32 -- this will also make
 	                                   negative shifts work */
@@ -2196,7 +2196,7 @@ int CRestore::ReadField( void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCou
 							pString++;
 						}
 						pInputData = pString;
-						if( strlen( (char *)pInputData ) == 0 )
+						if( ( (char *)pInputData )[0] == '\0' )
 							*( (string_t *)pOutputData ) = 0;
 						else
 						{
@@ -2291,7 +2291,7 @@ int CRestore::ReadField( void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCou
 						*( (void**)pOutputData ) = *(void **)pInputData;
 						break;
 					case FIELD_FUNCTION:
-						if( strlen( (char *)pInputData ) == 0 )
+						if( ( (char *)pInputData )[0] == '\0' )
 							*( (void**)pOutputData ) = 0;
 						else
 							*( (void**)pOutputData ) = (void*)FUNCTION_FROM_NAME( (char *)pInputData );

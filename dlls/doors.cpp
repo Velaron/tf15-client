@@ -540,10 +540,8 @@ void CBaseDoor::Precache( void )
 //
 void CBaseDoor::DoorTouch( CBaseEntity *pOther )
 {
-	entvars_t *pevToucher = pOther->pev;
-
 	// Ignore touches by anything but players
-	if( !FClassnameIs( pevToucher, "player" ) )
+	if( !pOther->IsPlayer() )
 		return;
 
 	// If door has master, and it's not ready to trigger, 
@@ -562,7 +560,7 @@ void CBaseDoor::DoorTouch( CBaseEntity *pOther )
 
 	m_hActivator = pOther;// remember who activated the door
 
-	if( DoorActivate())
+	if( DoorActivate() )
 		SetTouch( NULL ); // Temporarily disable the touch function, until movement is finished.
 }
 
@@ -965,6 +963,7 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	void EXPORT MomentaryMoveDone( void );
+	void EXPORT StopMoveSound( void );
 
 	void KeyValue( KeyValueData *pkvd );
 	void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
@@ -1157,6 +1156,14 @@ void CMomentaryDoor::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 
 void CMomentaryDoor::MomentaryMoveDone( void )
 {
+	SetThink(&CMomentaryDoor::StopMoveSound);
+	pev->nextthink = pev->ltime + 0.1;
+}
+
+void CMomentaryDoor::StopMoveSound()
+{
 	STOP_SOUND( ENT( pev ), CHAN_STATIC, STRING( pev->noiseMoving ) );
 	EMIT_SOUND( ENT( pev ), CHAN_STATIC, STRING( pev->noiseArrived ), 1, ATTN_NORM );
+	pev->nextthink = -1;
+	ResetThink();
 }
