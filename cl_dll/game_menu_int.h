@@ -31,7 +31,7 @@ public:
 	virtual int GetFontTall( HFont font ) = 0;
 	virtual int GetCharacterWidth(HFont font, int ch, int charH ) = 0;
 	virtual void GetTextSize( HFont font, const char *text, int *wide, int *height, int size = -1 ) = 0;
-	virtual int	 GetTextHeight( HFont font, const char *text, int size = -1 ) = 0;
+	virtual int	GetTextHeight( HFont font, const char *text, int size = -1 ) = 0;
 	virtual int DrawCharacter( HFont font, int ch, int x, int y, int charH, const unsigned int color, bool forceAdditive = false ) = 0;
 	virtual void SetupScoreboard( int xstart, int xend, int ystart, int yend, unsigned int color, bool drawStroke ) = 0;
 	virtual void DrawScoreboard( void ) = 0;

@@ -167,6 +167,7 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	memcpy( &gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t) );
 
 	EV_HookEvents();
+	CL_LoadMainUI();
 
 	return 1;
 }
@@ -415,16 +416,16 @@ void CL_UnloadMainUI( void )
 
 void CL_LoadMainUI( void )
 {
-	char szPDir[512];
+	char szDir[MAX_PATH];
 
-	if ( gEngfuncs.COM_ExpandFilename( MAINUI_DLLNAME, szPDir, sizeof( szPDir ) ) == FALSE )
+	if ( gEngfuncs.COM_ExpandFilename( MAINUI_DLLNAME, szDir, sizeof( szDir ) ) == false )
 	{
 		g_pMainUI = NULL;
 		g_hMainUIModule = NULL;
 		return;
 	}
 
-	g_hMainUIModule = Sys_LoadModule( szPDir );
+	g_hMainUIModule = Sys_LoadModule( szDir );
 	CreateInterfaceFn MainUIFactory = Sys_GetFactory( g_hMainUIModule );
 
 	if ( MainUIFactory == NULL )
@@ -434,10 +435,10 @@ void CL_LoadMainUI( void )
 		return;
 	}
 
-	g_pMainUI = (IGameMenuExports *)MainUIFactory( GAMEMENUEXPORTS_INTERFACE_VERSION, NULL);
+	g_pMainUI = (IGameMenuExports *)MainUIFactory( GAMEMENUEXPORTS_INTERFACE_VERSION, NULL );
 
 	if ( g_pMainUI )
 	{
-		 g_pMainUI->Initialize( MainUIFactory );
+		g_pMainUI->Initialize( MainUIFactory );
 	}
 }
