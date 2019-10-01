@@ -85,7 +85,7 @@ int CHudBattery::Draw( float flTime )
 	if( m_iBatMax > 0 )
 		fScale = 1.0 / (float)m_iBatMax;
 
-	rc.top  += m_iHeight * ((float)(m_iBatMax-(min(m_iBatMax,m_iBat))) * fScale); // battery can go from 0 to m_iBatMax so * fScale goes from 0 to 1
+	rc.top  += m_iHeight * ((float)(m_iBatMax-(Q_min(m_iBatMax,m_iBat))) * fScale); // battery can go from 0 to m_iBatMax so * fScale goes from 0 to 1
 
 	UnpackRGB( r, g, b, RGB_YELLOWISH );
 

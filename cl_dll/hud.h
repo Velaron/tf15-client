@@ -30,8 +30,6 @@
 #include "cl_dll.h"
 #include "ammo.h"
 
-#include "touch.h"
-
 #define DHN_DRAWZERO 1
 #define DHN_2DIGITS  2
 #define DHN_3DIGITS  4
@@ -608,8 +606,6 @@ public:
 	int DrawHudStringLen( const char *szIt );
 	void DrawDarkRectangle( int x, int y, int wide, int tall );
 
-	CTeamTouchMenu m_TeamTouchMenu;
-	CClassTouchMenu m_ClassTouchMenu;
 	bool m_iAllowSpectators;
 	int	m_iValidClasses[5];
 	int m_iIsFeigning;

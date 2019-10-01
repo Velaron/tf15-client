@@ -615,6 +615,7 @@ int CHud::MsgFunc_AllowSpec( const char *pszName,  int iSize, void *pbuf )
 
 int CHud::MsgFunc_TeamNames( const char *pszName,  int iSize, void *pbuf )
 {
+	/*
 	BEGIN_READ( pbuf, iSize );
 
 	m_iNumberOfTeams = READ_BYTE();
@@ -628,18 +629,19 @@ int CHud::MsgFunc_TeamNames( const char *pszName,  int iSize, void *pbuf )
 		if(m_TeamTouchMenu.m_pButtons[i])
 			m_TeamTouchMenu.m_pButtons[i]->SetText( m_sTeamNames[teamNum] );
 
-/*
+
 		if ( teamNum < 5 )
 		{
 			if ( m_pDisguiseButtons[teamNum] )
 				m_pDisguiseButtons[teamNum]->setText( m_sTeamNames[teamNum] );
 		}
-*/
+
 	}
 
 	if(m_TeamTouchMenu.Initialized)
 		m_TeamTouchMenu.Update();
 
+	*/
 	return 1;
 }
 
@@ -649,7 +651,7 @@ int CHud::MsgFunc_VGUIMenu( const char *pszName,  int iSize, void *pbuf )
 
 	int menuType = READ_BYTE();
 
-	ShowVGUIMenu(menuType);
+	//ShowVGUIMenu(menuType);
 	return 1;
 }
 
@@ -658,14 +660,14 @@ void CHud::ShowVGUIMenu( int menuType )
 	switch( menuType )
 	{
 	case MENU_TEAM:
-		m_TeamTouchMenu.Draw();
+		//m_TeamTouchMenu.Draw();
 		break;
 	case MENU_CLASS:
-		m_ClassTouchMenu.Draw();
+		//m_ClassTouchMenu.Draw();
 		break;
 	default:
-		m_TeamTouchMenu.Hide(); // back to the default touch page
-		m_ClassTouchMenu.Hide();
+		//m_TeamTouchMenu.Hide(); // back to the default touch page
+		//m_ClassTouchMenu.Hide();
 		break;
 	}
 }
