@@ -46,20 +46,6 @@ CHalfLifeTeamplay::CHalfLifeTeamplay()
 	// Cache this because the team code doesn't want to deal with changing this in the middle of a game
 
 	edict_t *pWorld = INDEXENT( 0 );
-<<<<<<< HEAD
-=======
-	if( pWorld && pWorld->v.team )
-	{
-		if( teamoverride.value )
-		{
-			const char *pTeamList = STRING( pWorld->v.team );
-			if( pTeamList && pTeamList[0] != '\0' )
-			{
-				strncpy( m_szTeamList, pTeamList, TEAMPLAY_TEAMLISTLENGTH );
-			}
-		}
-	}
->>>>>>> hlsdk-xash3d/master
 	// Has the server set teams
 	if( m_szTeamList[0] != '\0' )
 		m_teamLimit = TRUE;
