@@ -27,20 +27,21 @@ def options(opt):
 	grp.add_option('--enable-goldsrc-support', action = 'store_true', dest = 'GOLDSRC', default = False,
 		help = 'enable GoldSource engine support')
 
-	opt.recurse('cl_dll dlls')
+	#opt.recurse('cl_dll dlls')
+	opt.recurse('cl_dll')
 
 	opt.load('xcompile compiler_cxx compiler_c clang_compilation_database strip_on_install')
 	if sys.platform == 'win32':
-		opt.load('msvc msdev')
+		opt.load('msdev')
 	opt.load('reconfigure')
 
 
 def configure(conf):
 	# Configuration
-	conf.env.GAMEDIR     = 'valve'
+	conf.env.GAMEDIR     = 'tfc'
 	conf.env.CLIENT_DIR  = 'cl_dlls'
 	conf.env.SERVER_DIR  = 'dlls'
-	conf.env.SERVER_NAME = 'hl'
+	conf.env.SERVER_NAME = 'tfc'
 	conf.env.PREFIX = ''
 
 	conf.load('reconfigure')
@@ -67,7 +68,7 @@ def configure(conf):
 	conf.env.MSVC_SUBSYSTEM = 'WINDOWS,5.01'
 	conf.env.MSVC_TARGETS = ['x86'] # explicitly request x86 target for MSVC
 	if sys.platform == 'win32':
-		conf.load('msvc msdev')
+		conf.load('msdev')
 	conf.load('xcompile compiler_c compiler_cxx strip_on_install')
 
 	if conf.env.DEST_OS == 'android':
@@ -151,10 +152,12 @@ def configure(conf):
 
 	conf.env.append_unique('DEFINES', 'CLIENT_WEAPONS')
 
-	conf.recurse('cl_dll dlls')
+	#conf.recurse('cl_dll dlls')
+	conf.recurse('cl_dll')
 
 def build(bld):
-	bld.recurse('cl_dll dlls')
+	#bld.recurse('cl_dll dlls')
+	bld.recurse('cl_dll')
 		
 		
 	

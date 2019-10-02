@@ -25,5 +25,6 @@ cmake_install.cmake
 *.creator
 *.user
 .waf-*
+waf-*
 .lock*
 *.pyc
