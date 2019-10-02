@@ -15,6 +15,9 @@
 #define MAINUI_DLLNAME "cl_dlls/menu.so"
 #endif
 
+#define MENU_TEAM 2
+#define MENU_CLASS 3
+
 class IGameMenuExports : public IBaseInterface
 {
 public:
@@ -34,7 +37,7 @@ public:
 	virtual void SetupScoreboard( int xstart, int xend, int ystart, int yend, unsigned int color, bool drawStroke ) = 0;
 	virtual void DrawScoreboard( void ) = 0;
 	virtual void DrawSpectatorMenu( void ) = 0;
-	virtual void ShowVGUIMenu( int menuType, int param1, int param2 ) = 0;
+	virtual void ShowVGUIMenu( int menuType ) = 0;
 };
 
 #define GAMEMENUEXPORTS_INTERFACE_VERSION "GameMenuExports001"

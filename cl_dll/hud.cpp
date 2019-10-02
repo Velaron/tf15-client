@@ -28,9 +28,6 @@
 #include "demo.h"
 #include "demo_api.h"
 
-#define MENU_TEAM 2
-#define MENU_CLASS 3
-
 cvar_t *hud_textmode;
 float g_hud_text_color[3];
 
@@ -657,6 +654,8 @@ int CHud::MsgFunc_VGUIMenu( const char *pszName,  int iSize, void *pbuf )
 
 void CHud::ShowVGUIMenu( int menuType )
 {
+	g_pMainUI->ShowVGUIMenu( menuType );
+	/*
 	switch( menuType )
 	{
 	case MENU_TEAM:
@@ -670,6 +669,7 @@ void CHud::ShowVGUIMenu( int menuType )
 		//m_ClassTouchMenu.Hide();
 		break;
 	}
+	*/
 }
 
 void CHud::CmdFunc_InputPlayerSpecial( void )
