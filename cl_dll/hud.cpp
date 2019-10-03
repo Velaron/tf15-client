@@ -648,28 +648,14 @@ int CHud::MsgFunc_VGUIMenu( const char *pszName,  int iSize, void *pbuf )
 
 	int menuType = READ_BYTE();
 
-	//ShowVGUIMenu(menuType);
+	ShowVGUIMenu(menuType);
 	return 1;
 }
 
 void CHud::ShowVGUIMenu( int menuType )
 {
-	g_pMainUI->ShowVGUIMenu( menuType );
-	/*
-	switch( menuType )
-	{
-	case MENU_TEAM:
-		//m_TeamTouchMenu.Draw();
-		break;
-	case MENU_CLASS:
-		//m_ClassTouchMenu.Draw();
-		break;
-	default:
-		//m_TeamTouchMenu.Hide(); // back to the default touch page
-		//m_ClassTouchMenu.Hide();
-		break;
-	}
-	*/
+	if ( !g_pMainUI->IsActive() )
+		g_pMainUI->ShowVGUIMenu( menuType );
 }
 
 void CHud::CmdFunc_InputPlayerSpecial( void )
