@@ -1,10 +1,3 @@
-//========= Copyright � 1996-2002, Valve LLC, All rights reserved. ============
-//
-// Purpose: 
-//
-// $NoKeywords: $
-//=============================================================================
-
 #include <string.h>
 #include <stdlib.h>
 #include "interface.h"
@@ -13,6 +6,9 @@
 #include <dlfcn.h>
 #include <unistd.h> // getcwd
 #include <stdio.h> // sprintf
+#else
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #endif
 
 
@@ -60,15 +56,14 @@ EXPORT_FUNCTION IBaseInterface *CreateInterface( const char *pName, int *pReturn
 
 
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include "windows.h"
+
 #endif
 
 
 #ifdef _WIN32
 HINTERFACEMODULE Sys_LoadModule(const char *pModuleName)
 {
-	return (HINTERFACEMODULE)LoadLibrary(pModuleName);
+	return (HINTERFACEMODULE)LoadLibraryA( pModuleName );
 }
 
 #else  // LINUX

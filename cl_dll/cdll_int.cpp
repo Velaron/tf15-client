@@ -41,8 +41,10 @@ CHud gHUD;
 mobile_engfuncs_t *gMobileEngfuncs = NULL;
 
 #include "IGameMenuExports.h"
+#include "IGameClientExports.h"
 HINTERFACEMODULE g_hMainUIModule = NULL;
 IGameMenuExports *g_pMainUI = NULL;
+HINTERFACEMODULE g_hClientModule = NULL;
 
 void CL_LoadMainUI( void );
 void CL_UnloadMainUI( void );
@@ -416,7 +418,7 @@ void CL_UnloadMainUI( void )
 
 void CL_LoadMainUI( void )
 {
-	char szDir[MAX_PATH];
+	char szDir[PATH_MAX];
 
 	if ( gEngfuncs.COM_ExpandFilename( MAINUI_DLLNAME, szDir, sizeof( szDir ) ) == false )
 	{
@@ -439,6 +441,35 @@ void CL_LoadMainUI( void )
 
 	if ( g_pMainUI )
 	{
-		g_pMainUI->Initialize( MainUIFactory );
+		gEngfuncs.COM_ExpandFilename( CLIENT_DLLNAME, szDir, sizeof( szDir ) );
+		g_hClientModule = Sys_LoadModule( szDir );
+		CreateInterfaceFn ClientFactory = Sys_GetFactory( g_hClientModule );
+		g_pMainUI->Initialize( ClientFactory );
 	}
 }
+
+static class CGameClientExports : public IGameClientExports
+{
+public:
+	const char *GetServerHostName() override
+	{
+
+	}
+
+	bool IsPlayerGameVoiceMuted(int playerIndex) override
+	{
+
+	}
+
+	void MutePlayerGameVoice(int playerIndex) override
+	{
+
+	}
+
+	void UnmutePlayerGameVoice(int playerIndex) override
+	{
+		
+	}
+} s_Client;
+
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CGameMenuExports, IGameMenuExports, GAMEMENUEXPORTS_INTERFACE_VERSION, s_Client );

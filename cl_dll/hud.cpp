@@ -612,7 +612,6 @@ int CHud::MsgFunc_AllowSpec( const char *pszName,  int iSize, void *pbuf )
 
 int CHud::MsgFunc_TeamNames( const char *pszName,  int iSize, void *pbuf )
 {
-	/*
 	BEGIN_READ( pbuf, iSize );
 
 	m_iNumberOfTeams = READ_BYTE();
@@ -638,7 +637,6 @@ int CHud::MsgFunc_TeamNames( const char *pszName,  int iSize, void *pbuf )
 	if(m_TeamTouchMenu.Initialized)
 		m_TeamTouchMenu.Update();
 
-	*/
 	return 1;
 }
 

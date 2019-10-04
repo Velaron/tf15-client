@@ -7,22 +7,25 @@
 
 #ifndef IGAMECLIENTEXPORTS_H
 #define IGAMECLIENTEXPORTS_H
+
 #ifdef _WIN32
 #pragma once
 #endif
 
 #include "../common/interface.h"
 
-//-----------------------------------------------------------------------------
-// Purpose: Exports a set of functions for the GameUI interface to interact with the game client
-//-----------------------------------------------------------------------------
+#ifdef _WIN32
+#define CLIENT_DLLNAME "cl_dlls/client.dll"
+#elif defined(OSX)
+#define CLIENT_DLLNAME "cl_dlls/client.dylib"
+#elif defined(LINUX)
+#define CLIENT_DLLNAME "cl_dlls/client.so"
+#endif
+
 class IGameClientExports : public IBaseInterface
 {
 public:
-	// returns the name of the server the user is connected to, if any
 	virtual const char *GetServerHostName() = 0;
-
-	// ingame voice manipulation
 	virtual bool IsPlayerGameVoiceMuted(int playerIndex) = 0;
 	virtual void MutePlayerGameVoice(int playerIndex) = 0;
 	virtual void UnmutePlayerGameVoice(int playerIndex) = 0;
@@ -31,4 +34,4 @@ public:
 #define GAMECLIENTEXPORTS_INTERFACE_VERSION "GameClientExports001"
 
 
-#endif // IGAMECLIENTEXPORTS_H
+#endif
