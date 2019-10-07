@@ -29,6 +29,8 @@ include(VSForceXPToolchain) # Force XP toolchain for Visual Studio
 
 project (HLSDK-XASH3D)
 
+set(CMAKE_CXX_STANDARD 11)
+
 #--------------
 # USER DEFINES \
 ################\
