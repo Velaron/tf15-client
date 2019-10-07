@@ -22,6 +22,7 @@
 #include "cl_util.h"
 #include "netadr.h"
 #include "parsemsg.h"
+#include "extdll.h"
 
 #if defined(GOLDSOURCE_SUPPORT) && (defined(_WIN32) || defined(__linux__) || defined(__APPLE__)) && (defined(__i386) || defined(_M_IX86))
 #define USE_VGUI_FOR_GOLDSOURCE_SUPPORT
@@ -36,12 +37,13 @@ extern "C"
 
 #include <string.h>
 
+#include "IGameMenuExports.h"
+#include "IGameClientExports.h"
+
 cl_enginefunc_t gEngfuncs;
 CHud gHUD;
 mobile_engfuncs_t *gMobileEngfuncs = NULL;
 
-#include "IGameMenuExports.h"
-#include "IGameClientExports.h"
 HINTERFACEMODULE g_hMainUIModule = NULL;
 IGameMenuExports *g_pMainUI = NULL;
 HINTERFACEMODULE g_hClientModule = NULL;
@@ -418,7 +420,7 @@ void CL_UnloadMainUI( void )
 
 void CL_LoadMainUI( void )
 {
-	char szDir[PATH_MAX];
+	char szDir[MAX_PATH];
 
 	if ( gEngfuncs.COM_ExpandFilename( MAINUI_DLLNAME, szDir, sizeof( szDir ) ) == false )
 	{
