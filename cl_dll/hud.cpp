@@ -617,25 +617,9 @@ int CHud::MsgFunc_TeamNames( const char *pszName,  int iSize, void *pbuf )
 	m_iNumberOfTeams = READ_BYTE();
 
 	for ( int i = 0; i < m_iNumberOfTeams; i++ )
-	{
-		int teamNum = i + 1;
+		strcpy( m_sTeamNames[i], READ_STRING() );
 
-		m_TextMessage.LocaliseTextString( READ_STRING(), m_sTeamNames[teamNum], 32 );
-
-		if(m_TeamTouchMenu.m_pButtons[i])
-			m_TeamTouchMenu.m_pButtons[i]->SetText( m_sTeamNames[teamNum] );
-
-
-		if ( teamNum < 5 )
-		{
-			if ( m_pDisguiseButtons[teamNum] )
-				m_pDisguiseButtons[teamNum]->setText( m_sTeamNames[teamNum] );
-		}
-
-	}
-
-	if(m_TeamTouchMenu.Initialized)
-		m_TeamTouchMenu.Update();
+	g_pMainUI->SetTeamNames( m_sTeamNames, m_iNumberOfTeams );
 
 	return 1;
 }
