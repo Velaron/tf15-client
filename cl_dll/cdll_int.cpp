@@ -22,7 +22,6 @@
 #include "cl_util.h"
 #include "netadr.h"
 #include "parsemsg.h"
-#include "extdll.h"
 
 #if defined(GOLDSOURCE_SUPPORT) && (defined(_WIN32) || defined(__linux__) || defined(__APPLE__)) && (defined(__i386) || defined(_M_IX86))
 #define USE_VGUI_FOR_GOLDSOURCE_SUPPORT
@@ -39,6 +38,15 @@ extern "C"
 
 #include "IGameMenuExports.h"
 #include "IGameClientExports.h"
+
+#ifdef _WIN32
+#define HSPRITE HSPRITE_win32
+#include "windows.h"
+#undef HSPRITE
+#else
+#define MAX_PATH PATH_MAX
+#include <limits.h>
+#endif
 
 cl_enginefunc_t gEngfuncs;
 CHud gHUD;
