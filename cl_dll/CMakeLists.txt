@@ -47,6 +47,7 @@ endif()
 
 
 set (CLDLL_SOURCES
+	../dlls/crowbar.cpp
 	../dlls/tfc/tf_wpn_ac.cpp
 	../dlls/tfc/tf_wpn_ar.cpp
 	../dlls/tfc/tf_wpn_axe.cpp
@@ -59,12 +60,12 @@ set (CLDLL_SOURCES
 	../dlls/tfc/tf_wpn_sg.cpp
 	../dlls/tfc/tf_wpn_srifle.cpp
 	../dlls/tfc/tf_wpn_tranq.cpp
-	../dlls/crowbar.cpp
 	tfc/ev_tfc.cpp
 	tfc/tf_baseentity.cpp
 	tfc/tf_events.cpp
 	tfc/tf_objects.cpp
 	tfc/tf_weapons.cpp
+	../common/interface.cpp
 	ammo.cpp
 	ammo_secondary.cpp
 	ammohistory.cpp
