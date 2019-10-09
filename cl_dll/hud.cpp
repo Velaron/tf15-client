@@ -616,10 +616,17 @@ int CHud::MsgFunc_TeamNames( const char *pszName,  int iSize, void *pbuf )
 
 	m_iNumberOfTeams = READ_BYTE();
 
-	for ( int i = 0; i < m_iNumberOfTeams; i++ )
-		strcpy( m_sTeamNames[i], READ_STRING() );
+	if ( m_szTeamNames )
+		free( m_szTeamNames );
 
-	g_pMainUI->SetTeamNames( m_sTeamNames, m_iNumberOfTeams );
+	m_szTeamNames = ( char ** )malloc( sizeof( char * ) * m_iNumberOfTeams );
+
+	for ( int i = 0; i < m_iNumberOfTeams; i++ )
+	{
+		char *szTeamName = READ_STRING();
+		m_szTeamNames[i] = ( char * )malloc( strlen( szTeamName ) + 1 );
+		strcpy( m_szTeamNames[i], szTeamName );
+	}
 
 	return 1;
 }

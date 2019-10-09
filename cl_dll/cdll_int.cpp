@@ -461,6 +461,21 @@ public:
 	{
 		return gHUD.m_TextMessage.BufferedLocaliseTextString( msg );
 	}
+
+	int GetRandomClass( void ) override
+	{
+		return gHUD.m_iRandomPC;
+	}
+
+	char **GetTeamNames( void ) override
+	{
+		return gHUD.m_szTeamNames;
+	}
+
+	int GetNumberOfTeams( void ) override
+	{
+		return gHUD.m_iNumberOfTeams;
+	}
 };
 
 EXPOSE_SINGLE_INTERFACE( CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION );

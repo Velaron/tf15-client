@@ -32,7 +32,6 @@ public:
 	virtual int	GetTextHeight( HFont font, const char *text, int size = -1 ) = 0;
 	virtual int DrawCharacter( HFont font, int ch, int x, int y, int charH, const unsigned int color, bool forceAdditive = false ) = 0;
 	virtual void ShowVGUIMenu( int menuType ) = 0;
-	virtual void SetTeamNames( char teamNames[4][32], int numTeams ) = 0;
 };
 
 #define GAMEMENUEXPORTS_INTERFACE_VERSION "GameMenuExports001"

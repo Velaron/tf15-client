@@ -613,7 +613,7 @@ public:
 	int m_iIsSettingDetpack;
 	int m_iBuildState;
 	int m_iRandomPC;
-	char m_sTeamNames[4][32];
+	char **m_szTeamNames;
 
 private:
 	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.
