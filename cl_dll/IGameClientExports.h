@@ -25,10 +25,12 @@
 class IGameClientExports : public IBaseInterface
 {
 public:
-	virtual const char *GetServerHostName() = 0;
-	virtual bool IsPlayerGameVoiceMuted(int playerIndex) = 0;
-	virtual void MutePlayerGameVoice(int playerIndex) = 0;
-	virtual void UnmutePlayerGameVoice(int playerIndex) = 0;
+	//virtual const char *GetServerHostName() = 0;
+	//virtual bool IsPlayerGameVoiceMuted(int playerIndex) = 0;
+	//virtual void MutePlayerGameVoice(int playerIndex) = 0;
+	//virtual void UnmutePlayerGameVoice(int playerIndex) = 0;
+
+	virtual char *LocaliseTextString( const char *msg ) = 0;
 };
 
 #define GAMECLIENTEXPORTS_INTERFACE_VERSION "GameClientExports001"

@@ -18,10 +18,22 @@
 // this implementation handles the linking of the engine to the DLL
 //
 
+#ifdef _WIN32
+#define HSPRITE HSPRITE_win32
+#include "windows.h"
+#undef HSPRITE
+#else
+#define MAX_PATH PATH_MAX
+#include <limits.h>
+#endif
+
 #include "hud.h"
 #include "cl_util.h"
 #include "netadr.h"
 #include "parsemsg.h"
+
+#include "IGameMenuExports.h"
+#include "IGameClientExports.h"
 
 #if defined(GOLDSOURCE_SUPPORT) && (defined(_WIN32) || defined(__linux__) || defined(__APPLE__)) && (defined(__i386) || defined(_M_IX86))
 #define USE_VGUI_FOR_GOLDSOURCE_SUPPORT
@@ -36,25 +48,12 @@ extern "C"
 
 #include <string.h>
 
-#include "IGameMenuExports.h"
-#include "IGameClientExports.h"
-
-#ifdef _WIN32
-#define HSPRITE HSPRITE_win32
-#include "windows.h"
-#undef HSPRITE
-#else
-#define MAX_PATH PATH_MAX
-#include <limits.h>
-#endif
-
 cl_enginefunc_t gEngfuncs;
 CHud gHUD;
 mobile_engfuncs_t *gMobileEngfuncs = NULL;
 
 HINTERFACEMODULE g_hMainUIModule = NULL;
 IGameMenuExports *g_pMainUI = NULL;
-HINTERFACEMODULE g_hClientModule = NULL;
 
 void CL_LoadMainUI( void );
 void CL_UnloadMainUI( void );
@@ -451,35 +450,17 @@ void CL_LoadMainUI( void )
 
 	if ( g_pMainUI )
 	{
-		gEngfuncs.COM_ExpandFilename( CLIENT_DLLNAME, szDir, sizeof( szDir ) );
-		g_hClientModule = Sys_LoadModule( szDir );
-		CreateInterfaceFn ClientFactory = Sys_GetFactory( g_hClientModule );
-		g_pMainUI->Initialize( ClientFactory );
+		g_pMainUI->Initialize( CreateInterface );
 	}
 }
 
-static class CGameClientExports : public IGameClientExports
+class CClientExports : public IGameClientExports
 {
 public:
-	const char *GetServerHostName() override
+	char *LocaliseTextString( const char *msg ) override
 	{
-
+		return gHUD.m_TextMessage.BufferedLocaliseTextString( msg );
 	}
+};
 
-	bool IsPlayerGameVoiceMuted(int playerIndex) override
-	{
-
-	}
-
-	void MutePlayerGameVoice(int playerIndex) override
-	{
-
-	}
-
-	void UnmutePlayerGameVoice(int playerIndex) override
-	{
-		
-	}
-} s_Client;
-
-EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CGameMenuExports, IGameMenuExports, GAMEMENUEXPORTS_INTERFACE_VERSION, s_Client );
+EXPOSE_SINGLE_INTERFACE( CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION );
