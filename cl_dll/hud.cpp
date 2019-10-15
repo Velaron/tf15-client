@@ -643,8 +643,7 @@ int CHud::MsgFunc_VGUIMenu( const char *pszName,  int iSize, void *pbuf )
 
 void CHud::ShowVGUIMenu( int menuType )
 {
-	if ( !g_pMainUI->IsActive() )
-		g_pMainUI->ShowVGUIMenu( menuType );
+	g_pMainUI->ShowVGUIMenu( menuType );
 }
 
 void CHud::CmdFunc_InputPlayerSpecial( void )
