@@ -80,6 +80,7 @@ int __MsgFunc_GameMode( const char *pszName, int iSize, void *pbuf )
 
 void __CmdFunc_OpenCommandMenu( void )
 {
+	gHUD.CmdFunc_OpenCommandMenu();
 }
 
 void __CmdFunc_InputPlayerSpecial( void )
@@ -89,10 +90,12 @@ void __CmdFunc_InputPlayerSpecial( void )
 
 void __CmdFunc_CloseCommandMenu( void )
 {
+	gHUD.CmdFunc_CloseCommandMenu();
 }
 
 void __CmdFunc_ForceCloseCommandMenu( void )
 {
+	gHUD.CmdFunc_ForceCloseCommandMenu();
 }
 
 void __CmdFunc_ToggleServerBrowser( void )
@@ -649,6 +652,21 @@ void CHud::ShowVGUIMenu( int menuType )
 void CHud::CmdFunc_InputPlayerSpecial( void )
 {
 	ClientCmd( "_special" );
+}
+
+void CHud::CmdFunc_OpenCommandMenu( void )
+{
+	g_pMainUI->OpenCommandMenu();
+}
+
+void CHud::CmdFunc_CloseCommandMenu( void )
+{
+	g_pMainUI->CloseCommandMenu();
+}
+
+void CHud::CmdFunc_ForceCloseCommandMenu( void )
+{
+	g_pMainUI->CloseCommandMenu();
 }
 
 int CHud::MsgFunc_ValClass( const char *pszName,  int iSize, void *pbuf )

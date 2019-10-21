@@ -21,8 +21,8 @@ public:
 	virtual bool Initialize( CreateInterfaceFn factory ) = 0;
 	virtual HFont BuildFont( CFontBuilder &builder ) = 0;
 	virtual const char *L( const char *szStr ) = 0;
-	virtual bool IsActive() = 0;
-	virtual bool IsMainMenuActive() = 0;
+	virtual bool IsActive( void ) = 0;
+	virtual bool IsMainMenuActive( void ) = 0;
 	virtual void Key( int key, int down ) = 0;
 	virtual void MouseMove( int x, int y ) = 0;
 	virtual void GetCharABCWide( HFont font, int ch, int &a, int &b, int &c ) = 0;
@@ -32,6 +32,8 @@ public:
 	virtual int	GetTextHeight( HFont font, const char *text, int size = -1 ) = 0;
 	virtual int DrawCharacter( HFont font, int ch, int x, int y, int charH, const unsigned int color, bool forceAdditive = false ) = 0;
 	virtual void ShowVGUIMenu( int menuType ) = 0;
+	virtual void OpenCommandMenu( void ) = 0;
+	virtual void CloseCommandMenu( void ) = 0;
 };
 
 #define GAMEMENUEXPORTS_INTERFACE_VERSION "GameMenuExports001"

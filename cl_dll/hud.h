@@ -677,6 +677,9 @@ public:
 	int  _cdecl MsgFunc_TeamNames( const char *pszName, int iSize, void *pbuf );
 	int  _cdecl MsgFunc_VGUIMenu( const char *pszName, int iSize, void *pbuf );
 	void  _cdecl CmdFunc_InputPlayerSpecial( void );
+	void _cdecl CmdFunc_OpenCommandMenu( void );
+	void _cdecl CmdFunc_CloseCommandMenu( void );
+	void _cdecl CmdFunc_ForceCloseCommandMenu( void );
 	int _cdecl MsgFunc_ValClass( const char *pszName,  int iSize, void *pbuf );
 	int _cdecl MsgFunc_Feign( const char *pszName,  int iSize, void *pbuf );
 	int _cdecl MsgFunc_Detpack( const char *pszName,  int iSize, void *pbuf );
