@@ -29,6 +29,8 @@
 #include "StudioModelRenderer.h"
 #include "GameStudioModelRenderer.h"
 
+#include "tfc/tf_defs.h"
+
 // team colors for old TFC models
 #define TEAM1_COLOR		150
 #define TEAM2_COLOR		250
@@ -1460,24 +1462,6 @@ void CStudioModelRenderer::StudioProcessGait( entity_state_t *pplayer )
 		m_pPlayerInfo->gaitframe += pseqdesc->numframes;
 }
 
-#define PC_UNDEFINED	0 
-
-#define PC_SCOUT		1 
-#define PC_SNIPER		2 
-#define PC_SOLDIER		3 
-#define PC_DEMOMAN		4 
-#define PC_MEDIC		5 
-#define PC_HVYWEAP		6 
-#define PC_PYRO			7
-#define PC_SPY			8
-#define PC_ENGINEER		9
-#define PC_RANDOM		10 	
-#define PC_CIVILIAN		11
-
-#define PC_LASTCLASS	12
-
-#define TFC_MODELS_OLD	0
-
 extern cvar_t *tfc_newmodels;
 
 const char *sNewClassModelFiles[] =
@@ -1577,7 +1561,7 @@ int CStudioModelRenderer::ReturnDiguisedClass( int iPlayerIndex )
 
 const char *ReturnCorrectedModelString( int iSwitchClass )
 {
-	if( tfc_newmodels->value == TFC_MODELS_OLD )
+	if( !tfc_newmodels->value )
 	{
 		if( sOldClassModelFiles[iSwitchClass] )
 			return sOldClassModelFiles[iSwitchClass];
@@ -1740,7 +1724,7 @@ int CStudioModelRenderer::StudioDrawPlayer( int flags, entity_state_t *pplayer )
 		m_nBottomColor = m_pPlayerInfo->bottomcolor;
 
 		// get old remap colors
-		if( tfc_newmodels->value == TFC_MODELS_OLD )
+		if( !tfc_newmodels->value )
 		{
 			// team 1
 			if( ( m_nTopColor < 155 ) && ( m_nTopColor > 135 ) )
@@ -1792,7 +1776,7 @@ int CStudioModelRenderer::StudioDrawPlayer( int flags, entity_state_t *pplayer )
 			if( pweaponmodel )
 			{
 				// if we want to see the old p_models
-				if( tfc_newmodels->value == TFC_MODELS_OLD )
+				if( !tfc_newmodels->value )
 				{
 					for( int i = 0; i < NUM_WEAPON_PMODELS; ++i )
 					{

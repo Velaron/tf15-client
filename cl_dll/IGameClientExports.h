@@ -34,6 +34,7 @@ public:
 	virtual int GetRandomClass( void ) = 0;
 	virtual char **GetTeamNames( void ) = 0;
 	virtual int GetNumberOfTeams( void ) = 0;
+	virtual int GetPlayerClass( void ) = 0;
 };
 
 #define GAMECLIENTEXPORTS_INTERFACE_VERSION "GameClientExports001"

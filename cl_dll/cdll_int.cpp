@@ -476,6 +476,11 @@ public:
 	{
 		return gHUD.m_iNumberOfTeams;
 	}
+
+	int GetPlayerClass( void ) override
+	{
+		return g_iPlayerClass;
+	}
 };
 
 EXPOSE_SINGLE_INTERFACE( CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION );
