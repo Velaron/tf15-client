@@ -49,7 +49,7 @@ def options(opt):
 		opt.load('msvc msdev msvs')
 
 	opt.load('reconfigure subproject')
-	opt.add_subproject(["cl_dll", "dlls"])
+	opt.add_subproject(["cl_dll", "mainui"])
 
 def configure(conf):
 	# Configuration
@@ -250,7 +250,7 @@ def configure(conf):
 	if conf.env.COMPILER_CC == 'msvc':
 		conf.define('_CRT_SECURE_NO_WARNINGS', 1)
 		conf.define('_CRT_NONSTDC_NO_DEPRECATE', 1)
-	else:
+	elif conf.env.DEST_OS != 'win32':
 		conf.env.append_unique('DEFINES', ['stricmp=strcasecmp', 'strnicmp=strncasecmp', '_snprintf=snprintf', '_vsnprintf=vsnprintf', '_LINUX', 'LINUX'])
 		conf.env.append_unique('CXXFLAGS', ['-Wno-invalid-offsetof', '-fno-rtti', '-fno-exceptions'])
 
@@ -261,14 +261,10 @@ def configure(conf):
 		if conf.env.cxxshlib_PATTERN.startswith('lib'):
 			conf.env.cxxshlib_PATTERN = conf.env.cxxshlib_PATTERN[3:]
 
-	conf.define('CLIENT_WEAPONS', '1')
-
-	#conf.add_subproject(["cl_dll", "dlls"])
-	conf.add_subproject(["cl_dll"])
+	conf.add_subproject(["cl_dll", "mainui"])
 
 def build(bld):
-	#bld.add_subproject(["cl_dll", "dlls"])
-	bld.add_subproject(["cl_dll"])
+	bld.add_subproject(["cl_dll", "mainui"])
 
 
 
