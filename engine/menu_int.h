@@ -12,7 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#pragma once
+
 #ifndef MENU_INT_H
 #define MENU_INT_H
 
@@ -24,9 +24,8 @@ typedef int		HIMAGE;		// handle to a graphic
 
 // flags for PIC_Load
 #define PIC_NEAREST		(1<<0)		// disable texfilter
-#define PIC_KEEP_RGBDATA	(1<<1)		// some images keep source
+#define PIC_KEEP_SOURCE	(1<<1)		// some images keep source
 #define PIC_NOFLIP_TGA	(1<<2)		// Steam background completely ignore tga attribute 0x20
-#define PIC_KEEP_8BIT	(1<<3)		// keep original 8-bit image (if present)
 
 typedef struct ui_globalvars_s
 {	
@@ -37,17 +36,19 @@ typedef struct ui_globalvars_s
 	int		scrHeight;
 
 	int		maxClients;
-	int		developer;
+	int		developer; // boolean, changed from allow_console to make mainui_cpp compile for both engines
 	int		demoplayback;
 	int		demorecording;
 	char		demoname[64];	// name of currently playing demo
 	char		maptitle[64];	// title of active map
 } ui_globalvars_t;
 
+struct ref_viewpass_s;
+
 typedef struct ui_enginefuncs_s
 {
 	// image handlers
-	HIMAGE	(*pfnPIC_Load)( const char *szPicName, const byte *ucRawImage, long ulRawImageSize, long flags );
+	HIMAGE	(*pfnPIC_Load)( const char *szPicName, const byte *ucRawImage, int ulRawImageSize, int flags );
 	void	(*pfnPIC_Free)( const char *szPicName );
 	int	(*pfnPIC_Width)( HIMAGE hPic );
 	int	(*pfnPIC_Height)( HIMAGE hPic );
@@ -73,15 +74,15 @@ typedef struct ui_enginefuncs_s
 	int	(*pfnAddCommand)( const char *cmd_name, void (*function)(void) );
 	void	(*pfnClientCmd)( int execute_now, const char *szCmdString );
 	void	(*pfnDelCommand)( const char *cmd_name );
-	int       (*pfnCmdArgc)( void );	
+	int (*pfnCmdArgc)( void );
 	char*	(*pfnCmdArgv)( int argc );
 	char*	(*pfnCmd_Args)( void );
 
 	// debug messages (in-menu shows only notify)	
-	void	(*Con_Printf)( char *fmt, ... );
-	void	(*Con_DPrintf)( char *fmt, ... );
-	void	(*Con_NPrintf)( int pos, char *fmt, ... );
-	void	(*Con_NXPrintf)( struct con_nprint_s *info, char *fmt, ... );
+	void	(*Con_Printf)( const char *fmt, ... );
+	void	(*Con_DPrintf)( const char *fmt, ... );
+	void	(*Con_NPrintf)( int pos, const char *fmt, ... );
+	void	(*Con_NXPrintf)( struct con_nprint_s *info, const char *fmt, ... );
 
 	// sound handlers
 	void	(*pfnPlayLocalSound)( const char *szSound );
@@ -103,7 +104,7 @@ typedef struct ui_enginefuncs_s
 	struct cl_entity_s* (*pfnGetPlayerModel)( void );	// for drawing playermodel previews
 	void	(*pfnSetModel)( struct cl_entity_s *ed, const char *path );
 	void	(*pfnClearScene)( void );
-	void	(*pfnRenderScene)( const struct ref_params_s *fd );
+	void	(*pfnRenderScene)( const struct ref_viewpass_s *rvp );
 	int	(*CL_CreateVisibleEntity)( int type, struct cl_entity_s *ent );
 
 	// misc handlers
@@ -140,7 +141,7 @@ typedef struct ui_enginefuncs_s
 	int	(*pfnGetGameInfo)( GAMEINFO *pgameinfo );
 	GAMEINFO	**(*pfnGetGamesList)( int *numGames );			// collect info about all mods
 	char 	**(*pfnGetFilesList)( const char *pattern, int *numFiles, int gamedironly );	// find in files
-	int 	(*pfnGetSaveComment)( const char *savename, char *comment );
+	int (*pfnGetSaveComment)( const char *savename, char *comment );
 	int	(*pfnGetDemoComment)( const char *demoname, char *comment );
 	int	(*pfnCheckGameDll)( void );				// returns false if hl.dll is missed or invalid
 	char	*(*pfnGetClipboardData)( void );
@@ -155,12 +156,16 @@ typedef struct ui_enginefuncs_s
 	// menu interface is freezed at version 0.75
 	// new functions starts here 
 	float	(*pfnRandomFloat)( float flLow, float flHigh );	
-	int	(*pfnRandomLong)( int lLow, int lHigh );
+	int		(*pfnRandomLong)( int lLow, int lHigh );
 
 	void	(*pfnSetCursor)( void *hCursor );			// change cursor
 	int	(*pfnIsMapValid)( char *filename );
 	void	(*pfnProcessImage)( int texnum, float gamma, int topColor, int bottomColor );
-	int	(*pfnCompareFileTime)( char *filename1, char *filename2, int *iCompare );
+	int	(*pfnCompareFileTime)( const char *filename1, char *filename2, int *iCompare );
+
+	char *(*pfnGetModeString)( int vid_mode );
+	int	(*COM_SaveFile)( const char *filename, const void *data, int len );
+	int	(*COM_RemoveFile)( const char *filepath );
 } ui_enginefuncs_t;
 
 typedef struct
@@ -183,6 +188,47 @@ typedef struct
 	void	(*pfnFinalCredits)( void );	// show credits + game end
 } UI_FUNCTIONS;
 
+#define MENU_EXTENDED_API_VERSION 1
+
+typedef struct ui_extendedfuncs_s {
+	// text functions, frozen
+	void (*pfnEnableTextInput)( int enable );
+	int (*pfnUtfProcessChar) ( int ch );
+	int (*pfnUtfMoveLeft) ( char *str, int pos );
+	int (*pfnUtfMoveRight) ( char *str, int pos, int length );
+
+	// new engine extended api start here
+	// returns 1 if there are more in list, otherwise 0
+	int (*pfnGetRenderers)( unsigned int num, char *shortName, size_t size1, char *readableName, size_t size2 );
+} ui_extendedfuncs_t;
+
+// deprecated export from old engine
+typedef void (*ADDTOUCHBUTTONTOLIST)( const char *name, const char *texture, const char *command, unsigned char *color, int flags );
+
+typedef struct
+{
+	ADDTOUCHBUTTONTOLIST pfnAddTouchButtonToList;
+	void (*pfnResetPing)( void );
+	void (*pfnShowConnectionWarning)( void );
+	void (*pfnShowUpdateDialog)( int preferStore );
+	void (*pfnShowMessageBox)( const char *text );
+	void (*pfnConnectionProgress_Disconnect)( void );
+	void (*pfnConnectionProgress_Download)( const char *pszFileName, const char *pszServerName, int iCurrent, int iTotal, const char *comment );
+	void (*pfnConnectionProgress_DownloadEnd)( void );
+	void (*pfnConnectionProgress_Precache)( void );
+	void (*pfnConnectionProgress_Connect)( const char *server ); // NULL for local server
+	void (*pfnConnectionProgress_ChangeLevel)( void );
+	void (*pfnConnectionProgress_ParseServerInfo)( const char *server );
+} UI_EXTENDED_FUNCTIONS;
+
 typedef int (*MENUAPI)( UI_FUNCTIONS *pFunctionTable, ui_enginefuncs_t* engfuncs, ui_globalvars_t *pGlobals );
 
-#endif//MENU_INT_H
+typedef int (*UIEXTENEDEDAPI)( int version, UI_EXTENDED_FUNCTIONS *pFunctionTable, ui_extendedfuncs_t *engfuncs );
+
+// deprecated interface from old engine
+typedef int (*UITEXTAPI)( ui_extendedfuncs_t* engfuncs );
+
+#define PLATFORM_UPDATE_PAGE "PlatformUpdatePage"
+#define GENERIC_UPDATE_PAGE "GenericUpdatePage"
+
+#endif //MENU_INT_H

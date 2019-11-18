@@ -189,6 +189,11 @@ void CGameRules::RefreshSkillData ( void )
 	gSkillData.plrArm = 1.0f;
 }
 
+void CGameRules::ClientUserInfoChanged( CBasePlayer *pPlayer, char *infobuffer )
+{
+	pPlayer->SetPrefsFromUserinfo( infobuffer );
+}
+
 //=========================================================
 // instantiate the proper game rules object
 //=========================================================

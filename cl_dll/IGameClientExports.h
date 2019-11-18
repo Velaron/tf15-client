@@ -8,19 +8,7 @@
 #ifndef IGAMECLIENTEXPORTS_H
 #define IGAMECLIENTEXPORTS_H
 
-#ifdef _WIN32
-#pragma once
-#endif
-
 #include "../common/interface.h"
-
-#ifdef _WIN32
-#define CLIENT_DLLNAME "cl_dlls/client.dll"
-#elif defined(OSX)
-#define CLIENT_DLLNAME "cl_dlls/client.dylib"
-#elif defined(LINUX)
-#define CLIENT_DLLNAME "cl_dlls/client.so"
-#endif
 
 class IGameClientExports : public IBaseInterface
 {
@@ -38,6 +26,5 @@ public:
 };
 
 #define GAMECLIENTEXPORTS_INTERFACE_VERSION "GameClientExports001"
-
 
 #endif

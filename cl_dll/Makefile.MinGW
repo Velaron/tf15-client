@@ -82,7 +82,8 @@ INCLUDES = \
 DEFINES = \
 	-Wno-write-strings \
 	-DCLIENT_WEAPONS \
-	-DCLIENT_DLL
+	-DCLIENT_DLL \
+	-DNO_VOICEGAMEMGR
 
 FLAGS = -m32 -g
 OBJS = $(CPP_SOURCES:.cpp=.o) $(C_SOURCES:.c=.o)

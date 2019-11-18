@@ -12,9 +12,6 @@
 #define MAINUI_DLLNAME "cl_dlls/menu.so"
 #endif
 
-#define MENU_TEAM 2
-#define MENU_CLASS 3
-
 class IGameMenuExports : public IBaseInterface
 {
 public:
