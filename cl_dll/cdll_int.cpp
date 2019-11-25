@@ -429,12 +429,14 @@ void CL_LoadMainUI( void )
 {
 	char szDir[MAX_PATH];
 
+#if !defined(__ANDROID__)
 	if ( gEngfuncs.COM_ExpandFilename( MAINUI_DLLNAME, szDir, sizeof( szDir ) ) == false )
 	{
 		g_pMainUI = NULL;
 		g_hMainUIModule = NULL;
 		return;
 	}
+#endif
 
 	g_hMainUIModule = Sys_LoadModule( szDir );
 	CreateInterfaceFn MainUIFactory = Sys_GetFactory( g_hMainUIModule );

@@ -53,10 +53,19 @@ CreateInterfaceFn Sys_GetFactoryThis( void )
 	return CreateInterface;
 }
 
-#ifdef _WIN32
+#if defined(_WIN32)
 HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
 {
 	return (HINTERFACEMODULE)LoadLibraryA( pModuleName );
+}
+#elif defined(__ANDROID__)
+HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
+{
+	char szPath[1024];
+
+	snprintf( szPath, 1024, "%s/%s", getenv("XASH3D_GAMELIBDIR"), pModuleName );
+
+	return (HINTERFACEMODULE)dlopen( szPath, RTLD_NOW );
 }
 #else
 HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
@@ -65,7 +74,7 @@ HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
 }
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32)
 void Sys_FreeModule( HINTERFACEMODULE hModule )
 {
 	if( !hModule )
@@ -83,7 +92,7 @@ void Sys_FreeModule( HINTERFACEMODULE hModule )
 }
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32)
 CreateInterfaceFn Sys_GetFactory( HINTERFACEMODULE hModule )
 {
 	if( !hModule )

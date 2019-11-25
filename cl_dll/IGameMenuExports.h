@@ -8,7 +8,9 @@
 #define MAINUI_DLLNAME "cl_dlls/menu.dll"
 #elif defined(OSX)
 #define MAINUI_DLLNAME "cl_dlls/menu.dylib"
-#elif defined(LINUX)
+#elif defined(__ANDROID__)
+#define MAINUI_DLLNAME "libmenu.so"
+#else
 #define MAINUI_DLLNAME "cl_dlls/menu.so"
 #endif
 
