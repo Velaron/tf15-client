@@ -65,7 +65,7 @@ HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
 
 	snprintf( szPath, 1024, "%s/%s", getenv("XASH3D_GAMELIBDIR"), pModuleName );
 
-	return (HINTERFACEMODULE)dlopen( szPath, RTLD_NOW );
+	return (HINTERFACEMODULE)dlopen( szPath, RTLD_LAZY );
 }
 #else
 HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
