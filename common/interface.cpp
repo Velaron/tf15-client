@@ -61,16 +61,7 @@ HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
 #else
 HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
 {
-	char szCwd[1024];
-	char szAbsoluteLibFilename[1024];
-
-	getcwd( szCwd, sizeof( szCwd ) );
-	if( szCwd[ strlen( szCwd ) - 1 ] == '/' )
-		szCwd[ strlen( szCwd ) - 1 ] = 0;
-
-	sprintf( szAbsoluteLibFilename, "%s/%s", szCwd, pModuleName );
-
-	return (HINTERFACEMODULE)dlopen( szAbsoluteLibFilename, RTLD_NOW );
+	return (HINTERFACEMODULE)dlopen( pModuleName, RTLD_NOW );
 }
 #endif
 
