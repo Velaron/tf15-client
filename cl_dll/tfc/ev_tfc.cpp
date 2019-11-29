@@ -873,17 +873,14 @@ void EV_FireTFCNailgun(event_args_t *args)
 void EV_TFC_NailTouch(struct tempent_s *ent, pmtrace_t *ptr)
 {
 	physent_t *pe;
-	char name;
+	char decalname[32];
 
     pe = gEngfuncs.pEventAPI->EV_GetPhysent(ptr->ent);
     if(pe && (pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP))
     {
-        sprintf(&name, "{shot%i", gEngfuncs.pfnRandomLong(0, 4) + 1);
-        if(name)
-        {
-            if (ptr->fraction != 1.0)
-                EV_HLDM_GunshotDecalTrace(ptr, &name);
-        }
+        sprintf( decalname, "{shot%i", gEngfuncs.pfnRandomLong(0, 4) + 1 );
+        if (ptr->fraction != 1.0)
+			EV_HLDM_GunshotDecalTrace(ptr, decalname);
     }
 }
 
