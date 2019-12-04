@@ -493,6 +493,16 @@ public:
 	{
 		return gHUD.m_iIsFeigning;
 	}
+
+	const char *GetLevelName() override
+	{
+		return gEngfuncs.pfnGetLevelName();
+	}
+
+	int GetTeamNumber() override
+	{
+		return g_iTeamNumber;
+	}
 };
 
 EXPOSE_SINGLE_INTERFACE( CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION );

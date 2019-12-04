@@ -25,6 +25,8 @@ public:
 	virtual int GetPlayerClass() = 0;
 	virtual int GetAllowSpectators() = 0;
 	virtual int GetIsFeigning() = 0;
+	virtual const char *GetLevelName() = 0;
+	virtual int GetTeamNumber() = 0;
 };
 
 #define GAMECLIENTEXPORTS_INTERFACE_VERSION "GameClientExports001"
