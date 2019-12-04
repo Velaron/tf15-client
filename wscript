@@ -250,9 +250,12 @@ def configure(conf):
 	if conf.env.COMPILER_CC == 'msvc':
 		conf.define('_CRT_SECURE_NO_WARNINGS', 1)
 		conf.define('_CRT_NONSTDC_NO_DEPRECATE', 1)
-	elif conf.env.DEST_OS != 'win32':
-		conf.env.append_unique('DEFINES', ['stricmp=strcasecmp', 'strnicmp=strncasecmp', '_snprintf=snprintf', '_vsnprintf=vsnprintf', '_LINUX', 'LINUX'])
+	else:
+		conf.env.append_unique('DEFINES', ['stricmp=strcasecmp', 'strnicmp=strncasecmp', '_snprintf=snprintf', '_vsnprintf=vsnprintf'])
 		conf.env.append_unique('CXXFLAGS', ['-Wno-invalid-offsetof', '-fno-rtti', '-fno-exceptions'])
+
+		if conf.env.DEST_OS != 'win32':
+			conf.env.append_unique('DEFINES', ['_LINUX', 'LINUX'])
 
 	# strip lib from pattern
 	if conf.env.DEST_OS in ['linux', 'darwin']:

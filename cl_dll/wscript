@@ -21,12 +21,11 @@ def build(bld):
 		'pm_shared/*.c',
 		'dlls/tfc/tf_wpn_ac.cpp', 'dlls/tfc/tf_wpn_ar.cpp', 'dlls/tfc/tf_wpn_axe.cpp', 'dlls/tfc/tf_wpn_flame.cpp', 'dlls/tfc/tf_wpn_gl.cpp',
 		'dlls/tfc/tf_wpn_ic.cpp', 'dlls/tfc/tf_wpn_ng.cpp', 'dlls/tfc/tf_wpn_railgun.cpp', 'dlls/tfc/tf_wpn_rpg.cpp', 'dlls/tfc/tf_wpn_sg.cpp',
-		'dlls/tfc/tf_wpn_srifle.cpp',	'dlls/tfc/tf_wpn_tranq.cpp', 'dlls/crowbar.cpp'
+		'dlls/tfc/tf_wpn_srifle.cpp',	'dlls/tfc/tf_wpn_tranq.cpp', 'dlls/crowbar.cpp', 'common/interface.cpp'
 	])
 
-	source += bld.path.ant_glob(['tfc/*.cpp'])
-	source += bld.path.parent.ant_glob(['common/interface.cpp'])
-	source += [
+	source += bld.path.ant_glob([
+		'tfc/*.cpp',
 		'ammo.cpp', 'ammo_secondary.cpp', 'ammohistory.cpp',
 		'battery.cpp', 'cdll_int.cpp', 'com_weapons.cpp', 'death.cpp',
 		'demo.cpp', 'entity.cpp', 'ev_common.cpp', 'events.cpp',
@@ -39,14 +38,14 @@ def build(bld):
 		'status_icons.cpp', 'statusbar.cpp', 'studio_util.cpp',
 		'StudioModelRenderer.cpp', 'text_message.cpp', 'train.cpp',
 		'tri.cpp', 'util.cpp', 'view.cpp', 'scoreboard.cpp', 'MOTD.cpp'
-	]
+	])
 
 	includes = [
 		'.', 'tfc', '../dlls', '../dlls/tfc', '../common', '../engine',
 		'../pm_shared', '../game_shared', '../public', '../utils/false_vgui/include'
 	]
 
-	defines = ['CLIENT_DLL']
+	defines = ['CLIENT_DLL', 'CLIENT_WEAPONS', 'NO_VOICEGAMEMGR']
 
 	if bld.env.GOLDSRC:
 		defines += ['GOLDSOURCE_SUPPORT']
