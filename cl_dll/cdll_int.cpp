@@ -464,24 +464,34 @@ public:
 		return gHUD.m_TextMessage.BufferedLocaliseTextString( msg );
 	}
 
-	int GetRandomClass( void ) override
+	int GetRandomClass() override
 	{
 		return gHUD.m_iRandomPC;
 	}
 
-	char **GetTeamNames( void ) override
+	char **GetTeamNames() override
 	{
 		return gHUD.m_szTeamNames;
 	}
 
-	int GetNumberOfTeams( void ) override
+	int GetNumberOfTeams() override
 	{
 		return gHUD.m_iNumberOfTeams;
 	}
 
-	int GetPlayerClass( void ) override
+	int GetPlayerClass() override
 	{
 		return g_iPlayerClass;
+	}
+
+	int GetAllowSpectators() override
+	{
+		return gHUD.m_iAllowSpectators;
+	}
+
+	int GetIsFeigning() override
+	{
+		return gHUD.m_iIsFeigning;
 	}
 };
 

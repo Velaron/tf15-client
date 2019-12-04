@@ -1,4 +1,4 @@
-package in.celest.xash3d;
+package su.xash.engine;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,7 @@ public class InstallReceiver extends BroadcastReceiver
 	@Override
 	public void onReceive( Context context, Intent arg1 ) 
 	{
-		Log.d( TAG, "Install received, extracting PAK" );
+		Log.d( TAG, "Install received, extracting PAK..." );
 		ExtractAssets.extractPAK( context, true );
     }
 }
