@@ -12,11 +12,12 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#pragma once
+
 #ifndef GAMEINFO_H
 #define GAMEINFO_H
 
 #define GFL_NOMODELS	(1<<0)
+#define GFL_NOSKILLS	(1<<1)
 
 /*
 ========================================================================
