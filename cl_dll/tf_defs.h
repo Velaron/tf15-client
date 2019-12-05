@@ -406,11 +406,11 @@ enum
 #define BUILD_DISPENSER_MAX_ARMOR   500
 
 // Build state sent down to client
-#define BS2_IS_BUILDING			(1<<0)
-#define BS2_HAS_DISPENSER	(1<<1)
-#define BS2_HAS_SENTRY	(1<<2)
-#define BS2_CAN_BUILD_DISPENSER	(1<<3)
-#define BS2_CAN_BUILD_SENTRY	(1<<4)
+#define BS_BUILDING			(1<<0)
+#define BS_HAS_DISPENSER	(1<<1)
+#define BS_HAS_SENTRYGUN	(1<<2)
+#define BS_CANB_DISPENSER	(1<<3)
+#define BS_CANB_SENTRYGUN	(1<<4)
 /*==================================================*/
 /* Ammo quantities for dropping & dispenser use		*/
 /*==================================================*/
