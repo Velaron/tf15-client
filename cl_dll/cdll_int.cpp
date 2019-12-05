@@ -503,6 +503,16 @@ public:
 	{
 		return g_iTeamNumber;
 	}
+	
+	int GetBuildState() override
+	{
+		return gHUD.m_iBuildState;
+	}
+
+	int GetIsSettingDetpack() override
+	{
+		return gHUD.m_iIsSettingDetpack;
+	}
 };
 
 EXPOSE_SINGLE_INTERFACE( CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION );

@@ -27,6 +27,8 @@ public:
 	virtual int GetIsFeigning() = 0;
 	virtual const char *GetLevelName() = 0;
 	virtual int GetTeamNumber() = 0;
+	virtual int GetBuildState() = 0;
+	virtual int GetIsSettingDetpack() = 0;
 };
 
 #define GAMECLIENTEXPORTS_INTERFACE_VERSION "GameClientExports001"
