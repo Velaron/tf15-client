@@ -440,21 +440,6 @@ public:
 	static CLaserSpot *CreateSpot( void );
 };
 
-enum tfc_axe_e
-{
-    AXE_IDLE1 = 0,
-    AXE_DRAW,
-    AXE_HOLSTER,
-    AXE_ATTACK1,
-    AXE_ATTACK1MISS,
-    AXE_ATTACK2,
-    AXE_ATTACK2HIT,
-    AXE_ATTACK3,
-    AXE_ATTACK3HIT,
-    AXE_IDLE2,
-    AXE_IDLE3
-};
-
 class CTFAxe : public CCrowbar
 {
 public:
@@ -486,19 +471,6 @@ public:
 	BOOL Deploy(void);
 };
 
-enum tfc_sniper_e
-{
-    SNIPER_IDLE = 0,
-    SNIPER_AIM,
-    SNIPER_FIRE,
-    SNIPER_DRAW,
-    SNIPER_HOLSTER,
-    SNIPER_AUTOIDLE,
-    SNIPER_AUTOFIRE,
-    SNIPER_AUTODRAW,
-    SBIPER_AUTOHOLSTER
-};
-
 class CTFSniperRifle : public CBasePlayerWeapon
 {
 public:
@@ -527,20 +499,6 @@ public:
 		void UpdateSpot(void);
 		int m_fAimedDamage;
 		int m_fNextAimBonus;
-};
-
-enum tfc_shotgun_e
-{
-    TFCSHOTGUN_IDLE = 0,
-    TFCSHOTGUN_SHOOT,
-    TFCSHOTGUN_SHOOT_BIG,
-    TFCSHOTGUN_RELOAD,
-    TFCSHOTGUN_PUMP,
-    TFCSHOTGUN_STARTRELOAD,
-    TFCSHOTGUN_DRAW,
-    TFCSHOTGUN_REHOLSTER,
-    TFCSHOTGUN_IDLE4,
-    TFCSHOTGUN_DEEPIDLE
 };
 
 class CTFShotgun : public CBasePlayerWeapon
@@ -587,18 +545,6 @@ private:
 	unsigned short m_usFireSuperShotgun;
 };
 
-enum tf_ng_e
-{
-    NG_LONGIDLE = 0,
-    NG_IDLE1,
-    NG_GRENADE,
-    NG_RELOAD,
-    NG_DEPLOY,
-    NG_SHOOT1,
-    NG_SHOOT2,
-    NG_SHOOT3
-};
-
 class CTFNailgun : public CBasePlayerWeapon
 {
 public:
@@ -628,22 +574,6 @@ public:
 
 private:
 	unsigned short m_usFireSuperNailGun;
-};
-
-enum tf_gl_e
-{
-    GL_IDLE = 0,
-    PL_IDLE,
-    GL_FIRE,
-    PL_FIRE,
-    GL_RELOAD1,
-    GL_RELOAD2,
-    PL_RELOAD1,
-    PL_RELOAD2,
-    GL_DRAW,
-    PL_DRAW,
-    GL_HOLSTER,
-    PL_HOLSTER
 };
 
 class CTFGrenadeLauncher : public CBasePlayerWeapon
@@ -683,21 +613,6 @@ private:
 	float m_flNextReload;
 };
 
-enum tf_ft_e
-{
-	FT_IDLE = 0,
-	FT_FIDGET,
-	FT_ALTON,
-	FT_ALTCYCLE,
-	FT_ALTOFF,
-	FT_FIRE1,
-	FR_FIRE2,
-	FT_FIRE3,
-	FT_FIRE4,
-	FT_DRAW,
-	FT_HOLSTER
-};
-
 class CTFFlamethrower : public CBasePlayerWeapon
 {
 public:
@@ -713,22 +628,6 @@ public:
 
 private:
 	unsigned short m_usFireFlame;
-};
-
-enum tfc_tfcrpg_e
-{
-    TFCRPG_IDLE = 0,
-    TFCRPG_FIDGET,
-    TFCRPG_FIRE,
-    TFCRPG_HOLSTER1,
-    TFCRPG_DRAW1,
-    TFCRPG_HOLSTER2,
-    TFCRPG_DRAW2,
-    TFCRPG_RELSTART,
-    TFCRPG_RELCYCLE,
-    TFCRPG_RELEND,
-    TFCRPG_IDLE2,
-    TFCRPG_FIDGET2
 };
 
 class CTFRpg : public CBasePlayerWeapon
@@ -751,20 +650,6 @@ private:
 	float m_flNextReload;
 };
 
-enum tf_ic_e
-{
-	IC_IDLE = 0,
-	IC_FIDGET,
-	IC_RELOAD,
-	IC_FIRE,
-	IC_HOLSTER,
-	IC_DRAW,
-	IC_HOLSTER2,
-	IC_DRAW2,
-	IC_IDLE2,
-	IC_FIDGET2,
-};
-
 class CTFIncendiaryC : public CBasePlayerWeapon
 {
 public:
@@ -780,17 +665,6 @@ public:
 
 private:
 	unsigned short m_usFireIC;
-};
-
-enum tf_ac_e
-{
-    AC_IDLE = 0,
-    AC_IDLE2,
-    AC_SPINUP,
-    AC_SPINDOWN,
-    AC_FIRE,
-    AC_DRAW,
-    AC_HOLSTER
 };
 
 class CTFAssaultC : public CBasePlayerWeapon
@@ -830,19 +704,6 @@ public:
 
 private:
 	unsigned short m_usFireRail;
-};
-
-enum tf_tranq_e
-{
-    TRANQ_IDLE1 = 0,
-    TRANQ_IDLE2,
-    TRANQ_IDLE3,
-    TRANQ_SHOOT,
-    TRANQ_SHOOT_EMPTY,
-    TRANQ_RELOAD,
-    TRANQ_DRAW,
-    TRANQ_HOLSTER,
-    TRANQ_ADD_SILENCER,
 };
 
 class CTFTranq : public CBasePlayerWeapon

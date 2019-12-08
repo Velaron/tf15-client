@@ -38,7 +38,7 @@
 
 extern engine_studio_api_t IEngineStudio;
 
-static int tracerCount[32];
+static int g_tracerCount[32];
 
 extern "C" char PM_FindTextureType( char *name );
 
@@ -60,7 +60,6 @@ pmtrace_t *gp_tr_decal[33];
 extern float g_flSpinDownTime[33];
 extern int g_bACSpinning[33];
 extern float g_flSpinUpTime[33];
-int m_iSwing;
 extern cvar_t *cl_lw;
 BEAM *pBeam;
 BEAM *pBeam2;
@@ -565,45 +564,39 @@ int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 )
 	return 0;
 }
 
-enum tfc_axe_e
-{
-    AXE_IDLE1 = 0,
-    AXE_DRAW,
-    AXE_HOLSTER,
-    AXE_ATTACK1,
-    AXE_ATTACK1MISS,
-    AXE_ATTACK2,
-    AXE_ATTACK2HIT,
-    AXE_ATTACK3,
-    AXE_ATTACK3HIT,
-    AXE_IDLE2,
-    AXE_IDLE3
-};
-
 int EV_TFC_PlayCrowbarAnim( int iAnimType )
 {
-	m_iSwing++;
+	static int m_iSwing;
+	int iAnim;
 
-	if( iAnimType == 1 )
+	if( iAnimType == ANIM_HIT )
 	{
-		if( m_iSwing % 2 == 0 )
-			return AXE_ATTACK2HIT;
-		else
-			return AXE_ATTACK3HIT;
+		m_iSwing++;
+
+		switch( m_iSwing % 2 )
+		{
+		case 0:
+			iAnim = CROWBAR_ATTACK2HIT;
+		case 1:
+			iAnim = CROWBAR_ATTACK3HIT;
+		}
 	}
 	else
 	{
+		m_iSwing++;
+
 		switch( m_iSwing % 3 )
 		{
 		case 0:
-			return AXE_ATTACK1;
+			iAnim = CROWBAR_ATTACK1MISS;
 		case 1:
-			return AXE_ATTACK2;
+			iAnim = CROWBAR_ATTACK2MISS;
 		case 2:
-			return AXE_ATTACK3;
+			iAnim = CROWBAR_ATTACK3MISS;
 		}
 	}
-	return 0;
+
+	return iAnim;
 }
 
 #define CLASS_SPY 0
@@ -738,23 +731,11 @@ void EV_TFC_Axe( event_args_t *args )
 	EV_TFC_PlayAxeSound( idx, classid, origin, 2, fSoundData );
 }
 
-enum tfc_shotgun_e
+void EV_FireTFCShotgun( event_args_t *args )
 {
-    TFCSHOTGUN_IDLE = 0,
-    TFCSHOTGUN_SHOOT,
-    TFCSHOTGUN_SHOOT_BIG,
-    TFCSHOTGUN_RELOAD,
-    TFCSHOTGUN_PUMP,
-    TFCSHOTGUN_STARTRELOAD,
-    TFCSHOTGUN_DRAW,
-    TFCSHOTGUN_REHOLSTER,
-    TFCSHOTGUN_IDLE4,
-    TFCSHOTGUN_DEEPIDLE
-};
+	int idx = args->entindex;
+	int shell = gEngfuncs.pEventAPI->EV_FindModelIndex("models/shotgunshell.mdl");
 
-void EV_FireTFCShotgun(event_args_t *args)
-{
-	int idx;
 	vec3_t origin;
 	vec3_t angles;
 	vec3_t velocity;
@@ -762,34 +743,29 @@ void EV_FireTFCShotgun(event_args_t *args)
 
 	vec3_t ShellVelocity;
 	vec3_t ShellOrigin;
-	int shell;
 	vec3_t vecSrc, vecAiming;
 
-	idx = args->entindex;
-    VectorCopy(args->origin, origin);
-	VectorCopy(args->angles, angles);
-	VectorCopy(args->velocity, velocity);
+    VectorCopy( args->origin, origin );
+	VectorCopy( args->angles, angles );
+	VectorCopy( args->velocity, velocity );
+	AngleVectors( angles, forward, right, up );
 
-	AngleVectors(angles, forward, right, up);
+	EV_GetDefaultShellInfo( args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4 );
 
-	shell = gEngfuncs.pEventAPI->EV_FindModelIndex("models/shotgunshell.mdl");
-
-	EV_GetDefaultShellInfo(args, origin, velocity, ShellVelocity, ShellOrigin, forward, right, up, 20, -12, 4);
-
-	if(EV_IsLocal(idx))
+	if( EV_IsLocal( idx ) )
 	{
 	    EV_MuzzleFlash();
-	    gEngfuncs.pEventAPI->EV_WeaponAnimation(TFCSHOTGUN_SHOOT, 2);
+	    gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_FIRE, 2 );
         V_PunchAxis(0, -2.0);
 	}
 
-	EV_EjectBrass(ShellOrigin, ShellVelocity, angles.y, shell, TE_BOUNCE_SHELL);
+	EV_EjectBrass( ShellOrigin, ShellVelocity, angles.y, shell, TE_BOUNCE_SHELL );
 
-	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/sbarrel1.wav", gEngfuncs.pfnRandomFloat(0.95, 1.0), 0.8, 0, gEngfuncs.pfnRandomLong(0, 31) + 93);
-	EV_GetGunPosition(args, vecSrc, origin);
-	VectorCopy(forward, vecAiming);
+	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/sbarrel1.wav", gEngfuncs.pfnRandomFloat( 0.95, 1.0 ), 0.8, 0, gEngfuncs.pfnRandomLong( 0, 31 ) + 93 );
+	EV_GetGunPosition( args, vecSrc, origin );
+	VectorCopy( forward, vecAiming );
 
-	EV_HLDM_FireBullets(idx, forward, right, up, 6, vecSrc, vecAiming, 2048.0, BULLET_PLAYER_BUCKSHOT, 0, tracerCount + idx, 0.04, 0.04);
+	EV_HLDM_FireBullets( idx, forward, right, up, 6, vecSrc, vecAiming, 2048.0, BULLET_PLAYER_TF_BUCKSHOT, 0, &g_tracerCount[idx - 1], 0.04, 0.04 );
 }
 
 void EV_ReloadTFCShotgun(event_args_t *args)
@@ -801,7 +777,7 @@ void EV_ReloadTFCShotgun(event_args_t *args)
     idx = args->entindex;
     VectorCopy(args->origin, origin);
     if(EV_IsLocal(idx))
-        gEngfuncs.pEventAPI->EV_WeaponAnimation(TFCSHOTGUN_RELOAD, 2);
+        gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_RELOAD, 2 );
     if(gEngfuncs.pfnRandomLong(0, 1))
         sound = "weapons/reload3.wav";
 
@@ -820,21 +796,9 @@ void EV_PumpTFCShotgun(event_args_t *args)
     idx = args->entindex;
     VectorCopy(args->origin, origin);
     if(full && EV_IsLocal(idx))
-        gEngfuncs.pEventAPI->EV_WeaponAnimation(TFCSHOTGUN_PUMP, 2);
+        gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_PUMP, 2 );
   gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/scock1.wav", 1.0, 0.8, 0, gEngfuncs.pfnRandomLong(0, 31) + 95);
 }
-
-enum tf_ng_e
-{
-    NG_LONGIDLE = 0,
-    NG_IDLE1,
-    NG_GRENADE,
-    NG_RELOAD,
-    NG_DEPLOY,
-    NG_SHOOT1,
-    NG_SHOOT2,
-    NG_SHOOT3
-};
 
 void EV_FireTFCNailgun(event_args_t *args)
 {
@@ -859,7 +823,7 @@ void EV_FireTFCNailgun(event_args_t *args)
 	shell = gEngfuncs.pEventAPI->EV_FindModelIndex("models/nail.mdl");
 
     if(EV_IsLocal(idx))
-        gEngfuncs.pEventAPI->EV_WeaponAnimation(NG_SHOOT1, 2);
+        gEngfuncs.pEventAPI->EV_WeaponAnimation( NAILGUN_FIRE1, 2 );
     EV_GetGunPosition(args, ShellOrigin, origin);
     VectorMA(ShellOrigin, -4.0, up, ShellOrigin);
     VectorMA(ShellOrigin, 2.0, right, ShellOrigin);
@@ -907,7 +871,7 @@ void EV_FireTFCSuperNailgun(event_args_t *args)
 	shell = gEngfuncs.pEventAPI->EV_FindModelIndex("models/nail.mdl");
 
     if(EV_IsLocal(idx))
-        gEngfuncs.pEventAPI->EV_WeaponAnimation(NG_SHOOT1, 2);
+        gEngfuncs.pEventAPI->EV_WeaponAnimation( NAILGUN_FIRE1, 2 );
     EV_GetGunPosition(args, ShellOrigin, origin);
     VectorMA(ShellOrigin, -4.0, up, ShellOrigin);
     VectorMA(ShellOrigin, 2.0, right, ShellOrigin);
@@ -945,7 +909,7 @@ void EV_FireTFCSuperShotgun(event_args_t *args)
 	if(EV_IsLocal(idx))
 	{
 	    EV_MuzzleFlash();
-	    gEngfuncs.pEventAPI->EV_WeaponAnimation(TFCSHOTGUN_SHOOT, 2);
+	    gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_FIRE, 2 );
         V_PunchAxis(0, -4.0);
 	}
 
@@ -955,21 +919,8 @@ void EV_FireTFCSuperShotgun(event_args_t *args)
 	EV_GetGunPosition(args, vecSrc, origin);
 	VectorCopy(forward, vecAiming);
 
-	EV_HLDM_FireBullets(idx, forward, right, up, 14, vecSrc, vecAiming, 2048.0, BULLET_PLAYER_BUCKSHOT, 0, tracerCount + idx, 0.04, 0.04);
+	EV_HLDM_FireBullets(idx, forward, right, up, 14, vecSrc, vecAiming, 2048.0, BULLET_PLAYER_BUCKSHOT, 0, &g_tracerCount[idx - 1], 0.04, 0.04);
 }
-
-enum tfc_sniper_e
-{
-    SNIPER_IDLE = 0,
-    SNIPER_AIM,
-    SNIPER_FIRE,
-    SNIPER_DRAW,
-    SNIPER_HOLSTER,
-    SNIPER_AUTOIDLE,
-    SNIPER_AUTOFIRE,
-    SNIPER_AUTODRAW,
-    SBIPER_AUTOHOLSTER
-};
 
 void EV_FireTFCAutoRifle(event_args_t *args)
 {
@@ -988,7 +939,7 @@ void EV_FireTFCAutoRifle(event_args_t *args)
 	VectorCopy(args->angles, angles);
     AngleVectors(angles, forward, right, up);
     if (EV_IsLocal(idx))
-        gEngfuncs.pEventAPI->EV_WeaponAnimation(SNIPER_AUTOFIRE, 2);
+        gEngfuncs.pEventAPI->EV_WeaponAnimation( ARIFLE_FIRE, 2 );
     gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/sniper.wav", 0.9, 0.8, 0, 100);
     EV_GetGunPosition(args, vecSrc, origin);
     vecAiming = forward;
@@ -1071,17 +1022,6 @@ void EV_TFC_BloodDrips(float *vecOrigin, signed int iDamage, long double height)
     gEngfuncs.pEfxAPI->R_BloodSprite(vecOrigin, 47, modelIndex, modelIndex2, scale);
     }
 }
-
-enum tf_ac_e
-{
-    AC_IDLE = 0,
-    AC_IDLE2,
-    AC_SPINUP,
-    AC_SPINDOWN,
-    AC_FIRE,
-    AC_DRAW,
-    AC_HOLSTER
-};
 
 void EV_TFC_Assault_WindUp(event_args_t *args)
 {
@@ -1180,7 +1120,7 @@ void EV_TFC_Assault_Fire( event_args_t *args )
     vecSrc.x = right.x + right.x + up.x * -4.0 + vecSrc.x;
     vecSrc.y = right.y + right.y + up.y * -4.0 + vecSrc.y;
     vecSrc.z = right.z + right.z + -4.0 * up.z + vecSrc.z;
-    EV_HLDM_FireBullets( idx, forward, right, up, 5, vecSrc, vecAiming, 0.1, 8192.0, BULLET_PLAYER_MP5, &tracerCount[idx - 1], 1.0, 8.0 );
+    EV_HLDM_FireBullets( idx, forward, right, up, 5, vecSrc, vecAiming, 0.1, 8192.0, BULLET_PLAYER_MP5, &g_tracerCount[idx - 1], 1.0, 8.0 );
 }
 
 void EV_TFC_Assault_Spin(event_args_t *args)
@@ -1416,22 +1356,6 @@ void EV_TFC_NormalGrenade(event_args_t *args)
     EV_TFC_Explode(origin, 180, &tr, 0.0);
 }
 
-enum tfc_tfcrpg_e
-{
-    TFCRPG_IDLE = 0,
-    TFCRPG_FIDGET,
-    TFCRPG_FIRE,
-    TFCRPG_HOLSTER1,
-    TFCRPG_DRAW1,
-    TFCRPG_HOLSTER2,
-    TFCRPG_DRAW2,
-    TFCRPG_RELSTART,
-    TFCRPG_RELCYCLE,
-    TFCRPG_RELEND,
-    TFCRPG_IDLE2,
-    TFCRPG_FIDGET2
-};
-
 void EV_TFC_FireRPG(event_args_t *args)
 {
     int idx;
@@ -1441,7 +1365,7 @@ void EV_TFC_FireRPG(event_args_t *args)
     VectorCopy(args->origin, origin);
 
     if(EV_IsLocal(idx))
-    gEngfuncs.pEventAPI->EV_WeaponAnimation(TFCRPG_FIRE, 2);
+    gEngfuncs.pEventAPI->EV_WeaponAnimation( RPG_FIRE, 2 );
     gEngfuncs.pEventAPI->EV_PlaySound(-1, origin, CHAN_WEAPON, "weapons/rocketfire1.wav", 0.9, 0.8, 0, 100);
     gEngfuncs.pEventAPI->EV_PlaySound(-1, origin, CHAN_WEAPON, "weapons/glauncher.wav", 0.7, 0.8, 0, 100);
     if(EV_IsLocal(idx))
@@ -1467,7 +1391,7 @@ void EV_FireTFCSniper(event_args_t *args)
 	VectorCopy(args->angles, angles);
     AngleVectors(angles, forward, right, up);
     if (EV_IsLocal(idx))
-        gEngfuncs.pEventAPI->EV_WeaponAnimation(SNIPER_FIRE, 2);
+        gEngfuncs.pEventAPI->EV_WeaponAnimation( SRIFLE_FIRE, 2 );
     gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, "ambience/rifle1.wav", 0.9, 0.8, 0, 100);
     EV_GetGunPosition(args, vecSrc, origin);
     vecDir = forward;
@@ -1513,20 +1437,6 @@ void EV_TFC_SniperHit(event_args_s *args)
     gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_STATIC, sound, volume, 0.8, 0, 100);
 }
 
-enum tf_ic_e
-{
-	IC_IDLE = 0,
-	IC_FIDGET,
-	IC_RELOAD,
-	IC_FIRE,
-	IC_HOLSTER,
-	IC_DRAW,
-	IC_HOLSTER2,
-	IC_DRAW2,
-	IC_IDLE2,
-	IC_FIDGET2,
-};
-
 void EV_TFC_FireIC(event_args_t *args)
 {
     int idx;
@@ -1536,7 +1446,7 @@ void EV_TFC_FireIC(event_args_t *args)
     VectorCopy(args->origin, origin);
 
     if(EV_IsLocal(idx))
-        gEngfuncs.pEventAPI->EV_WeaponAnimation(IC_FIRE, 2);
+        gEngfuncs.pEventAPI->EV_WeaponAnimation( RPG_FIRE, 2 );
     gEngfuncs.pEventAPI->EV_PlaySound(-1, origin, CHAN_WEAPON, "weapons/sgun1.wav", 0.9, 0.8, 0, 100);
     if(EV_IsLocal(idx))
         V_PunchAxis(0, -5.0);
@@ -1601,22 +1511,6 @@ void EV_TFC_NailgrenadeNail(event_args_t *args)
             gEngfuncs.pEventAPI->EV_PlaySound(-1, origin, CHAN_WEAPON, "weapons/spike2.wav", 1, 0.8, 0, gEngfuncs.pfnRandomLong(0, 15) + 94);
     }
 }
-
-enum tf_gl_e
-{
-    GL_IDLE = 0,
-    PL_IDLE,
-    GL_FIRE,
-    PL_FIRE,
-    GL_RELOAD1,
-    GL_RELOAD2,
-    PL_RELOAD1,
-    PL_RELOAD2,
-    GL_DRAW,
-    PL_DRAW,
-    GL_HOLSTER,
-    PL_HOLSTER
-};
 
 void EV_TFC_GrenadeLauncher(event_args_t *args)
 {
@@ -1856,21 +1750,6 @@ void EV_TFC_EMP(event_args_t *args)
     gEngfuncs.pEfxAPI->R_BeamCirclePoints(21, vecSpot, vecEnd, sprite, 0.2, 70, 0, 1.0, 0, 0, 0, 1.0, 1.0, 0.0);
 }
 
-enum tf_ft_e
-{
-	FT_IDLE = 0,
-	FT_FIDGET,
-	FT_ALTON,
-	FT_ALTCYCLE,
-	FT_ALTOFF,
-	FT_FIRE1,
-	FR_FIRE2,
-	FT_FIRE3,
-	FT_FIRE4,
-	FT_DRAW,
-	FT_HOLSTER
-};
-
 void EV_TFC_Flame_Fire(event_args_t *args)
 {
     int idx;
@@ -1889,7 +1768,7 @@ void EV_TFC_Flame_Fire(event_args_t *args)
     bubble = gEngfuncs.pEventAPI->EV_FindModelIndex("sprites/bubble.spr");
     gEngfuncs.pfnAngleVectors(angles, forward, right, up);
     if(EV_IsLocal(idx))
-        gEngfuncs.pEventAPI->EV_WeaponAnimation(FT_FIRE1, 2);
+        gEngfuncs.pEventAPI->EV_WeaponAnimation( FLAME_FIRE1, 2 );
     EV_GetGunPosition(args, ShellOrigin, origin);
     VectorMA(ShellOrigin, -8.0, up, ShellOrigin);
     VectorMA(ShellOrigin, 8.0, right, ShellOrigin);
@@ -2084,19 +1963,6 @@ int EV_TFC_IsAlly(int idx1, int idx2)
         result = iPlayer1 == iPlayer2;
     return result;
 }
-
-enum tf_tranq_e
-{
-    TRANQ_IDLE1 = 0,
-    TRANQ_IDLE2,
-    TRANQ_IDLE3,
-    TRANQ_SHOOT,
-    TRANQ_SHOOT_EMPTY,
-    TRANQ_RELOAD,
-    TRANQ_DRAW,
-    TRANQ_HOLSTER,
-    TRANQ_ADD_SILENCER,
-};
 
 void EV_TFC_Tranquilizer(event_args_t *args)
 {
