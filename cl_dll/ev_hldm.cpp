@@ -94,7 +94,7 @@ float EV_HLDM_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *v
 	char chTextureType = CHAR_TEX_CONCRETE;
 	float fvol;
 	float fvolbar;
-	const char *rgsz[4];
+	char *rgsz[4];
 	int cnt;
 	float fattn = ATTN_NORM;
 	int entity;

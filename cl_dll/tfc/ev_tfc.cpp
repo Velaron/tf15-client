@@ -1019,9 +1019,9 @@ void EV_TFC_TraceAttack( int idx, float *vecDir, pmtrace_t *ptr, float flDamage 
     vec3_t vecOrigin;
 
     VectorScale( vecDir, -4.0, dir );
-    vecOrigin.x = ( int )ptr + 20 - dir.x;
-    vecOrigin.y = ( int )ptr + 24 - dir.y;
-    vecOrigin.z = ( int )ptr + 28 - dir.z;
+    vecOrigin.x = ptr->endpos.x - dir.x;
+    vecOrigin.y = ptr->endpos.y - dir.y;
+    vecOrigin.z = ptr->endpos.z - dir.z;
     index = gEngfuncs.pEventAPI->EV_IndexFromTrace( ptr );
 
 	iPlayer1 = -1;

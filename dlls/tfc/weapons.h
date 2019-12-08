@@ -560,7 +560,7 @@ public:
 	int m_iShell;
     int m_iMaxClipSize;
     int m_iShellsReloaded;
-    int m_fReloadTime;
+    float m_fReloadTime;
 
 	virtual BOOL UseDecrement( void )
 	{
@@ -662,7 +662,7 @@ public:
 	int m_iAnim_Idle;
 	int m_iAnim_ReloadDown;
 	int m_iAnim_ReloadUp;
-	int m_iAnim_Deploy;;
+	int m_iAnim_Deploy;
 
 private:
 	unsigned short m_usFireGL;

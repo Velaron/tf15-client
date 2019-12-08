@@ -109,9 +109,9 @@ public class LauncherActivity extends Activity
 		Button startButton = new Button( this );
 		startButton.setText( styleButtonString( "Launch " + "TF15-Client" + "!" ) );
 
-		LayoutParams buttonParams = new LayoutParams( LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT );
-		buttonParams.gravity = 5;
-		startButton.setLayoutParams( buttonParams );
+		LayoutParams startButtonParams = new LayoutParams( LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT );
+		startButtonParams.gravity = 5;
+		startButton.setLayoutParams( startButtonParams );
 
 		if( sdk < 21 )
 		{

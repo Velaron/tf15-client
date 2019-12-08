@@ -1,9 +1,8 @@
 .vscode/
 *.o
 *.so
-*/*.o
-*/*/*.o
 *.a
+*.apk
 *.framework
 *.exe
 *.dll
@@ -31,3 +30,5 @@ waf3-*
 .lock*
 *.pyc
 .vscode/
+
+*.keystore
