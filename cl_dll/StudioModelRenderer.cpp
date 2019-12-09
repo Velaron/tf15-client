@@ -1577,8 +1577,8 @@ const char *ReturnCorrectedModelString( int iSwitchClass )
 	}
 }
 
-float g_flSpinUpTime[33];
-float g_flSpinDownTime[33];
+float g_flSpinUpTime[32];
+float g_flSpinDownTime[32];
 
 /*
 ====================
