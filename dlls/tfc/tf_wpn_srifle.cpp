@@ -118,7 +118,7 @@ void CTFSniperRifle::Holster()
 
     m_fAimedDamage = 0;
     m_pPlayer->m_flNextAttack = 0.5;
-    SendWeaponAnim(SNIPER_HOLSTER, 1);
+    SendWeaponAnim(SRIFLE_HOLSTER, 1);
 }
 
 BOOL CTFSniperRifle::Deploy()
@@ -127,7 +127,7 @@ BOOL CTFSniperRifle::Deploy()
     m_flTimeWeaponIdle = 0.5;
     m_fAimedDamage = 0;
     m_iSpotActive = 0;
-	return DefaultDeploy( "models/v_tfc_sniper.mdl", "models/p_sniper.mdl", SNIPER_DRAW, "autosniper", 1 );
+	return DefaultDeploy( "models/v_tfc_sniper.mdl", "models/p_sniper.mdl", SRIFLE_DRAW, "autosniper", 1 );
 }
 
 int CTFSniperRifle::AddToPlayer( CBasePlayer *pPlayer )
@@ -175,7 +175,7 @@ void CTFSniperRifle::WeaponIdle( void )
     if(m_flTimeWeaponIdle < 0.0)
     {
         m_flTimeWeaponIdle = 12.5;
-        SendWeaponAnim(SNIPER_IDLE, 1);
+        SendWeaponAnim(SRIFLE_IDLE, 1);
     }
 }
 

@@ -55,7 +55,7 @@ int CTFAxe::GetItemInfo( ItemInfo *p )
 void CTFAxe::Holster()
 {
     m_pPlayer->m_flNextAttack = 0.5;
-    SendWeaponAnim(AXE_HOLSTER, 1);
+    SendWeaponAnim(CROWBAR_HOLSTER, 1);
 }
 
 BOOL CTFAxe::AxeHit(CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr)
@@ -102,9 +102,9 @@ BOOL CTFAxe::AxeHit(CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr)
 BOOL CTFAxe::Deploy()
 {
 	if(m_pPlayer->pev->playerclass == PC_CIVILIAN)
-	    return DefaultDeploy( "models/v_umbrella.mdl", "models/p_umbrella.mdl", AXE_DRAW, "crowbar", 1 );
+	    return DefaultDeploy( "models/v_umbrella.mdl", "models/p_umbrella.mdl", CROWBAR_DRAW, "crowbar", 1 );
     else
-	    return DefaultDeploy( "models/v_tfc_crowbar.mdl", "models/p_crowbar.mdl", AXE_DRAW, "crowbar", 1 );
+	    return DefaultDeploy( "models/v_tfc_crowbar.mdl", "models/p_crowbar.mdl", CROWBAR_DRAW, "crowbar", 1 );
 }
 
 void CTFAxe::PrimaryAttack()

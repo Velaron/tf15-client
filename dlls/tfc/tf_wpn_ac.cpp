@@ -57,7 +57,7 @@ int CTFAssaultC::GetItemInfo( ItemInfo *p )
 
 BOOL CTFAssaultC::Deploy()
 {
-	return DefaultDeploy( "models/v_tfac.mdl", "models/p_mini.mdl", AC_DRAW, "ac", 1 );
+	return DefaultDeploy( "models/v_tfac.mdl", "models/p_mini.mdl", AC_DEPLOY, "ac", 1 );
 }
 
 int CTFAssaultC::AddToPlayer( CBasePlayer *pPlayer )

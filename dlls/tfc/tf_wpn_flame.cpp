@@ -64,19 +64,19 @@ void CTFFlamethrower::WeaponIdle( void )
         if(UTIL_SharedRandomLong(m_pPlayer->random_seed, 0, 4))
         {
             m_flTimeWeaponIdle = 12.5;
-            SendWeaponAnim(FT_IDLE, 1);
+            SendWeaponAnim(FLAME_IDLE1, 1);
         }
         else
         {
             m_flTimeWeaponIdle = 3;
-            SendWeaponAnim(FT_FIDGET, 1);
+            SendWeaponAnim(FLAME_FIDGET1, 1);
         }
     }
 }
 
 BOOL CTFFlamethrower::Deploy()
 {
-	return DefaultDeploy( "models/v_flame.mdl", "models/p_egon.mdl", FT_DRAW, "egon", 1 );
+	return DefaultDeploy( "models/v_flame.mdl", "models/p_egon.mdl", FLAME_DRAW, "egon", 1 );
 }
 
 int CTFFlamethrower::AddToPlayer( CBasePlayer *pPlayer )

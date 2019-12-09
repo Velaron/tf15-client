@@ -38,7 +38,7 @@ int CTFIncendiaryC::GetItemInfo( ItemInfo *p )
 void CTFIncendiaryC::Holster()
 {
     m_fInReload = 0;
-    SendWeaponAnim(IC_HOLSTER, 1);
+    SendWeaponAnim(RPG_HOLSTER, 1);
     m_pPlayer->m_flNextAttack = 0.5;
 }
 
@@ -64,7 +64,7 @@ void CTFIncendiaryC::WeaponIdle( void )
         else
         {
             m_flTimeWeaponIdle = 3;
-            SendWeaponAnim(IC_FIDGET, 1);
+            SendWeaponAnim(RPG_FIDGET, 1);
         }
     }
 }
