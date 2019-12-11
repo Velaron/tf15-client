@@ -367,47 +367,33 @@ void EV_HLDM_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 	}
 }
 
-int EV_HLDM_CheckTracer( int idx, float *vecSrc, float *end, float *forward, float *right, int iBulletType, int iTracerFreq, int *tracerCount )
+int EV_TFC_CheckTracer( int idx, float *vecSrc, float *end, float *forward, float *right, int iBulletType, int iTracerFreq, int *tracerCount )
 {
-	int tracer = 0;
-	int i;
-	qboolean player = idx >= 1 && idx <= gEngfuncs.GetMaxClients() ? true : false;
+	bool bIsPlayer = idx > 0 && idx <= gEngfuncs.GetMaxClients();
+	Vector vecTracerSrc;
 
-	if( iTracerFreq != 0 && ( (*tracerCount)++ % iTracerFreq ) == 0 )
+	if ( iTracerFreq )
 	{
-		vec3_t vecTracerSrc;
-
-		if( player )
+		if ( !( ++(*tracerCount) % iTracerFreq ) )
 		{
-			vec3_t offset( 0, 0, -4 );
-
-			// adjust tracer position for player
-			for( i = 0; i < 3; i++ )
+			if ( bIsPlayer )
 			{
-				vecTracerSrc[i] = vecSrc[i] + offset[i] + right[i] * 2 + forward[i] * 16;
+				vec3_t offset( 0.0f, 0.0f, -4.0f );
+
+				for( int i = 0; i < 3; i++ )
+					vecTracerSrc[i] = vecSrc[i] + offset[i] + right[i] * 2 + forward[i] * 16.0f;
 			}
-		}
-		else
-		{
-			VectorCopy( vecSrc, vecTracerSrc );
-		}
+			else
+			{
+				VectorCopy( vecSrc, vecTracerSrc );
+			}
 
-		if( iTracerFreq != 1 )		// guns that always trace also always decal
-			tracer = 1;
-
-		switch( iBulletType )
-		{
-		case BULLET_PLAYER_MP5:
-		case BULLET_MONSTER_MP5:
-		case BULLET_MONSTER_9MM:
-		case BULLET_MONSTER_12MM:
-		default:
-			EV_CreateTracer( vecTracerSrc, end );
-			break;
+			if ( iBulletType != BULLET_PLAYER_TF_BUCKSHOT )
+				EV_CreateTracer( vecTracerSrc, end );
 		}
 	}
 
-	return tracer;
+	return iTracerFreq != 1;
 }
 
 /*
@@ -417,83 +403,68 @@ FireBullets
 Go to the trouble of combining multiple pellets into a single damage call.
 ================
 */
-void EV_HLDM_FireBullets( int idx, float *forward, float *right, float *up, int cShots, float *vecSrc, float *vecDirShooting, float flDistance, int iBulletType, int iTracerFreq, int *tracerCount, float flSpreadX, float flSpreadY )
+void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int cShots, float *vecSrc, float *vecDirShooting, float *vecSpread, float flDistance, int iBulletType, int iTracerFreq, int *tracerCount, int iDamage )
 {
-	int i;
+	int cMultiGunShots = 0;
+	int iShot = 1;
+	float x, y, z;
 	pmtrace_t tr;
-	int iShot;
-	int tracer;
+	Vector vecDir, vecEnd;
+	char decalname[32];
+	int decal_index[5];
 
-	for( iShot = 1; iShot <= cShots; iShot++ )
+	if ( cShots < 0 )
+		return;
+
+	while ( true )
 	{
-		vec3_t vecDir, vecEnd;
-		float x, y, z;
-
-		//We randomize for the Shotgun.
-		if( iBulletType == BULLET_PLAYER_BUCKSHOT )
+		do
 		{
-			do{
-				x = gEngfuncs.pfnRandomFloat( -0.5, 0.5 ) + gEngfuncs.pfnRandomFloat( -0.5, 0.5 );
-				y = gEngfuncs.pfnRandomFloat( -0.5, 0.5 ) + gEngfuncs.pfnRandomFloat( -0.5, 0.5 );
-				z = x * x + y * y;
-			}while( z > 1 );
-
-			for( i = 0 ; i < 3; i++ )
-			{
-				vecDir[i] = vecDirShooting[i] + x * flSpreadX * right[i] + y * flSpreadY * up [i];
-				vecEnd[i] = vecSrc[i] + flDistance * vecDir[i];
-			}
-		}//But other guns already have their spread randomized in the synched spread.
-		else
+			x = gEngfuncs.pfnRandomFloat( -0.5f, 0.5f ) + gEngfuncs.pfnRandomFloat( -0.5f, 0.5f );
+			y = gEngfuncs.pfnRandomFloat( -0.5f, 0.5f ) + gEngfuncs.pfnRandomFloat( -0.5f, 0.5f );
+			z = x * x + y * y;
+		} while ( z > 1.0f );
+		
+		for( int i = 0 ; i < 3; i++ )
 		{
-			for( i = 0 ; i < 3; i++ )
-			{
-				vecDir[i] = vecDirShooting[i] + flSpreadX * right[i] + flSpreadY * up [i];
-				vecEnd[i] = vecSrc[i] + flDistance * vecDir[i];
-			}
+			vecDir[i] = vecDirShooting[i] + x * vecSpread[0] * right[i] + y * vecSpread[1] * up [i];
+			vecEnd[i] = vecSrc[i] + flDistance * vecDir[i];
 		}
 
 		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
-
-		// Store off the old count
 		gEngfuncs.pEventAPI->EV_PushPMStates();
-
-		// Now add in all of the players.
-		gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );
-
+		gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );	
 		gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
 		gEngfuncs.pEventAPI->EV_PlayerTrace( vecSrc, vecEnd, PM_STUDIO_BOX, -1, &tr );
 
-		tracer = EV_HLDM_CheckTracer( idx, vecSrc, tr.endpos, forward, right, iBulletType, iTracerFreq, tracerCount );
+		int tracer = EV_TFC_CheckTracer( idx, vecSrc, tr.endpos, forward, right, iBulletType, iTracerFreq, tracerCount );
 
-		// do damage, paint decals
-		if( tr.fraction != 1.0 )
-		{
-			switch( iBulletType )
-			{
-			default:
-			case BULLET_PLAYER_9MM:
-				EV_HLDM_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
-				EV_HLDM_DecalGunshot( &tr, iBulletType );
-				break;
-			case BULLET_PLAYER_MP5:
-				if( !tracer )
-				{
-					EV_HLDM_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
-					EV_HLDM_DecalGunshot( &tr, iBulletType );
-				}
-				break;
-			case BULLET_PLAYER_BUCKSHOT:
-				EV_HLDM_DecalGunshot( &tr, iBulletType );
-				break;
-			case BULLET_PLAYER_357:
-				EV_HLDM_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
-				EV_HLDM_DecalGunshot( &tr, iBulletType );
-				break;
-			}
-		}
+		if ( tr.fraction != 1.0f )
+      		break;
 
 		gEngfuncs.pEventAPI->EV_PopPMStates();
+
+    	if ( cShots < ++iShot )
+		{
+			if ( cMultiGunShots )
+			{
+				sprintf(decalname, "{shot%i", 1);
+				decal_index[0] = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname );
+				sprintf(decalname, "{shot%i", 2);
+				decal_index[1] = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname );
+				sprintf(decalname, "{shot%i", 3);
+				decal_index[2] = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname );
+				sprintf(decalname, "{shot%i", 4);
+				decal_index[3] = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname );
+				sprintf(decalname, "{shot%i", 5);
+				v25 = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName(decalname);
+				LODWORD(size.z) = 0;
+				decal_index[4] = v25;
+				size.x = *vecSpread;
+				size.y = vecSpread[1];
+				gEngfuncs.pEfxAPI->R_MultiGunshot(vecSrc, vecDirShooting, (float *)&size, cMultiGunShots, 5, decal_index);
+			}
+		}
 	}
 }
 
@@ -1929,40 +1900,32 @@ void EV_TFC_RailDie(particle_s *particle)
 	}
 }
 
-int EV_TFC_IsAlly(int idx1, int idx2)
+int EV_TFC_IsAlly( int idx1, int idx2 )
 {
-	bool err;
-	signed int iPlayer1;
-	signed int iPlayer2;
-	int result;
-	long v10;
-	if (idx1 > 0 && idx1 <= gEngfuncs.GetMaxClients() && GetEntity(idx1) != 0 )
-	{
-		iPlayer1 = GetEntity(idx1)->curstate.team;
-		err = iPlayer1 == -1;
-	}
-	else
-	{
-		err = 1;
-		iPlayer1 = -1;
-	}
-	if (idx1 < 0 || idx1 > gEngfuncs.GetMaxClients() || GetEntity(idx1) == 0 )
-		return 0;
-	iPlayer2 = GetEntity(idx2)->curstate.team;
-	if(iPlayer2 == -1 || err || !iPlayer2 || !iPlayer1)
-		return 0;
-	result = 0;
-	if (!gEngfuncs.GetLocalPlayer())
-		return result;
-	if(iPlayer2 > 4 || iPlayer2 > 4)
+	cl_entity_t *pPlayer;
+	cl_entity_t *pEnt1, *pEnt2;
+	int iTeam1, iTeam2;
+
+	iTeam1 = iTeam2 = -1;
+	pEnt1 = gEngfuncs.GetEntityByIndex( idx1 );
+	pEnt2 = gEngfuncs.GetEntityByIndex( idx2 );
+
+	if ( idx1 > 0 && idx1 <= gEngfuncs.GetMaxClients() && pEnt1 )
+		iTeam1 = pEnt1->curstate.team;
+
+	if ( idx2 > 0 && idx2 <= gEngfuncs.GetMaxClients() && pEnt2 )
+		iTeam2 = pEnt2->curstate.team;
+
+	if( iTeam1 < 1 || iTeam2 < 1 || iTeam1 > 4 || iTeam2 > 4 )
 		return 0;
 
-	//Velaron: rewrite
-	v10 = strtol(gEngfuncs.PhysInfo_ValueForKey("ta"), 0, 10);
-	result = 1;
-	if (!(((v10 & 0x1F) + iPlayer1) >> (iPlayer2 - 1) & 1))
-		result = iPlayer1 == iPlayer2;
-	return result;
+	pPlayer = gEngfuncs.GetLocalPlayer();
+
+	if ( !pPlayer )
+		return 0;
+
+	//Velaron: add missing code
+	return iTeam1 == iTeam2;
 }
 
 void EV_TFC_Tranquilizer(event_args_t *args)
