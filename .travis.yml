@@ -17,8 +17,7 @@ jobs:
             - libfreetype6-dev:i386
             - libfontconfig-dev:i386
             - p7zip-full
-      before_script:
-        - export ARCH=i686
+      env: ARCH=i686
       script:
         - ./waf -T debug configure build
       before_deploy:
@@ -34,6 +33,9 @@ jobs:
       name: "Build for Windows"
       cache: ccache
       os: windows
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
+      before_install:
+        - choco install python --version 3.8.1
       script:
         - ./waf -T debug configure build
       before_deploy:
