@@ -1,4 +1,4 @@
-language: cpp
+language: c
 git:
   submodules: true
 jobs:
@@ -29,6 +29,7 @@ jobs:
         file: tf15-client-linux.7z
         skip_cleanup: true
         overwrite: true
+        draft: true
     - stage: build
       name: "Build for Windows"
       cache: ccache
