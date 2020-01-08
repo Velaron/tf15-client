@@ -18,7 +18,7 @@ jobs:
             - p7zip-full
       env: ARCH=i686
       script:
-        - ./waf -T debug configure build
+        - ./waf -T debug configure build -v
       before_deploy:
         - mv */*/*.so .
         - 7z a -t7z tf15-client-linux.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
@@ -37,7 +37,7 @@ jobs:
       before_install:
         - choco install python --version 3.8.1
       script:
-        - ./waf -T debug configure build
+        - ./waf -T debug configure build -v
       before_deploy:
         - mv */*/*.dll */*/*.pdb .
         - 7z a -t7z tf15-client-win32.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.dll *.pdb
