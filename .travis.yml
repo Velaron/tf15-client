@@ -38,7 +38,9 @@ jobs:
         - choco install python --version 3.8.1
       before_script:
         - set CC=
+        - set CC_FOR_BUILD=
         - set CXX=
+        - set CXX_FOR_BUILD=
       script:
         - ./waf configure -T debug build -v
       before_deploy:
