@@ -26,7 +26,7 @@ jobs:
         - 7z a -t7z tf15-client-linux.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
       deploy:
         provider: releases
-        api_key: $GITHUB_OAUTH
+        api_key: $GITHUB_TOKEN
         file: tf15-client-linux-i386.7z
         skip_cleanup: true
         overwrite: true
