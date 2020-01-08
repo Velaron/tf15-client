@@ -49,7 +49,7 @@ def options(opt):
 	opt.load('xcompile compiler_cxx compiler_c clang_compilation_database strip_on_install')
 
 	if sys.platform == 'win32':
-		opt.load('msvc msdev msvs')
+		opt.load('msvc msdev msvs msvc_pdb')
 
 	opt.load('reconfigure subproject')
 	opt.add_subproject(["cl_dll", "mainui"])
@@ -89,7 +89,7 @@ def configure(conf):
 	conf.env.MSVC_SUBSYSTEM = 'WINDOWS,5.01'
 	conf.env.MSVC_TARGETS = ['x86'] # explicitly request x86 target for MSVC
 	if sys.platform == 'win32':
-		conf.load('msdev')
+		conf.load('msvc msdev')
 	conf.load('xcompile compiler_c compiler_cxx strip_on_install')
 
 	try:
@@ -254,11 +254,8 @@ def configure(conf):
 		conf.define('_CRT_SECURE_NO_WARNINGS', 1)
 		conf.define('_CRT_NONSTDC_NO_DEPRECATE', 1)
 	else:
-		conf.env.append_unique('DEFINES', ['stricmp=strcasecmp', 'strnicmp=strncasecmp', '_snprintf=snprintf', '_vsnprintf=vsnprintf'])
+		conf.env.append_unique('DEFINES', ['stricmp=strcasecmp', 'strnicmp=strncasecmp', '_snprintf=snprintf', '_vsnprintf=vsnprintf', '_LINUX', 'LINUX'])
 		conf.env.append_unique('CXXFLAGS', ['-Wno-invalid-offsetof', '-fno-rtti', '-fno-exceptions'])
-
-		if conf.env.DEST_OS != 'win32':
-			conf.env.append_unique('DEFINES', ['_LINUX', 'LINUX'])
 
 	# strip lib from pattern
 	if conf.env.DEST_OS in ['linux', 'darwin']:
@@ -267,6 +264,8 @@ def configure(conf):
 		if conf.env.cxxshlib_PATTERN.startswith('lib'):
 			conf.env.cxxshlib_PATTERN = conf.env.cxxshlib_PATTERN[3:]
 
+	# conf.define('CLIENT_WEAPONS', '1')
+
 	if conf.env.DEST_OS == 'android' or conf.options.ENABLE_MOD_HACKS:
 		conf.define('MOBILE_HACKS', '1')
 
@@ -274,6 +273,3 @@ def configure(conf):
 
 def build(bld):
 	bld.add_subproject(["cl_dll", "mainui"])
-
-
-

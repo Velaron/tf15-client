@@ -1,16 +1,45 @@
 language: cpp
-compiler: 
-  - gcc
-  - clang
-os:
-  - linux
-  - osx
-sudo: true
-before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install gcc-multilib g++-multilib; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CC" == "gcc" ]]; then sudo apt-get install mingw-w64-i686-dev binutils-mingw-w64-i686 gcc-mingw-w64-i686 g++-mingw-w64-i686; fi
-script:
-  - mkdir -p build && cd build
-  - cmake ../ -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DUSE_VOICEMGR=0 && make -j3 && rm -rf *
-  - cmake ../ -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DUSE_VOICEMGR=1 && make -j3 && rm -rf *
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CC" == "gcc" ]]; then cd ..; mkdir build-mingw; cd build-mingw; cmake ../ -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ && make -j3; fi
+compiler: gcc
+git:
+  submodules: true
+jobs:
+  include:
+    - stage: build
+      name: "Build for Linux"
+      cache: ccache
+      os: linux
+      dist: xenial
+      addons:
+        apt:
+          packages:
+            - gcc-multilib
+            - g++-multilib
+            - p7zip-full
+      before_script:
+        - export ARCH=i686
+      script:
+        - ./waf -T debug configure build
+      before_deploy:
+        - mv */*/*.so .
+        - 7z a -t7z tf15-client-linux.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
+      deploy:
+        provider: releases
+        api_key: $GITHUB_OAUTH
+        file: tf15-client-linux-i386.7z
+        skip_cleanup: true
+        overwrite: true
+    - stage: build
+      name: "Build for Windows"
+      cache: ccache
+      os: windows
+      script:
+        - ./waf -T debug configure build
+      before_deploy:
+        - mv */*/*.dll */*/*.pdb .
+        - 7z a -t7z tf15-client-win32.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.dll *.pdb
+      deploy:
+        provider: releases
+        api_key: $GITHUB_TOKEN
+        file: tf15-client-win32-msvc.7z
+        skip_cleanup: true
+        overwrite: true

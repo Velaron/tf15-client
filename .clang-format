@@ -1,2 +1,3 @@
+BreakBeforeBraces : Stroustrup
 SpaceBeforeParens : ControlStatements
 SpacesInParentheses : true
