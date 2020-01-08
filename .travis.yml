@@ -1,5 +1,4 @@
 language: cpp
-compiler: gcc
 git:
   submodules: true
 jobs:
@@ -7,6 +6,7 @@ jobs:
     - stage: build
       name: "Build for Linux"
       cache: ccache
+      compiler: gcc
       os: linux
       dist: xenial
       addons:

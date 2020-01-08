@@ -40,6 +40,9 @@ def options(opt):
 	grp.add_option('--enable-poly-opt', action = 'store_true', dest = 'POLLY', default = False,
 		help = 'enable polyhedral optimization if possible [default: %default]')
 
+	grp.add_option('--low-memory-mode', action = 'store', dest = 'LOW_MEMORY', default = 0, type = 'int',
+		help = 'enable low memory mode (only for devices have <128 ram)')
+
 	grp.add_option('--enable-magx', action = 'store_true', dest = 'MAGX', default = False,
 		help = 'enable targetting for MotoMAGX phones [default: %default]')
 

@@ -1,8 +1,5 @@
 @echo off
 
-rem try fix py2 build
-chcp 1251
-set PYTHONIOENCODING=UTF-8
 rem from issue #964
 
 Setlocal EnableDelayedExpansion
@@ -96,6 +93,6 @@ goto running
 
 @echo Using %PYTHON%
 
-"%PYTHON%" -x "%~dp0waf" %* 
+"%PYTHON%" -x "%~dp0waf" %*
 Endlocal
 exit /b %ERRORLEVEL%
