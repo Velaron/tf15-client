@@ -6,7 +6,6 @@ jobs:
     - stage: build
       name: "Build for Linux"
       cache: ccache
-      compiler: gcc
       os: linux
       dist: xenial
       addons:
