@@ -1,4 +1,4 @@
-language: cpp
+language: c
 git:
   submodules: true
 jobs:
@@ -33,7 +33,7 @@ jobs:
       name: "Build for Windows"
       cache: ccache
       os: windows
-      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH CC=cl CXX=cl CC_FOR_BUILD=cl CXX_FOR_BUILD=cl
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
       before_install:
         - choco install python --version 3.8.1
       script:
