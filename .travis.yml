@@ -21,12 +21,12 @@ jobs:
       script:
         - ./waf configure -T debug build -v
       before_deploy:
-        - mv */*/*.so .
-        - 7z a -t7z tf15-client-linux.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
+        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on */*/client.so */*/menu.so
+        - git tag -f "travis-ci"
       deploy:
         provider: releases
         api_key: $GITHUB_TOKEN
-        file: tf15-client-linux.7z
+        file: tf15-client-$TRAVIS_OS_NAME.7z
         skip_cleanup: true
         overwrite: true
         draft: true
@@ -37,19 +37,15 @@ jobs:
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
       before_install:
         - choco install python --version 3.8.1
-      before_script:
-        - set CC=
-        - set CC_FOR_BUILD=
-        - set CXX=
-        - set CXX_FOR_BUILD=
       script:
         - ./waf configure -T debug build -v
       before_deploy:
-        - mv */*/*.dll */*/*.pdb .
-        - 7z a -t7z tf15-client-win32.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.dll *.pdb
+        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on */*/client.so */*/menu.so */*/client.pdb */*/menu.pdb
+        - git tag -f "travis-ci"
       deploy:
         provider: releases
         api_key: $GITHUB_TOKEN
-        file: tf15-client-win32.7z
+        file: tf15-client-$TRAVIS_OS_NAME.7z
         skip_cleanup: true
         overwrite: true
+        draft: false
