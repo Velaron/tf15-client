@@ -25,7 +25,7 @@ jobs:
       deploy:
         provider: releases
         api_key: $GITHUB_TOKEN
-        file: tf15-client-linux-i386.7z
+        file: tf15-client-linux.7z
         skip_cleanup: true
         overwrite: true
     - stage: build
