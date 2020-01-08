@@ -25,7 +25,6 @@ jobs:
       deploy:
         provider: releases
         api_key: $GITHUB_TOKEN
-        tag_name: "travis-ci"
         file: tf15-client-linux.7z
         skip_cleanup: true
         overwrite: true
@@ -44,7 +43,6 @@ jobs:
       deploy:
         provider: releases
         api_key: $GITHUB_TOKEN
-        tag_name: "travis-ci"
         file: tf15-client-win32-msvc.7z
         skip_cleanup: true
         overwrite: true

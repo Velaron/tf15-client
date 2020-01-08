@@ -52,7 +52,7 @@ def options(opt):
 	opt.load('xcompile compiler_cxx compiler_c clang_compilation_database strip_on_install')
 
 	if sys.platform == 'win32':
-		opt.load('msvc msdev msvs msvc_pdb')
+		opt.load('msvc msdev msvs')
 
 	opt.load('reconfigure subproject')
 	opt.add_subproject(["cl_dll", "mainui"])
@@ -92,7 +92,7 @@ def configure(conf):
 	conf.env.MSVC_SUBSYSTEM = 'WINDOWS,5.01'
 	conf.env.MSVC_TARGETS = ['x86'] # explicitly request x86 target for MSVC
 	if sys.platform == 'win32':
-		conf.load('msvc msdev')
+		conf.load('msvc msdev msvc_pdb')
 	conf.load('xcompile compiler_c compiler_cxx strip_on_install')
 
 	try:
