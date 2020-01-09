@@ -55,7 +55,7 @@ def options(opt):
 		opt.load('msvc msdev msvs')
 
 	opt.load('reconfigure subproject')
-	opt.add_subproject(["cl_dll", "mainui"])
+	opt.add_subproject(['cl_dll', 'mainui', 'android'])
 
 def configure(conf):
 	# Configuration
@@ -91,7 +91,7 @@ def configure(conf):
 	# TODO: wrapper around bld.stlib, bld.shlib and so on?
 	conf.env.MSVC_SUBSYSTEM = 'WINDOWS,5.01'
 	conf.env.MSVC_TARGETS = ['x86'] # explicitly request x86 target for MSVC
-	if sys.platform == 'win32':
+	if conf.env.COMPILER_CC == 'msvc':
 		conf.load('msvc msdev msvc_pdb')
 	conf.load('xcompile compiler_c compiler_cxx strip_on_install')
 
@@ -272,7 +272,7 @@ def configure(conf):
 	if conf.env.DEST_OS == 'android' or conf.options.ENABLE_MOD_HACKS:
 		conf.define('MOBILE_HACKS', '1')
 
-	conf.add_subproject(["cl_dll", "mainui"])
+	conf.add_subproject(['cl_dll', 'mainui', 'android'])
 
 def build(bld):
-	bld.add_subproject(["cl_dll", "mainui"])
+	bld.add_subproject(['cl_dll', 'mainui', 'android'])
