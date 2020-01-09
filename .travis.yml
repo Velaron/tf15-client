@@ -36,11 +36,11 @@ jobs:
       os: windows
       env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
       before_install:
-        - choco install python
+        - choco install python --version 3.8.1
       script:
         - ./waf configure -T debug build -v
       before_deploy:
-        - mv */*/client.* */*/menu.*
+        - mv */*/client.* */*/menu.* .
         - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.dll *.pdb
       deploy:
         provider: releases
