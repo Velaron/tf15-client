@@ -21,8 +21,8 @@ jobs:
       script:
         - ./waf configure -T debug build -v
       before_deploy:
-        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on */*/client.so */*/menu.so
-        - git tag -f "travis-ci"
+        - mv */*/*.so
+        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
       deploy:
         provider: releases
         api_key: $GITHUB_TOKEN
@@ -40,12 +40,20 @@ jobs:
       script:
         - ./waf configure -T debug build -v
       before_deploy:
-        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on */*/client.so */*/menu.so */*/client.pdb */*/menu.pdb
-        - git tag -f "travis-ci"
+        - mv */*/client.* */*/menu.*
+        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.dll *.pdb
       deploy:
         provider: releases
         api_key: $GITHUB_TOKEN
         file: tf15-client-$TRAVIS_OS_NAME.7z
         skip_cleanup: true
         overwrite: true
+        draft: true
+    - stage: deploy
+      name: "Deploy to Github"
+      script:
+        - git tag -f "travis-ci"
+      deploy:
+        provider: releases
+        api_key: $GITHUB_TOKEN
         draft: false
