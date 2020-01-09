@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Set your package name here -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="su.xash.engine.tf15client"
+      package="su.xash.tf15client"
       android:versionCode="1"
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="5" android:targetSdkVersion="28"/>
@@ -9,7 +9,7 @@
     <application android:label="TF15-Client" android:debuggable="true"
 		android:icon="@drawable/ic_launcher">
     <!-- Set your launcher title here -->
-        <activity android:name="su.xash.engine.LauncherActivity"
+        <activity android:name="su.xash.tf15client.LauncherActivity"
                   android:label="TF15-Client"
 			android:windowSoftInputMode="adjustResize">
             <intent-filter>

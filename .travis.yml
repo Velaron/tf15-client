@@ -20,16 +20,16 @@ jobs:
       env: ARCH=i686
       script:
         - ./waf configure -T debug build -v
-      before_deploy:
-        - mv */*/*.so
-        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
-      deploy:
-        provider: releases
-        api_key: $GITHUB_TOKEN
-        file: tf15-client-$TRAVIS_OS_NAME.7z
-        skip_cleanup: true
-        overwrite: true
-        draft: true
+#      before_deploy:
+#        - mv */*/*.so
+#        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
+#      deploy:
+#        provider: releases
+#        api_key: $GITHUB_TOKEN
+#        file: tf15-client-$TRAVIS_OS_NAME.7z
+#        skip_cleanup: true
+#        overwrite: true
+#        draft: true
     - stage: build
       name: "Build for Windows"
       cache: ccache
@@ -39,21 +39,21 @@ jobs:
         - choco install python
       script:
         - ./waf configure -T debug build -v
-      before_deploy:
-        - mv */*/client.* */*/menu.* .
-        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.dll *.pdb
-      deploy:
-        provider: releases
-        api_key: $GITHUB_TOKEN
-        file: tf15-client-$TRAVIS_OS_NAME.7z
-        skip_cleanup: true
-        overwrite: true
-        draft: true
-    - stage: deploy
-      name: "Deploy to Github"
-      script:
-        - git tag -f "travis-ci"
-      deploy:
-        provider: releases
-        api_key: $GITHUB_TOKEN
-        draft: false
+#      before_deploy:
+#        - mv */*/client.* */*/menu.* .
+#        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.dll *.pdb
+#      deploy:
+#        provider: releases
+#        api_key: $GITHUB_TOKEN
+#        file: tf15-client-$TRAVIS_OS_NAME.7z
+#        skip_cleanup: true
+#        overwrite: true
+#        draft: true
+#    - stage: deploy
+#      name: "Deploy to Github"
+#      script:
+#        - git tag -f "travis-ci"
+#      deploy:
+#        provider: releases
+#        api_key: $GITHUB_TOKEN
+#        draft: false

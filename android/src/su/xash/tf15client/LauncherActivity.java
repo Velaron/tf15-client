@@ -1,6 +1,7 @@
-package su.xash.engine;
+package su.xash.tf15client;
 import android.app.*;
 import android.content.*;
+import android.content.pm.*;
 import android.graphics.*;
 import android.os.*;
 import android.text.*;
@@ -167,11 +168,17 @@ public class LauncherActivity extends Activity
 
 		i.putExtra( "gamedir", "tfc" );
 
-		// default library package
-		// if you are using client from other package (not from half-life),
-		// replace following line by:
-		/*i.putExtra("gamelibdir", "/data/data/<clientpkgname>/lib");*/
-		i.putExtra( "gamelibdir", getFilesDir().getAbsolutePath().replace( "/files","/lib" ) );
+		try
+		{
+			PackageManager packageManager = getPackageManager();
+			ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
+			i.putExtra( "gamelibdir", applicationInfo.nativeLibraryDir );
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			i.putExtra( "gamelibdir", getFilesDir().getParentFile().getPath() + "/lib" );
+		}
 		
 		// if you are using pak file, uncomment this:
 		// i.putExtra("pakfile", getFilesDir().getAbsolutePath() + "/extras.pak");
