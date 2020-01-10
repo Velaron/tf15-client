@@ -429,7 +429,9 @@ void CL_LoadMainUI( void )
 {
 	char szDir[MAX_PATH];
 
-#if !defined(__ANDROID__)
+#if defined(__ANDROID__)
+	strcpy( szDir, MAINUI_DLLNAME );
+#else
 	if ( gEngfuncs.COM_ExpandFilename( MAINUI_DLLNAME, szDir, sizeof( szDir ) ) == false )
 	{
 		g_pMainUI = NULL;
