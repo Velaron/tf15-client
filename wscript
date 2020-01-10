@@ -94,9 +94,10 @@ def configure(conf):
 	# TODO: wrapper around bld.stlib, bld.shlib and so on?
 	conf.env.MSVC_SUBSYSTEM = 'WINDOWS,5.01'
 	conf.env.MSVC_TARGETS = ['x86'] # explicitly request x86 target for MSVC
-	if conf.env.COMPILER_CC == 'msvc':
-		conf.load('msvc msdev msvc_pdb')
+
 	conf.load('xcompile compiler_c compiler_cxx strip_on_install')
+	if conf.env.COMPILER_CC == 'msvc':
+		conf.load('msvc msvc_pdb msdev msvs')
 
 	try:
 		conf.env.CC_VERSION[0]
@@ -147,7 +148,7 @@ def configure(conf):
 	compiler_c_cxx_flags = {
 		'common': {
 			# disable thread-safe local static initialization for C++11 code, as it cause crashes on Windows XP
-			'msvc':    ['/D_USING_V110_SDK71_', '/Zi', '/FS', '/Zc:threadSafeInit-', '/MT'],
+			'msvc':    ['/D_CRT_SILENCE_NONCONFORMING_TGMATH_H', '/D_USING_V110_SDK71_', '/Zi', '/FS', '/Zc:threadSafeInit-', '/MT'],
 			'clang':   ['-g', '-gdwarf-2', '-fvisibility=hidden'],
 			'gcc':     ['-g']
 		},
