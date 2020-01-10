@@ -48,6 +48,9 @@ def options(opt):
 
 	grp.add_option('--enable-simple-mod-hacks', action = 'store_true', dest = 'ENABLE_MOD_HACKS', default = False,
 		help = 'enable hacks for simple mods that mostly compatible with Half-Life but has little changes. Enforced for Android. [default: %default]')
+	
+	grp.add_option('--build-apk', action = 'store_true', dest = 'BUILD_APK', default = False,
+		help = 'only build the Android executable. [default: %default]')
 
 	opt.load('xcompile compiler_cxx compiler_c clang_compilation_database strip_on_install')
 
@@ -272,7 +275,14 @@ def configure(conf):
 	if conf.env.DEST_OS == 'android' or conf.options.ENABLE_MOD_HACKS:
 		conf.define('MOBILE_HACKS', '1')
 
-	conf.add_subproject(['cl_dll', 'mainui', 'android'])
+	if conf.options.BUILD_APK:
+		conf.env.BUILD_APK = conf.options.BUILD_APK
+		conf.add_subproject(['android'])
+	else:
+		conf.add_subproject(['cl_dll', 'mainui'])
 
 def build(bld):
-	bld.add_subproject(['cl_dll', 'mainui', 'android'])
+	if bld.env.BUILD_APK:
+		bld.add_subproject(['android'])
+	else:
+		bld.add_subproject(['cl_dll', 'mainui'])

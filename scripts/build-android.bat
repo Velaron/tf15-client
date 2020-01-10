@@ -23,5 +23,4 @@ call ./waf configure -o "build/%%i" -T debug --android=%%i,%TOOLCHAIN%,%API% --c
 call ./waf install --destdir="build/android" -v
 )
 
-call ./waf configure -T debug -v7a
-call ./waf build -v
+call ./waf configure -T debug --build-apk build -v
