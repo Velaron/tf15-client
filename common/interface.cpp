@@ -61,11 +61,7 @@ HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
 #elif defined(__ANDROID__)
 HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )
 {
-	char szPath[1024];
-
-	snprintf( szPath, 1024, "%s/%s", getenv("XASH3D_GAMELIBDIR"), pModuleName );
-
-	return (HINTERFACEMODULE)dlopen( szPath, RTLD_LAZY );
+	return (HINTERFACEMODULE)dlopen( pModuleName, RTLD_LAZY );
 }
 #else
 HINTERFACEMODULE Sys_LoadModule( const char *pModuleName )

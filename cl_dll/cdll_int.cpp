@@ -430,7 +430,7 @@ void CL_LoadMainUI( void )
 	char szDir[MAX_PATH];
 
 #if defined(__ANDROID__)
-	strcpy( szDir, MAINUI_DLLNAME );
+	snprintf( szDir, 1024, "%s/%s", getenv("XASH3D_GAMELIBDIR"), MAINUI_DLLNAME );
 #else
 	if ( gEngfuncs.COM_ExpandFilename( MAINUI_DLLNAME, szDir, sizeof( szDir ) ) == false )
 	{
