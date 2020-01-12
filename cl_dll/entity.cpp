@@ -147,7 +147,6 @@ void DLLEXPORT HUD_ProcessPlayerState( struct entity_state_s *dst, const struct 
 	dst->playerclass			= src->playerclass;
 	dst->team				= src->team;
 	dst->colormap				= src->colormap;
-
 	dst->fuser1				= src->fuser1;
 
 	// Save off some data so other areas of the Client DLL can get to it

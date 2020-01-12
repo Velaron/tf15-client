@@ -40,11 +40,17 @@ def options(opt):
 	grp.add_option('--enable-poly-opt', action = 'store_true', dest = 'POLLY', default = False,
 		help = 'enable polyhedral optimization if possible [default: %default]')
 
+	grp.add_option('--low-memory-mode', action = 'store', dest = 'LOW_MEMORY', default = 0, type = 'int',
+		help = 'enable low memory mode (only for devices have <128 ram)')
+
 	grp.add_option('--enable-magx', action = 'store_true', dest = 'MAGX', default = False,
 		help = 'enable targetting for MotoMAGX phones [default: %default]')
 
 	grp.add_option('--enable-simple-mod-hacks', action = 'store_true', dest = 'ENABLE_MOD_HACKS', default = False,
 		help = 'enable hacks for simple mods that mostly compatible with Half-Life but has little changes. Enforced for Android. [default: %default]')
+	
+	grp.add_option('--build-apk', action = 'store_true', dest = 'BUILD_APK', default = False,
+		help = 'only build the Android executable. [default: %default]')
 
 	opt.load('xcompile compiler_cxx compiler_c clang_compilation_database strip_on_install')
 
@@ -52,7 +58,7 @@ def options(opt):
 		opt.load('msvc msdev msvs')
 
 	opt.load('reconfigure subproject')
-	opt.add_subproject(["cl_dll", "mainui"])
+	opt.add_subproject(['cl_dll', 'mainui', 'android'])
 
 def configure(conf):
 	# Configuration
@@ -88,9 +94,10 @@ def configure(conf):
 	# TODO: wrapper around bld.stlib, bld.shlib and so on?
 	conf.env.MSVC_SUBSYSTEM = 'WINDOWS,5.01'
 	conf.env.MSVC_TARGETS = ['x86'] # explicitly request x86 target for MSVC
-	if sys.platform == 'win32':
-		conf.load('msdev')
+
 	conf.load('xcompile compiler_c compiler_cxx strip_on_install')
+	if conf.env.COMPILER_CC == 'msvc':
+		conf.load('msvc msvc_pdb msdev msvs')
 
 	try:
 		conf.env.CC_VERSION[0]
@@ -141,7 +148,7 @@ def configure(conf):
 	compiler_c_cxx_flags = {
 		'common': {
 			# disable thread-safe local static initialization for C++11 code, as it cause crashes on Windows XP
-			'msvc':    ['/D_USING_V110_SDK71_', '/Zi', '/FS', '/Zc:threadSafeInit-', '/MT'],
+			'msvc':    ['/D_CRT_SILENCE_NONCONFORMING_TGMATH_H', '/D_USING_V110_SDK71_', '/Zi', '/FS', '/Zc:threadSafeInit-', '/MT'],
 			'clang':   ['-g', '-gdwarf-2', '-fvisibility=hidden'],
 			'gcc':     ['-g']
 		},
@@ -254,11 +261,8 @@ def configure(conf):
 		conf.define('_CRT_SECURE_NO_WARNINGS', 1)
 		conf.define('_CRT_NONSTDC_NO_DEPRECATE', 1)
 	else:
-		conf.env.append_unique('DEFINES', ['stricmp=strcasecmp', 'strnicmp=strncasecmp', '_snprintf=snprintf', '_vsnprintf=vsnprintf'])
+		conf.env.append_unique('DEFINES', ['stricmp=strcasecmp', 'strnicmp=strncasecmp', '_snprintf=snprintf', '_vsnprintf=vsnprintf', '_LINUX', 'LINUX'])
 		conf.env.append_unique('CXXFLAGS', ['-Wno-invalid-offsetof', '-fno-rtti', '-fno-exceptions'])
-
-		if conf.env.DEST_OS != 'win32':
-			conf.env.append_unique('DEFINES', ['_LINUX', 'LINUX'])
 
 	# strip lib from pattern
 	if conf.env.DEST_OS in ['linux', 'darwin']:
@@ -267,13 +271,19 @@ def configure(conf):
 		if conf.env.cxxshlib_PATTERN.startswith('lib'):
 			conf.env.cxxshlib_PATTERN = conf.env.cxxshlib_PATTERN[3:]
 
+	# conf.define('CLIENT_WEAPONS', '1')
+
 	if conf.env.DEST_OS == 'android' or conf.options.ENABLE_MOD_HACKS:
 		conf.define('MOBILE_HACKS', '1')
 
-	conf.add_subproject(["cl_dll", "mainui"])
+	if conf.options.BUILD_APK:
+		conf.env.BUILD_APK = conf.options.BUILD_APK
+		conf.add_subproject(['android'])
+	else:
+		conf.add_subproject(['cl_dll', 'mainui'])
 
 def build(bld):
-	bld.add_subproject(["cl_dll", "mainui"])
-
-
-
+	if bld.env.BUILD_APK:
+		bld.add_subproject(['android'])
+	else:
+		bld.add_subproject(['cl_dll', 'mainui'])

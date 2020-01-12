@@ -1,16 +1,59 @@
-language: cpp
-compiler: 
-  - gcc
-  - clang
-os:
-  - linux
-  - osx
-sudo: true
-before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install gcc-multilib g++-multilib; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CC" == "gcc" ]]; then sudo apt-get install mingw-w64-i686-dev binutils-mingw-w64-i686 gcc-mingw-w64-i686 g++-mingw-w64-i686; fi
-script:
-  - mkdir -p build && cd build
-  - cmake ../ -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DUSE_VOICEMGR=0 && make -j3 && rm -rf *
-  - cmake ../ -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DUSE_VOICEMGR=1 && make -j3 && rm -rf *
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$CC" == "gcc" ]]; then cd ..; mkdir build-mingw; cd build-mingw; cmake ../ -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ && make -j3; fi
+language: c
+git:
+  submodules: true
+jobs:
+  include:
+    - stage: build
+      name: "Build for Linux"
+      compiler: gcc
+      cache: ccache
+      os: linux
+      dist: xenial
+      addons:
+        apt:
+          packages:
+            - gcc-multilib
+            - g++-multilib
+            - libfreetype6-dev:i386
+            - libfontconfig-dev:i386
+            - p7zip-full
+      env: ARCH=i686
+      script:
+        - ./waf configure -T debug build -v
+#      before_deploy:
+#        - mv */*/*.so
+#        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
+#      deploy:
+#        provider: releases
+#        api_key: $GITHUB_TOKEN
+#        file: tf15-client-$TRAVIS_OS_NAME.7z
+#        skip_cleanup: true
+#        overwrite: true
+#        draft: true
+    - stage: build
+      name: "Build for Windows"
+      cache: ccache
+      os: windows
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
+      before_install:
+        - choco install python
+      script:
+        - ./waf configure -T debug build -v
+#      before_deploy:
+#        - mv */*/client.* */*/menu.* .
+#        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.dll *.pdb
+#      deploy:
+#        provider: releases
+#        api_key: $GITHUB_TOKEN
+#        file: tf15-client-$TRAVIS_OS_NAME.7z
+#        skip_cleanup: true
+#        overwrite: true
+#        draft: true
+#    - stage: deploy
+#      name: "Deploy to Github"
+#      script:
+#        - git tag -f "travis-ci"
+#      deploy:
+#        provider: releases
+#        api_key: $GITHUB_TOKEN
+#        draft: false

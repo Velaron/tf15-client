@@ -37,7 +37,6 @@ public:
 #define CREATEINTERFACE_PROCNAME	"CreateInterface"
 typedef IBaseInterface* (*CreateInterfaceFn)(const char *pName, int *pReturnCode);
 
-
 typedef IBaseInterface* (*InstantiateInterfaceFn)();
 
 
@@ -85,13 +84,13 @@ public:
 	static className __g_##className##_singleton;\
 	EXPOSE_SINGLE_INTERFACE_GLOBALVAR(className, interfaceName, versionName, __g_##className##_singleton)
 
-
 #ifdef _WIN32
 	#define EXPORT_FUNCTION __declspec(dllexport)
+#elif __GNUC__ >= 4
+	#define EXPORT_FUNCTION __attribute__ ((visibility ("default")))
 #else
 	#define EXPORT_FUNCTION
 #endif
-
 
 // This function is automatically exported and allows you to access any interfaces exposed with the above macros.
 // if pReturnCode is set, it will return one of the following values
@@ -102,16 +101,13 @@ enum
 	IFACE_FAILED
 };
 
-
 extern "C"
 {
 	EXPORT_FUNCTION IBaseInterface* CreateInterface(const char *pName, int *pReturnCode);
 };
 
-
 // Handle to an interface (HInterfaceModule_t* is just there for type safety).
 typedef struct HInterfaceModule_t* HINTERFACEMODULE;
-
 
 // Use these to load and unload a module.
 extern HINTERFACEMODULE		Sys_LoadModule(const char *pModuleName);

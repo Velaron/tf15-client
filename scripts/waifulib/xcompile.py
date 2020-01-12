@@ -199,16 +199,22 @@ class Android:
 	def cc(self):
 		if self.is_host():
 			return 'clang --target=%s%d' % (self.ndk_triplet(), self.api)
+		if sys.platform == 'win32':
+			return self.gen_toolchain_path() + ('clang.cmd' if self.is_clang() else 'gcc.cmd')
 		return self.gen_toolchain_path() + ('clang' if self.is_clang() else 'gcc')
 
 	def cxx(self):
 		if self.is_host():
 			return 'clang++ --target=%s%d' % (self.ndk_triplet(), self.api)
+		if sys.platform == 'win32':
+			return self.gen_toolchain_path() + ('clang++.cmd' if self.is_clang() else 'g++.cmd')
 		return self.gen_toolchain_path() + ('clang++' if self.is_clang() else 'g++')
 
 	def strip(self):
 		if self.is_host():
 			return 'llvm-strip'
+		if sys.platform == 'win32':
+			return os.path.join(self.gen_binutils_path(), 'strip.exe')
 		return os.path.join(self.gen_binutils_path(), 'strip')
 
 	def system_stl(self):
@@ -298,7 +304,7 @@ class Android:
 			linkflags += ['--sysroot=%s/sysroot' % (self.gen_gcc_toolchain_path())]
 
 		if self.is_clang() or self.is_host():
-			linkflags += ['-fuse-ld=lld']
+			linkflags += ['-fuse-ld=gold']
 
 		linkflags += ['-Wl,--hash-style=both','-Wl,--no-undefined']
 		return linkflags
