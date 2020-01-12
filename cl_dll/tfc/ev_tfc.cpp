@@ -296,117 +296,28 @@ Go to the trouble of combining multiple pellets into a single damage call.
 */
 void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int cShots, float *vecSrc, float *vecDirShooting, float *vecSpread, float flDistance, int iBulletType, int iTracerFreq, int *tracerCount, int iDamage )
 {
-	int cMultiGunShots = 0;
-	int iShot = 1;
-	int tracer;
-	float x, y, z;
-	pmtrace_t tr;
-	physent_t *pe;
-	char decalname[32];
-	int decal_index[5];
+/*
+	int cMultiGunShots;
+	int iShot;
 
-	for( iShot = 1; iShot <= cShots; iShot++ )
+	if( cShots <= 0 )
+		return;
+
+	cMultiGunShots = 0;
+	iShot = 1;
+
+	while ( 1 )
 	{
-		Vector vecDir, vecEnd;
+		float x, y, z;
 
 		do
 		{
-			x = gEngfuncs.pfnRandomFloat( -0.5f, 0.5f ) + gEngfuncs.pfnRandomFloat( -0.5f, 0.5f );
-			y = gEngfuncs.pfnRandomFloat( -0.5f, 0.5f ) + gEngfuncs.pfnRandomFloat( -0.5f, 0.5f );
+			x = gEngfuncs.pfnRandomFloat(-0.5, 0.5) + gEngfuncs.pfnRandomFloat(-0.5, 0.5);
+			y =  gEngfuncs.pfnRandomFloat(-0.5, 0.5) + gEngfuncs.pfnRandomFloat(-0.5, 0.5);
 			z = x * x + y * y;
-		} while ( z > 1.0f );
-		
-		for( int i = 0 ; i < 3; i++ )
-		{
-			vecDir[i] = vecDirShooting[i] + x * vecSpread[0] * right[i] + y * vecSpread[1] * up [i];
-			vecEnd[i] = vecSrc[i] + flDistance * vecDir[i];
 		}
-
-		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
-		gEngfuncs.pEventAPI->EV_PushPMStates();
-		gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );	
-		gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
-		gEngfuncs.pEventAPI->EV_PlayerTrace( vecSrc, vecEnd, PM_STUDIO_BOX, -1, &tr );
-
-		tracer = EV_TFC_CheckTracer( idx, vecSrc, tr.endpos, forward, right, iBulletType, iTracerFreq, tracerCount );
-
-		if ( tr.fraction != 1.0f )
-      		break;
-	}
-
-	if ( !iDamage && !tracer )
-	{
-		switch ( iBulletType )
-		{
-		case BULLET_PLAYER_BUCKSHOT:
-			break;
-		default:
-			EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
-			break;
-		}
-
-		pe = gEngfuncs.pEventAPI->EV_GetPhysent( tr.ent );
-
-		if( pe && pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP )
-			EV_HLDM_DecalGunshot( &tr, iBulletType );
-		
-		gEngfuncs.pEventAPI->EV_PopPMStates();
-
-    	if ( cShots < ++iShot )
-		{
-			if ( cMultiGunShots )
-			{
-				for ( int i = 0; i < 5; i++ )
-				{
-					sprintf(decalname, "{shot%i", i + 1);
-					decal_index[i] = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname );
-				}
-				
-				gEngfuncs.pEfxAPI->R_MultiGunshot(vecSrc, vecDirShooting, vecSpread, cMultiGunShots, 5, decal_index);
-			}
-		}
-	}
-
-	if ( cShots != 1 )
-	{
-		if ( !cl_localblood || cl_localblood->value != 0.0f )
-			EV_TFC_TraceAttack( idx, vecDir, &tr, (float)iDamage );
-		cMultiGunShots++;
-
-		if ( cMultiGunShots )
-		{
-			for ( int i = 0; i < 5; i++ )
-			{
-				sprintf(decalname, "{shot%i", i + 1);
-				decal_index[i] = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname );
-			}
-			
-			gEngfuncs.pEfxAPI->R_MultiGunshot(vecSrc, vecDirShooting, vecSpread, cMultiGunShots, 5, decal_index);
-		}
-	}
-
-	if ( !cl_localblood || cl_localblood->value != 0.0f )
-		EV_TFC_TraceAttack( idx, vecDir, &tr, (float)iDamage );
-
-	EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
-
-	pe = gEngfuncs.pEventAPI->EV_GetPhysent( tr.ent );
-
-	if( pe && pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP )
-		EV_HLDM_DecalGunshot( &tr, iBulletType );
-	
-	gEngfuncs.pEventAPI->EV_PopPMStates();
-
-	if ( cMultiGunShots )
-	{
-		for ( int i = 0; i < 5; i++ )
-		{
-			sprintf(decalname, "{shot%i", i + 1);
-			decal_index[i] = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname );
-		}
-		
-		gEngfuncs.pEfxAPI->R_MultiGunshot(vecSrc, vecDirShooting, vecSpread, cMultiGunShots, 5, decal_index);
-	}
+    	while( z > 1.0 );
+*/
 }
 
 #define SND_CHANGE_PITCH	(1 << 7)

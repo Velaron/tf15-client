@@ -27,6 +27,7 @@
 
 LINK_ENTITY_TO_CLASS( weapon_crowbar, CCrowbar )
 
+/*
 enum crowbar_e
 {
 	CROWBAR_IDLE = 0,
@@ -45,6 +46,7 @@ enum crowbar_e
 	CROWBAR_IDLE3
 #endif
 };
+*/
 
 void CCrowbar::Spawn()
 {
