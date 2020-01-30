@@ -70,7 +70,7 @@ int CTFShotgun::GetItemInfo( ItemInfo *p )
 
 BOOL CTFShotgun::Deploy()
 {
-	return DefaultDeploy( "models/v_tfc_12gauge.mdl", "models/p_smallshotgun.mdl", TFCSHOTGUN_DRAW, "shotgun", 1 );
+	return DefaultDeploy( "models/v_tfc_12gauge.mdl", "models/p_smallshotgun.mdl", SHOTGUN_DRAW, "shotgun", 1 );
 }
 
 void CTFShotgun::PrimaryAttack()
@@ -142,7 +142,7 @@ void CTFShotgun::Reload( void )
             }
             else
             {
-                SendWeaponAnim(TFCSHOTGUN_STARTRELOAD, 1);
+                SendWeaponAnim(SHOTGUN_START_RELOAD, 1);
                 //m_pPlayer->tfstate |= 2;
                 m_fInSpecialReload = 1;
                 m_pPlayer->m_flNextAttack = 0.1;
@@ -186,18 +186,18 @@ void CTFShotgun::WeaponIdle( void )
             if ( i == 20 * (i / 20) )
             {
                 m_flTimeWeaponIdle = 2.22222;
-                iAnim = TFCSHOTGUN_IDLE;
+                iAnim = SHOTGUN_IDLE;
             }
             else
             {
                 m_flTimeWeaponIdle = 2.10526;
-                iAnim = TFCSHOTGUN_IDLE4;
+                iAnim = SHOTGUN_IDLE4;
             }
         }
         else
         {
             m_flTimeWeaponIdle = 5;
-            iAnim = TFCSHOTGUN_DEEPIDLE;
+            iAnim = SHOTGUN_IDLE_DEEP;
         }
         SendWeaponAnim(iAnim, 1);
     }

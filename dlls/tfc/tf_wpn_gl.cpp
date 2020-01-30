@@ -21,8 +21,8 @@ void CTFGrenadeLauncher::Spawn()
     m_iAnim_Deploy = GL_DRAW;
     m_iAnim_Holster = GL_HOLSTER;
     m_iAnim_Idle = GL_IDLE;
-    m_iAnim_ReloadDown = GL_RELOAD1;
-    m_iAnim_ReloadUp = GL_RELOAD2;
+    m_iAnim_ReloadDown = GL_RELOAD_DN;
+    m_iAnim_ReloadUp = GL_RELOAD_UP;
 }
 
 void CTFGrenadeLauncher::Precache()
@@ -191,8 +191,8 @@ void CTFPipebombLauncher::Spawn()
     m_usFireGL = PRECACHE_EVENT(1, "events/wpn/tf_pipel.sc");
     m_iAnim_Holster = PL_HOLSTER;
     m_iAnim_Idle = PL_IDLE;
-    m_iAnim_ReloadDown = PL_RELOAD1;
-    m_iAnim_ReloadUp = PL_RELOAD2;
+    m_iAnim_ReloadDown = PL_RELOAD_DN;
+    m_iAnim_ReloadUp = PL_RELOAD_UP;
     m_iAnim_Deploy = PL_DRAW;
 }
 

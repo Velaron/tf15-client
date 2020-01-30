@@ -68,7 +68,7 @@ void CTFRpg::Reload( void )
             if ( m_flTimeWeaponIdle <= 0.0 )
             {
                 m_fInSpecialReload = 2;
-                SendWeaponAnim(TFCRPG_RELCYCLE, 1);
+                SendWeaponAnim( RPG_RELOAD, 1 );
                 m_flNextReload = m_fReloadTime;
                 m_flTimeWeaponIdle = m_fReloadTime;
             }
@@ -83,7 +83,7 @@ void CTFRpg::Reload( void )
     }
     else
     {
-        SendWeaponAnim(TFCRPG_RELSTART, 1);
+        SendWeaponAnim( RPG_RELOAD_START, 1 );
         //m_pPlayer->tfstate |= 2;
         m_fInSpecialReload = 1;
         m_pPlayer->m_flNextAttack = + 0.1;
@@ -119,7 +119,7 @@ void CTFRpg::WeaponIdle( void )
             }
             if(m_iClip == 4)
             {
-                SendWeaponAnim(TFCRPG_RELEND, 1);
+                SendWeaponAnim( RPG_RELOAD_END, 1 );
                 m_fInSpecialReload = 0;
                 m_flTimeWeaponIdle = 1.5;
                 return;
@@ -153,7 +153,7 @@ void CTFRpg::WeaponIdle( void )
             return;
         }
 
-        SendWeaponAnim(TFCRPG_RELEND, 1);
+        SendWeaponAnim( RPG_RELOAD_END, 1 );
         m_fInSpecialReload = 0;
         m_flTimeWeaponIdle = 1.5;
         return;
@@ -163,9 +163,9 @@ void CTFRpg::WeaponIdle( void )
 BOOL CTFRpg::Deploy()
 {
     if(m_iClip >= 0)
-	    return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_srpg.mdl", TFCRPG_DRAW1, "rpg", 1 );
+	    return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_srpg.mdl", RPG_DRAW, "rpg", 1 );
     else
-	    return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_srpg.mdl", TFCRPG_DRAW2, "rpg", 1 );
+	    return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_srpg.mdl", RPG_DRAW_UL, "rpg", 1 );
 }
 
 int CTFRpg::AddToPlayer( CBasePlayer *pPlayer )
