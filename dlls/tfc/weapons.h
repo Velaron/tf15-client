@@ -255,6 +255,12 @@ public:
 	// hle time creep vars
 	float	m_flPrevPrimaryAttack;
 	float	m_flLastFireTime;
+
+	float m_flNextReload;
+	int m_iWeaponState;
+	float m_fAimedDamage;
+	float m_fNextAimBonus;
+	float m_fInZoom;
 };
 
 class CBasePlayerAmmo : public CBaseEntity
@@ -518,15 +524,16 @@ public:
 		return true;
 	}
 
+	BOOL m_fInZoom;
+	BOOL m_iSpotActive;
+	CLaserSpot* m_pSpot;
+	int m_fAimedDamage;
+	int m_fNextAimBonus;
+
 	private:
 		unsigned short m_usFireSniper;
 		unsigned short m_usSniperHit;
-		BOOL m_fInZoom;
-		CLaserSpot* m_pSpot;
-		BOOL m_iSpotActive;
 		void UpdateSpot(void);
-		int m_fAimedDamage;
-		int m_fNextAimBonus;
 };
 
 enum tfc_shotgun_e

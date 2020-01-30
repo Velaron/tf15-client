@@ -57,6 +57,9 @@ const char *legs_bones[] =
 	"Bip01 R Foot"
 };
 
+float g_flSpinUpTime[33];
+float g_flSpinDownTime[33];
+
 /*
 ====================
 Init
@@ -1576,9 +1579,6 @@ const char *ReturnCorrectedModelString( int iSwitchClass )
 			return sNewClassModelFiles[PC_SCOUT];
 	}
 }
-
-float g_flSpinUpTime[33];
-float g_flSpinDownTime[33];
 
 /*
 ====================

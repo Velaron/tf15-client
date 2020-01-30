@@ -20,11 +20,11 @@
 #include "pmtrace.h"	
 #include "pm_shared.h"
 
-void Game_AddObjects( void );
-
 extern vec3_t v_origin;
 
 int g_iAlive = 1;
+
+extern int g_bACSpinning[33];
 
 extern "C"
 {
@@ -527,11 +527,7 @@ void DLLEXPORT HUD_CreateEntities( void )
 #if defined( BEAM_TEST )
 	Beams();
 #endif
-	// Add in any game specific objects
-	Game_AddObjects();
 }
-
-int g_bACSpinning[33];
 
 /*
 =========================

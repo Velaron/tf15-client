@@ -55,15 +55,12 @@ struct eventnode_s
 };
 typedef eventnode_s eventnode_t;
 
-pmtrace_s g_tr_decal[33];
-pmtrace_t *gp_tr_decal[33];
+static pmtrace_s g_tr_decal[32];
+static pmtrace_t *gp_tr_decal[32];
+int g_bACSpinning[33];
 extern float g_flSpinDownTime[33];
-extern int g_bACSpinning[33];
 extern float g_flSpinUpTime[33];
-int m_iSwing;
 extern cvar_t *cl_lw;
-BEAM *pBeam;
-BEAM *pBeam2;
 
 extern "C"
 {
@@ -582,6 +579,8 @@ enum tfc_axe_e
 
 int EV_TFC_PlayCrowbarAnim( int iAnimType )
 {
+	static int m_iSwing;
+	
 	m_iSwing++;
 
 	if( iAnimType == 1 )
