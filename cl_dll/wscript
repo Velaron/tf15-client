@@ -58,7 +58,7 @@ def build(bld):
 	if bld.env.DEST_OS == 'linux':
 		libs += ['DL']
 
-	if bld.env.DEST_OS not in ['android']:
+	if bld.env.DEST_OS not in ['android', 'dos']:
 		install_path = os.path.join(bld.env.GAMEDIR, bld.env.CLIENT_DIR)
 	else:
 		install_path = bld.env.PREFIX
@@ -66,6 +66,7 @@ def build(bld):
 	bld.shlib(
 		source   = source,
 		target   = 'client' + bld.env.POSTFIX,
+		name     = 'client',
 		features = 'c cxx',
 		includes = includes,
 		defines  = defines,
