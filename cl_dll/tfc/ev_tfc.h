@@ -8,6 +8,9 @@
 #if !defined ( EV_TFCH )
 #define EV_TFCH
 
+#define DONT_BLEED -1
+#define BLOOD_COLOR_RED	247
+
 enum {
 	BULLET_NONE = 0,
 	BULLET_PLAYER_9MM = 1,
@@ -176,15 +179,15 @@ enum nailgun_e {
 	NAILGUN_FIRE3 = 7
 };
 
-void EV_HLDM_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName );
-void EV_HLDM_DecalGunshot( pmtrace_t *pTrace, int iBulletType );
-int EV_HLDM_CheckTracer( int idx, float *vecSrc, float *end, float *forward, float *right, int iBulletType, int iTracerFreq, int *tracerCount );
-void EV_HLDM_FireBullets( int idx, float *forward, float *right, float *up, int cShots, float *vecSrc, float *vecDirShooting, float flDistance, int iBulletType, int iTracerFreq, int *tracerCount, float flSpreadX, float flSpreadY );
+void EV_TFC_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName );
+void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType );
+int EV_TFC_CheckTracer( int idx, float *vecSrc, float *end, float *forward, float *right, int iBulletType, int iTracerFreq, int *tracerCount );
+void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int cShots, float *vecSrc, float *vecDirShooting, float *vecSpread, float flDistance, int iBulletType, int iTracerFreq, int *tracerCount, int iDamage );
 void EV_TFC_NailTouch( struct tempent_s *ent, pmtrace_t *ptr );
-void EV_TFC_Explode( float *org, int dmg, pmtrace_t *pTrace, qboolean bDontSpark );
-void EV_TFC_BloodDrips( float *vecOrigin, signed int iDamage, long double height );
+void EV_TFC_Explode( float *org, int dmg, pmtrace_t *pTrace, float fExplosionScale );
+void EV_TFC_BloodDrips( float *origin, float *dir, int color, int amount );
 void EV_TFC_TraceAttack( int idx, float *vecDir, pmtrace_t *ptr, float flDamage );
-long double EV_TFC_WaterLevel( float *position, float minz, float maxz );
+float EV_TFC_WaterLevel( float *position, float minz, float maxz );
 void EV_TFC_RailDie( struct particle_s *particle );
 int EV_TFC_IsAlly( int idx1, int idx2 );
 void EV_TFC_TranqNailTouch( tempent_s *ent, pmtrace_t *ptr );
@@ -192,7 +195,9 @@ void EV_TFC_PlayAxeSound( int idx, int classid, float *origin, int iSoundType, f
 int EV_TFC_AxeHit( int idx, float *origin, float *forward, float *right, int entity, float *vecDir, pmtrace_t *ptr );
 int EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, int entity, float *vecDir, pmtrace_t *ptr );
 tempent_s* EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, int ishead );
-void EV_TFC_GibCallback( tempent_s *ent, float frametime );
+void EV_TFC_GibTouchCallback( tempent_s *ent, pmtrace_t *ptr );
+void EV_TFC_GibCallback( tempent_s *ent, float frametime, float currenttime );
+void EV_TFC_BloodDecalTrace( pmtrace_t *pTrace, int bloodColor );
 int EV_TFC_PlayCrowbarAnim( int iAnimType );
 
 extern cvar_t *cl_gibcount;
