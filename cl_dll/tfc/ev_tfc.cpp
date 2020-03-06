@@ -291,25 +291,17 @@ char *EV_TFC_DamageDecal( int entity )
 	static char decalname[32];
 
 	pe = gEngfuncs.pEventAPI->EV_GetPhysent( entity );
-	decalname[0] = '\0';
+	*decalname = NULL;
 
-	if ( !pe )
+	if( pe && pe->rendermode != kRenderNormal )
 	{
-		return decalname;
+		sprintf( decalname, "{bproof1" );
 	}
-
-	if ( pe->rendermode == kRenderTransAlpha )
-	{
-		return decalname;
-	}
-
-	if ( pe->rendermode == kRenderNormal )
+	else if ( pe  )
 	{
 		sprintf( decalname, "{shot%i", gEngfuncs.pfnRandomLong( 1, 5 ) );
-		return decalname;
 	}
 
-	sprintf( decalname, "{bproof1" );
 	return decalname;
 }
 
@@ -349,8 +341,7 @@ void EV_TFC_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName )
 	{
 		if( CVAR_GET_FLOAT( "r_decals" ) )
 		{
-			gEngfuncs.pEfxAPI->R_DecalShoot(
-				gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalName ) ),
+			gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalName ) ),
 				gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
 		}
 	}
@@ -359,7 +350,6 @@ void EV_TFC_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName )
 void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 {
 	physent_t *pe;
-	char *decalname;
 
 	pe = gEngfuncs.pEventAPI->EV_GetPhysent( pTrace->ent );
 
@@ -367,54 +357,54 @@ void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 	{
 		switch( iBulletType )
 		{
-		case BULLET_PLAYER_TF_ASSAULT:
-			decalname = "hwshot1";
-			break;
+		//case BULLET_PLAYER_TF_ASSAULT:
+		//	EV_TFC_GunshotDecalTrace( pTrace, "hwshot1" );
+		//	break;
 		default:
-			decalname = EV_TFC_DamageDecal( pTrace->ent );
+			EV_TFC_GunshotDecalTrace( pTrace, EV_TFC_DamageDecal( pTrace->ent ) );
 			break;
 		}
-
-		EV_TFC_GunshotDecalTrace( pTrace, decalname );
 	}
 }
 
 int EV_TFC_CheckTracer( int idx, float *vecSrc, float *end, float *forward, float *right, int iBulletType, int iTracerFreq, int *tracerCount )
 {
-	Vector vecTracerSrc, offset;
+	int tracer = 0;
 
-	if ( iTracerFreq == 0 )
+	if( iTracerFreq != 0 && ( (*tracerCount)++ % iTracerFreq ) == 0 )
 	{
-		return false;
-	}
+		vec3_t vecTracerSrc;
 
-	*tracerCount++;
-
-	if ( *tracerCount % 5 )
-	{
-		return false;
-	}
-
-	if ( idx > 0 && idx <= gEngfuncs.GetMaxClients() )
-	{
-		offset = Vector( 0.0f, 0.0f, -4.0f );
-
-		for ( int i = 0; i < 3; i++ )
+		if( EV_IsPlayer( idx ) )
 		{
-			vecTracerSrc[i] = vecSrc[i] + offset[i] + right[i] * 2.0f + forward[i] * 16.0f;
+			vec3_t offset( 0, 0, -4 );
+
+			for( int i = 0; i < 3; i++ )
+			{
+				vecTracerSrc[i] = vecSrc[i] + offset[i] + right[i] * 2.0f + forward[i] * 16.0f;
+			}
+		}
+		else
+		{
+			VectorCopy( vecSrc, vecTracerSrc );
+		}
+
+		if( iTracerFreq != 1 )
+		{
+			tracer = 1;
+		}
+
+		switch( iBulletType )
+		{
+		case BULLET_PLAYER_TF_BUCKSHOT:
+			break;
+		default:
+			EV_CreateTracer( vecTracerSrc, end );
+			break;
 		}
 	}
-	else
-	{
-		VectorCopy( vecSrc, vecTracerSrc );
-	}
 
-	if ( iBulletType != BULLET_PLAYER_TF_BUCKSHOT )
-	{
-		EV_CreateTracer( vecTracerSrc, end );
-	}
-
-	return iTracerFreq != 1;
+	return tracer;
 }
 
 /*
@@ -426,23 +416,24 @@ Go to the trouble of combining multiple pellets into a single damage call.
 */
 void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int cShots, float *vecSrc, float *vecDirShooting, float *vecSpread, float flDistance, int iBulletType, int iTracerFreq, int *tracerCount, int iDamage )
 {
-	int i;
 	pmtrace_t tr;
 	int iShot;
 	int tracer;
+	char decalname[32];
+	int decal_index[5];
 
-	for( iShot = 1; iShot <= cShots; iShot++ )
+	for( iShot = 1; iShot <= cShots; iShot++ )	
 	{
 		vec3_t vecDir, vecEnd;
 		float x, y, z;
 
-		do{
-			x = gEngfuncs.pfnRandomFloat( -0.5, 0.5 ) + gEngfuncs.pfnRandomFloat( -0.5, 0.5 );
-			y = gEngfuncs.pfnRandomFloat( -0.5, 0.5 ) + gEngfuncs.pfnRandomFloat( -0.5, 0.5 );
+		do {
+			x = gEngfuncs.pfnRandomFloat( -0.5f, 0.5f ) + gEngfuncs.pfnRandomFloat( -0.5f, 0.5f );
+			y = gEngfuncs.pfnRandomFloat( -0.5f, 0.5f ) + gEngfuncs.pfnRandomFloat( -0.5f, 0.5f );
 			z = x * x + y * y;
 		} while( z > 1 );
 
-		for( i = 0 ; i < 3; i++ )
+		for ( int i = 0 ; i < 3; i++ )
 		{
 			vecDir[i] = vecDirShooting[i] + x * vecSpread[0] * right[i] + y * vecSpread[1] * up [i];
 			vecEnd[i] = vecSrc[i] + flDistance * vecDir[i];
@@ -450,39 +441,50 @@ void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int c
 
 		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
 		gEngfuncs.pEventAPI->EV_PushPMStates();
-		gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );
+		gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );	
 		gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
 		gEngfuncs.pEventAPI->EV_PlayerTrace( vecSrc, vecEnd, PM_STUDIO_BOX, -1, &tr );
 
 		tracer = EV_TFC_CheckTracer( idx, vecSrc, tr.endpos, forward, right, iBulletType, iTracerFreq, tracerCount );
 
-		if( tr.fraction != 1.0 )
+		if ( tr.fraction != 1.0f && !iDamage )
 		{
-			switch( iBulletType )
+			switch ( iBulletType )
 			{
-			default:
-			case BULLET_PLAYER_9MM:
-				EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
-				EV_TFC_DecalGunshot( &tr, iBulletType );
+			case BULLET_PLAYER_BUCKSHOT:
+				if ( !tracer )
+				{
+					EV_TFC_DecalGunshot( &tr, iBulletType );
+				}
 				break;
-			case BULLET_PLAYER_MP5:
-				if( !tracer )
+			default:
+				if ( !tracer )
 				{
 					EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
 					EV_TFC_DecalGunshot( &tr, iBulletType );
 				}
 				break;
-			case BULLET_PLAYER_BUCKSHOT:
-				EV_TFC_DecalGunshot( &tr, iBulletType );
-				break;
-			case BULLET_PLAYER_357:
-				EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
-				EV_TFC_DecalGunshot( &tr, iBulletType );
-				break;
 			}
+		}
+		else if ( tr.fraction != 1.0f )
+		{
+			EV_TFC_TraceAttack( idx, vecDirShooting, &tr, (float)iDamage );
+			EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
+			EV_TFC_DecalGunshot( &tr, iBulletType );
 		}
 
 		gEngfuncs.pEventAPI->EV_PopPMStates();
+	}
+
+	if ( cShots != 1 )
+	{
+		for ( int i = 0; i < 5; i++ )
+		{
+			sprintf( decalname, "{shot%i", i + 1 );
+    		decal_index[i] = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname );
+		}
+
+		gEngfuncs.pEfxAPI->R_MultiGunshot( vecSrc, vecDirShooting, vecSpread, cShots, 5, decal_index );
 	}
 }
 
@@ -533,7 +535,6 @@ void EV_TrainPitchAdjust( event_args_t *args )
 		strcpy( sz, "plats/ttrain7.wav");
 		break;
 	default:
-		// no sound
 		strcpy( sz, "" );
 		return;
 	}
@@ -550,7 +551,7 @@ void EV_TrainPitchAdjust( event_args_t *args )
 
 int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 )
 {
-	long ta; // Velaron: delet longs?
+	long ta;
 	int team_ally[5];
 
 	ta = strtol( gEngfuncs.PhysInfo_ValueForKey( "ta" ), 0, 10 );
@@ -2038,7 +2039,7 @@ void EV_TFC_TranqNailTouch( tempent_s *ent, pmtrace_t *ptr )
 
 	entity = gEngfuncs.pEventAPI->EV_IndexFromTrace( ptr );
 
-	if( entity > 0 && entity <= gEngfuncs.GetMaxClients() )
+	if( !EV_IsPlayer( entity ) )
 	{
 		pe = gEngfuncs.pEventAPI->EV_GetPhysent( ptr->ent );
 
@@ -2134,7 +2135,7 @@ void EV_TFC_GibCallback( tempent_s *ent, float frametime, float currenttime )
 
 void EV_TFC_BloodDecalTrace( pmtrace_t *pTrace, int bloodColor )
 {
-	char *format;
+	const char *format;
 	char decalname[32];
 	physent_s *pe;
 
@@ -2161,7 +2162,8 @@ void EV_TFC_BloodDecalTrace( pmtrace_t *pTrace, int bloodColor )
 	{
 		if( gEngfuncs.pfnGetCvarFloat( "r_decals" ) != 0.0f )
 		{
-			gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname ) ), gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
+			gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname ) ),
+				gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
 		}
 	}
 }
