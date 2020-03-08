@@ -20,6 +20,10 @@ GNU General Public License for more details.
 #include "gameinfo.h"
 #include "wrect.h"
 
+// a macro for mainui_cpp, indicating that mainui should be compiled for
+// Xash3D 1.0 interface
+#define NEW_ENGINE_INTERFACE
+
 typedef int		HIMAGE;		// handle to a graphic
 
 // flags for PIC_Load
@@ -66,7 +70,7 @@ typedef struct ui_enginefuncs_s
 	// cvar handlers
 	cvar_t*	(*pfnRegisterVariable)( const char *szName, const char *szValue, int flags );
 	float	(*pfnGetCvarFloat)( const char *szName );
-	char*	(*pfnGetCvarString)( const char *szName );
+	const char*	(*pfnGetCvarString)( const char *szName );
 	void	(*pfnCvarSetString)( const char *szName, const char *szValue );
 	void	(*pfnCvarSetValue)( const char *szName, float flValue );
 
@@ -75,8 +79,8 @@ typedef struct ui_enginefuncs_s
 	void	(*pfnClientCmd)( int execute_now, const char *szCmdString );
 	void	(*pfnDelCommand)( const char *cmd_name );
 	int (*pfnCmdArgc)( void );
-	char*	(*pfnCmdArgv)( int argc );
-	char*	(*pfnCmd_Args)( void );
+	const char*	(*pfnCmdArgv)( int argc );
+	const char*	(*pfnCmd_Args)( void );
 
 	// debug messages (in-menu shows only notify)	
 	void	(*Con_Printf)( const char *fmt, ... );
@@ -161,9 +165,9 @@ typedef struct ui_enginefuncs_s
 	void	(*pfnSetCursor)( void *hCursor );			// change cursor
 	int	(*pfnIsMapValid)( char *filename );
 	void	(*pfnProcessImage)( int texnum, float gamma, int topColor, int bottomColor );
-	int	(*pfnCompareFileTime)( const char *filename1, char *filename2, int *iCompare );
+	int	(*pfnCompareFileTime)( const char *filename1, const char *filename2, int *iCompare );
 
-	char *(*pfnGetModeString)( int vid_mode );
+	const char *(*pfnGetModeString)( int vid_mode );
 	int	(*COM_SaveFile)( const char *filename, const void *data, int len );
 	int	(*COM_RemoveFile)( const char *filepath );
 } ui_enginefuncs_t;
@@ -200,6 +204,7 @@ typedef struct ui_extendedfuncs_s {
 	// new engine extended api start here
 	// returns 1 if there are more in list, otherwise 0
 	int (*pfnGetRenderers)( unsigned int num, char *shortName, size_t size1, char *readableName, size_t size2 );
+	double (*pfnDoubleTime)( void );
 } ui_extendedfuncs_t;
 
 // deprecated export from old engine
