@@ -2251,9 +2251,9 @@ void EV_TFC_Gibs( event_args_t *args )
 	gibcount = cl_gibcount->value;
 	gibcount = gibcount > 64 ? 64 : gibcount;
 
-	for( int x = 0; x <= gibcount; x++ )
+	for( int x = 0; x < gibcount; x++ )
 	{
-		EV_TFC_CreateGib( origin, attackdir, multiplier, x == gibcount ? true : false );
+		EV_TFC_CreateGib( origin, attackdir, multiplier, x == ( gibcount - 1 ) ? true : false );
 	}
 }
 
