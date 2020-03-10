@@ -2257,41 +2257,31 @@ void EV_TFC_Gibs( event_args_t *args )
 	}
 }
 
+enum soundtypes_e
+{
+	SOUND_MISS,
+	SOUND_HIT_BODY,
+	SOUND_HIT_WALL,
+};
+
 void EV_TFC_PlayAxeSound( int idx, int classid, float *origin, int iSoundType, float fSoundData )
 {
-	if( classid == 2 )
-		return;
+	char *sound;
 
-	if ( iSoundType == 0 )
+	switch ( iSoundType )
 	{
-		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/cbar_miss1.wav", 1.0f, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 15 ) + 94 );
-	}
-	else if ( iSoundType == 1 )
-	{
-		switch( gEngfuncs.pfnRandomLong( 0, 2 ) )
-		{
-		case 0:
-			gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/cbar_hitbod1.wav", 1.0f, ATTN_NORM, 0, 100 );
-			break;
-		case 1:
-			gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/cbar_hitbod2.wav", 1.0f, ATTN_NORM, 0, 100 );
-			break;
-		case 2:
-			gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/cbar_hitbod3.wav", 1.0f, ATTN_NORM, 0, 100 );
-			break;
-		}
-	}
-	else if ( iSoundType == 2 )
-	{
-		switch( gEngfuncs.pfnRandomLong( 0, 1 ) )
-		{
-		case 0:
-			gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/cbar_hit1.wav", fSoundData, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 3 ) + 98 );
-			break;
-		case 1:
-			gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/cbar_hit2.wav", fSoundData, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 3 ) + 98 );
-			break;
-		}
+	case SOUND_MISS:
+		sound = "weapons/cbar_miss1.wav";
+		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, sound, fSoundData, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 15 ) + 94 );
+		break;
+	case SOUND_HIT_BODY:
+		sprintf( sound, "weapons/cbar_hitbod%i.wav", gEngfuncs.pfnRandomLong( 1, 3 ) );
+		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, sound, fSoundData, ATTN_NORM, 0, 100 );
+		break;
+	case SOUND_HIT_WALL:
+		sprintf( sound, "weapons/cbar_hit%i.wav", gEngfuncs.pfnRandomLong( 1, 2 ) );
+		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, sound, fSoundData, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 3 ) + 98 );
+		break;
 	}
 }
 
@@ -2380,7 +2370,7 @@ char *EV_TFC_LookupDoorSound( int type, int index )
 	else if ( !type )
 	{
 		idx = index & 0xFF;
-		sprintf( sound, "doors/doormove%i.wav", index );
+		sprintf( sound, "doors/doormove%i.wav", idx );
 	}
 
 	return sound;
