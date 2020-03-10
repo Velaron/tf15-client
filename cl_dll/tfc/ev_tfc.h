@@ -199,6 +199,7 @@ void EV_TFC_GibTouchCallback( tempent_s *ent, pmtrace_t *ptr );
 void EV_TFC_GibCallback( tempent_s *ent, float frametime, float currenttime );
 void EV_TFC_BloodDecalTrace( pmtrace_t *pTrace, int bloodColor );
 int EV_TFC_PlayCrowbarAnim( int iAnimType );
+char *EV_TFC_LookupDoorSound( int type, int index );
 
 extern cvar_t *cl_gibcount;
 extern cvar_t *cl_giblife;

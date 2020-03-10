@@ -468,7 +468,7 @@ void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int c
 		}
 		else if ( tr.fraction != 1.0f )
 		{
-			EV_TFC_TraceAttack( idx, vecDirShooting, &tr, (float)iDamage );
+			EV_TFC_TraceAttack( idx, vecDirShooting, &tr, iDamage );
 			EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
 			EV_TFC_DecalGunshot( &tr, iBulletType );
 		}
@@ -814,9 +814,9 @@ void EV_PumpTFCShotgun( event_args_t *args )
 	full = args->bparam1;
 	idx = args->entindex;
 
-	VectorCopy(args->origin, origin);
+	VectorCopy( args->origin, origin );
 
-	if( full && EV_IsLocal(idx) )
+	if( full && EV_IsLocal( idx ) )
 	{
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_PUMP, 2 );
 	}
@@ -900,7 +900,7 @@ void EV_FireTFCSuperNailgun( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( NAILGUN_FIRE1, 2 );
 	}
 
-	EV_GetGunPosition(args, ShellOrigin, origin);
+	EV_GetGunPosition( args, ShellOrigin, origin );
 	VectorMA( ShellOrigin, -4.0f, up, ShellOrigin );
 	VectorMA( ShellOrigin, 2.0f, right, ShellOrigin );
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/spike2.wav", VOL_NORM, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 15 ) + 94 );
@@ -1033,11 +1033,11 @@ void EV_TFC_BloodDrips( float *origin, float *dir, int color, int amount )
 	int modelIndex, modelIndex2;
 	float scale;
 
-	if ( color == BLOOD_COLOR_RED && gEngfuncs.pfnGetCvarFloat("violence_hblood") == 0.0f )
+	if ( color == BLOOD_COLOR_RED && gEngfuncs.pfnGetCvarFloat( "violence_hblood" ) == 0.0f )
 	{
 		return;
 	}
-	else if ( gEngfuncs.pfnGetCvarFloat("violence_ablood") == 0.0f )
+	else if ( gEngfuncs.pfnGetCvarFloat( "violence_ablood" ) == 0.0f )
 	{
 		return;
 	}
@@ -1055,18 +1055,7 @@ void EV_TFC_BloodDrips( float *origin, float *dir, int color, int amount )
 	modelIndex = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/bloodspray.spr" );
 	modelIndex2 = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/blood.spr" );
 
-	if ( amount > 159 )
-	{
-		scale = 16.0f;
-	}
-	else if ( amount > 29 )
-	{
-		scale = (float)( amount / 10 );
-	}
-	else
-	{
-		scale = 3.0f;
-	}
+	scale = max( 3.0f, min( amount / 10, 16.0f ) );
 
 	gEngfuncs.pEfxAPI->R_BloodSprite( origin, color, modelIndex, modelIndex2, scale );
 }
@@ -1224,54 +1213,40 @@ void EV_TFC_Gas( event_args_t *args )
 
 void EV_TFC_DoorGoUp( event_args_t *args )
 {
-	int index;
-	char sound[32];
+	const char *sound;
 
-	index = args->iparam1;
-	sprintf( sound, "doors/doormove%i.wav", index ); // Velaron: EV_TFC_LookupDoorSound
-
+	sound = EV_TFC_LookupDoorSound( 0, args->iparam1 );
 	gEngfuncs.pEventAPI->EV_StopSound( -1, CHAN_STATIC, sound );
-	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, 100 );
+	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
 void EV_TFC_DoorGoDown( event_args_t *args )
 {
-	int index;
-	char sound[32];
+	const char *sound;
 
-	index = args->iparam1;
-	sprintf( sound,"doors/doormove%i.wav", index );
-	
+	sound = EV_TFC_LookupDoorSound( 0, args->iparam1 );
 	gEngfuncs.pEventAPI->EV_StopSound( -1, CHAN_STATIC, sound );
-	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, 100 );
+	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
 void EV_TFC_DoorHitTop( event_args_t *args )
 {
-	int index;
-	char sound[32];
+	const char *sound;
 
-	index = args->iparam1;
-
-	sprintf( sound,"doors/doormove%i.wav", index );
+	sound = EV_TFC_LookupDoorSound( 0, args->iparam1 );
 	gEngfuncs.pEventAPI->EV_StopSound( -1, CHAN_STATIC, sound );
-
-	sprintf( sound,"doors/doorstop%i.wav", index );
-	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, 100 );
+	sound = EV_TFC_LookupDoorSound( 1, args->iparam1 );
+	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
 void EV_TFC_DoorHitBottom( event_args_t *args )
 {
-int index;
-	char sound[32];
+	const char *sound;
 
-	index = args->iparam1;
-
-	sprintf( sound,"doors/doormove%i.wav", index );
+	sound = EV_TFC_LookupDoorSound( 0, args->iparam1 );
 	gEngfuncs.pEventAPI->EV_StopSound( -1, CHAN_STATIC, sound );
-
-	sprintf( sound,"doors/doorstop%i.wav", index );
-	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, 100 );
+	sound = EV_TFC_LookupDoorSound( 1, args->iparam1 );
+	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
 void EV_TFC_Explode( float *org, int dmg, pmtrace_t *pTrace, float fExplosionScale )
@@ -1293,13 +1268,13 @@ void EV_TFC_Explode( float *org, int dmg, pmtrace_t *pTrace, float fExplosionSca
 			dmg -= 24;
 		}
 
-		fireball = (float)dmg * 0.6f;
+		fireball = dmg * 0.6f;
 		VectorMA( pTrace->endpos, fireball, pTrace->plane.normal, origin );
 	}
 
 	if ( fExplosionScale == 0.0f )
 	{
-		fExplosionScale = (float)(dmg - 50) * 0.6f;
+		fExplosionScale = (dmg - 50) * 0.6f;
 	}
 
 	explosion = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/explode01.spr" );
@@ -1469,7 +1444,7 @@ void EV_TFC_SniperHit( event_args_s *args )
 	Vector origin;
 
 	idx = args->entindex;
-	volume = (float)args->iparam1 / 100.0f;
+	volume = args->iparam1 / 100.0f;
 
 	VectorCopy( args->origin, origin );
 	
@@ -1517,7 +1492,7 @@ void EV_TFC_NailgrenadeNail( event_args_t *args )
 	Vector origin, angles, forward, velocity, org;
 
 	VectorCopy( args->origin, org );
-	angles = Vector( 0.0f, (float)( args->iparam1 & 0x7FF ) * 0.25f, 0.0f );
+	angles = Vector( 0.0f, ( args->iparam1 & 0x7FF ) * 0.25f, 0.0f );
 	nail = gEngfuncs.pEventAPI->EV_FindModelIndex( "models/nail.mdl" );
 
 	for ( int i = 0; i < 5; i++ )
@@ -2388,6 +2363,27 @@ int EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, int ent
 	}
 
 	return true;
+}
+
+char *EV_TFC_LookupDoorSound( int type, int index )
+{
+	int idx;
+	static char *sound;
+
+	sound = "common/null.wav";
+
+	if ( type )
+	{
+		idx = ( index >> 8 ) & 0xFF;
+		sprintf( sound, "doors/doorstop%i.wav", idx );
+	}
+	else if ( !type )
+	{
+		idx = index & 0xFF;
+		sprintf( sound, "doors/doormove%i.wav", index );
+	}
+
+	return sound;
 }
 
 void EV_TFC_Knife( event_args_t *args )
