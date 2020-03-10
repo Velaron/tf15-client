@@ -36,6 +36,9 @@
 #include "r_studioint.h"
 #include "com_model.h"
 
+#define max(a, b)  (((a) > (b)) ? (a) : (b))
+#define min(a, b)  (((a) < (b)) ? (a) : (b))
+
 extern engine_studio_api_t IEngineStudio;
 
 extern "C" char PM_FindTextureType( char *name );
@@ -2237,16 +2240,15 @@ tempent_s* EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, in
 void EV_TFC_Gibs( event_args_t *args )
 {
 	int idx;
-	int multiplier;
+	int multiplier, gibcount;
 	Vector origin, attackdir;
-	int gibcount;
 
 	idx = args->entindex;
 	multiplier = args->iparam1;
 	VectorCopy( args->origin, origin )
 	VectorCopy( args->angles, attackdir )
 
-	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "common/bodysplat.wav", 1.0f, ATTN_NORM, 0, 100 );
+	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "common/bodysplat.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 
 	gibcount = cl_gibcount->value;
 	gibcount = gibcount > 64 ? 64 : gibcount;
