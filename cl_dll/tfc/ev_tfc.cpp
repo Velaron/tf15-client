@@ -1668,7 +1668,7 @@ void EV_TFC_Concussion( event_args_t *args )
 	VectorCopy( origin, vecEnd );
 
 	vecSpot.z += 16.0f;
-	vecEnd.z += 616.0f;
+	vecEnd.z += 600.0f + 16.0f;
 
 	gEngfuncs.pEfxAPI->R_BeamCirclePoints( TE_BEAMCYLINDER, vecSpot, vecEnd, wave, 0.2f, 70.0f, 0.0f, 1.0f, 0.0f, 0, 0.0f, 1.0f, 1.0f, 1.0f );
 }
@@ -1741,7 +1741,7 @@ void EV_TFC_EMP( event_args_t *args )
 	VectorCopy( origin, vecEnd );
 
 	vecSpot.z += 16.0f;
-	vecEnd.z += 616.0f;
+	vecEnd.z += 600.0f + 16.0f;
 
 	gEngfuncs.pEfxAPI->R_BeamCirclePoints( TE_BEAMCYLINDER, vecSpot, vecEnd, wave, 0.2f, 70.0f, 0.0f, 1.0f, 0.0f, 0, 0.0f, 1.0f, 1.0f, 1.0f );
 }
@@ -2158,41 +2158,23 @@ void EV_TFC_GibTouchCallback( tempent_s *ent, pmtrace_t *ptr )
 tempent_s* EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, int ishead )
 {
 	int modelindex;
-	tempent_s* ent;
-	float vmultiple;
-	float mins[3];
-	float maxs[3];
-	float scale;
-	float len;
+	tempent_s *ent;
+	float mins[3], maxs[3];
+	float vmultiple, scale, len;
 
 	model_s* gib = gEngfuncs.CL_LoadModel( "models/hgibs.mdl", &modelindex );
 
-	if ( !gib )
-		return 0;
+	if ( gib == NULL )
+		return NULL;
 
-	if ( multiplier <= 0 )
-	{
-		vmultiple = 0.7f * cl_gibvelscale->value;
-	}
-	else
-	{
-		vmultiple = 4.0f * cl_gibvelscale->value;
-	}
+	vmultiple = multiplier ? ( 4.0f  * cl_gibvelscale->value ) : ( vmultiple = 0.7f * cl_gibvelscale->value );
 
 	gEngfuncs.pEventAPI->EV_LocalPlayerBounds( 0, mins, maxs );
 	ent = gEngfuncs.pEfxAPI->CL_TentEntAllocCustom( origin, gib, 0, EV_TFC_GibCallback );
 
 	if ( ent )
 	{
-		if ( ishead )
-		{
-			ent->entity.curstate.body = 0;
-		}
-		else
-		{
-			ent->entity.curstate.body = gEngfuncs.pfnRandomLong( 1, 5 );
-		}
-
+		ent->entity.curstate.body = ishead ? 0 : gEngfuncs.pfnRandomLong( 1, 5 );
 		ent->entity.origin[0] += gEngfuncs.pfnRandomFloat( -1.0f, 1.0f ) * ( ( maxs[0] - mins[0] ) * 0.5f );
 		ent->entity.origin[1] += gEngfuncs.pfnRandomFloat( -1.0f, 1.0f ) * ( ( maxs[1] - mins[1] ) * 0.5f );
 		ent->entity.origin[2] += gEngfuncs.pfnRandomFloat( -1.0f, 1.0f ) * ( ( maxs[2] - mins[2] ) * 0.5f );
@@ -2208,12 +2190,9 @@ tempent_s* EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, in
 		else
 		{
 			VectorScale( attackdir, -1.0f, ent->entity.curstate.velocity );
-			ent->entity.curstate.velocity[0] += gEngfuncs.pfnRandomFloat( -0.25f, 0.25f );
-			ent->entity.curstate.velocity[0] *= gEngfuncs.pfnRandomFloat( 300.0f, 400.0f ) * vmultiple;
-			ent->entity.curstate.velocity[1] += gEngfuncs.pfnRandomFloat( -0.25f, 0.25f );
-			ent->entity.curstate.velocity[1] *= gEngfuncs.pfnRandomFloat( 300.0f, 400.0f ) * vmultiple;
-			ent->entity.curstate.velocity[2] += gEngfuncs.pfnRandomFloat( -0.25f, 0.25f );
-			ent->entity.curstate.velocity[2] *= gEngfuncs.pfnRandomFloat( 300.0f, 400.0f ) * vmultiple;
+			ent->entity.curstate.velocity[0] += gEngfuncs.pfnRandomFloat( -0.25f, 0.25f ) * gEngfuncs.pfnRandomFloat( 300.0f, 400.0f ) * vmultiple;
+			ent->entity.curstate.velocity[1] += gEngfuncs.pfnRandomFloat( -0.25f, 0.25f ) * gEngfuncs.pfnRandomFloat( 300.0f, 400.0f ) * vmultiple;
+			ent->entity.curstate.velocity[2] += gEngfuncs.pfnRandomFloat( -0.25f, 0.25f ) * gEngfuncs.pfnRandomFloat( 300.0f, 400.0f ) * vmultiple;
 			ent->entity.baseline.angles[0] = gEngfuncs.pfnRandomFloat( 100.0f, 200.0f );
         	ent->entity.baseline.angles[1] = gEngfuncs.pfnRandomFloat( 100.0f, 200.0f );
 		}
@@ -2268,12 +2247,12 @@ enum soundtypes_e
 
 void EV_TFC_PlayAxeSound( int idx, int classid, float *origin, int iSoundType, float fSoundData )
 {
-	char *sound;
+	static char sound[32];
 
 	switch ( iSoundType )
 	{
 	case SOUND_MISS:
-		sound = "weapons/cbar_miss1.wav";
+		sprintf( sound, "weapons/cbar_miss1.wav" );
 		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, sound, fSoundData, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 15 ) + 94 );
 		break;
 	case SOUND_HIT_BODY:
@@ -2360,16 +2339,16 @@ int EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, int ent
 char *EV_TFC_LookupDoorSound( int type, int index )
 {
 	int idx;
-	static char *sound;
+	static char sound[32];
 
-	sound = "common/null.wav";
+	sprintf( sound, "common/null.wav" );
 
 	if ( type )
 	{
 		idx = ( index >> 8 ) & 0xFF;
 		sprintf( sound, "doors/doorstop%i.wav", idx );
 	}
-	else if ( !type )
+	else
 	{
 		idx = index & 0xFF;
 		sprintf( sound, "doors/doormove%i.wav", idx );

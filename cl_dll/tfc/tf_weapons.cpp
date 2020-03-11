@@ -51,7 +51,7 @@ static CBasePlayerWeapon *g_pWpns[32];
 
 float g_flApplyVel = 0.0;
 
-typedef struct laserdot_info_t
+struct laserdot_info_t
 {
 	Vector previousorigin;
 	int laserdotactive;
