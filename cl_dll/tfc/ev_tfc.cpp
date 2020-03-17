@@ -290,19 +290,22 @@ float EV_TFC_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *ve
 
 char *EV_TFC_DamageDecal( int entity )
 {
-	physent_s *pe;
+	physent_t *pe;
 	static char decalname[32];
 
 	pe = gEngfuncs.pEventAPI->EV_GetPhysent( entity );
 	*decalname = NULL;
 
-	if( pe && pe->rendermode != kRenderNormal )
+	if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) )
 	{
-		sprintf( decalname, "{bproof1" );
-	}
-	else if ( pe  )
-	{
-		sprintf( decalname, "{shot%i", gEngfuncs.pfnRandomLong( 1, 5 ) );
+		if ( pe->rendermode != kRenderNormal && pe->rendermode != kRenderTransAlpha )
+		{
+			sprintf( decalname, "{bproof1" );
+		}
+		else
+		{
+			sprintf( decalname, "{shot%i", gEngfuncs.pfnRandomLong( 1, 5 ) );
+		}
 	}
 
 	return decalname;
@@ -798,6 +801,7 @@ void EV_ReloadTFCShotgun( event_args_t *args )
 
 	idx = args->entindex;
 	VectorCopy( args->origin, origin );
+
 	if ( EV_IsLocal( idx ) )
 	{
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_RELOAD, 2 );
