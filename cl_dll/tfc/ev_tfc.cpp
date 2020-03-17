@@ -2059,59 +2059,42 @@ void EV_TFC_NailGrenade( event_args_t *args )
 
 void EV_TFC_GibCallback( tempent_s *ent, float frametime, float currenttime )
 {
-	if ( ent->entity.curstate.playerclass == 0 )
+	switch ( ent->entity.curstate.playerclass )
 	{
+	case 0:
 		if ( Length( ent->entity.baseline.origin ) == 0.0f )
 		{
 			ent->entity.curstate.playerclass = 1;
 			ent->entity.baseline.fuser1 = cl_giblife->value;
 		}
-
 		ent->die = gEngfuncs.GetClientTime() + 1.0f;
-		return;
-	}
-	else if ( ent->entity.curstate.playerclass == 1 )
-	{
-		ent->entity.baseline.fuser1 = ent->entity.baseline.fuser1 - frametime;
-
+		break;
+	case 1:
+		ent->entity.baseline.fuser1 -= frametime;
 		if ( ent->entity.baseline.fuser1 <= 0.0f )
 		{
 			ent->entity.curstate.playerclass = 2;
 		}
-
 		ent->die = gEngfuncs.GetClientTime() + 1.0f;
-		return;
-	}
-	else if ( ent->entity.curstate.playerclass == 2 )
-	{
+		break;
+	case 2:
 		ent->entity.curstate.playerclass = 3;
 		ent->entity.curstate.renderamt = 255;
 		ent->entity.curstate.rendermode = kRenderFxPulseFast;
-		ent->die = gEngfuncs.GetClientTime() + 2.5f;
-		return;
-	}
-	else if ( ent->entity.curstate.playerclass > 4 )
-	{
-		if ( Length( ent->entity.baseline.origin ) == 0.0f )
-		{
-			ent->entity.curstate.playerclass = 1;
-			ent->entity.baseline.fuser1 = cl_giblife->value;
-		}
-
-		ent->die = gEngfuncs.GetClientTime() + 1.0f;
-		return;
-	}
-
-	if ( ent->entity.curstate.renderamt <= 7 )
-	{
-		ent->entity.curstate.renderamt = 0;
-		ent->die = gEngfuncs.GetClientTime() + 0.2f;
-		ent->entity.curstate.playerclass = 4;
-	}
-	else
-	{
+		ent->die = gEngfuncs.GetClientTime() + 2.5f;	
+		break;
+	case 3:
 		ent->die = gEngfuncs.GetClientTime() + 1.0f;
 		ent->entity.curstate.renderamt = ent->entity.curstate.renderamt - frametime * 70.0f;
+		break;
+	default:
+		if ( ent->entity.curstate.renderamt <= 7 )
+		{
+			ent->entity.curstate.renderamt = 0;
+			ent->die = gEngfuncs.GetClientTime() + 0.2f;
+			ent->entity.curstate.playerclass = 4;
+		}
+		break;
 	}
 }
 
