@@ -773,7 +773,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 			if( player.m_pActiveItem )
 				player.m_pActiveItem->Holster();
 			
-			//speed stuff
+			// Velaron: TeamFortress_SetSpeed
 		}
 
 		gEngfuncs.pEventAPI->EV_StopSound( gEngfuncs.GetLocalPlayer()->index, CHAN_STATIC, "weapons/timer.wav" );
