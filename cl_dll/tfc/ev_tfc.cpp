@@ -2084,15 +2084,16 @@ void EV_TFC_GibCallback( tempent_s *ent, float frametime, float currenttime )
 		ent->die = gEngfuncs.GetClientTime() + 2.5f;	
 		break;
 	case 3:
-		ent->die = gEngfuncs.GetClientTime() + 1.0f;
-		ent->entity.curstate.renderamt = ent->entity.curstate.renderamt - frametime * 70.0f;
-		break;
-	default:
 		if ( ent->entity.curstate.renderamt <= 7 )
 		{
+			ent->entity.curstate.playerclass = 4;
 			ent->entity.curstate.renderamt = 0;
 			ent->die = gEngfuncs.GetClientTime() + 0.2f;
-			ent->entity.curstate.playerclass = 4;
+		}
+		else
+		{
+			ent->entity.curstate.renderamt = ent->entity.curstate.renderamt - frametime * 70.0f;
+			ent->die = gEngfuncs.GetClientTime() + 1.0f;
 		}
 		break;
 	}
