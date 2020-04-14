@@ -20,12 +20,12 @@ import os
 import sys
 
 ANDROID_NDK_ENVVARS = ['ANDROID_NDK_HOME', 'ANDROID_NDK']
-ANDROID_NDK_SUPPORTED = [10, 19, 20]
+ANDROID_NDK_SUPPORTED = [10, 19, 20, 21]
 ANDROID_NDK_HARDFP_MAX = 11 # latest version that supports hardfp
 ANDROID_NDK_GCC_MAX = 17 # latest NDK that ships with GCC
 ANDROID_NDK_UNIFIED_SYSROOT_MIN = 15
 ANDROID_NDK_SYSROOT_FLAG_MAX = 19 # latest NDK that need --sysroot flag
-ANDROID_NDK_API_MIN = { 10: 3, 19: 16, 20: 16 } # minimal API level ndk revision supports
+ANDROID_NDK_API_MIN = { 10: 3, 19: 16, 20: 16, 21: 16 } # minimal API level ndk revision supports
 ANDROID_64BIT_API_MIN = 21 # minimal API level that supports 64-bit targets
 
 # This class does support ONLY r10e and r19c/r20 NDK
@@ -217,6 +217,20 @@ class Android:
 			return os.path.join(self.gen_binutils_path(), 'strip.exe')
 		return os.path.join(self.gen_binutils_path(), 'strip')
 
+	def ar(self):
+		if self.is_host():
+			return 'llvm-ar'
+		if sys.platform == 'win32':
+			return os.path.join(self.gen_binutils_path(), 'ar.exe')
+		return os.path.join(self.gen_binutils_path(), 'ar')
+	
+	def objcopy(self):
+		if self.is_host():
+			return 'llvm-objcopy'
+		if sys.platform == 'win32':
+			return os.path.join(self.gen_binutils_path(), 'objcopy.exe')
+		return os.path.join(self.gen_binutils_path(), 'objcopy')
+
 	def system_stl(self):
 		# TODO: proper STL support
 		return os.path.abspath(os.path.join(self.ndk_home, 'sources', 'cxx-stl', 'system', 'include'))
@@ -304,7 +318,7 @@ class Android:
 			linkflags += ['--sysroot=%s/sysroot' % (self.gen_gcc_toolchain_path())]
 
 		if self.is_clang() or self.is_host():
-			linkflags += ['-fuse-ld=gold']
+			linkflags += ['-fuse-ld=lld']
 
 		linkflags += ['-Wl,--hash-style=both','-Wl,--no-undefined']
 		return linkflags
@@ -346,6 +360,8 @@ def configure(conf):
 		conf.environ['CC'] = android.cc()
 		conf.environ['CXX'] = android.cxx()
 		conf.environ['STRIP'] = android.strip()
+		conf.environ['AR'] = android.ar()
+		conf.environ['OBJCOPY'] = android.objcopy()
 		conf.env.CFLAGS += android.cflags()
 		conf.env.CXXFLAGS += android.cflags(True)
 		conf.env.LINKFLAGS += android.linkflags()
@@ -360,9 +376,9 @@ def configure(conf):
 
 		conf.msg('Selected Android NDK', '%s, version: %d' % (android.ndk_home, android.ndk_rev))
 		# no need to print C/C++ compiler, as it would be printed by compiler_c/cxx
-		conf.msg('... C/C++ flags', ' '.join(android.cflags()).replace(android.ndk_home, '$NDK/'))
-		conf.msg('... link flags', ' '.join(android.linkflags()).replace(android.ndk_home, '$NDK/'))
-		conf.msg('... ld flags', ' '.join(android.ldflags()).replace(android.ndk_home, '$NDK/'))
+		conf.msg('... C/C++ flags', android.cflags())
+		conf.msg('... link flags', android.linkflags())
+		conf.msg('... ld flags', android.ldflags())
 
 		# conf.env.ANDROID_OPTS = android
 		conf.env.DEST_OS2 = 'android'
