@@ -28,3 +28,4 @@ waf3-*
 *.creator
 *.user
 *.pyc
+*.pak

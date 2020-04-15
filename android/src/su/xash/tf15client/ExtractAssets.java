@@ -11,7 +11,7 @@ public class ExtractAssets
 {
 	public static String TAG = "ExtractAssets";
 	static SharedPreferences mPref;
-	public static int PAK_VERSION = 0;
+	public static int PAK_VERSION = 2;
 
     private static int chmod( String path, int mode )
 	{
@@ -48,7 +48,7 @@ public class ExtractAssets
 		try
 		{
 			InputStream is = context.getAssets().open( path );
-			File out = new File( context.getFilesDir().getPath() + "/" + path );
+			File out = new File( context.getExternalFilesDir(null).getPath() + "/" + path );
 			out.getParentFile().mkdirs();
 			chmod( out.getParent(), 0777 );
 			FileOutputStream os = new FileOutputStream( out );
@@ -60,7 +60,7 @@ public class ExtractAssets
 				os.write(buffer, 0, length);
 			}
 
-			chmod( context.getFilesDir().getPath() + "/" + path, 0777 );
+			chmod( context.getExternalFilesDir(null).getPath() + "/" + path, 0777 );
 			os.close();
 			is.close();
 		} 

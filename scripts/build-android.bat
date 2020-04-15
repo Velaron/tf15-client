@@ -23,4 +23,8 @@ call ./waf configure -o "build/%%i" -T debug --android=%%i,%TOOLCHAIN%,%API% --c
 call ./waf install --destdir="build/android" --strip
 )
 
+cd android
+python makepak.py pak/ assets/extras.pak
+cd ..
+
 call ./waf configure -T debug --build-apk build

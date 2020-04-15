@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
 		<!-- Uncomment this if you have assets -->
-		<!--<receiver android:name="in.celest.xash3d.InstallReceiver">
+		<receiver android:name="in.celest.xash3d.InstallReceiver">
 			<intent-filter android:priority="100">
 				<category android:name="android.intent.category.DEFAULT" />
 				<action android:name="android.intent.action.PACKAGE_ADDED"  />
@@ -28,6 +28,6 @@
 				<action android:name="android.intent.action.PACKAGE_REPLACED" />
 				<data android:scheme="package" />
 			</intent-filter>
-		</receiver>-->
+		</receiver>
     </application>
 </manifest> 

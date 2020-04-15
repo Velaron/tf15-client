@@ -108,7 +108,7 @@ public class LauncherActivity extends Activity
 		}
 
 		Button startButton = new Button( this );
-		startButton.setText( styleButtonString( "Launch " + "TF15-Client" + "!" ) );
+		startButton.setText( styleButtonString( "Launch TF15-Client!" ) );
 
 		LayoutParams startButtonParams = new LayoutParams( LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT );
 		startButtonParams.gravity = 5;
@@ -141,7 +141,7 @@ public class LauncherActivity extends Activity
 		cmdArgs.setText( mPref.getString( "argv", "-dev 3 -log" ) );
 
 		// Uncomment this if you have pak file
-		// ExtractAssets.extractPAK( this, false );
+		ExtractAssets.extractPAK( this, false );
 	}
 
 	private Intent prepareIntent( Intent i )
@@ -164,7 +164,7 @@ public class LauncherActivity extends Activity
 		*/
 
 		if( argv.length() != 0 )
-			i.putExtra( "argv", argv) ;
+			i.putExtra( "argv", argv );
 
 		i.putExtra( "gamedir", "tfc" );
 
@@ -180,8 +180,7 @@ public class LauncherActivity extends Activity
 			i.putExtra( "gamelibdir", getFilesDir().getParentFile().getPath() + "/lib" );
 		}
 		
-		// if you are using pak file, uncomment this:
-		// i.putExtra("pakfile", getFilesDir().getAbsolutePath() + "/extras.pak");
+		i.putExtra("pakfile", getExternalFilesDir(null).getAbsolutePath() + "/extras.pak");
 
 		// you may pass extra enviroment variables to game
 		// it is availiable from game code with getenv() function
