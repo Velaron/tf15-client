@@ -39,6 +39,13 @@ cvar_t *cl_viewbob = NULL;
 cvar_t *tfc_newmodels;
 void ShutdownInput( void );
 
+#include "progdefs.h"
+#include "screenfade.h"
+#include "shake.h"
+#include "pm_shared.h"
+extern globalvars_t *gpGlobals;
+const Vector& GetTeamColor( int team_no );
+
 //DECLARE_MESSAGE( m_Logo, Logo )
 int __MsgFunc_Logo( const char *pszName, int iSize, void *pbuf )
 {
@@ -100,6 +107,7 @@ void __CmdFunc_ForceCloseCommandMenu( void )
 
 void __CmdFunc_ToggleServerBrowser( void )
 {
+	return;
 }
 
 int __MsgFunc_ValClass( const char *pszName, int iSize, void *pbuf )
@@ -139,12 +147,12 @@ int __MsgFunc_RandomPC( const char *pszName, int iSize, void *pbuf )
  
 int __MsgFunc_ServerName( const char *pszName, int iSize, void *pbuf )
 {
-	return 0;
+	return gHUD.MsgFunc_ServerName( pszName, iSize, pbuf );
 }
 
 int __MsgFunc_Spectator( const char *pszName, int iSize, void *pbuf )
 {
-	return 0;
+	return gHUD.MsgFunc_Spectator( pszName, iSize, pbuf );
 }
 
 int __MsgFunc_AllowSpec( const char *pszName, int iSize, void *pbuf )
@@ -152,17 +160,15 @@ int __MsgFunc_AllowSpec( const char *pszName, int iSize, void *pbuf )
 	return gHUD.MsgFunc_AllowSpec( pszName, iSize, pbuf );
 }
 
-/*
-int __MsgFunc_SpecFade(const char *pszName, int iSize, void *pbuf)
+int __MsgFunc_SpecFade( const char *pszName, int iSize, void *pbuf )
 {
 	return gHUD.MsgFunc_SpecFade( pszName, iSize, pbuf );
 }
 
-int __MsgFunc_ResetFade(const char *pszName, int iSize, void *pbuf)
+int __MsgFunc_ResetFade( const char *pszName, int iSize, void *pbuf )
 {
 	return gHUD.MsgFunc_ResetFade( pszName, iSize, pbuf );
 }
- */
 
 // This is called every time the DLL is loaded
 void CHud::Init( void )
@@ -188,15 +194,10 @@ void CHud::Init( void )
 	HOOK_MESSAGE( BuildSt );
 	HOOK_MESSAGE( RandomPC );
 	HOOK_MESSAGE( ServerName );
-
 	HOOK_MESSAGE( Spectator );
 	HOOK_MESSAGE( AllowSpec );
-/*
 	HOOK_MESSAGE( SpecFade );
 	HOOK_MESSAGE( ResetFade );
-*/
-
-	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );
 
 	CVAR_CREATE( "hud_classautokill", "1", FCVAR_ARCHIVE | FCVAR_USERINFO );		// controls whether or not to suicide immediately on TF class switch
@@ -248,8 +249,8 @@ void CHud::Init( void )
 	m_StatusIcons.Init();
 	m_MOTD.Init();
 	m_Scoreboard.Init();
-
 	m_Menu.Init();
+	//m_Benchmark.Init();
 	
 	MsgFunc_ResetHUD( 0, 0, NULL );
 }
@@ -429,6 +430,7 @@ void CHud::VidInit( void )
 	m_StatusIcons.VidInit();
 	m_Scoreboard.VidInit();
 	m_MOTD.VidInit();
+	//m_Benchmark.VidInit();
 }
 
 int CHud::MsgFunc_Logo( const char *pszName,  int iSize, void *pbuf )
@@ -716,7 +718,6 @@ int CHud::MsgFunc_RandomPC( const char *pszName,  int iSize, void *pbuf )
 	return 1;
 }
 
-/*
 int CHud::MsgFunc_ResetFade( const char *pszName,  int iSize, void *pbuf )
 {
 	if ( !gpGlobals )
@@ -743,6 +744,8 @@ int CHud::MsgFunc_ResetFade( const char *pszName,  int iSize, void *pbuf )
 
 	return 1;
 }
+
+#define BUILD_TELEPORTER_FADE_OUT 0
 
 int CHud::MsgFunc_SpecFade( const char *pszName,  int iSize, void *pbuf )
 {
@@ -803,4 +806,28 @@ int CHud::MsgFunc_SpecFade( const char *pszName,  int iSize, void *pbuf )
 
 	return 1;
 }
-*/
+
+int CHud::MsgFunc_Spectator( const char *pszName,  int iSize, void *pbuf )
+{
+	int idx;
+
+	BEGIN_READ( pbuf, iSize );
+	idx = READ_BYTE();
+
+	if ( idx < MAX_PLAYERS )
+	{
+		g_IsSpectator[idx] = READ_BYTE();
+	}
+
+	return 1;
+}
+
+int CHud::MsgFunc_ServerName( const char *pszName,  int iSize, void *pbuf )
+{
+	BEGIN_READ( pbuf, iSize );
+	
+	strncpy( m_szServerName, READ_STRING(), 64 );
+	m_szServerName[63] = '\0';
+
+	return 1;
+}

@@ -61,6 +61,12 @@ extern float g_flSpinDownTime[33];
 extern float g_flSpinUpTime[33];
 extern cvar_t *cl_lw;
 
+Vector g_vRed = Vector( 255.0f, 0.0f, 0.0f );
+Vector g_vBlue = Vector( 0.0f, 0.0f, 255.0f );
+Vector g_vYellow = Vector( 255.0f, 255.0f, 0.0f );
+Vector g_vGreen = Vector( 0.0f, 255.0f, 0.0f );
+Vector g_vBlack = Vector( 0.0f, 0.0f, 0.0f );
+
 extern "C"
 {
 void EV_TFC_Axe( struct event_args_s *args );
@@ -2288,6 +2294,23 @@ char *EV_TFC_LookupDoorSound( int type, int index )
 void EV_TFC_Knife( event_args_t *args )
 {
 	
+}
+
+const Vector& GetTeamColor( int team_no )
+{
+	switch( team_no )
+	{
+	case 0:
+		return g_vBlue;
+	case 1:
+		return g_vRed;
+	case 2:
+		return g_vYellow;
+	case 3:
+		return g_vGreen;
+	default:
+		return g_vBlack;
+	}
 }
 
 void ClearEventList( void )

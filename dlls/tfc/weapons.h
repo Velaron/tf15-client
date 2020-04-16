@@ -805,16 +805,17 @@ enum ac_e {
 class CTFAssaultC : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	void Holster(void);
-	void WeaponIdle(void);
-	BOOL Deploy(void);
-	BOOL ShouldWeaponIdle() {return 1;};
-	int AddToPlayer(CBasePlayer *pPlayer);
-	void PrimaryAttack(void);
-	void Fire(void);
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
+	void Holster( void );
+	void WeaponIdle( void );
+	BOOL Deploy( void );
+	BOOL ShouldWeaponIdle( void ) { return true; };
+	int AddToPlayer( CBasePlayer *pPlayer );
+	void PrimaryAttack( void );
+	void Fire( void );
+	int iItemSlot( void ) { return 3; };
 
 private:
 	int m_iWeaponState;
