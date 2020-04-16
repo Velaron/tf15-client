@@ -2270,17 +2270,16 @@ char *EV_TFC_LookupDoorSound( int type, int index )
 	int idx;
 	static char sound[32];
 
-	sprintf( sound, "common/null.wav" );
+	strcpy( sound, "common/null.wav" );
 
-	if ( type )
+	idx = (char)index;
+
+	if ( idx > 0 )
 	{
-		idx = ( index >> 8 ) & 0xFF;
-		sprintf( sound, "doors/doorstop%i.wav", idx );
-	}
-	else
-	{
-		idx = index & 0xFF;
-		sprintf( sound, "doors/doormove%i.wav", idx );
+		if ( type )
+			sprintf( sound, "doors/doorstop%i.wav", idx );
+		else
+			sprintf( sound, "doors/doormove%i.wav", idx );
 	}
 
 	return sound;
