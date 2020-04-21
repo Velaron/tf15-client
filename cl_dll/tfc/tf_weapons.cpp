@@ -69,12 +69,12 @@ CTFFlamethrower g_Flame;
 CTFIncendiaryC g_IC;
 CTFRailgun g_Rail;
 CTFRpg g_RPG;
-//CTFAutoRifle g_AR;
+CTFAutoRifle g_AR;
 CTFAssaultC g_AC;
 CTFGrenadeLauncher g_GL;
 CTFPipebombLauncher g_PL;
 CTFSniperRifle g_Sniper;
-//CTFKnife g_Knife;
+CTFKnife g_Knife;
 CTFSpanner g_Spanner;
 //CTFMedikit g_Medkit;
 CTFAxe g_Crowbar;
@@ -618,12 +618,12 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_IC, &player );
 	HUD_PrepEntity( &g_Rail, &player );
 	HUD_PrepEntity( &g_RPG, &player );
-	//HUD_PrepEntity( &g_AR, &player );
+	HUD_PrepEntity( &g_AR, &player );
 	HUD_PrepEntity( &g_AC, &player );
 	HUD_PrepEntity( &g_GL, &player );
 	HUD_PrepEntity( &g_PL, &player );
 	HUD_PrepEntity( &g_Sniper, &player );
-	//HUD_PrepEntity( &g_Knife, &player );
+	HUD_PrepEntity( &g_Knife, &player );
 	HUD_PrepEntity( &g_Spanner, &player );
 	//HUD_PrepEntity( &g_Medkit, &player );
 	HUD_PrepEntity( &g_Crowbar, &player );
@@ -712,7 +712,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 			pWeapon = &g_Sniper;
 			break;
 		case WEAPON_AUTO_RIFLE:
-			//pWeapon = &g_AR;
+			pWeapon = &g_AR;
 			break;
 		case WEAPON_TF_SHOTGUN:
 			pWeapon = &g_Gun;
@@ -751,7 +751,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 			pWeapon = &g_PL;
 			break;
 		case WEAPON_KNIFE:
-			//pWeapon = &g_Knife;
+			pWeapon = &g_Knife;
 			break;
 	}
 

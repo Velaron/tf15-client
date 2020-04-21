@@ -13,7 +13,7 @@ LINK_ENTITY_TO_CLASS( tf_weapon_axe, CTFAxe )
 void CTFAxe::Spawn()
 {
     Precache();
-    m_iId = 5;
+    m_iId = WEAPON_AXE;
     m_iClip = -1;
     pev->solid = SOLID_TRIGGER;
 }
@@ -47,7 +47,7 @@ int CTFAxe::GetItemInfo( ItemInfo *p )
     p->iSlot = 0;
     p->iPosition = 3;
     p->iFlags = 0;
-    p->iId = WEAPON_AXE;
+    p->iId = m_iId = WEAPON_AXE;
     p->iWeight = 0;
     return 1;
 }
@@ -146,7 +146,7 @@ void CTFSpanner::Spawn()
 {
     Precache();
 
-    m_iId = 4;
+    m_iId = WEAPON_SPANNER;
     SET_MODEL(ENT(pev), "models/w_egon.mdl");
     m_iDefaultAmmo = 50;
     pev->solid = SOLID_TRIGGER;
@@ -179,7 +179,7 @@ int CTFSpanner::GetItemInfo( ItemInfo *p )
     p->iPosition = 2;
     p->iFlags = 0;
     p->iMaxClip = -1;
-    p->iId = 4;
+    p->iId = m_iId = WEAPON_SPANNER;
     p->iWeight = 0;
     return 1;
 }
@@ -198,4 +198,66 @@ void CTFSpanner::WeaponIdle( void )
         m_flTimeWeaponIdle = 12.5;
         SendWeaponAnim(0, 1);
     }
+}
+
+void CTFKnife::Spawn( void )
+{
+	m_iClip = -1;
+	m_iId = WEAPON_KNIFE;
+	pev->solid = SOLID_TRIGGER;
+	classid = 0;
+}
+
+void CTFKnife::Precache( void )
+{
+	PRECACHE_MODEL( "models/v_tfc_knife.mdl" );
+	PRECACHE_MODEL( "models/p_knife.mdl" );
+	PRECACHE_MODEL( "models/p_knife2.mdl" );
+	m_usAxe = PRECACHE_EVENT( 1, "events/wpn/tf_axe.sc" );
+	m_usAxeDecal = PRECACHE_EVENT( 1, "events/wpn/tf_axedecal.sc" );
+	m_usKnife = PRECACHE_EVENT( 1, "events/wpn/tf_knife.sc" );
+}
+
+void CTFKnife::Holster( void )
+{
+	m_pPlayer->m_flNextAttack = 0.5f;
+	SendWeaponAnim( KNIFE_HOLSTER, 1 );
+}
+
+int CTFKnife::GetItemInfo( ItemInfo *p )
+{
+    p->pszAmmo1 = NULL;
+    p->pszName = STRING( pev->classname );
+    p->iMaxAmmo1 = -1;
+    p->pszAmmo2 = NULL;
+    p->iMaxAmmo2 = -1;
+    p->iSlot = 0;
+    p->iPosition = 4;
+    p->iFlags = 0;
+    p->iMaxClip = -1;
+    p->iId = m_iId = WEAPON_KNIFE;
+    p->iWeight = 0;
+    return 1;
+}
+
+BOOL CTFKnife::Deploy( void )
+{
+	return DefaultDeploy( "models/v_tfc_knife.mdl", "models/p_knife.mdl", KNIFE_DRAW, "knife", 1 );
+}
+
+void CTFKnife::PlayAnim( int iAnimType )
+{
+	if ( iAnimType == 0 || iAnimType == 1 )
+	{
+		SendWeaponAnim( KNIFE_ATTACK1, 1 );
+	}
+}
+
+void CTFKnife::WeaponIdle( void )
+{
+	if ( m_flTimeWeaponIdle <= 0.0f )
+	{
+		m_flTimeWeaponIdle = 7.5f;
+		SendWeaponAnim( RANDOM_LONG( 0, 1 ), 1 );
+	}
 }

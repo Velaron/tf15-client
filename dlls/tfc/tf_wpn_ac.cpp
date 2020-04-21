@@ -14,7 +14,7 @@ void CTFAssaultC::Spawn()
 {
 	pev->classname = MAKE_STRING( "tf_weapon_ac" );
 	Precache();
-	m_iId = 4;
+	m_iId = WEAPON_ASSAULT_CANNON;
 	m_iDefaultAmmo = 25;
 	m_iWeaponState = 0;
 	pev->solid = SOLID_TRIGGER;
@@ -41,21 +41,19 @@ void CTFAssaultC::Precache()
 
 int CTFAssaultC::GetItemInfo( ItemInfo *p )
 {
-	p->pszName = STRING( pev->classname );
 	p->pszAmmo1 = "buckshot";
-
+	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
 		p->iMaxAmmo1 = m_pPlayer->maxammo_shells;
 	else
 		p->iMaxAmmo1 = 200;
-	
 	p->pszAmmo2 = NULL;
 	p->iMaxAmmo2 = -1;
 	p->iMaxClip = -1;
 	p->iSlot = 4;
 	p->iPosition = 3;
 	p->iFlags = 0;
-	p->iId = WEAPON_ASSAULT_CANNON;
+	p->iId = m_iId = WEAPON_ASSAULT_CANNON;
 	p->iWeight = 15;
 	return 1;
 }

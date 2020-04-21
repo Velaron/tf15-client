@@ -14,7 +14,7 @@ void CTFGrenadeLauncher::Spawn()
 {
     Precache();
     SET_MODEL( ENT( pev ), "models/w_gauss.mdl" );
-    m_iId = 12;
+    m_iId = WEAPON_GRENADE_LAUNCHER;
     m_iDefaultAmmo = 50;
     m_fReloadTime = 0.666667;
     pev->solid = SOLID_TRIGGER;
@@ -54,7 +54,7 @@ int CTFGrenadeLauncher::GetItemInfo( ItemInfo *p )
     p->iPosition = 3;
     p->iFlags = 0;
     p->iMaxClip = 6;
-    p->iId = 12;
+    p->iId = m_iId = WEAPON_GRENADE_LAUNCHER;
     p->iWeight = 15;
     return 1;
 }
@@ -207,7 +207,7 @@ int CTFPipebombLauncher::GetItemInfo( ItemInfo *p )
     p->iPosition = 4;
     p->iFlags = 0;
     p->iMaxClip = 6;
-    p->iId = WEAPON_PIPEBOMB_LAUNCHER;
+    p->iId = m_iId = WEAPON_PIPEBOMB_LAUNCHER;
     p->iWeight = 15;
     return 1;
 }

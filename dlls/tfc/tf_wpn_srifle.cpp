@@ -80,7 +80,7 @@ int CTFSniperRifle::GetItemInfo( ItemInfo *p )
     p->iPosition = 1;
     p->iFlags = 0;
     p->iMaxClip = -1;
-    p->iId = 6;
+    p->iId = m_iId = 6;
     p->iWeight = 10;
     return 1;
 }

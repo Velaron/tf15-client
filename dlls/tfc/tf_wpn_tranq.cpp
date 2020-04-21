@@ -8,98 +8,111 @@
 #include "gamerules.h"
 #include "tf_defs.h"
 
-// #include "cdll_int.h"
-// extern cl_enginefunc_t gEngfuncs; 
-
 LINK_ENTITY_TO_CLASS( tf_weapon_tranq, CTFTranq )
 
-void CTFTranq::Spawn()
+void CTFTranq::Spawn( void )
 {
-    Precache();
-    pev->classname = MAKE_STRING("tf_weapon_tranq");
-    m_iId = WEAPON_TRANQ;
-    m_iDefaultAmmo = 17;
-    pev->solid = SOLID_TRIGGER;
+	pev->classname = MAKE_STRING( "tf_weapon_tranq" );
+	Precache();
+	m_iId = WEAPON_TRANQ;
+	m_iDefaultAmmo = 17;
+	pev->solid = SOLID_TRIGGER;
 }
 
 void CTFTranq::Precache()
 {
-    PRECACHE_MODEL("models/v_tfc_pistol.mdl");
-    PRECACHE_MODEL("models/p_spygun.mdl");
-    PRECACHE_MODEL("models/p_9mmhandgun2.mdl");
-    PRECACHE_SOUND("weapons/dartgun.wav");
-    m_usFireTranquilizer = PRECACHE_EVENT(1, "events/wpn/tf_tranq.sc");
+	PRECACHE_MODEL( "models/v_tfc_pistol.mdl" );
+	PRECACHE_MODEL( "models/p_spygun.mdl" );
+	PRECACHE_MODEL( "models/p_9mmhandgun2.mdl" );
+	PRECACHE_SOUND( "weapons/dartgun.wav" );
+	m_usFireTranquilizer = PRECACHE_EVENT( 1, "events/wpn/tf_tranq.sc" );
 }
 
 int CTFTranq::GetItemInfo( ItemInfo *p )
 {
-    p->pszAmmo1 = "buckshot";
-    p->pszName = STRING( pev->classname );
-    p->iMaxAmmo1 = 40;
-    p->pszAmmo2 = 0;
-    p->iMaxAmmo2 = -1;
-    p->iSlot = 1;
-    p->iPosition = 4;
-    p->iFlags = 0;
-    p->iMaxClip = -1;
-    p->iId = WEAPON_TRANQ;
-    p->iWeight = 10;
-    return 1;
-}
-
-BOOL CTFTranq::Deploy()
-{
-	return DefaultDeploy( "models/v_tfc_pistol.mdl", "models/p_spygun.mdl", TRANQ_DRAW, 0, 0, 1);
+	p->pszAmmo1 = "buckshot";
+	p->pszName = STRING( pev->classname );
+	if ( m_pPlayer )
+		p->iMaxAmmo1 = m_pPlayer->maxammo_shells;
+	else
+		p->iMaxAmmo1 = 200;
+	p->pszAmmo2 = NULL;
+	p->iMaxAmmo2 = -1;
+	p->iMaxClip = -1;
+	p->iSlot = 1;
+	p->iPosition = 4;
+	p->iFlags = 0;
+	p->iId = m_iId = WEAPON_TRANQ;
+	p->iWeight = 10;
+	return 1;
 }
 
 void CTFTranq::WeaponIdle( void )
 {
-    ResetEmptySound();
+	ResetEmptySound();
 
-    if(m_flTimeWeaponIdle <= 0.0)
-    {
-        switch(RANDOM_LONG(0, 2))
-        {
-            case 1:
-            {
-                m_flTimeWeaponIdle = 3.75;
-                SendWeaponAnim(TRANQ_IDLE1, 1, 1);
-                // gEngfuncs.Con_Printf("1 %.5f\n", m_flTimeWeaponIdle);
-            }
-            break;
-            case 2:
-            {
-                m_flTimeWeaponIdle = 3.0625;
-                SendWeaponAnim(TRANQ_IDLE3, 1, 1);
-                // gEngfuncs.Con_Printf("3 %.5f\n", m_flTimeWeaponIdle);
-            }
-            break;
-            default:
-            {
-                m_flTimeWeaponIdle = 2.5;
-                SendWeaponAnim(TRANQ_IDLE2, 1, 1);
-                // gEngfuncs.Con_Printf("2 %.5f\n", m_flTimeWeaponIdle);
-            }
-            break;
-        }
-    }
+	if ( m_flTimeWeaponIdle <= 0.0f )
+	{
+		int iRand = UTIL_SharedRandomLong( m_pPlayer->random_seed, 0, 20 );
+
+		if ( iRand == 3 * ( iRand / 3 ) )
+		{
+			m_flTimeWeaponIdle = 3.0625f;
+			SendWeaponAnim( TRANQ_IDLE3, 1 );
+		}
+		else if ( iRand + 1 == 3 * ( ( iRand + 1 ) / 3 ) )
+		{
+			m_flTimeWeaponIdle = 3.75f;
+			SendWeaponAnim( TRANQ_IDLE1, 1 );
+		}
+		else
+		{
+			m_flTimeWeaponIdle = 2.5f;
+			SendWeaponAnim( TRANQ_IDLE2, 1 );
+		}
+	}
 }
 
-void CTFTranq::PrimaryAttack()
+BOOL CTFTranq::Deploy( void )
 {
-    if(m_pPlayer->ammo_shells <= 0)
-    {
-        PlayEmptySound();
-        m_flNextPrimaryAttack = 0.2;
-        return;
-    }
+	BOOL result;
 
-    m_pPlayer->m_iWeaponVolume = 600;
-    m_pPlayer->m_iWeaponFlash = 256;
-    PLAYBACK_EVENT_FULL(1, ENT(pev), m_usFireTranquilizer, 0, (float *)&g_vecZero, (float *)&g_vecZero, 0, 0, 0, 0, 0, 0);
-    m_pPlayer->pev->effects |= EF_MUZZLEFLASH;
-    m_pPlayer->SetAnimation(PLAYER_ATTACK1);
-    //CreateNail
-    m_flTimeWeaponIdle = 12.5;
-    m_flNextPrimaryAttack = 1.5;
+	pev->body = 1;
+	result = DefaultDeploy( "models/v_tfc_pistol.mdl", "models/p_spygun.mdl", TRANQ_DRAW, "onehanded", 1 );
+
+	if ( result )
+	{
+		SendWeaponAnim( TRANQ_DRAW, 0 );
+	}
+
+	return result;
+}
+
+void CTFTranq::PrimaryAttack( void )
+{
+	Vector p_vecOrigin, p_vecAngles;
+
+	if ( m_pPlayer->ammo_shells <= 0)
+	{
+		PlayEmptySound();
+		m_flNextPrimaryAttack = GetNextAttackDelay( 0.2f );
+	}
+	else
+	{
+		m_pPlayer->m_iWeaponVolume = 600;
+		m_pPlayer->m_iWeaponFlash = 256;
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireTranquilizer, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
+		p_vecOrigin = m_pPlayer->GetGunPosition();
+		p_vecAngles = m_pPlayer->pev->v_angle;
+		//CTFNailgunNail::CreateTranqNail( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
+		m_pPlayer->ammo_shells--;
+
+		if ( m_pPlayer->ammo_nails < 0 )
+			m_pPlayer->ammo_nails = 0;
+
+		m_flTimeWeaponIdle = 12.5f;
+		m_flNextPrimaryAttack = GetNextAttackDelay( 1.5f );
+	}
 }

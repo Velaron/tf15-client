@@ -237,29 +237,28 @@ public:
 	virtual CBasePlayerItem *GetWeaponPtr( void ) { return (CBasePlayerItem *)this; };
 	float GetNextAttackDelay( float delay );
 
-	float m_flPumpTime;
-	int		m_fInSpecialReload;									// Are we in the middle of a reload for the shotguns
 	float	m_flNextPrimaryAttack;								// soonest time ItemPostFrame will call PrimaryAttack
 	float	m_flNextSecondaryAttack;							// soonest time ItemPostFrame will call SecondaryAttack
 	float	m_flTimeWeaponIdle;									// soonest time ItemPostFrame will call WeaponIdle
+	float	m_flNextReload;
+	float	m_flPumpTime;
+	float	m_fReloadTime;
+	float 	m_fAimedDamage;
+	float 	m_fNextAimBonus;
+	float 	m_fInZoom;
+	int 	m_iWeaponState;
+	int		m_fInReload;										// Are we in the middle of a reload;
+	int		m_fInSpecialReload;									// Are we in the middle of a reload for the shotguns
 	int		m_iPrimaryAmmoType;									// "primary" ammo index into players m_rgAmmo[]
 	int		m_iSecondaryAmmoType;								// "secondary" ammo index into players m_rgAmmo[]
 	int		m_iClip;											// number of shots left in the primary weapon clip, -1 it not used
 	int		m_iClientClip;										// the last version of m_iClip sent to hud dll
 	int		m_iClientWeaponState;								// the last version of the weapon state sent to hud dll (is current weapon, is on target)
-	int		m_fInReload;										// Are we in the middle of a reload;
-
 	int		m_iDefaultAmmo;// how much ammo you get when you pick up this weapon as placed by a level designer.
 	
 	// hle time creep vars
 	float	m_flPrevPrimaryAttack;
 	float	m_flLastFireTime;
-
-	float m_flNextReload;
-	int m_iWeaponState;
-	float m_fAimedDamage;
-	float m_fNextAimBonus;
-	float m_fInZoom;
 };
 
 class CBasePlayerAmmo : public CBaseEntity
@@ -494,6 +493,22 @@ public:
 	unsigned short m_usAxeDecal;
 };
 
+
+class CTFKnife : public CTFAxe
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	void Holster( void );
+	int GetItemInfo( ItemInfo *p );
+	BOOL Deploy( void );
+	void WeaponIdle( void );
+
+private:
+	void PlayAnim( int iAnimType );
+	unsigned short m_usKnife;
+};
+
 enum spanner_e {
 	SPANNER_IDLE = 0,
 	SPANNER_ATTACK1 = 1,
@@ -558,6 +573,23 @@ public:
 		void UpdateSpot(void);
 };
 
+class CTFAutoRifle : public CBasePlayerWeapon
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
+	void Holster( void );
+	void PrimaryAttack( void );
+	BOOL Deploy( void );
+	void WeaponIdle( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
+	int iItemSlot( void ) { return 3; };
+
+private:
+	unsigned short m_usFireAutoRifle;
+};
+
 enum shotgun_e {
 	SHOTGUN_IDLE = 0,
 	SHOTGUN_FIRE = 1,
@@ -574,27 +606,19 @@ enum shotgun_e {
 class CTFShotgun : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	int AddToPlayer(CBasePlayer *pPlayer);
-	void PrimaryAttack(void);
-	BOOL Deploy();
-	void Reload(void);
-	void WeaponIdle(void);
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
+	BOOL Deploy( void );
+	void PrimaryAttack( void );
+	void ItemPostFrame( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
+	void WeaponIdle( void );
+	void Reload( void );
 
-	int m_fInReload;
-	float m_flNextReload;
 	int m_iShell;
-    int m_iMaxClipSize;
-    int m_iShellsReloaded;
-    float m_fReloadTime;
-
-	virtual BOOL UseDecrement( void )
-	{
-		return true;
-	}
-
+	int m_iMaxClipSize;
+	int m_iShellsReloaded;
 	unsigned short m_usReloadShotgun;
 	unsigned short m_usPumpShotgun;
 
@@ -605,11 +629,11 @@ private:
 class CTFSuperShotgun : public CTFShotgun
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	void PrimaryAttack(void);
-	BOOL Deploy();
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
+	BOOL Deploy( void );
+	void PrimaryAttack( void );
 
 private:
 	unsigned short m_usFireSuperShotgun;
@@ -629,18 +653,14 @@ enum nailgun_e {
 class CTFNailgun : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	int AddToPlayer(CBasePlayer *pPlayer);
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
 	void PrimaryAttack(void);
-	BOOL Deploy();
-	void WeaponIdle(void);
-
-	virtual BOOL UseDecrement( void )
-	{
-		return true;
-	}
+	BOOL Deploy( void );
+	void WeaponIdle( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
+	int iItemSlot( void ) { return 2; };
 
 	unsigned short m_usFireNailGun;
 };
@@ -648,10 +668,11 @@ public:
 class CTFSuperNailgun : public CTFNailgun
 {
 public:
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	void PrimaryAttack(void);
-	BOOL Deploy();
+	int GetItemInfo( ItemInfo *p );
+	void Precache( void );
+	void PrimaryAttack( void );
+	BOOL Deploy( void );
+	int iItemSlot( void ) { return 4; };
 
 private:
 	unsigned short m_usFireSuperNailGun;
@@ -726,15 +747,16 @@ enum flamethrower_e {
 class CTFFlamethrower : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	BOOL CanHolster(void) {return 1;};
-	void Holster(void);
-	void WeaponIdle(void);
-	BOOL Deploy(void);
-	int AddToPlayer(CBasePlayer *pPlayer);
-	void PrimaryAttack(void);
+	void Spawn( void );
+	int GetItemInfo( ItemInfo *p );
+	BOOL CanHolster( void ) { return 1; };
+	void Holster( void );
+	void PrimaryAttack( void );
+	BOOL Deploy( void );
+	void Precache( void );
+	void WeaponIdle( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
+	int iItemSlot( void ) { return 5; };
 
 private:
 	unsigned short m_usFireFlame;
@@ -758,35 +780,35 @@ enum rpg_e {
 class CTFRpg : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	BOOL CanHolster(void) {return 1;};
-	void Holster(void);
-	void WeaponIdle(void);
-	void Reload(void);
-	BOOL Deploy(void);
-	int AddToPlayer(CBasePlayer *pPlayer);
-	void PrimaryAttack(void);
+	void Spawn( void );
+	int GetItemInfo( ItemInfo *p );
+	BOOL CanHolster( void ) { return 1; };
+	void Holster( void );
+	void Precache( void );
+	void Reload( void );
+	void WeaponIdle( void );
+	BOOL Deploy( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
+	void PrimaryAttack( void );
+	int iItemSlot( void ) { return 5; };
 
 private:
 	unsigned short m_usFireRPG;
-	float m_fReloadTime;
-	float m_flNextReload;
 };
 
 class CTFIncendiaryC : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	BOOL CanHolster(void) {return 1;};
-	void Holster(void);
-	void WeaponIdle(void);
-	BOOL Deploy(void);
-	int AddToPlayer(CBasePlayer *pPlayer);
-	void PrimaryAttack(void);
+	void Spawn( void );
+	int GetItemInfo( ItemInfo *p );
+	BOOL CanHolster( void ) { return 1; };
+	void Holster( void );
+	void Precache( void );
+	void WeaponIdle( void );
+	BOOL Deploy( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
+	void PrimaryAttack( void );
+	int iItemSlot( void ) { return 4; };
 
 private:
 	unsigned short m_usFireIC;
@@ -838,12 +860,13 @@ enum railgun_e {
 class CTFRailgun : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	void WeaponIdle(void);
-	BOOL Deploy(void);
-	void PrimaryAttack(void);
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
+	BOOL Deploy( void );
+	void WeaponIdle( void );
+	void PrimaryAttack( void );
+	int iItemSlot( void ) { return 2; };
 
 private:
 	unsigned short m_usFireRail;
@@ -865,12 +888,12 @@ enum tranq_e {
 class CTFTranq : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	void WeaponIdle(void);
-	BOOL Deploy(void);
-	void PrimaryAttack(void);
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
+	void WeaponIdle( void );
+	BOOL Deploy( void );
+	void PrimaryAttack( void );
 	virtual int iItemSlot( void ) { return 2; }
 
 private:
