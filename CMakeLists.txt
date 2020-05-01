@@ -27,7 +27,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 include(VSForceXPToolchain) # Force XP toolchain for Visual Studio
 
-project (HLSDK-XASH3D)
+project (TF15-CLIENT)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -39,12 +39,13 @@ option(USE_VGUI2 "Enable VGUI2. UNDONE" OFF)
 option(USE_VOICEMGR "Enable VOICE MANAGER." OFF)
 option(BUILD_CLIENT "Build client dll" ON)
 option(BUILD_SERVER "Build server dll" OFF)
+option(BUILD_MENU "Build menu dll" ON)
 option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" OFF)
 option(64BIT "Disable auto -m32 appending to compiler flags" OFF)
-set(GAMEDIR "valve" CACHE STRING "Gamedir path")
+set(GAMEDIR "tfc" CACHE STRING "Gamedir path")
 set(SERVER_INSTALL_DIR "dlls" CACHE STRING "Where put server dll")
 set(CLIENT_INSTALL_DIR "cl_dlls" CACHE STRING "Where put client dll")
-set(SERVER_LIBRARY_NAME "hl" CACHE STRING "Library name for Linux/MacOS/Windows")
+set(SERVER_LIBRARY_NAME "tfc" CACHE STRING "Library name for Linux/MacOS/Windows")
 
 #-----------------
 # MAIN BUILD CODE \
@@ -54,7 +55,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT 64BIT)
 	if(MSVC)
-		error("UNDONE: set 32 build flags")
+		message(FATAL_ERROR "UNDONE: set 32 build flags")
 	else()
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_C_FLAGS}")
@@ -104,6 +105,10 @@ endif()
 
 if(BUILD_SERVER)
 	add_subdirectory(dlls)
+endif()
+
+if(BUILD_MENU)
+	add_subdirectory(mainui)
 endif()
 
 if(NOT BUILD_SERVER AND NOT BUILD_CLIENT)
