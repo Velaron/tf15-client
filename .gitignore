@@ -30,3 +30,4 @@ waf3-*
 *.user
 *.pyc
 *.pak
+*.lib

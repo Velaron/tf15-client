@@ -45,6 +45,7 @@ option(64BIT "Disable auto -m32 appending to compiler flags" OFF)
 set(GAMEDIR "tfc" CACHE STRING "Gamedir path")
 set(SERVER_INSTALL_DIR "dlls" CACHE STRING "Where put server dll")
 set(CLIENT_INSTALL_DIR "cl_dlls" CACHE STRING "Where put client dll")
+set(MENU_INSTALL_DIR "cl_dlls" CACHE STRING "Where to put menu dll")
 set(SERVER_LIBRARY_NAME "tfc" CACHE STRING "Library name for Linux/MacOS/Windows")
 
 #-----------------
