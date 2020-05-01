@@ -61,11 +61,11 @@ extern float g_flSpinDownTime[33];
 extern float g_flSpinUpTime[33];
 extern cvar_t *cl_lw;
 
-Vector g_vRed = Vector( 255.0f, 0.0f, 0.0f );
-Vector g_vBlue = Vector( 0.0f, 0.0f, 255.0f );
-Vector g_vYellow = Vector( 255.0f, 255.0f, 0.0f );
-Vector g_vGreen = Vector( 0.0f, 255.0f, 0.0f );
-Vector g_vBlack = Vector( 0.0f, 0.0f, 0.0f );
+const Vector g_vRed = Vector( 255.0f, 0.0f, 0.0f );
+const Vector g_vBlue = Vector( 0.0f, 0.0f, 255.0f );
+const Vector g_vYellow = Vector( 255.0f, 255.0f, 0.0f );
+const Vector g_vGreen = Vector( 0.0f, 255.0f, 0.0f );
+const Vector g_vBlack = Vector( 0.0f, 0.0f, 0.0f );
 
 extern "C"
 {

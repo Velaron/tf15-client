@@ -8,7 +8,7 @@
 #include "gamerules.h"
 #include "tf_defs.h"
 
-LINK_ENTITY_TO_CLASS( tf_weapon_ar, CTFAutoRifle )
+LINK_ENTITY_TO_CLASS( tf_weapon_autorifle, CTFAutoRifle )
 
 void CTFAutoRifle::Spawn( void )
 {
@@ -33,11 +33,11 @@ int CTFAutoRifle::GetItemInfo( ItemInfo *p )
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
-		p->iMaxAmmo1 = m_pPlayer->maxammo_shells;
+		p->iAmmo1 = m_pPlayer->maxammo_shells;
 	else
-		p->iMaxAmmo1 = 75;
+		p->iAmmo1 = 75;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
 	p->iSlot = 2;
 	p->iPosition = 1;
@@ -70,7 +70,7 @@ void CTFAutoRifle::PrimaryAttack( void )
 	}
 	else
 	{
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireAutoRifle, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireAutoRifle, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->m_iWeaponVolume = 600;
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		m_flTimeWeaponIdle = 0.2f;
@@ -83,9 +83,9 @@ void CTFAutoRifle::PrimaryAttack( void )
 		{
 			pent = ENT( 0 );
 			
-			if ( tr.pHit || pent != 0 )
+			if ( tr.pHit || pent )
 			{
-				pEntity = CBaseEntity::Instance( tr.pHit );
+				pEntity = CBaseEntity::Instance( pent );
 
 				if ( pEntity )
 				{

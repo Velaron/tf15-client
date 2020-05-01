@@ -38,14 +38,14 @@ void CTFNailgun::Precache( void )
 
 int CTFNailgun::GetItemInfo( ItemInfo *p )
 {
-	p->pszAmmo1 = ""; //Velaron: fix this
+	p->pszAmmo1 = "9mm";
 	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
-		p->iMaxAmmo1 = m_pPlayer->maxammo_nails;
+		p->iAmmo1 = m_pPlayer->maxammo_nails;
 	else
-		p->iMaxAmmo1 = 200;
+		p->iAmmo1 = 200;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iMaxClip = 0;
 	p->iSlot = 3;
 	p->iPosition = 4;
@@ -67,10 +67,10 @@ void CTFNailgun::PrimaryAttack( void )
 	{
 		m_pPlayer->m_iWeaponVolume = 1000;
 		m_pPlayer->m_iWeaponFlash = 512;
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireNailGun, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireNailGun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
-		p_vecOrigin = gpGlobals->v_up * -4.0f + gpGlobals->v_right * 2.0f + m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs;
+		p_vecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_up * -4.0f + gpGlobals->v_right * 2.0f;
 		p_vecAngles = m_pPlayer->pev->v_angle;
 		//CTFNailgunNail::CreateNail( false, &p_vecOrigin, &p_vecAngles, m_pPlayer, this, true );
 		m_pPlayer->ammo_nails--;
@@ -117,14 +117,14 @@ LINK_ENTITY_TO_CLASS( tf_weapon_superng, CTFSuperNailgun )
 
 int CTFSuperNailgun::GetItemInfo( ItemInfo *p )
 {
-	p->pszAmmo1 = "";
+	p->pszAmmo1 = "9mm";
 	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
-		p->iMaxAmmo1 = m_pPlayer->maxammo_nails;
+		p->iAmmo1 = m_pPlayer->maxammo_nails;
 	else
-		p->iMaxAmmo1 = 150;
+		p->iAmmo1 = 150;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iMaxClip = 0;
 	p->iSlot = 3;
 	p->iPosition = 1;
@@ -157,10 +157,10 @@ void CTFSuperNailgun::PrimaryAttack( void )
 	{
 		m_pPlayer->m_iWeaponVolume = 1000;
 		m_pPlayer->m_iWeaponFlash = 512;
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireSuperNailGun, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireSuperNailGun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
-		p_vecOrigin = gpGlobals->v_up * -4.0f + gpGlobals->v_right * 2.0f + m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs;
+		p_vecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_up * -4.0f + gpGlobals->v_right * 2.0f;
 		p_vecAngles = m_pPlayer->pev->v_angle;
 		if ( m_pPlayer->ammo_nails <= 3 )
 		{

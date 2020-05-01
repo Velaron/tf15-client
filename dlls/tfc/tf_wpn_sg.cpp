@@ -47,11 +47,11 @@ int CTFShotgun::GetItemInfo( ItemInfo *p )
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
-		p->iMaxAmmo1 = m_pPlayer->maxammo_shells;
+		p->iAmmo1 = m_pPlayer->maxammo_shells;
 	else
-		p->iMaxAmmo1 = 200;
+		p->iAmmo1 = 200;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iSlot = 1;
 	p->iPosition = 3;
 	p->iFlags = 0;
@@ -81,7 +81,7 @@ void CTFShotgun::PrimaryAttack()
 	{
 		m_pPlayer->m_iWeaponVolume = 1000;
 		m_pPlayer->m_iWeaponFlash = 256;
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireShotgun, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		vecSrc = m_pPlayer->GetGunPosition();
 		vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
@@ -113,7 +113,7 @@ void CTFShotgun::ItemPostFrame( void )
 	{
 		if ( m_flPumpTime <= 0.0f )
 		{
-			PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+			PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		}
 
 		CBasePlayerWeapon::ItemPostFrame();
@@ -146,7 +146,7 @@ void CTFShotgun::WeaponIdle( void )
 			{
 				if ( m_iClip == m_iMaxClipSize || ammo_shells < m_iShellsReloaded )
 				{
-					PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 1, 0 );
+					PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 1, 0 );
 					m_fInSpecialReload = 0;
 					m_flTimeWeaponIdle = 1.5f;
 					return;
@@ -162,7 +162,7 @@ void CTFShotgun::WeaponIdle( void )
 			{
 				if ( m_iClip == m_iMaxClipSize || ammo_shells < m_iShellsReloaded )
 				{
-					PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 1, 0 );
+					PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 1, 0 );
 					m_fInSpecialReload = 0;
 					m_flTimeWeaponIdle = 1.5f;
 					return;
@@ -212,7 +212,7 @@ void CTFShotgun::Reload( void )
 					if ( m_flTimeWeaponIdle <= 0.0f )
 						{
 							m_fInSpecialReload = 2;
-							PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usReloadShotgun, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+							PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usReloadShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 							m_flNextReload = m_fReloadTime;
 							m_flTimeWeaponIdle = m_fReloadTime;
 						}
@@ -277,11 +277,11 @@ int CTFSuperShotgun::GetItemInfo( ItemInfo *p )
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
-		p->iMaxAmmo1 = m_pPlayer->maxammo_shells;
+		p->iAmmo1 = m_pPlayer->maxammo_shells;
 	else
-		p->iMaxAmmo1 = 200;
+		p->iAmmo1 = 200;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iSlot = 2;
 	p->iPosition = 2;
 	p->iFlags = 0;
@@ -315,7 +315,7 @@ void CTFSuperShotgun::PrimaryAttack()
 	{
 		m_pPlayer->m_iWeaponVolume = 1000;
 		m_pPlayer->m_iWeaponFlash = 256;
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireSuperShotgun, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireSuperShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->pev->effects |= EF_MUZZLEFLASH;
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		vecSrc = m_pPlayer->GetGunPosition();

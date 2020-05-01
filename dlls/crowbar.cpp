@@ -77,9 +77,9 @@ int CCrowbar::GetItemInfo( ItemInfo *p )
 {
 	p->pszName = STRING( pev->classname );
 	p->pszAmmo1 = NULL;
-	p->iMaxAmmo1 = -1;
+	p->iAmmo1 = -1;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iMaxClip = WEAPON_NOCLIP;
 	p->iSlot = 0;
 	p->iPosition = 0;

@@ -172,6 +172,8 @@ BOOL CBaseMonster::FInViewCone( CBaseEntity *pEntity ) { return FALSE; }
 BOOL CBaseMonster::FInViewCone( Vector *pOrigin ) { return FALSE; }
 BOOL CBaseEntity::FVisible( CBaseEntity *pEntity ) { return FALSE; }
 BOOL CBaseEntity::FVisible( const Vector &vecOrigin ) { return FALSE; }
+BOOL CBaseEntity::EngineerUse( CBasePlayer *pPlayer ) { return FALSE; }
+BOOL CBaseEntity::IsAlly( CBaseEntity *pOther ) { return TRUE; }
 void CBaseMonster::MakeIdealYaw( Vector vecTarget ) { }
 float CBaseMonster::FlYawDiff( void ) { return 0.0; }
 float CBaseMonster::ChangeYaw( int yawSpeed ) { return 0; }
@@ -298,6 +300,8 @@ int CBasePlayer::GetCustomDecalFrames( void ) { return -1; }
 void CBasePlayer::DropPlayerItem( char *pszItemName ) { }
 BOOL CBasePlayer::HasPlayerItem( CBasePlayerItem *pCheckItem ) { return FALSE; }
 BOOL CBasePlayer::SwitchWeapon( CBasePlayerItem *pWeapon )  { return FALSE; }
+void CBasePlayer::TeamFortress_SetSpeed( void ) { }
+BOOL EngineerUse( CBasePlayer *pPlayer ) { return TRUE; }
 Vector CBasePlayer::GetGunPosition( void ) { return g_vecZero; }
 const char *CBasePlayer::TeamID( void ) { return ""; }
 int CBasePlayer::GiveAmmo( int iCount, const char *szName, int iMax ) { return 0; }

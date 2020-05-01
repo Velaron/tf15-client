@@ -19,8 +19,8 @@ set API=21
 )
 
 for %%i in (%ARCHS%) do (
-call ./waf configure -o "build/%%i" -T debug --android=%%i,%TOOLCHAIN%,%API% --check-c-compiler=clang --check-cxx-compiler=clang++ build
-call ./waf install --destdir="build/android" --strip
+call ./waf configure -o "build/%%i" -T debug --android=%%i,%TOOLCHAIN%,%API% --check-c-compiler=clang --check-cxx-compiler=clang++ build -v
+call ./waf install --destdir="build/android" --strip -v
 )
 
 cd android

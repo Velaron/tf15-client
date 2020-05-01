@@ -10,7 +10,7 @@
 
 LINK_ENTITY_TO_CLASS( tf_weapon_ac, CTFAssaultC )
 
-void CTFAssaultC::Spawn()
+void CTFAssaultC::Spawn( void )
 {
 	pev->classname = MAKE_STRING( "tf_weapon_ac" );
 	Precache();
@@ -20,23 +20,23 @@ void CTFAssaultC::Spawn()
 	pev->solid = SOLID_TRIGGER;
 }
 
-void CTFAssaultC::Precache()
+void CTFAssaultC::Precache( void )
 {
-	PRECACHE_MODEL("models/v_tfac.mdl");
-	PRECACHE_MODEL("models/p_mini.mdl");
-	PRECACHE_MODEL("models/p_mini2.mdl");
-	m_iShell = PRECACHE_MODEL("models/shell.mdl");
-	PRECACHE_SOUND("weapons/357_cock1.wav");
-	PRECACHE_SOUND("weapons/asscan1.wav");
-	PRECACHE_SOUND("weapons/asscan2.wav");
-	PRECACHE_SOUND("weapons/asscan3.wav");
-	PRECACHE_SOUND("weapons/asscan4.wav");
-	m_usWindUp = PRECACHE_EVENT(1, "events/wpn/tf_acwu.sc");
-	m_usWindDown = PRECACHE_EVENT(1, "events/wpn/tf_acwd.sc");
-	m_usFire = PRECACHE_EVENT(1, "events/wpn/tf_acfire.sc");
-	m_usStartSpin = PRECACHE_EVENT(1, "events/wpn/tf_acsspin.sc");
-	m_usSpin = PRECACHE_EVENT(1, "events/wpn/tf_acspin.sc");
-	m_usACStart = PRECACHE_EVENT(1, "events/wpn/tf_acstart.sc");
+	PRECACHE_MODEL( "models/v_tfac.mdl" );
+	PRECACHE_MODEL( "models/p_mini.mdl" );
+	PRECACHE_MODEL( "models/p_mini2.mdl" );
+	m_iShell = PRECACHE_MODEL( "models/shell.mdl" );
+	PRECACHE_SOUND( "weapons/357_cock1.wav" );
+	PRECACHE_SOUND( "weapons/asscan1.wav" );
+	PRECACHE_SOUND( "weapons/asscan2.wav" );
+	PRECACHE_SOUND( "weapons/asscan3.wav" );
+	PRECACHE_SOUND( "weapons/asscan4.wav" );
+	m_usWindUp = PRECACHE_EVENT( 1, "events/wpn/tf_acwu.sc" );
+	m_usWindDown = PRECACHE_EVENT( 1, "events/wpn/tf_acwd.sc" );
+	m_usFire = PRECACHE_EVENT( 1, "events/wpn/tf_acfire.sc" );
+	m_usStartSpin = PRECACHE_EVENT( 1, "events/wpn/tf_acsspin.sc" );
+	m_usSpin = PRECACHE_EVENT( 1, "events/wpn/tf_acspin.sc" );
+	m_usACStart = PRECACHE_EVENT( 1, "events/wpn/tf_acstart.sc" );
 }
 
 int CTFAssaultC::GetItemInfo( ItemInfo *p )
@@ -44,11 +44,11 @@ int CTFAssaultC::GetItemInfo( ItemInfo *p )
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
-		p->iMaxAmmo1 = m_pPlayer->maxammo_shells;
+		p->iAmmo1 = m_pPlayer->maxammo_shells;
 	else
-		p->iMaxAmmo1 = 200;
+		p->iAmmo1 = 200;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
 	p->iSlot = 4;
 	p->iPosition = 3;
@@ -58,7 +58,7 @@ int CTFAssaultC::GetItemInfo( ItemInfo *p )
 	return 1;
 }
 
-BOOL CTFAssaultC::Deploy()
+BOOL CTFAssaultC::Deploy( void )
 {
 	return DefaultDeploy( "models/v_tfac.mdl", "models/p_mini.mdl", AC_DEPLOY, "ac", 1 );
 }
@@ -68,21 +68,17 @@ int CTFAssaultC::AddToPlayer( CBasePlayer *pPlayer )
 	if( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, ENT( pPlayer->pev ) );
-			WRITE_BYTE( m_iId );
+		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
-void CTFAssaultC::Holster()
+void CTFAssaultC::Holster( void )
 {
-	PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usWindDown, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 1, 0 );
-	m_iWeaponState = 0;
-	//m_pPlayer->tfstate &= 0xFFFFF7FF;
-	//m_pPlayer->TeamFortress_SetSpeed();
+	WindDown( true );
 	m_fInReload = 0;
-	m_flTimeWeaponIdle = 2.0f;
 	m_pPlayer->m_flNextAttack = 0.1f;
 	SendWeaponAnim( AC_HOLSTER, 1 );
 }
@@ -95,10 +91,10 @@ void CTFAssaultC::WeaponIdle( void )
 	{
 		if( m_iWeaponState )
 		{
-			PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usWindDown, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+			PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usWindDown, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 			m_iWeaponState = 0;
-			//m_pPlayer->tfstate &= 0xFFFFF7FF;
-			//m_pPlayer->TeamFortress_SetSpeed();
+			m_pPlayer->tfstate &= ~TFSTATE_AIMING;
+			m_pPlayer->TeamFortress_SetSpeed();
 			m_flTimeWeaponIdle = 2.0f;
 		}
 		else
@@ -109,83 +105,97 @@ void CTFAssaultC::WeaponIdle( void )
 	}
 }
 
-void CTFAssaultC::PrimaryAttack()
+void CTFAssaultC::Fire( void )
+{
+	Vector p_vecSrc, p_VecDirShooting, p_vecSpread;
+
+	if( m_flNextPrimaryAttack <= 0.0f )
+	{
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_UPDATE, ENT( m_pPlayer->pev ), m_usWindUp, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, m_pPlayer->ammo_shells & 1, 0 );
+		m_pPlayer->m_iWeaponVolume = 600;
+		m_pPlayer->m_iWeaponFlash = 256;
+		m_pPlayer->pev->effects |= EF_MUZZLEFLASH;
+		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
+		p_vecSrc = m_pPlayer->GetGunPosition() + gpGlobals->v_up * -4.0f + gpGlobals->v_right * 2.0f;
+		p_VecDirShooting = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
+		p_vecSpread = Vector( 0.1f, 0.1f, 0.0f );
+		FireBullets( 5, p_vecSrc, p_VecDirShooting, p_vecSpread, 8192.0f, BULLET_PLAYER_TF_ASSAULT, 8, 7, NULL );
+		m_pPlayer->ammo_shells--;
+	}
+}
+
+void CTFAssaultC::PrimaryAttack( void )
 {
 	switch( m_iWeaponState )
 	{
 		case 1:
 			if ( m_flNextPrimaryAttack <= 0.0f )
 			{
-				PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usACStart, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+				PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usACStart, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 				m_iWeaponState = 2;
+				m_flTimeWeaponIdle = 0.1f;
 				m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
-				m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.1f;
 			}
 			return;
 		case 2:
 		{
 			if ( m_pPlayer->ammo_shells <= 0 )
-			{
-				PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usStartSpin, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
-				m_iWeaponState = 3;
-				m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-				pev->effects &= ~EF_MUZZLEFLASH;
-			}
+				StartSpin();
 			else
-			{
 				Fire();
-			}
 			
+			m_flTimeWeaponIdle = 0.1f;
 			m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
-			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.1f;
 			return;
 		}
 		case 3:
 		{
 			if ( m_pPlayer->ammo_shells <= 0 )
-			{
-				PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usSpin, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
-				m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-			}
+				Spin();
 			else
-			{
 				m_iWeaponState = 1;
-			}
 			
+			m_flTimeWeaponIdle = 0.1f;
 			m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
-			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.1f;
 			return;
 		}
 	}
 
-	if( m_pPlayer->pev->button & IN_ATTACK )
-	{
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usWindUp, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
-		m_iWeaponState = 1;
-		//m_pPlayer->tfstate |= 0x800u;
-		//m_pPlayer->TeamFortress_SetSpeed();
-	}
+	if ( m_pPlayer->pev->button & IN_ATTACK )
+		WindUp();
 
-	m_flNextPrimaryAttack = GetNextAttackDelay( 0.5f );
 	m_flTimeWeaponIdle = 0.6f;
+	m_flNextPrimaryAttack = GetNextAttackDelay( 0.5f );
 }
 
-void CTFAssaultC::Fire()
+void CTFAssaultC::StartSpin( void )
 {
-	Vector p_vecSrc, vecAiming, vecSpread;
-
-	if( m_flNextPrimaryAttack > 0.0f )
-		return;
-
-	PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_UPDATE, ENT( m_pPlayer->pev ), m_usWindUp, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, m_pPlayer->ammo_shells & 1, 0 );
-	m_pPlayer->m_iWeaponVolume = 600;
-	m_pPlayer->m_iWeaponFlash = 256;
-	m_pPlayer->pev->effects |= EF_MUZZLEFLASH;
+	PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usStartSpin, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+	m_iWeaponState = 3;
 	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-	UTIL_MakeVectors( m_pPlayer->pev->v_angle );
-	p_vecSrc = gpGlobals->v_up * -4.0f + gpGlobals->v_right * 2.0f + m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs;
-	vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
-	vecSpread = Vector( 0.1f, 0.1f, 0.0f );
-	FireBullets( 5, p_vecSrc, vecAiming, vecSpread, 8192.0f, BULLET_PLAYER_TF_ASSAULT, 8, 7, NULL );
-	m_pPlayer->ammo_shells--;
+	pev->effects &= ~EF_MUZZLEFLASH;
+}
+
+void CTFAssaultC::Spin( void )
+{
+	PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usSpin, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+}
+
+void CTFAssaultC::WindUp( void )
+{
+	PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usWindUp, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+	m_iWeaponState = 1;
+	m_pPlayer->tfstate |= TFSTATE_AIMING;
+	m_pPlayer->TeamFortress_SetSpeed();
+}
+
+void CTFAssaultC::WindDown( bool bFromHolster )
+{
+	PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usWindDown, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, bFromHolster, 0 );
+	m_iWeaponState = 0;
+	m_pPlayer->tfstate &= ~TFSTATE_AIMING;
+	m_pPlayer->TeamFortress_SetSpeed();
+	m_flTimeWeaponIdle = 2.0f;
 }

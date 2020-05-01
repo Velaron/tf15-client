@@ -93,17 +93,17 @@ enum {
 
 typedef struct
 {
-	int		iSlot;
-	int		iPosition;
-	const char	*pszAmmo1;	// ammo 1 type
-	int		iMaxAmmo1;		// max ammo 1
-	const char	*pszAmmo2;	// ammo 2 type
-	int		iMaxAmmo2;		// max ammo 2
-	const char	*pszName;
-	int		iMaxClip;
-	int		iId;
-	int		iFlags;
-	int		iWeight;// this value used to determine this weapon's importance in autoselection.
+	int iSlot;
+	int iPosition;
+	const char *pszAmmo1; // ammo 1 type
+	int iAmmo1; // max ammo 1
+	const char *pszAmmo2; // ammo 2 type
+	int iAmmo2; // max ammo 2
+	const char *pszName;
+	int iMaxClip;
+	int iId;
+	int iFlags;
+	int iWeight; // this value used to determine this weapon's importance in autoselection.
 } ItemInfo;
 
 typedef struct
@@ -167,9 +167,9 @@ public:
 
 	int			iItemPosition( void ) { return ItemInfoArray[ m_iId ].iPosition; }
 	const char	*pszAmmo1( void )	{ return ItemInfoArray[ m_iId ].pszAmmo1; }
-	int			iMaxAmmo1( void )	{ return ItemInfoArray[ m_iId ].iMaxAmmo1; }
+	int			iMaxAmmo1( void )	{ return ItemInfoArray[ m_iId ].iAmmo1; }
 	const char	*pszAmmo2( void )	{ return ItemInfoArray[ m_iId ].pszAmmo2; }
-	int			iMaxAmmo2( void )	{ return ItemInfoArray[ m_iId ].iMaxAmmo2; }
+	int			iMaxAmmo2( void )	{ return ItemInfoArray[ m_iId ].iAmmo2; }
 	const char	*pszName( void )	{ return ItemInfoArray[ m_iId ].pszName; }
 	int			iMaxClip( void )	{ return ItemInfoArray[ m_iId ].iMaxClip; }
 	int			iWeight( void )		{ return ItemInfoArray[ m_iId ].iWeight; }
@@ -456,13 +456,26 @@ enum crowbar_e {
 	CROWBAR_ATTACK3HIT = 8
 };
 
-enum medikit_e {
-	MEDIKIT_IDLE_SHORT = 0,
-	MEDIKIT_IDLE_LONG = 1,
-	MEDIKIT_USE_SHORT = 2,
-	MEDIKIT_USE_LONG = 3,
-	MEDIKIT_HOLSTER = 4,
-	MEDIKIT_DRAW = 5
+class CTFAxe : public CCrowbar
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
+	void Holster( void );
+	void Smack( void );
+	BOOL AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr );
+	void PrimaryAttack( void );
+	BOOL Deploy( void );
+	int iItemSlot( void ) { return 1; }
+	int IsUseable( void ) { return true; }
+
+	int classid;
+	unsigned short m_usAxe;
+	unsigned short m_usAxeDecal;
+
+private:
+	BOOL m_bHullHit;
 };
 
 enum knife_e {
@@ -473,26 +486,6 @@ enum knife_e {
 	KNIFE_DRAW = 4,
 	KNIFE_HOLSTER = 5
 };
-
-class CTFAxe : public CCrowbar
-{
-public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	BOOL CanHolster(void) {return 1;};
-	void Holster(void);
-	BOOL AxeHit(CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr);
-	BOOL Deploy(void);
-	void PrimaryAttack(void);
-	int iItemSlot( void ) {return 1;}
-	int IsUseable( void ) {return 1;}
-	int classid;
-	BOOL m_bHullHit;
-	unsigned short m_usAxe;
-	unsigned short m_usAxeDecal;
-};
-
 
 class CTFKnife : public CTFAxe
 {
@@ -521,13 +514,43 @@ enum spanner_e {
 class CTFSpanner : public CTFAxe
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	BOOL IsUseable(void) {return 1;};
-	void Holster(void);
-	void WeaponIdle(void);
-	BOOL Deploy(void);
+	void Spawn( void );
+	void Precache( void );
+	void Holster( void );
+	int GetItemInfo( ItemInfo *p );
+	BOOL Deploy( void );
+	void WeaponIdle( void );
+	BOOL AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr );
+
+private:
+	void PlayAnim( int iAnimType );
+};
+
+enum medikit_e {
+	MEDIKIT_IDLE_SHORT = 0,
+	MEDIKIT_IDLE_LONG = 1,
+	MEDIKIT_USE_SHORT = 2,
+	MEDIKIT_USE_LONG = 3,
+	MEDIKIT_HOLSTER = 4,
+	MEDIKIT_DRAW = 5
+};
+
+class CTFMedikit : public CTFAxe
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	void Holster( void );
+	int GetItemInfo( ItemInfo *p );
+	BOOL Deploy( void );
+	void PlayAnim( int iAnimType );
+	void WeaponIdle( void );
+	BOOL AxeHit( CBaseEntity *pTarget, Vector *p_vecDir, TraceResult *ptr );
+
+private:
+	unsigned short m_usNormalShot;
+	unsigned short m_usSuperShot;
+	unsigned short m_usSteamShot;
 };
 
 enum srifle_e {
@@ -545,32 +568,25 @@ enum srifle_e {
 class CTFSniperRifle : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	int AddToPlayer(CBasePlayer *pPlayer);
-	void PrimaryAttack(void);
-	void SecondaryAttack(void);
-	void Holster(void);
-	BOOL Deploy();
-	void WeaponIdle(void);
-	void ItemPostFrame(void);
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
+	void SecondaryAttack( void );
+	void Holster( void );
+	BOOL Deploy( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
+	void UpdateSpot( void );
+	void WeaponIdle( void );
+	void PrimaryAttack( void );
+	void ItemPostFrame( void );
+	int iItemSlot( void ) { return 3; }
 
-	virtual BOOL UseDecrement( void )
-	{
-		return true;
-	}
-
-	BOOL m_fInZoom;
 	BOOL m_iSpotActive;
 	CLaserSpot* m_pSpot;
-	int m_fAimedDamage;
-	int m_fNextAimBonus;
 
-	private:
-		unsigned short m_usFireSniper;
-		unsigned short m_usSniperHit;
-		void UpdateSpot(void);
+private:
+	unsigned short m_usFireSniper;
+	unsigned short m_usSniperHit;
 };
 
 class CTFAutoRifle : public CBasePlayerWeapon
@@ -662,6 +678,7 @@ public:
 	int AddToPlayer( CBasePlayer *pPlayer );
 	int iItemSlot( void ) { return 2; };
 
+private:
 	unsigned short m_usFireNailGun;
 };
 
@@ -696,38 +713,32 @@ enum gl_e {
 class CTFGrenadeLauncher : public CBasePlayerWeapon
 {
 public:
-	void Spawn(void);
-	void Precache(void);
-	int GetItemInfo(ItemInfo *p);
-	void Holster(void);
-	void WeaponIdle(void);
-	BOOL Deploy(void);
-	void Reload(void);
-	int AddToPlayer(CBasePlayer *pPlayer);
-	void PrimaryAttack(void);
+	void Spawn( void );
+	void Precache( void );
+	int GetItemInfo( ItemInfo *p );
+	void Holster( void );
+	BOOL Deploy( void );
+	void Reload( void );
+	void WeaponIdle( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
+	void PrimaryAttack( void );
+	int iItemSlot( void ) { return 3; };
+
 	int m_iAnim_Holster;
 	int m_iAnim_Idle;
 	int m_iAnim_ReloadDown;
 	int m_iAnim_ReloadUp;
 	int m_iAnim_Deploy;
-
-private:
 	unsigned short m_usFireGL;
-	float m_fReloadTime;
-	float m_flNextReload;
 };
 
 class CTFPipebombLauncher : public CTFGrenadeLauncher
 {
 public:
-	void Spawn(void);
-	int GetItemInfo(ItemInfo *p);
-	void PrimaryAttack(void);
-
-private:
-	unsigned short m_usFireGL;
-	float m_fReloadTime;
-	float m_flNextReload;
+	void Spawn( void );
+	int GetItemInfo( ItemInfo *p );
+	void PrimaryAttack( void );
+	int iItemSlot( void ) { return 3; };
 };
 
 enum flamethrower_e {
@@ -830,17 +841,20 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	int GetItemInfo( ItemInfo *p );
+	BOOL Deploy( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
 	void Holster( void );
 	void WeaponIdle( void );
-	BOOL Deploy( void );
-	BOOL ShouldWeaponIdle( void ) { return true; };
-	int AddToPlayer( CBasePlayer *pPlayer );
-	void PrimaryAttack( void );
 	void Fire( void );
+	void PrimaryAttack( void );
+	void StartSpin( void );
+	void Spin( void );
+	void WindUp( void );
+	void WindDown( bool bFromHolster );
 	int iItemSlot( void ) { return 3; };
+	BOOL ShouldWeaponIdle( void ) { return true; };
 
 private:
-	int m_iWeaponState;
 	int m_iShell;
 	unsigned short m_usWindUp;
 	unsigned short m_usWindDown;

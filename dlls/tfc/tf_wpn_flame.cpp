@@ -25,11 +25,11 @@ int CTFFlamethrower::GetItemInfo( ItemInfo *p )
 	p->pszAmmo1 = "uranium";
 	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
-		p->iMaxAmmo1 = m_pPlayer->maxammo_cells;
+		p->iAmmo1 = m_pPlayer->maxammo_cells;
 	else
-		p->iMaxAmmo1 = 200;
+		p->iAmmo1 = 200;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
 	p->iSlot = 3;
 	p->iPosition = 2;

@@ -166,6 +166,8 @@ public:
 	BOOL			m_fNoPlayerSound;	// a debugging feature. Player makes no sound if this is true. 
 	BOOL			m_fLongJump; // does this player have the longjump module?
 
+	int m_iGLClip;
+
 	float       m_tSneaking;
 	int			m_iUpdateTime;		// stores the number of frame ticks before sending HUD update messages
 	int			m_iClientHealth;	// the health currently known by the client.  If this changes, send a new
@@ -305,6 +307,9 @@ public:
 	void SetCustomDecalFrames( int nFrames );
 	int GetCustomDecalFrames( void );
 
+	void TeamFortress_SetSpeed( void );
+	BOOL EngineerUse( CBasePlayer *pPlayer );
+
 	void TabulateAmmo( void );
 
 	float m_flStartCharge;
@@ -330,9 +335,6 @@ public:
 	Vector m_vecLastViewAngles;
 
 	bool m_bSentBhopcap; // If false, the player just joined and needs a bhopcap message.
-
-	//Team Fortress
-	void TeamFortress_SetSpeed();
 };
 
 #define AUTOAIM_2DEGREES  0.0348994967025

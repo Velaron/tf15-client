@@ -336,6 +336,8 @@ public:
 	virtual	BOOL FVisible( CBaseEntity *pEntity );
 	virtual	BOOL FVisible( const Vector &vecOrigin );
 
+	BOOL EngineerUse( CBasePlayer *pPlayer );
+
 	void tfgoal_timer_tick();
 	void ReturnItem();
 	void item_tfgoal_touch( CBaseEntity *pOther );

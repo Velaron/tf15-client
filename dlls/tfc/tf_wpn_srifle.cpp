@@ -6,9 +6,9 @@
 #include "nodes.h"
 #include "player.h"
 #include "gamerules.h"
+#include "tf_defs.h"
 
 LINK_ENTITY_TO_CLASS( laser_spot, CLaserSpot )
-LINK_ENTITY_TO_CLASS( tf_weapon_sniperrifle, CTFSniperRifle )
 
 CLaserSpot *CLaserSpot::CreateSpot( void )
 {
@@ -37,189 +37,308 @@ void CLaserSpot::Suspend( float flSuspendTime )
 	pev->nextthink = gpGlobals->time + flSuspendTime;
 }
 
-void CLaserSpot::Revive()
+void CLaserSpot::Revive( void )
 {
 	pev->effects &= ~EF_NODRAW;
 	SetThink( NULL );
 }
 
-void CLaserSpot::Precache()
+void CLaserSpot::Precache( void )
 {
 	PRECACHE_MODEL( "sprites/laserdot.spr" );
 }
 
-void CTFSniperRifle::Spawn()
-{
-    Precache();
+LINK_ENTITY_TO_CLASS( tf_weapon_sniperrifle, CTFSniperRifle )
 
-    m_iId = 6;
-    m_iDefaultAmmo = 5;
-    m_fAimedDamage = 0;
-    m_fNextAimBonus = -1;
-    pev->solid = SOLID_TRIGGER;
+void CTFSniperRifle::Spawn( void )
+{
+	m_fAimedDamage = 0.0f;
+	Precache();
+	m_iId = WEAPON_SNIPER_RIFLE;
+	m_iDefaultAmmo = 5;
+	m_fNextAimBonus = -1.0f;
+	pev->solid = SOLID_TRIGGER;
 }
 
-void CTFSniperRifle::Precache()
+void CTFSniperRifle::Precache( void )
 {
-    PRECACHE_MODEL("models/v_tfc_sniper.mdl");
-    PRECACHE_MODEL("models/p_sniper.mdl");
-    PRECACHE_MODEL("models/p_sniper2.mdl");
-    PRECACHE_SOUND("ambience/rifle1.wav");
-    m_usFireSniper = PRECACHE_EVENT(1, "events/wpn/tf_sniper.sc");
-    m_usSniperHit = PRECACHE_EVENT(1, "events/wpn/tf_sniperhit.sc");
+	PRECACHE_MODEL( "models/v_tfc_sniper.mdl" );
+	PRECACHE_MODEL( "models/p_sniper.mdl" );
+	PRECACHE_MODEL( "models/p_sniper2.mdl" );
+	PRECACHE_SOUND( "ambience/rifle1.wav" );
+	m_usFireSniper = PRECACHE_EVENT( 1, "events/wpn/tf_sniper.sc" );
+	m_usSniperHit = PRECACHE_EVENT( 1, "events/wpn/tf_sniperhit.sc" );
 }
 
 int CTFSniperRifle::GetItemInfo( ItemInfo *p )
 {
-    p->pszAmmo1 = "buckshot";
-    p->pszName = STRING( pev->classname );
-    p->iMaxAmmo1 = 75;
-    p->pszAmmo2 = 0;
-    p->iMaxAmmo2 = -1;
-    p->iSlot = 1;
-    p->iPosition = 1;
-    p->iFlags = 0;
-    p->iMaxClip = -1;
-    p->iId = m_iId = 6;
-    p->iWeight = 10;
-    return 1;
+	p->pszAmmo1 = "buckshot";
+	p->pszName = STRING( pev->classname );
+	if ( m_pPlayer )
+		p->iAmmo1 = m_pPlayer->maxammo_shells;
+	else
+		p->iAmmo1 = 75;
+	p->pszAmmo2 = 0;
+	p->iAmmo2 = -1;
+	p->iMaxClip = -1;
+	p->iSlot = 1;
+	p->iPosition = 1;
+	p->iId = m_iId = WEAPON_SNIPER_RIFLE;
+	p->iFlags = 0;
+	p->iWeight = 10;
+	return 1;
 }
 
-void CTFSniperRifle::SecondaryAttack()
+void CTFSniperRifle::SecondaryAttack( void )
 {
-    if(m_fInZoom)
-    {
-        m_pPlayer->m_iFOV = 0;
-        pev->fov = 0;
-        m_fInZoom = 0;
-    }
-    else
-    {
-        m_pPlayer->m_iFOV = 20;
-        pev->fov = 20;
-        m_fInZoom = 1;
-    }
+	if ( m_fInZoom )
+	{
+		m_pPlayer->m_iFOV = 0;
+		m_pPlayer->pev->fov = 0.0f;
+		m_fInZoom = false;
+	}
+	else
+	{
+		m_pPlayer->m_iFOV = 20;
+		m_pPlayer->pev->fov = 20.0f;
+		m_fInZoom = true;
+	}
 
-    pev->nextthink = gpGlobals->time + 0.1;
-    m_flNextSecondaryAttack = 0.3;
+	pev->nextthink = gpGlobals->time + 0.1f;
+	m_flNextSecondaryAttack = 0.3f;
 }
 
-void CTFSniperRifle::Holster()
+void CTFSniperRifle::Holster( void )
 {
-    m_fInReload = 0;
-    if(m_fInZoom)
-        SecondaryAttack();
+	m_fInReload = 0;
 
-    //m_pPlayer->tfstate &= 2;
-    //тф сет спид
+	if ( m_fInZoom )
+		SecondaryAttack();
 
-    if(m_pSpot)
-        m_pSpot->Killed(0, 0);
+	m_pPlayer->tfstate &= ~TFSTATE_AIMING;
+	m_pPlayer->TeamFortress_SetSpeed();
 
-    m_fAimedDamage = 0;
-    m_pPlayer->m_flNextAttack = 0.5;
-    SendWeaponAnim( SRIFLE_HOLSTER, 1 );
+	if ( m_pSpot )
+	{
+		m_pSpot->Killed( NULL, GIB_NORMAL );
+		m_pSpot = NULL;
+	}
+
+	m_fAimedDamage = 0.0f;
+	m_pPlayer->m_flNextAttack = 0.5f;
+	SendWeaponAnim( SRIFLE_HOLSTER, 1 );
 }
 
-BOOL CTFSniperRifle::Deploy()
+BOOL CTFSniperRifle::Deploy( void )
 {
-    m_pSpot = 0;
-    m_flTimeWeaponIdle = 0.5;
-    m_fAimedDamage = 0;
-    m_iSpotActive = 0;
-	return DefaultDeploy( "models/v_tfc_sniper.mdl", "models/p_sniper.mdl", SRIFLE_DRAW, "autosniper", 1 );
+	int result = DefaultDeploy( "models/v_tfc_sniper.mdl", "models/p_sniper.mdl", SRIFLE_DRAW, "autosniper", 1 );
+
+	if ( result )
+	{
+		m_pSpot = NULL;
+		m_flTimeWeaponIdle = 0.5f;
+		m_fAimedDamage = 0.0f;
+		m_iSpotActive = false;
+	}
+	
+	return result;
 }
 
 int CTFSniperRifle::AddToPlayer( CBasePlayer *pPlayer )
 {
-    if( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
-    {
-        MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
-            WRITE_BYTE( m_iId );
-        MESSAGE_END();
-        return TRUE;
-    }
-    return FALSE;
+	if( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
+	{
+		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
+		WRITE_BYTE( m_iId );
+		MESSAGE_END();
+		return true;
+	}
+
+	return false;
 }
 
-void CTFSniperRifle::UpdateSpot()
+void CTFSniperRifle::UpdateSpot( void )
 {
-    vec3_t vecSrc, vecEnd;
-    TraceResult tr;
+	Vector vecSrc, vecEnd;
+	TraceResult tr;
 
-    if(!m_iSpotActive)
-        return;
+	if ( m_iSpotActive )
+	{
+		if ( !m_pSpot )
+		{
+			m_pSpot = CLaserSpot::CreateSpot();
+			m_pSpot->pev->flags |= FL_SKIPLOCALHOST;
+			m_pSpot->pev->owner = m_pPlayer->edict();
+		}
 
-    if(!m_pSpot)
-    {
-        m_pSpot = CLaserSpot::CreateSpot();
-        m_pSpot->pev->effects |= EF_NIGHTVISION;
-        m_pSpot->pev->owner = ENT(m_pPlayer->pev);
-    }
-
-    UTIL_MakeVectors(m_pPlayer->pev->v_angle);
-    vecSrc = m_pPlayer->GetGunPosition();
-    vecEnd.x = gpGlobals->v_forward.x * 8192.0 + vecSrc.x;
-    vecEnd.y = gpGlobals->v_forward.y * 8192.0 + vecSrc.y;
-    vecEnd.z = gpGlobals->v_forward.z * 8192.0 + vecSrc.z;
-    UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(m_pPlayer->pev), &tr);
-    UTIL_SetOrigin(m_pSpot->pev, tr.vecEndPos);
-    m_pSpot->pev->renderamt = 0.25 * m_fAimedDamage + 150.0;
+		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
+		vecSrc = m_pPlayer->GetGunPosition();
+		vecEnd = vecSrc + gpGlobals->v_forward * 8192.0f;
+		UTIL_TraceLine( vecSrc, vecEnd, dont_ignore_monsters, m_pPlayer->edict(), &tr );
+		UTIL_SetOrigin( m_pSpot->pev, tr.vecEndPos );
+		m_pSpot->pev->renderamt = 0.25f * m_fAimedDamage + 150.0f;
+	}
 }
 
 void CTFSniperRifle::WeaponIdle( void )
 {
-    if(m_iSpotActive)
-        UpdateSpot();
+	if ( m_iSpotActive )
+		UpdateSpot();
 
-    if(m_flTimeWeaponIdle < 0.0)
-    {
-        m_flTimeWeaponIdle = 12.5;
-        SendWeaponAnim(SRIFLE_IDLE, 1);
-    }
+	if ( m_flTimeWeaponIdle < 0.0f )
+	{
+		SendWeaponAnim( SRIFLE_IDLE, 1 );
+		m_flTimeWeaponIdle = 12.5f;
+	}
 }
 
-//Velaron: finish this nightmare
-void CTFSniperRifle::PrimaryAttack()
+void CTFSniperRifle::PrimaryAttack( void )
 {
-    vec3_t anglesAim;
-    vec3_t vecAim;
-    vec3_t vecSrc, vecEnd;
-    TraceResult tr;
+	Vector vecSrc, vecEnd;
+	TraceResult tr;
+	edict_t *pent;
+	CBaseEntity *pEntity;
 
-    if(m_pPlayer->ammo_shells <= 0)
-    {
-        PlayEmptySound();
-        return;
-    }
+	if ( m_pPlayer->ammo_shells <= 0 )
+	{
+		PlayEmptySound();
+	}
+	else
+	{
+		m_pPlayer->m_iWeaponVolume = 200;
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireSniper, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, m_fAimedDamage, 0, 0, 0 );
+		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+		m_flTimeWeaponIdle = 0.5f;
+		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
+		vecSrc = m_pPlayer->GetGunPosition();
+		vecEnd = vecSrc + gpGlobals->v_forward * 8192.0f;
+		UTIL_TraceLine( vecSrc, vecEnd, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
 
-    m_pPlayer->m_iWeaponVolume = 200;
-    m_pPlayer->m_iWeaponFlash = 512;
-    PLAYBACK_EVENT_FULL(1, ENT(m_pPlayer->pev), m_usFireSniper, 0, (float *)&g_vecZero, (float *)&g_vecZero, 0, 0, m_fAimedDamage, 0, 0, 0);
-    m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-    m_flTimeWeaponIdle = 0.5;
-    anglesAim.x = m_pPlayer->pev->v_angle.x + m_pPlayer->pev->punchangle.x;
-    anglesAim.y = m_pPlayer->pev->v_angle.y + m_pPlayer->pev->punchangle.y;
-    anglesAim.z = m_pPlayer->pev->v_angle.z + m_pPlayer->pev->punchangle.z;
-    UTIL_MakeVectors(anglesAim);
-    vecAim = m_pPlayer->GetGunPosition();
-    UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(m_pPlayer->pev), &tr);
+		if ( tr.flFraction == 1.0f )
+		{
+			PLAYBACK_EVENT_FULL( FEV_SERVER | FEV_HOSTONLY, ENT( m_pPlayer->pev ), m_usSniperHit, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 25, 0, 0, 0 );
+		}
+		else
+		{
+			pent = ENT( 0 );
+			
+			if ( tr.pHit || pent )
+			{
+				pEntity = CBaseEntity::Instance( pent );
 
-    PLAYBACK_EVENT_FULL(1, ENT(m_pPlayer->pev), m_usSniperHit, 0, (float *)&g_vecZero, (float *)&g_vecZero, 0, 0, 0, 0, 0, 0);
+				if ( pEntity )
+				{
+					ClearMultiDamage();
+					pEntity->TraceAttack( m_pPlayer->pev, m_fAimedDamage, gpGlobals->v_forward, &tr, DMG_BULLET );
 
-    m_pPlayer->ammo_shells--;
+					if ( m_pPlayer->deathtype )
+						deathtype = m_pPlayer->deathtype;
+					
+					ApplyMultiDamage( pev, m_pPlayer->pev );
+					m_pPlayer->deathtype = 0;
+					//STRING( pEntity->pev->classname );
+					//Velaron: TODO
+				}
+			}
+		}
+		
+	}
 }
 
 void CTFSniperRifle::ItemPostFrame()
 {
-/*
-    if(!m_pPlayer->pev->button & 8 || m_flNextSecondaryAttack > 0.0)
-    {
-        if(m_pPlayer->m_afButtonReleased & 1 && m_flNextPrimaryAttack <= 0.0)
-        {
-            if(tfstate & 8)
-            {}
-        }
-    }
-*/
+	ItemInfo info;
+
+	GetItemInfo( &info );
+
+	if ( !( m_pPlayer->pev->button & IN_ATTACK2 ) || m_flNextSecondaryAttack > 0.0f )
+	{
+		if ( m_pPlayer->m_afButtonReleased & IN_ATTACK && m_flNextPrimaryAttack <= 0.0f )
+		{
+			if ( m_pPlayer->tfstate & TFSTATE_AIMING )
+			{
+				m_pPlayer->tfstate &= ~TFSTATE_AIMING;
+				m_pPlayer->TeamFortress_SetSpeed();
+
+				if ( m_pPlayer->pev->flags & FL_ONGROUND )
+					PrimaryAttack();
+				else
+					ClientPrint( m_pPlayer->pev, HUD_PRINTCENTER, "#Sniper_cantfire" );
+				
+				m_iSpotActive = false;
+
+				if ( m_pSpot )
+					m_pSpot->Killed( NULL, GIB_NEVER );
+				
+				m_pSpot = NULL;
+				m_fAimedDamage = 0.0f;
+			}
+		}
+		else if ( m_pPlayer->pev->button & IN_ATTACK && m_flNextPrimaryAttack <= 0.0f )
+		{
+			if ( m_pPlayer->tfstate & TFSTATE_AIMING )
+			{
+				m_iSpotActive = true;
+				if ( m_fAimedDamage < 400.0f )
+				{
+					m_fAimedDamage -= m_fNextAimBonus * 50.0f;
+					m_fNextAimBonus = 0.0f;
+				}
+				UpdateSpot();
+			}
+			else if ( sqrt( m_pPlayer->pev->velocity.x * m_pPlayer->pev->velocity.x + m_pPlayer->pev->velocity.y * m_pPlayer->pev->velocity.y ) <= 50.0f )
+			{
+				m_iSpotActive = true;
+				m_fAimedDamage = 50.0f;
+				m_fNextAimBonus = 0.0f;
+				m_pPlayer->tfstate |= TFSTATE_AIMING;
+				m_pPlayer->TeamFortress_SetSpeed();
+				SendWeaponAnim( SRIFLE_AIM, 1 );
+				m_flTimeWeaponIdle = 1000.0f;
+			}
+		}
+		else if ( !(m_pPlayer->pev->button & IN_ATTACK | IN_ATTACK2 ) )
+		{
+			m_fFireOnEmpty = false;
+			if ( IsUseable() || m_flNextPrimaryAttack >= 0.0f )
+			{
+				if ( !m_iClip && !( info.iFlags & ITEM_FLAG_NOAUTORELOAD ) && m_flNextPrimaryAttack < 0.0f )
+				{
+					Reload();
+					return;
+				}
+			}
+			else if ( !(info.iFlags & ITEM_FLAG_NOAUTOSWITCHEMPTY ) && UTIL_GetNextBestWeapon( m_pPlayer, this ) )
+			{
+				m_flNextPrimaryAttack = GetNextAttackDelay( 0.3f );
+				return;
+			}
+
+			WeaponIdle();
+			return;
+		}
+
+		if ( !ShouldWeaponIdle() )
+			return;
+		
+		WeaponIdle();
+		return;
+	}
+
+	if ( info.pszAmmo2 )
+	{
+		if ( m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()])
+		{
+			m_fFireOnEmpty = true;
+		}
+	}
+
+	SecondaryAttack();
+	m_pPlayer->pev->button &= ~IN_ATTACK2;
+
+	if ( ShouldWeaponIdle() )
+	{	
+		WeaponIdle();
+		return;
+	}
 }

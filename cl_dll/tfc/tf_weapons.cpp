@@ -76,7 +76,7 @@ CTFPipebombLauncher g_PL;
 CTFSniperRifle g_Sniper;
 CTFKnife g_Knife;
 CTFSpanner g_Spanner;
-//CTFMedikit g_Medkit;
+CTFMedikit g_Medkit;
 CTFAxe g_Crowbar;
 CLaserSpot g_Spot;
 
@@ -625,7 +625,7 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_Sniper, &player );
 	HUD_PrepEntity( &g_Knife, &player );
 	HUD_PrepEntity( &g_Spanner, &player );
-	//HUD_PrepEntity( &g_Medkit, &player );
+	HUD_PrepEntity( &g_Medkit, &player );
 	HUD_PrepEntity( &g_Crowbar, &player );
 	HUD_PrepEntity( &g_Spot, &player );
 
@@ -700,7 +700,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	switch( from->client.m_iId )
 	{
 		case WEAPON_BIOWEAPON:
-			//pWeapon = &g_Medkit;
+			pWeapon = &g_Medkit;
 			break;
 		case WEAPON_SPANNER:
 			pWeapon = &g_Spanner;
@@ -764,7 +764,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	// If so, run the appropriate player killed or spawn function
 	if( g_runfuncs )
 	{
-		if( to->client.health > 0.0 && lasthealth <= 0 && player.m_pActiveItem )
+		if( to->client.health > 0.0f && lasthealth <= 0 && player.m_pActiveItem )
 		{
 			player.m_pActiveItem->Deploy();
 		}

@@ -33,11 +33,11 @@ int CTFTranq::GetItemInfo( ItemInfo *p )
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
-		p->iMaxAmmo1 = m_pPlayer->maxammo_shells;
+		p->iAmmo1 = m_pPlayer->maxammo_shells;
 	else
-		p->iMaxAmmo1 = 200;
+		p->iAmmo1 = 200;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
 	p->iSlot = 1;
 	p->iPosition = 4;
@@ -101,7 +101,7 @@ void CTFTranq::PrimaryAttack( void )
 	{
 		m_pPlayer->m_iWeaponVolume = 600;
 		m_pPlayer->m_iWeaponFlash = 256;
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireTranquilizer, 0.0f, (float *)&g_vecZero, (float *)&g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireTranquilizer, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		p_vecOrigin = m_pPlayer->GetGunPosition();
