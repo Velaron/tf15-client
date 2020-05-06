@@ -9,10 +9,10 @@ matrix:
           - build-tools-29.0.3
           - android-5
           - android-29
-       before_script:
-         - cd android
-       script:
-         - ./gradlew build
+      before_script:
+        - cd android
+      script:
+        - ./gradlew build
     - language: cpp
       os: linux
       dist: bionic
