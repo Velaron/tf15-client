@@ -34,7 +34,7 @@ matrix:
         - cd build
         - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
         - ninja -v
-      - language: cpp
+    - language: cpp
       os: windows
       compiler: msvc
       install:
