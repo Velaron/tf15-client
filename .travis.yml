@@ -10,6 +10,10 @@ matrix:
           - build-tools-29.0.3
           - android-5
           - android-29
+          - extra-google-m2repository
+      install:
+        - echo y | sdkmanager "ndk-bundle"
+        - echo y | sdkmanager "ndk;21.0.6113669"
       before_script:
         - cd android
       script:
@@ -42,6 +46,6 @@ matrix:
       script:
         - mkdir build
         - cd build
-        - cmd.exe /C "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x86
-        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
-        - ninja -v
+        - cmd.exe /C '"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x86 &&
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug .. &&
+          ninja -v''
