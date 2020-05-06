@@ -1,0 +1,11 @@
+# Gradle
+.gradle
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Android
+.externalNativeBuild
+.cxx/

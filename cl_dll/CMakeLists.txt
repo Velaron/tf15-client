@@ -21,9 +21,9 @@
 #
 
 cmake_minimum_required(VERSION 2.6.0)
-project (CLDLL)
+project(client)
 
-set (CLDLL_LIBRARY client)
+set(CLDLL_LIBRARY client)
 
 include(CheckIncludeFile)
 check_include_file("tgmath.h" HAVE_TGMATH_H)
@@ -46,12 +46,12 @@ else()
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE)
 endif()
 
-if (GOLDSOURCE_SUPPORT)
+if(GOLDSOURCE_SUPPORT)
 	add_definitions(-DGOLDSOURCE_SUPPORT)
 endif()
 
 
-set (CLDLL_SOURCES
+set(CLDLL_SOURCES
 	../dlls/crowbar.cpp
 	../dlls/tfc/tf_wpn_ac.cpp
 	../dlls/tfc/tf_wpn_ar.cpp
@@ -115,7 +115,7 @@ set (CLDLL_SOURCES
 	scoreboard.cpp
 	MOTD.cpp)
 
-include_directories (. hl/ ../dlls ../dlls/tfc ../common ../engine ../pm_shared ../game_shared ../public ../utils/false_vgui/include)
+include_directories(. hl/ ../dlls ../dlls/tfc ../common ../engine ../pm_shared ../game_shared ../public ../utils/false_vgui/include)
 
 if(USE_VOICEMGR)
 	#set(CLDLL_SOURCES
@@ -124,13 +124,14 @@ if(USE_VOICEMGR)
 	#	../game_shared/voice_status.cpp)
 endif()
 
-add_library (${CLDLL_LIBRARY} MODULE ${CLDLL_SOURCES})
-if (GOLDSOURCE_SUPPORT)
-	target_link_libraries( ${CLDLL_LIBRARY} ${CMAKE_DL_LIBS} )
+add_library(${CLDLL_LIBRARY} MODULE ${CLDLL_SOURCES})
+
+if(GOLDSOURCE_SUPPORT)
+	target_link_libraries(${CLDLL_LIBRARY} ${CMAKE_DL_LIBS})
 endif()
 
 if(WIN32)
-	target_link_libraries( ${CLDLL_LIBRARY} user32.lib )
+	target_link_libraries(${CLDLL_LIBRARY} user32.lib)
 endif()
 
 set_target_properties (${CLDLL_LIBRARY} PROPERTIES
@@ -143,12 +144,14 @@ if(APPLE OR WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 		PREFIX "")
 endif()
 
-install( TARGETS ${CLDLL_LIBRARY}
+install(TARGETS ${CLDLL_LIBRARY}
 	DESTINATION "${GAMEDIR}/${CLIENT_INSTALL_DIR}/"
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 	    GROUP_READ GROUP_EXECUTE
-		WORLD_READ WORLD_EXECUTE )
+		WORLD_READ WORLD_EXECUTE)
 
 # Install PDB file on Windows
-install(FILES $<TARGET_PDB_FILE:${CLDLL_LIBRARY}>
-	DESTINATION "${GAMEDIR}/${CLIENT_INSTALL_DIR}/" OPTIONAL)
+if(WIN32 AND MSVC)
+	install(FILES $<TARGET_PDB_FILE:${CLDLL_LIBRARY}>
+		DESTINATION "${GAMEDIR}/${CLIENT_INSTALL_DIR}/" OPTIONAL)
+endif()

@@ -1,0 +1,49 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion = 29
+    buildToolsVersion = '29.0.3'
+    ndkVersion '21.0.6113669'
+
+    defaultConfig {
+        applicationId = 'su.xash.tf15client'
+        minSdkVersion 5
+        targetSdkVersion 29
+        versionCode = 1
+        versionName = '1.0'
+
+        externalNativeBuild {
+            cmake {
+                arguments '-DMAINUI_USE_CUSTOM_FONT_RENDER=0'
+            }
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path file('../../CMakeLists.txt')
+        }
+    }
+}
+
+task makePak(type:Exec) {
+    commandLine 'python', 'makepak.py', 'pak/', 'src/main/assets/extras.pak'
+} 
+
+preBuild.dependsOn(makePak)

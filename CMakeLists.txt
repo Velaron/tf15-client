@@ -27,7 +27,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 include(VSForceXPToolchain) # Force XP toolchain for Visual Studio
 
-project (TF15-CLIENT)
+project(tf15-client)
 
 set(CMAKE_CXX_STANDARD 11)
 

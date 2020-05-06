@@ -1,14 +1,22 @@
-language: c
-git:
-  submodules: true
-jobs:
+matrix:
   include:
-    - stage: build
-      name: "Build for Linux"
-      compiler: gcc
-      cache: ccache
+    - language: android
       os: linux
-      dist: xenial
+      dist: bionic
+      jdk: oraclejdk8
+      android:
+        components:
+          - build-tools-29.0.3
+          - android-5
+          - android-29
+       before_script:
+         - cd android
+       script:
+         - ./gradlew build
+    - language: cpp
+      os: linux
+      dist: bionic
+      compiler: gcc
       addons:
         apt:
           packages:
@@ -17,43 +25,9 @@ jobs:
             - libfreetype6-dev:i386
             - libfontconfig-dev:i386
             - p7zip-full
-      env: ARCH=i686
+            - cmake
+            - cmake-data
+            - ninja-build
       script:
-        - ./waf configure -T debug build -v
-#      before_deploy:
-#        - mv */*/*.so
-#        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.so
-#      deploy:
-#        provider: releases
-#        api_key: $GITHUB_TOKEN
-#        file: tf15-client-$TRAVIS_OS_NAME.7z
-#        skip_cleanup: true
-#        overwrite: true
-#        draft: true
-    - stage: build
-      name: "Build for Windows"
-      cache: ccache
-      os: windows
-      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
-      before_install:
-        - choco install python
-      script:
-        - ./waf configure -T debug build -v
-#      before_deploy:
-#        - mv */*/client.* */*/menu.* .
-#        - 7z a -t7z tf15-client-$TRAVIS_OS_NAME.7z -m0=lzma2 -mx=9 -mfb=64 -md=32m -ms=on *.dll *.pdb
-#      deploy:
-#        provider: releases
-#        api_key: $GITHUB_TOKEN
-#        file: tf15-client-$TRAVIS_OS_NAME.7z
-#        skip_cleanup: true
-#        overwrite: true
-#        draft: true
-#    - stage: deploy
-#      name: "Deploy to Github"
-#      script:
-#        - git tag -f "travis-ci"
-#      deploy:
-#        provider: releases
-#        api_key: $GITHUB_TOKEN
-#        draft: false
+        - cmake -Bbuild -G Ninja -DCMAKE_BUILD_TYPE=Debug
+        - ninja -v
