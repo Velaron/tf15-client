@@ -3,6 +3,7 @@
 build/
 CMakeLists.txt.user
 cmake_install.cmake
+CMakeSettings.json
 .waf-*
 waf-*
 .waf3-*
