@@ -12,7 +12,6 @@ LINK_ENTITY_TO_CLASS( tf_weapon_flamethrower, CTFFlamethrower )
 
 void CTFFlamethrower::Spawn( void )
 {
-	//current_ammo = 0;
 	Precache();
 	m_iId = WEAPON_FLAMETHROWER;
 	SET_MODEL( ENT( pev ), "models/w_egon.mdl" );
@@ -124,7 +123,6 @@ int CTFFlamethrower::AddToPlayer( CBasePlayer *pPlayer )
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		//current_ammo = m_pPlayer->ammo_cells;
 		return true;
 	}
 

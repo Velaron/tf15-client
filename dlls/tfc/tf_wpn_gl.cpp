@@ -12,7 +12,6 @@ LINK_ENTITY_TO_CLASS( tf_weapon_gl, CTFGrenadeLauncher )
 
 void CTFGrenadeLauncher::Spawn( void )
 {
-	current_ammo = 0;
 	Precache();
 	m_iId = WEAPON_GRENADE_LAUNCHER;
 	m_iAnim_Deploy = GL_DRAW;
@@ -177,7 +176,6 @@ int CTFGrenadeLauncher::AddToPlayer( CBasePlayer *pPlayer )
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		current_ammo = &m_pPlayer->ammo_rockets;
 		return true;
 	}
 
@@ -219,7 +217,6 @@ LINK_ENTITY_TO_CLASS( tf_weapon_pl, CTFPipebombLauncher )
 
 void CTFPipebombLauncher::Spawn( void )
 {
-	current_ammo = NULL;
 	Precache();
 	m_iId = WEAPON_PIPEBOMB_LAUNCHER;
 	m_iDefaultAmmo = 50;

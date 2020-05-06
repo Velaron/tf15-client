@@ -14,7 +14,6 @@ void CTFIncendiaryC::Spawn( void )
 {
 	Precache();
 	m_iId = WEAPON_FLAMETHROWER;
-	//current_ammo = 0;
 	SET_MODEL( ENT( pev ), "models/w_rpg.mdl" );
 	m_iDefaultAmmo = 50;
 	pev->solid = SOLID_TRIGGER;
@@ -92,7 +91,6 @@ int CTFIncendiaryC::AddToPlayer( CBasePlayer *pPlayer )
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		//current_ammo = m_pPlayer->ammo_rockets
 		return true;
 	}
 

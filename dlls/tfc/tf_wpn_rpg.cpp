@@ -12,7 +12,6 @@ LINK_ENTITY_TO_CLASS( tf_weapon_rpg, CTFRpg )
 
 void CTFRpg::Spawn( void )
 {
-	//current_ammo = 0;
 	Precache();
 	m_iId = WEAPON_ROCKET_LAUNCHER;
 	SET_MODEL( ENT( pev ), "models/w_rpg.mdl" );
@@ -178,7 +177,6 @@ int CTFRpg::AddToPlayer( CBasePlayer *pPlayer )
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		//current_ammo = m_pPlayer->ammo_rockets;
 		return true;
 	}
 

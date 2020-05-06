@@ -143,6 +143,7 @@ float EV_TFC_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *ve
 	char texname[64];
 	char szbuffer[64];
 
+	chTextureType = NULL;
 	entity = gEngfuncs.pEventAPI->EV_IndexFromTrace( ptr );
 
 	if( entity >= 1 && entity <= gEngfuncs.GetMaxClients() )

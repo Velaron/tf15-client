@@ -127,27 +127,26 @@ public:
 	virtual int AddDuplicate( CBasePlayerItem *pItem ) { return FALSE; }	// return TRUE if you want your duplicate removed from world
 	void EXPORT DestroyItem( void );
 	void EXPORT DefaultTouch( CBaseEntity *pOther );	// default weapon touch
-	void EXPORT FallThink ( void );// when an item is first spawned, this think is run to determine when the object has hit the ground.
+	void EXPORT FallThink( void );// when an item is first spawned, this think is run to determine when the object has hit the ground.
 	void EXPORT Materialize( void );// make a weapon visible and tangible
 	void EXPORT AttemptToMaterialize( void );  // the weapon desires to become visible and tangible, if the game rules allow for it
-	CBaseEntity* Respawn ( void );// copy a weapon
+	CBaseEntity *Respawn( void );// copy a weapon
 	void FallInit( void );
 	void CheckRespawn( void );
-	virtual int GetItemInfo(ItemInfo *p) { return 0; };	// returns 0 if struct not filled out
+	virtual int GetItemInfo( ItemInfo *p ) { return 0; };	// returns 0 if struct not filled out
 	virtual BOOL CanDeploy( void ) { return TRUE; };
-	virtual BOOL Deploy( )								// returns is deploy was successful
-		 { return TRUE; };
+	virtual BOOL Deploy( void ) { return TRUE; }; // returns is deploy was successful
 
 	virtual BOOL CanHolster( void ) { return TRUE; };// can this weapon be put away right now?
 	virtual void Holster( int skiplocal = 0 );
 	virtual void UpdateItemInfo( void ) { return; };
 
-	virtual void ItemPreFrame( void )	{ return; }		// called each frame by the player PreThink
+	virtual void ItemPreFrame( void ) { return; }		// called each frame by the player PreThink
 	virtual void ItemPostFrame( void ) { return; }		// called each frame by the player PostThink
 
 	virtual void Drop( void );
 	virtual void Kill( void );
-	virtual void AttachToPlayer ( CBasePlayer *pPlayer );
+	virtual void AttachToPlayer( CBasePlayer *pPlayer );
 
 	virtual int PrimaryAmmoIndex() { return -1; };
 	virtual int SecondaryAmmoIndex() { return -1; };
@@ -156,24 +155,24 @@ public:
 
 	virtual CBasePlayerItem *GetWeaponPtr( void ) { return NULL; };
 
-	static ItemInfo ItemInfoArray[ MAX_WEAPONS ];
-	static AmmoInfo AmmoInfoArray[ MAX_AMMO_SLOTS ];
+	static ItemInfo ItemInfoArray[MAX_WEAPONS];
+	static AmmoInfo AmmoInfoArray[MAX_AMMO_SLOTS];
 
-	CBasePlayer	*m_pPlayer;
+	CBasePlayer *m_pPlayer;
 	CBasePlayerItem *m_pNext;
 	int		m_iId;												// WEAPON_???
 
 	virtual int iItemSlot( void ) { return 0; }			// return 0 to MAX_ITEMS_SLOTS, used in hud
 
-	int			iItemPosition( void ) { return ItemInfoArray[ m_iId ].iPosition; }
-	const char	*pszAmmo1( void )	{ return ItemInfoArray[ m_iId ].pszAmmo1; }
-	int			iMaxAmmo1( void )	{ return ItemInfoArray[ m_iId ].iAmmo1; }
-	const char	*pszAmmo2( void )	{ return ItemInfoArray[ m_iId ].pszAmmo2; }
-	int			iMaxAmmo2( void )	{ return ItemInfoArray[ m_iId ].iAmmo2; }
-	const char	*pszName( void )	{ return ItemInfoArray[ m_iId ].pszName; }
-	int			iMaxClip( void )	{ return ItemInfoArray[ m_iId ].iMaxClip; }
-	int			iWeight( void )		{ return ItemInfoArray[ m_iId ].iWeight; }
-	int			iFlags( void )		{ return ItemInfoArray[ m_iId ].iFlags; }
+	int			iItemPosition( void ) { return ItemInfoArray[m_iId].iPosition; }
+	const char *pszAmmo1( void ) { return ItemInfoArray[m_iId].pszAmmo1; }
+	int			iMaxAmmo1( void ) { return ItemInfoArray[m_iId].iAmmo1; }
+	const char *pszAmmo2( void ) { return ItemInfoArray[m_iId].pszAmmo2; }
+	int			iMaxAmmo2( void ) { return ItemInfoArray[m_iId].iAmmo2; }
+	const char *pszName( void ) { return ItemInfoArray[m_iId].pszName; }
+	int			iMaxClip( void ) { return ItemInfoArray[m_iId].iMaxClip; }
+	int			iWeight( void ) { return ItemInfoArray[m_iId].iWeight; }
+	int			iFlags( void ) { return ItemInfoArray[m_iId].iFlags; }
 
 	// int		m_iIdPrimary;										// Unique Id for primary ammo
 	// int		m_iIdSecondary;										// Unique Id for secondary ammo
@@ -225,7 +224,7 @@ public:
 	virtual void WeaponIdle( void ) { return; }					// called when no buttons pressed
 	virtual int UpdateClientData( CBasePlayer *pPlayer );		// sends hud info to client dll, if things have changed
 	virtual void RetireWeapon( void );
-	virtual BOOL ShouldWeaponIdle( void ) {return FALSE; };
+	virtual BOOL ShouldWeaponIdle( void ) { return FALSE; };
 	virtual void Holster( int skiplocal = 0 );
 	virtual BOOL UseDecrement( void ) { return FALSE; };
 
@@ -254,8 +253,8 @@ public:
 	int		m_iClip;											// number of shots left in the primary weapon clip, -1 it not used
 	int		m_iClientClip;										// the last version of m_iClip sent to hud dll
 	int		m_iClientWeaponState;								// the last version of the weapon state sent to hud dll (is current weapon, is on target)
-	int		m_iDefaultAmmo;// how much ammo you get when you pick up this weapon as placed by a level designer.
-	
+	int		m_iDefaultAmmo;										// how much ammo you get when you pick up this weapon as placed by a level designer.
+
 	// hle time creep vars
 	float	m_flPrevPrimaryAttack;
 	float	m_flLastFireTime;
@@ -268,7 +267,7 @@ public:
 	void EXPORT DefaultTouch( CBaseEntity *pOther ); // default weapon touch
 	virtual BOOL AddAmmo( CBaseEntity *pOther ) { return TRUE; };
 
-	CBaseEntity* Respawn( void );
+	CBaseEntity *Respawn( void );
 	void EXPORT Materialize( void );
 };
 
@@ -283,18 +282,18 @@ extern DLL_GLOBAL	short	g_sModelIndexBubbles;// holds the index for the bubbles 
 extern DLL_GLOBAL	short	g_sModelIndexBloodDrop;// holds the sprite index for blood drops
 extern DLL_GLOBAL	short	g_sModelIndexBloodSpray;// holds the sprite index for blood spray (bigger)
 
-extern void ClearMultiDamage(void);
-extern void ApplyMultiDamage(entvars_t* pevInflictor, entvars_t* pevAttacker );
-extern void AddMultiDamage( entvars_t *pevInflictor, CBaseEntity *pEntity, float flDamage, int bitsDamageType);
+extern void ClearMultiDamage( void );
+extern void ApplyMultiDamage( entvars_t *pevInflictor, entvars_t *pevAttacker );
+extern void AddMultiDamage( entvars_t *pevInflictor, CBaseEntity *pEntity, float flDamage, int bitsDamageType );
 
 extern void DecalGunshot( TraceResult *pTrace, int iBulletType );
-extern void SpawnBlood(Vector vecSpot, int bloodColor, float flDamage);
+extern void SpawnBlood( Vector vecSpot, int bloodColor, float flDamage );
 extern int DamageDecal( CBaseEntity *pEntity, int bitsDamageType );
 extern void RadiusDamage( Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, float flRadius, int iClassIgnore, int bitsDamageType );
 
 typedef struct
 {
-	CBaseEntity		*pEntity;
+	CBaseEntity *pEntity;
 	float			amount;
 	int				type;
 } MULTIDAMAGE;
@@ -343,7 +342,7 @@ class CWeaponBox : public CBaseEntity
 	void SetObjectCollisionBox( void );
 
 public:
-	void EXPORT Kill ( void );
+	void EXPORT Kill( void );
 	int		Save( CSave &save );
 	int		Restore( CRestore &restore );
 	static	TYPEDESCRIPTION m_SaveData[];
@@ -352,7 +351,7 @@ public:
 	BOOL PackWeapon( CBasePlayerItem *pWeapon );
 	BOOL PackAmmo( int iszName, int iCount );
 
-	CBasePlayerItem	*m_rgpPlayerItems[MAX_ITEM_TYPES];// one slot for each
+	CBasePlayerItem *m_rgpPlayerItems[MAX_ITEM_TYPES];// one slot for each
 
 	int m_rgiszAmmo[MAX_AMMO_SLOTS];// ammo names
 	int	m_rgAmmo[MAX_AMMO_SLOTS];// ammo quantities
@@ -361,8 +360,8 @@ public:
 };
 
 #ifdef CLIENT_DLL
-bool bIsMultiplayer ( void );
-void LoadVModel ( const char *szViewModel, CBasePlayer *m_pPlayer );
+bool bIsMultiplayer( void );
+void LoadVModel( const char *szViewModel, CBasePlayer *m_pPlayer );
 #endif
 
 class CGrenade : public CBaseMonster
@@ -419,7 +418,7 @@ public:
 	TraceResult m_trHit;
 
 	virtual BOOL UseDecrement( void )
-	{ 
+	{
 #if defined( CLIENT_WEAPONS )
 		return TRUE;
 #else
@@ -582,7 +581,7 @@ public:
 	int iItemSlot( void ) { return 3; }
 
 	BOOL m_iSpotActive;
-	CLaserSpot* m_pSpot;
+	CLaserSpot *m_pSpot;
 
 private:
 	unsigned short m_usFireSniper;
@@ -672,7 +671,7 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	int GetItemInfo( ItemInfo *p );
-	void PrimaryAttack(void);
+	void PrimaryAttack( void );
 	BOOL Deploy( void );
 	void WeaponIdle( void );
 	int AddToPlayer( CBasePlayer *pPlayer );

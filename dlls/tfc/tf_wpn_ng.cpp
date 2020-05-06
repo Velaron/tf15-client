@@ -12,7 +12,6 @@ LINK_ENTITY_TO_CLASS( tf_weapon_ng, CTFNailgun )
 
 void CTFNailgun::Spawn( void )
 {
-	//current_ammo = 0;
 	Precache();
 	m_iId = WEAPON_NAILGUN;
 	m_iDefaultAmmo = 50;
