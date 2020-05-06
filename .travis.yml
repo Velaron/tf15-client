@@ -2,10 +2,11 @@ matrix:
   include:
     - language: android
       os: linux
-      dist: trusty
-      jdk: oraclejdk8
+      dist: bionic
+      jdk: openjdk8
       android:
         components:
+          - tools
           - build-tools-29.0.3
           - android-5
           - android-29
@@ -15,7 +16,7 @@ matrix:
         - ./gradlew build
     - language: cpp
       os: linux
-      dist: trusty
+      dist: bionic
       compiler: gcc
       addons:
         apt:
