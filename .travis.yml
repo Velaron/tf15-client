@@ -2,8 +2,8 @@ matrix:
   include:
     - language: android
       os: linux
-      dist: bionic
-      jdk: openjdk8
+      dist: trusty
+      jdk: oraclejdk8
       android:
         components:
           - tools
@@ -32,5 +32,16 @@ matrix:
       script:
         - mkdir build
         - cd build
+        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
+        - ninja -v
+      - language: cpp
+      os: windows
+      compiler: msvc
+      install:
+        - choco install ninja
+      script:
+        - mkdir build
+        - cd build
+        - cmd.exe /C "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x86
         - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
         - ninja -v
