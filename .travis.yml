@@ -2,7 +2,7 @@ matrix:
   include:
     - language: android
       os: linux
-      dist: bionic
+      dist: trusty
       jdk: oraclejdk8
       android:
         components:
@@ -15,7 +15,7 @@ matrix:
         - ./gradlew build
     - language: cpp
       os: linux
-      dist: bionic
+      dist: trusty
       compiler: gcc
       addons:
         apt:
@@ -29,5 +29,7 @@ matrix:
             - cmake-data
             - ninja-build
       script:
-        - cmake -Bbuild -G Ninja -DCMAKE_BUILD_TYPE=Debug
+        - mkdir build
+        - cd build
+        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
         - ninja -v
