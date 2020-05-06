@@ -34,9 +34,8 @@ matrix:
             - cmake-data
             - ninja-build
       script:
-        - mkdir build
+        - cmake -H. -Bbuild -G Ninja -DCMAKE_BUILD_TYPE=Debug
         - cd build
-        - cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
         - ninja -v
     - language: cpp
       os: windows
@@ -44,8 +43,6 @@ matrix:
       install:
         - choco install ninja
       script:
-        - mkdir build
+        - cmake -A Win32 -H. -Bbuild -G Ninja -DCMAKE_BUILD_TYPE=Debug
         - cd build
-        - cmd.exe /C '"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x86 &&
-          cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug .. &&
-          ninja -v''
+        - ninja -v
