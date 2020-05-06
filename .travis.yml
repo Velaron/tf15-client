@@ -34,15 +34,13 @@ matrix:
             - cmake-data
             - ninja-build
       script:
-        - cmake -H. -Bbuild -G Ninja -DCMAKE_BUILD_TYPE=Debug
+        - cmake -H. -Bbuild -G Ninja
         - cd build
-        - ninja -v
+        - cmake --build . --config Debug
     - language: cpp
       os: windows
       compiler: msvc
-      install:
-        - choco install ninja
       script:
-        - cmake -A Win32 -H. -Bbuild -G Ninja -DCMAKE_BUILD_TYPE=Debug
+        - cmake -A Win32 -H. -Bbuild
         - cd build
-        - ninja -v
+        - cmake --build . --config Debug
