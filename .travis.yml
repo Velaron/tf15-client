@@ -53,7 +53,9 @@ matrix:
         - cd build
         - cmake --build . --config Debug
       before_deploy:
-        - tar -czvf tf15-client.tar.gz **/*menu*.so **/*client*.so
+        - mkdir -p tfc/cl_dll
+        - mv -t tfc/cl_dll **/*client*.so **/*menu*.so
+        - tar -czvf tf15-client.tar.gz tfc
         - export TRAVIS_TAG=travis-ci
         - git tag -f $TRAVIS_TAG
       deploy:
@@ -70,3 +72,19 @@ matrix:
         - cmake -A Win32 -H. -Bbuild
         - cd build
         - cmake --build . --config Debug
+      before_deploy:
+        - mkdir tfc\cl_dll
+        - for /r %x in (client.dll) do move %x tfc\cl_dll
+        - for /r %x in (client.pdb) do move %x tfc\cl_dll
+        - for /r %x in (menu.dll) do move %x tfc\cl_dll
+        - for /r %x in (menu.pdb) do move %x tfc\cl_dll
+        - 7z a -tzip tf15-client.zip tfc
+        - export TRAVIS_TAG=travis-ci
+        - git tag -f $TRAVIS_TAG
+      deploy:
+        provider: releases
+        api_key: "$GITHUB_TOKEN"
+        file: "tf15-client.zip"
+        skip_cleanup: true
+        prerelease: true
+        overwrite: true
