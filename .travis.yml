@@ -73,11 +73,8 @@ matrix:
         - cd build
         - cmake --build . --config Debug
       before_deploy:
-        - mkdir tfc\cl_dll
-        - for /r %x in (client.dll) do move %x tfc\cl_dll
-        - for /r %x in (client.pdb) do move %x tfc\cl_dll
-        - for /r %x in (menu.dll) do move %x tfc\cl_dll
-        - for /r %x in (menu.pdb) do move %x tfc\cl_dll
+        - mkdir -p tfc/cl_dll
+        - mv -t tfc/cl_dll **/*client*.dll **/*menu*.dll **/*client*.pdb **/*menu*.pdb
         - 7z a -tzip tf15-client.zip tfc
         - export TRAVIS_TAG=travis-ci
         - git tag -f $TRAVIS_TAG
