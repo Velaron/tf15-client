@@ -74,6 +74,7 @@ matrix:
         - cmake --build . --config Debug
       before_deploy:
         - mkdir -p tfc/cl_dll
+        - shopt -s globstar
         - mv -t tfc/cl_dll **/*client*.dll **/*menu*.dll **/*client*.pdb **/*menu*.pdb
         - 7z a -tzip tf15-client.zip tfc
         - export TRAVIS_TAG=travis-ci
