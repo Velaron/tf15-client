@@ -6,8 +6,8 @@ matrix:
   include:
     - language: android
       os: linux
-      dist: trusty
-      jdk: oraclejdk8
+      dist: bionic
+      jdk: oraclejdk11
       android:
         components:
           - tools
