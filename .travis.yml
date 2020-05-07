@@ -1,3 +1,7 @@
+branches:
+  except:
+  - travis-ci
+
 matrix:
   include:
     - language: android
@@ -25,7 +29,7 @@ matrix:
       deploy:
         provider: releases
         api_key: "$GITHUB_TOKEN"
-        file: "android/tf15-client.apk"
+        file: "tf15-client.apk"
         skip_cleanup: true
         prerelease: true
         overwrite: true
@@ -48,6 +52,17 @@ matrix:
         - cmake -H. -Bbuild -G Ninja
         - cd build
         - cmake --build . --config Debug
+      before_deploy:
+        - tar -czvf tf15-client.tar.gz **/*menu*.so **/*client*.so
+        - export TRAVIS_TAG=travis-ci
+        - git tag -f $TRAVIS_TAG
+      deploy:
+        provider: releases
+        api_key: "$GITHUB_TOKEN"
+        file: "tf15-client.tar.gz"
+        skip_cleanup: true
+        prerelease: true
+        overwrite: true
     - language: cpp
       os: windows
       compiler: msvc
