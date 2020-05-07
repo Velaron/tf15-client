@@ -41,21 +41,21 @@ int CTFRpg::GetItemInfo( ItemInfo *p )
 
 void CTFRpg::Holster( void )
 {
-	//m_pPlayer->tfstate &= 0xFFFFFFFD;
+	m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
 	m_fInSpecialReload = 0;
 	m_pPlayer->m_flNextAttack = 0.5f;
 	SendWeaponAnim( RPG_HOLSTER, 1 );
 }
 
-void CTFRpg::Precache()
+void CTFRpg::Precache( void )
 {
 	PRECACHE_MODEL( "models/v_tfc_rpg.mdl" );
 	PRECACHE_MODEL( "models/p_srpg.mdl" );
 	PRECACHE_MODEL( "models/p_rpg2.mdl" );
 	PRECACHE_SOUND( "items/9mmclip1.wav" );
-	UTIL_PrecacheOther( "tf_rpg_rocket" );
 	PRECACHE_SOUND( "weapons/rocketfire1.wav" );
 	PRECACHE_SOUND( "weapons/glauncher.wav" );
+	UTIL_PrecacheOther( "tf_rpg_rocket" );
 	m_usFireRPG = PRECACHE_EVENT( 1, "events/wpn/tf_rpg.sc" );
 }
 
@@ -79,16 +79,16 @@ void CTFRpg::Reload( void )
 				}
 				else
 				{
-					m_iClip += 1;
+					m_iClip++;
 					m_pPlayer->ammo_rockets--;
 					m_fInSpecialReload = 1;
-					//m_pPlayer->tfstate &= 0xFFFFFFFD;
+					m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
 				}
 			}
 			else
 			{
 				SendWeaponAnim( RPG_RELOAD_START, 1 );
-				m_pPlayer->tfstate |= 2;
+				m_pPlayer->tfstate |= TFSTATE_RELOADING;
 				m_fInSpecialReload = 1;
 				m_pPlayer->m_flNextAttack = 0.1f;
 				m_flTimeWeaponIdle = 0.1f;
@@ -164,7 +164,7 @@ void CTFRpg::WeaponIdle( void )
 
 BOOL CTFRpg::Deploy( void )
 {
-	if( m_iClip )
+	if ( m_iClip )
 		return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_srpg.mdl", RPG_DRAW, "rpg", 1 );
 	else
 		return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_srpg.mdl", RPG_DRAW_UL, "rpg", 1 );
@@ -172,7 +172,7 @@ BOOL CTFRpg::Deploy( void )
 
 int CTFRpg::AddToPlayer( CBasePlayer *pPlayer )
 {
-	if( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
+	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
@@ -189,8 +189,8 @@ void CTFRpg::PrimaryAttack( void )
 
 	if ( m_iClip )
 	{
-		m_pPlayer->m_iWeaponVolume = 1000;
-		m_pPlayer->m_iWeaponFlash = 512;
+		m_pPlayer->m_iWeaponVolume = LOUD_GUN_VOLUME;
+		m_pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
 		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireRPG, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
@@ -199,7 +199,7 @@ void CTFRpg::PrimaryAttack( void )
 		//CTFRpgRocket::CreateRpgRocket( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		m_fInSpecialReload = 0;
-    	//m_pPlayer->tfstate &= 0xFFFFFFFD;
+		m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
 		m_iClip--;
 		m_flTimeWeaponIdle = 0.8f;
 		m_flNextPrimaryAttack = GetNextAttackDelay( 0.8f );

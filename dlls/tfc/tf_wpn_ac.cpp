@@ -25,12 +25,12 @@ void CTFAssaultC::Precache( void )
 	PRECACHE_MODEL( "models/v_tfac.mdl" );
 	PRECACHE_MODEL( "models/p_mini.mdl" );
 	PRECACHE_MODEL( "models/p_mini2.mdl" );
-	m_iShell = PRECACHE_MODEL( "models/shell.mdl" );
 	PRECACHE_SOUND( "weapons/357_cock1.wav" );
 	PRECACHE_SOUND( "weapons/asscan1.wav" );
 	PRECACHE_SOUND( "weapons/asscan2.wav" );
 	PRECACHE_SOUND( "weapons/asscan3.wav" );
 	PRECACHE_SOUND( "weapons/asscan4.wav" );
+	m_iShell = PRECACHE_MODEL( "models/shell.mdl" );
 	m_usWindUp = PRECACHE_EVENT( 1, "events/wpn/tf_acwu.sc" );
 	m_usWindDown = PRECACHE_EVENT( 1, "events/wpn/tf_acwd.sc" );
 	m_usFire = PRECACHE_EVENT( 1, "events/wpn/tf_acfire.sc" );
@@ -65,13 +65,14 @@ BOOL CTFAssaultC::Deploy( void )
 
 int CTFAssaultC::AddToPlayer( CBasePlayer *pPlayer )
 {
-	if( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
+	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, ENT( pPlayer->pev ) );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
 		return true;
 	}
+
 	return false;
 }
 
@@ -87,19 +88,15 @@ void CTFAssaultC::WeaponIdle( void )
 {
 	ResetEmptySound();
 
-	if( m_flTimeWeaponIdle <= 0.0f )
+	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
-		if( m_iWeaponState )
+		if ( m_iWeaponState )
 		{
-			PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usWindDown, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
-			m_iWeaponState = 0;
-			m_pPlayer->tfstate &= ~TFSTATE_AIMING;
-			m_pPlayer->TeamFortress_SetSpeed();
-			m_flTimeWeaponIdle = 2.0f;
+			WindDown( false );
 		}
 		else
 		{
-			SendWeaponAnim( !UTIL_SharedRandomLong( m_pPlayer->random_seed, 0, 1 ), 1 );
+			SendWeaponAnim( !UTIL_SharedRandomLong( m_pPlayer->random_seed, AC_IDLE1, AC_IDLE2 ), 1 );
 			m_flTimeWeaponIdle = 12.5f;
 		}
 	}
@@ -109,11 +106,11 @@ void CTFAssaultC::Fire( void )
 {
 	Vector p_vecSrc, p_VecDirShooting, p_vecSpread;
 
-	if( m_flNextPrimaryAttack <= 0.0f )
+	if ( m_flNextPrimaryAttack <= 0.0f )
 	{
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_UPDATE, ENT( m_pPlayer->pev ), m_usWindUp, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, m_pPlayer->ammo_shells & 1, 0 );
-		m_pPlayer->m_iWeaponVolume = 600;
-		m_pPlayer->m_iWeaponFlash = 256;
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_UPDATE, ENT( m_pPlayer->pev ), m_usFire, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, m_pPlayer->ammo_shells & 1, 0 );
+		m_pPlayer->m_iWeaponVolume = NORMAL_GUN_VOLUME;
+		m_pPlayer->m_iWeaponFlash = NORMAL_GUN_FLASH;
 		m_pPlayer->pev->effects |= EF_MUZZLEFLASH;
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
@@ -127,39 +124,39 @@ void CTFAssaultC::Fire( void )
 
 void CTFAssaultC::PrimaryAttack( void )
 {
-	switch( m_iWeaponState )
+	switch ( m_iWeaponState )
 	{
-		case 1:
-			if ( m_flNextPrimaryAttack <= 0.0f )
-			{
-				PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usACStart, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
-				m_iWeaponState = 2;
-				m_flTimeWeaponIdle = 0.1f;
-				m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
-			}
-			return;
-		case 2:
+	case 1:
+		if ( m_flNextPrimaryAttack <= 0.0f )
 		{
-			if ( m_pPlayer->ammo_shells <= 0 )
-				StartSpin();
-			else
-				Fire();
-			
+			PLAYBACK_EVENT_FULL( FEV_NOTHOST | FEV_RELIABLE | FEV_GLOBAL, ENT( m_pPlayer->pev ), m_usACStart, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+			m_iWeaponState = 2;
 			m_flTimeWeaponIdle = 0.1f;
 			m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
-			return;
 		}
-		case 3:
-		{
-			if ( m_pPlayer->ammo_shells <= 0 )
-				Spin();
-			else
-				m_iWeaponState = 1;
-			
-			m_flTimeWeaponIdle = 0.1f;
-			m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
-			return;
-		}
+		return;
+	case 2:
+	{
+		if ( m_pPlayer->ammo_shells <= 0 )
+			StartSpin();
+		else
+			Fire();
+
+		m_flTimeWeaponIdle = 0.1f;
+		m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
+		return;
+	}
+	case 3:
+	{
+		if ( m_pPlayer->ammo_shells <= 0 )
+			Spin();
+		else
+			m_iWeaponState = 1;
+
+		m_flTimeWeaponIdle = 0.1f;
+		m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
+		return;
+	}
 	}
 
 	if ( m_pPlayer->pev->button & IN_ATTACK )

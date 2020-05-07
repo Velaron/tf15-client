@@ -88,11 +88,11 @@ void CTFGrenadeLauncher::Reload( void )
 				if ( m_fInSpecialReload == 1 )
 				{
 					if ( m_flTimeWeaponIdle <= 0.0 )
-						{
-							m_fInSpecialReload = 2;
-							m_flNextReload = m_fReloadTime;
-							m_flTimeWeaponIdle = m_fReloadTime;
-						}
+					{
+						m_fInSpecialReload = 2;
+						m_flNextReload = m_fReloadTime;
+						m_flTimeWeaponIdle = m_fReloadTime;
+					}
 				}
 				else
 				{
@@ -163,7 +163,7 @@ void CTFGrenadeLauncher::WeaponIdle( void )
 				return;
 			}
 		}
-		
+
 		m_flTimeWeaponIdle = 3.0f;
 		SendWeaponAnim( m_iAnim_Idle, 1 );
 	}
@@ -171,7 +171,7 @@ void CTFGrenadeLauncher::WeaponIdle( void )
 
 int CTFGrenadeLauncher::AddToPlayer( CBasePlayer *pPlayer )
 {
-	if( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
+	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
@@ -188,8 +188,8 @@ void CTFGrenadeLauncher::PrimaryAttack( void )
 
 	if ( m_iClip )
 	{
-		m_pPlayer->m_iWeaponVolume = 1000;
-		m_pPlayer->m_iWeaponFlash = 512;
+		m_pPlayer->m_iWeaponVolume = LOUD_GUN_VOLUME;
+		m_pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
 		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireGL, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
@@ -255,8 +255,8 @@ void CTFPipebombLauncher::PrimaryAttack( void )
 
 	if ( m_iClip )
 	{
-		m_pPlayer->m_iWeaponVolume = 1000;
-		m_pPlayer->m_iWeaponFlash = 512;
+		m_pPlayer->m_iWeaponVolume = LOUD_GUN_VOLUME;
+		m_pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
 		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireGL, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );

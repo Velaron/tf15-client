@@ -18,6 +18,17 @@ matrix:
         - cd android
       script:
         - ./gradlew build
+      before_deploy:
+        - mv app/build/outputs/apk/debug/app-debug.apk tf15-client.apk
+        - export TRAVIS_TAG=travis-ci
+        - git tag -f $TRAVIS_TAG
+      deploy:
+        provider: releases
+        api_key: "$GITHUB_TOKEN"
+        file: "android/tf15-client.apk"
+        skip_cleanup: true
+        prerelease: true
+        overwrite: true
     - language: cpp
       os: linux
       dist: bionic
