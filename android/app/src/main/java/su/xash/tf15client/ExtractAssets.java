@@ -1,101 +1,56 @@
 package su.xash.tf15client;
-import android.content.SharedPreferences;
-import java.io.FileOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import android.util.Log;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+import java.io.InputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class ExtractAssets
 {
-	public static String TAG = "ExtractAssets";
-	static SharedPreferences mPref;
-	public static int PAK_VERSION = 2;
+	public static final String TAG = "ExtractAssets";
 
-    private static int chmod( String path, int mode )
-	{
-		int ret = -1;
-
-		try
-		{
-			ret = Runtime.getRuntime().exec( "chmod " + Integer.toOctalString( mode ) + " " + path ).waitFor();
-			Log.d( TAG, "chmod " + Integer.toOctalString( mode ) + " " + path + ": " + ret );
-		}
-		catch( Exception e )
-		{
-			ret = -1;
-			Log.d( TAG, "chmod: Runtime failed: " + e.toString() );
-		}
-
-		try
-		{
-			Class fileUtils = Class.forName( "android.os.FileUtils" );
-			Method setPermissions = fileUtils.getMethod( "setPermissions", String.class, int.class, int.class, int.class );
-			ret = (Integer)setPermissions.invoke( null, path, mode, -1, -1 );
-		}
-		catch( Exception e )
-		{
-			ret = -1;
-			Log.d( TAG, "chmod: android.os.FileUtils failed: " + e.toString() );
-		}
-
-		return ret;
-	}
-
-	private static void extractFile( Context context, String path ) 
+	private static void extractFile( Context context, String filename, boolean overwrite ) 
 	{
 		try
 		{
-			InputStream is = context.getAssets().open( path );
-			File out = new File( context.getExternalFilesDir(null).getPath() + "/" + path );
-			out.getParentFile().mkdirs();
-			chmod( out.getParent(), 0777 );
-			FileOutputStream os = new FileOutputStream( out );
+			InputStream in = context.getAssets().open( filename );
+			File outFile = new File( context.getExternalFilesDir( null ), filename );
+
+			if( outFile.isFile() && !overwrite )
+			{
+				return;
+			}
+
+			FileOutputStream out = new FileOutputStream( outFile );
+
 			byte[] buffer = new byte[1024];
 			int length;
 
-			while ( ( length = is.read( buffer ) ) > 0 ) 
+			while ( ( length = in.read( buffer ) ) != -1 ) 
 			{
-				os.write(buffer, 0, length);
+				out.write( buffer, 0, length );
 			}
 
-			chmod( context.getExternalFilesDir(null).getPath() + "/" + path, 0777 );
-			os.close();
-			is.close();
+			in.close();
+			out.flush();
+			out.close();
 		} 
 		catch( Exception e )
 		{
-			Log.e( TAG, "Failed to extract file:" + e.toString() );
-			e.printStackTrace();
+			Log.e( TAG, "Failed to extract file" + filename + ":" + e );
 		}
 	}
 
-	public static synchronized void extractPAK( Context context, Boolean force ) 
+	public static void extractPAK( Context context, boolean overwrite ) 
 	{
-		InputStream is = null;
-		FileOutputStream os = null;
-
 		try 
 		{
-			if( mPref == null )
-				mPref = context.getSharedPreferences("mod", 0);
-
-			synchronized( mPref )
-			{
-				if( mPref.getInt( "pakversion", 0 ) == PAK_VERSION && !force )
-					return;
-
-				extractFile( context, "extras.pak" );
-				// add custom files here
-				SharedPreferences.Editor editor = mPref.edit();
-				editor.putInt( "pakversion", PAK_VERSION );
-				editor.commit();
-			}
+			extractFile( context, "extras.pak", overwrite );
 		} 
 		catch( Exception e )
 		{
-			Log.e( TAG, "Failed to extract PAK:" + e.toString() );
+			Log.e( TAG, "Failed to extract PAK:" + e );
 		}
 	}
 }

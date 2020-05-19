@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="su.xash.tf15client">
-  <application android:label="TF15Client" android:debuggable="true"
-  android:icon="@drawable/ic_launcher">
-    <activity android:name="su.xash.tf15client.LauncherActivity"
-              android:label="TF15Client"
-  android:windowSoftInputMode="adjustResize">
+          package="su.xash.tf15client">
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18"/>
+  <application
+      android:label="@string/app_name"
+      android:icon="@drawable/ic_launcher"
+      android:supportsRtl="true"
+      android:allowBackup="true">
+    <activity android:name=".LauncherActivity"
+              android:label="@string/app_name"
+              android:screenOrientation="portrait"
+              android:windowSoftInputMode="adjustResize">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -16,7 +21,7 @@
         <category android:name="android.intent.category.DEFAULT" />
         <action android:name="android.intent.action.PACKAGE_ADDED"  />
         <action android:name="android.intent.action.PACKAGE_CHANGED" />
-        <action android:name="android.intent.action.PACKAGE_INSTALL" />
+        <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
         <action android:name="android.intent.action.PACKAGE_REMOVED" />
         <action android:name="android.intent.action.PACKAGE_REPLACED" />
         <data android:scheme="package" />

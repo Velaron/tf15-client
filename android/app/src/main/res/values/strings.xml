@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">TF15Client</string>
+  <string name="launch">Launch</string>
+  <string name="enable_logging">Enable logging</string>
+  <string name="dev_level">Developer level</string>
+  <string-array name="dev_options">
+    <item>None</item>
+    <item>1</item>
+    <item>2</item>
+    <item>3</item>
+    <item>4</item>
+    <item>5</item>
+  </string-array>
+</resources>

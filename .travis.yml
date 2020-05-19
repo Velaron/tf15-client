@@ -7,7 +7,7 @@ matrix:
     - language: android
       os: linux
       dist: trusty
-      jdk: oraclejdk11
+      jdk: oraclejdk8
       android:
         components:
           - tools
