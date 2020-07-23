@@ -1723,14 +1723,16 @@ void EV_TFC_Flame_Fire( event_args_t *args )
 {
 	int idx;
 	float height;
-	int shell;
-	int bubble;
-	Vector ShellOrigin, BubbleSpot;
+	int shell, bubble;
+	Vector ShellOrigin;
+	Vector BubbleSpot;
 	Vector vecVelocity;
 	Vector up, right, forward;
 	Vector origin, angles;
+	int underwater;
 
 	idx = args->entindex;
+	underwater = args->bparam1;
 	shell = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/fthrow.spr" );
 	bubble = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/bubble.spr" );
 	VectorCopy( args->origin, origin );
@@ -1748,7 +1750,7 @@ void EV_TFC_Flame_Fire( event_args_t *args )
 	VectorMA( ShellOrigin, 8.0f, right, ShellOrigin );
 	VectorMA( ShellOrigin, 16.0f, forward, ShellOrigin );
 
-	if ( !args->bparam1 )
+	if ( !underwater )
 	{
 		VectorScale( forward, 600.0f, vecVelocity );
 		gEngfuncs.pEfxAPI->R_Projectile( ShellOrigin, vecVelocity, shell, 1, idx, NULL );
@@ -1770,6 +1772,7 @@ void EV_TFC_Flame_Fire( event_args_t *args )
 	if ( height >= 8.0f )
 	{
 		gEngfuncs.pEfxAPI->R_BubbleTrail( ShellOrigin, BubbleSpot, height + BubbleSpot.z - ShellOrigin.z, bubble, 4, 8.0f );
+		return;
 	}
 }
 

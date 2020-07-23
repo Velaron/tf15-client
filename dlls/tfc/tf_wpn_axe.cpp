@@ -38,14 +38,14 @@ void CTFAxe::Precache( void )
 
 int CTFAxe::GetItemInfo( ItemInfo *p )
 {
-	p->pszAmmo1 = 0;
-	p->iAmmo1 = -1;
-	p->pszName = STRING( pev->classname );
-	p->pszAmmo2 = NULL;
-	p->iAmmo2 = -1;
-	p->iMaxClip = -1;
 	p->iSlot = 0;
 	p->iPosition = 3;
+	p->pszAmmo1 = NULL;
+	p->iAmmo1 = -1;
+	p->pszAmmo2 = NULL;
+	p->iAmmo2 = -1;
+	p->pszName = STRING( pev->classname );
+	p->iMaxClip = -1;
 	p->iId = m_iId = WEAPON_AXE;
 	p->iFlags = 0;
 	p->iWeight = 0;

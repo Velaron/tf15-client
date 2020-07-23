@@ -57,46 +57,26 @@ public class LauncherActivity extends Activity
 
 		return i;
 	}
-	
+*/
     public void startXash( View view )
     {
-		try
-		{
-			Intent intent = new Intent();
-			intent.setAction( "su.xash.engine.START" );
-			intent = prepareIntent( intent );
-			startActivity( intent );
-			return;
-		}
-		catch( Exception e )
-		{
-
-		}
+		Intent intent = new Intent();
+		intent.setComponent( new ComponentName( "su.xash.engine", "su.xash.engine.XashActivity" ) ); 
+		intent.putExtra( "pakfile", getExternalFilesDir( null ).getAbsolutePath() + "/extras.pak" );
+		intent.putExtra( "gamedir", "tfc" );
+		intent.putExtra( "argv", "-log -dev 5" );
 
 		try
 		{
-			Intent intent = new Intent();
-			intent.setComponent( new ComponentName( "su.xash.engine", "su.xash.engine.XashActivity" ) ); 
-			intent = prepareIntent( intent );
-			startActivity( intent );
-			return;
+			PackageManager packageManager = getPackageManager();
+			ApplicationInfo applicationInfo = packageManager.getApplicationInfo( getPackageName(), 0 );
+			intent.putExtra( "gamelibdir", applicationInfo.nativeLibraryDir );
 		}
 		catch( Exception e )
 		{
-
+			intent.putExtra( "gamelibdir", getFilesDir().getParentFile().getPath() + "/lib" );
 		}
-		
-		new AlertDialog.Builder( this )
-		.setTitle( "Error" )
-		.setMessage( "Failed to start Xash3D FWGS engine\nIs it installed?" )
-		.setCancelable( false )
-		.setPositiveButton( "OK", new DialogInterface.OnClickListener()
-		{
-			public void onClick( DialogInterface i, int w )
-			{
-				LauncherActivity.this.finish();
-			}
-		} ).show();
+
+		startActivity( intent );
 	}
-*/
 }

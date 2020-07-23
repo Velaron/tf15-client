@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
               android:orientation="vertical">
-  <ScrollView android:layout_width="match_parent"
-              android:layout_height="match_parent"
+  <ScrollView android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
               android:orientation="vertical"
               android:layout_weight="1"
               android:background="#0B0C10">
@@ -13,30 +13,27 @@
       android:layout_height="wrap_content"
       android:orientation="vertical">
       <LinearLayout
-        style="@style/block"
-        android:background="@drawable/block_background" >
+        style="@style/option"
+        android:background="@drawable/option_background" >
         <TextView
-          style="@style/block_element"
+          style="@style/option_label"
           android:text="@string/dev_level"
           android:layout_weight="1" />
         <Spinner
-          style="@style/block_element"
+          style="@style/option_label"
           android:id="@+id/dev_spinner"
+          android:spinnerMode="dialog"
           android:gravity="end" />
       </LinearLayout>
       <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        style="@style/option"
+        android:background="@drawable/option_background" >
         <TextView
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
+          style="@style/option_label"
           android:text="@string/enable_logging"
-          android:layout_weight="1"
-          android:textSize="18sp" />
-        <CheckBox android:id="@+id/enable_logging"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
+          android:layout_weight="1" />
+        <CheckBox style="@style/option_label"
+                  android:id="@+id/enable_logging"
                   android:gravity="end" />
       </LinearLayout>
     </LinearLayout>
@@ -44,5 +41,6 @@
   <Button android:id="@+id/launch"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:text="@string/launch" />
+          android:text="@string/launch"
+          android:onClick="startXash" />
 </LinearLayout>

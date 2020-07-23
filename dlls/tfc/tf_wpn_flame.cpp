@@ -21,17 +21,17 @@ void CTFFlamethrower::Spawn( void )
 
 int CTFFlamethrower::GetItemInfo( ItemInfo *p )
 {
+	p->iSlot = 3;
+	p->iPosition = 2;
 	p->pszAmmo1 = "uranium";
-	p->pszName = STRING( pev->classname );
 	if ( m_pPlayer )
 		p->iAmmo1 = m_pPlayer->maxammo_cells;
 	else
 		p->iAmmo1 = 200;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
+	p->pszName = STRING( pev->classname );
 	p->iMaxClip = -1;
-	p->iSlot = 3;
-	p->iPosition = 2;
 	p->iId = m_iId = WEAPON_FLAMETHROWER;
 	p->iFlags = 0;
 	p->iWeight = 20;
@@ -55,8 +55,8 @@ void CTFFlamethrower::PrimaryAttack( void )
 	}
 	else
 	{
-		m_pPlayer->m_iWeaponVolume = 1000;
-		m_pPlayer->m_iWeaponFlash = 512;
+		m_pPlayer->m_iWeaponVolume = LOUD_GUN_VOLUME;
+		m_pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
 		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireFlame, 0.0f, m_pPlayer->pev->origin, m_pPlayer->pev->angles, 0.0f, 0.0f, 0, 0, m_pPlayer->pev->waterlevel > 2, 0 );
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
