@@ -23,6 +23,8 @@
 cmake_minimum_required(VERSION 2.6.0)
 project(client)
 
+include(FWGSLib)
+
 set(CLDLL_LIBRARY client)
 
 include(CheckIncludeFile)
@@ -143,6 +145,8 @@ if(APPLE OR WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 		OUTPUT_NAME ${CLDLL_NAME}
 		PREFIX "")
 endif()
+
+fwgs_set_default_properties(${CLDLL_LIBRARY})
 
 install(TARGETS ${CLDLL_LIBRARY}
 	DESTINATION "${GAMEDIR}/${CLIENT_INSTALL_DIR}/"

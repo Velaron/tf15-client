@@ -26,42 +26,13 @@ public class LauncherActivity extends Activity
 
 		ExtractAssets.extractPAK( this, false );
 	}
-/*
-	private Intent prepareIntent( Intent i )
-	{
-		String argv = cmdArgs.getText().toString();
-		i.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
 
-		SharedPreferences.Editor editor = mPref.edit();
-		editor.putString( "argv", argv );
-		editor.commit();
-
-		if( argv.length() != 0 )
-			i.putExtra( "argv", argv );
-
-		i.putExtra( "gamedir", "tfc" );
-
-		try
-		{
-			PackageManager packageManager = getPackageManager();
-			ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
-			i.putExtra( "gamelibdir", applicationInfo.nativeLibraryDir );
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			i.putExtra( "gamelibdir", getFilesDir().getParentFile().getPath() + "/lib" );
-		}
-		
-		i.putExtra("pakfile", getExternalFilesDir(null).getAbsolutePath() + "/extras.pak");
-
-		return i;
-	}
-*/
     public void startXash( View view )
     {
 		Intent intent = new Intent();
 		intent.setComponent( new ComponentName( "su.xash.engine", "su.xash.engine.XashActivity" ) ); 
+		intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+
 		intent.putExtra( "pakfile", getExternalFilesDir( null ).getAbsolutePath() + "/extras.pak" );
 		intent.putExtra( "gamedir", "tfc" );
 		intent.putExtra( "argv", "-log -dev 5" );
