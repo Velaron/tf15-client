@@ -25,7 +25,7 @@ matrix:
       before_deploy:
         - mv app/build/outputs/apk/debug/app-debug.apk tf15-client.apk
         - export TRAVIS_TAG=travis-ci
-        - git tag -f $TRAVIS_TAG
+        - git tag -f -a $TRAVIS_TAG
       deploy:
         provider: releases
         api_key: "$GITHUB_TOKEN"
@@ -57,7 +57,7 @@ matrix:
         - mv -t tfc/cl_dll **/*client*.so **/*menu*.so
         - tar -czvf tf15-client.tar.gz tfc
         - export TRAVIS_TAG=travis-ci
-        - git tag -f $TRAVIS_TAG
+        - git tag -f -a $TRAVIS_TAG
       deploy:
         provider: releases
         api_key: "$GITHUB_TOKEN"
@@ -78,7 +78,7 @@ matrix:
         - mv -t tfc/cl_dll **/*client*.dll **/*menu*.dll **/*client*.pdb **/*menu*.pdb
         - 7z a -tzip tf15-client.zip tfc
         - export TRAVIS_TAG=travis-ci
-        - git tag -f $TRAVIS_TAG
+        - git tag -f -a $TRAVIS_TAG
       deploy:
         provider: releases
         api_key: "$GITHUB_TOKEN"
