@@ -4427,14 +4427,6 @@ BOOL CBasePlayer::SwitchWeapon( CBasePlayerItem *pWeapon )
 }
 
 //=========================================================
-// 
-//=========================================================
-void CBasePlayer::TeamFortress_SetSpeed( void )
-{
-
-}
-
-//=========================================================
 // Dead HEV suit prop
 //=========================================================
 class CDeadHEV : public CBaseMonster

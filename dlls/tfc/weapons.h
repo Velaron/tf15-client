@@ -552,19 +552,20 @@ class CTFSniperRifle : public CBasePlayerWeapon
 public:
 	void Spawn( void );
 	void Precache( void );
-	int GetItemInfo( ItemInfo *p );
-	void SecondaryAttack( void );
-	void Holster( void );
-	BOOL Deploy( void );
-	int AddToPlayer( CBasePlayer *pPlayer );
-	void UpdateSpot( void );
-	void WeaponIdle( void );
-	void PrimaryAttack( void );
-	void ItemPostFrame( void );
 	int iItemSlot( void ) { return 3; }
+	int GetItemInfo( ItemInfo *p );
+	void ItemPostFrame( void );
+	void PrimaryAttack( void );
+	void SecondaryAttack( void );
+	int AddToPlayer( CBasePlayer *pPlayer );
+	BOOL Deploy( void );
+	void Holster( int skiplocal = 0 );
+	void Reload( void );
+	void WeaponIdle( void );
+	void UpdateSpot( void );
 
-	BOOL m_iSpotActive;
 	CLaserSpot *m_pSpot;
+	BOOL m_iSpotActive;
 
 private:
 	unsigned short m_usFireSniper;

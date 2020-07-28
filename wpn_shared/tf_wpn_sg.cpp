@@ -6,6 +6,8 @@
 #include "nodes.h"
 #include "player.h"
 #include "gamerules.h"
+
+#define TF_DEFS_ONLY
 #include "tf_defs.h"
 
 LINK_ENTITY_TO_CLASS( tf_weapon_shotgun, CTFShotgun )

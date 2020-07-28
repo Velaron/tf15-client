@@ -27,7 +27,8 @@
 #include "StudioModelRenderer.h"
 #include "GameStudioModelRenderer.h"
 
-#include "tfc/tf_defs.h"
+#define TF_DEFS_ONLY
+#include "tf_defs.h"
 
 // team colors for old TFC models
 #define TEAM1_COLOR		150

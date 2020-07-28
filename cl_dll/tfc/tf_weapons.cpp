@@ -21,6 +21,7 @@
 #include "nodes.h"
 #include "player.h"
 
+#define TF_DEFS_ONLY
 #include "tf_defs.h"
 
 #include "usercmd.h"
@@ -499,6 +500,51 @@ void CBasePlayer::Spawn( void )
 {
 	if ( m_pActiveItem )
 		m_pActiveItem->Deploy();
+}
+
+void CBasePlayer::TeamFortress_SetSpeed( void )
+{
+	if ( tfstate & TFSTATE_CANT_MOVE || !pev->playerclass )
+	{
+		pev->velocity = g_vecZero;
+		g_engfuncs.pfnSetClientMaxspeed( ENT( pev ), 1.0f );
+		pev->maxspeed = 1.0f;
+	}
+	else
+	{
+		switch ( pev->playerclass )
+		{
+		case 1:
+			pev->maxspeed = 400.0f;
+			break;
+		case 2:
+			pev->maxspeed = 300.0f;
+			break;
+		case 3:
+			pev->maxspeed = 240.0f;
+			break;
+		case 4:
+			pev->maxspeed = 280.0f;
+			break;
+		case 5:
+			pev->maxspeed = 320.0f;
+			break;
+		case 6:
+			pev->maxspeed = 230.0f;
+			break;
+		case 7:
+		case 8:
+		case 9:
+			pev->maxspeed = 300.0f;
+			break;
+		case 11:
+			pev->maxspeed = 240.0f;
+			break;
+		}
+		
+		if ( tfstate & TFSTATE_AIMING && pev->maxspeed > 80.0f )
+			pev->maxspeed = 80.0f;
+	}
 }
 
 /*
