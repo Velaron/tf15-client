@@ -54,24 +54,23 @@ endif()
 
 
 set(CLDLL_SOURCES
-	../dlls/crowbar.cpp
-	../dlls/tfc/tf_wpn_ac.cpp
-	../dlls/tfc/tf_wpn_ar.cpp
-	../dlls/tfc/tf_wpn_axe.cpp
-	../dlls/tfc/tf_wpn_flame.cpp
-	../dlls/tfc/tf_wpn_gl.cpp
-	../dlls/tfc/tf_wpn_ic.cpp
-	../dlls/tfc/tf_wpn_ng.cpp
-	../dlls/tfc/tf_wpn_railgun.cpp
-	../dlls/tfc/tf_wpn_rpg.cpp
-	../dlls/tfc/tf_wpn_sg.cpp
-	../dlls/tfc/tf_wpn_srifle.cpp
-	../dlls/tfc/tf_wpn_tranq.cpp
-	tfc/ev_tfc.cpp
+	../wpn_shared/tf_wpn_ac.cpp
+	../wpn_shared/tf_wpn_ar.cpp
+	../wpn_shared/tf_wpn_axe.cpp
+	../wpn_shared/tf_wpn_flame.cpp
+	../wpn_shared/tf_wpn_gl.cpp
+	../wpn_shared/tf_wpn_ic.cpp
+	../wpn_shared/tf_wpn_ng.cpp
+	../wpn_shared/tf_wpn_railgun.cpp
+	../wpn_shared/tf_wpn_rpg.cpp
+	../wpn_shared/tf_wpn_sg.cpp
+	../wpn_shared/tf_wpn_srifle.cpp
+	../wpn_shared/tf_wpn_tranq.cpp
+	ev_tfc.cpp
 	tfc/tf_baseentity.cpp
 	tfc/tf_events.cpp
 	tfc/tf_weapons.cpp
-	../common/interface.cpp
+	../public/interface.cpp
 	ammo.cpp
 	ammo_secondary.cpp
 	ammohistory.cpp

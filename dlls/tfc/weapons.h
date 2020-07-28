@@ -405,41 +405,24 @@ public:
 	void EXPORT SwingAgain( void );
 	void EXPORT Smack( void );
 	int GetItemInfo( ItemInfo *p );
-	int AddToPlayer( CBasePlayer *pPlayer );
-
 	void PrimaryAttack( void );
 	int Swing( int fFirst );
 	BOOL Deploy( void );
 	void Holster( int skiplocal = 0 );
-#ifdef CROWBAR_IDLE_ANIM
-	void WeaponIdle();
-#endif
+
 	int m_iSwing;
 	TraceResult m_trHit;
-
-	virtual BOOL UseDecrement( void )
-	{
-#if defined( CLIENT_WEAPONS )
-		return TRUE;
-#else
-		return FALSE;
-#endif
-	}
-private:
-	unsigned short m_usCrowbar;
 };
 
 class CLaserSpot : public CBaseEntity
 {
 	void Spawn( void );
 	void Precache( void );
-
 	int	ObjectCaps( void ) { return FCAP_DONT_SAVE; }
 
 public:
 	void Suspend( float flSuspendTime );
 	void EXPORT Revive( void );
-
 	static CLaserSpot *CreateSpot( void );
 };
 
@@ -458,23 +441,23 @@ enum crowbar_e {
 class CTFAxe : public CCrowbar
 {
 public:
-	void Spawn( void );
-	void Precache( void );
-	int GetItemInfo( ItemInfo *p );
-	void Holster( void );
+	virtual void Spawn( void );
+	virtual void Precache( void );
 	void Smack( void );
-	BOOL AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr );
-	void PrimaryAttack( void );
-	BOOL Deploy( void );
-	int iItemSlot( void ) { return 1; }
-	int IsUseable( void ) { return true; }
+	virtual BOOL AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr );
+	virtual int GetItemInfo( ItemInfo *p );
+	virtual void PlayAnim( int iAnimType );
+	virtual void PlaySound( int iSoundType, float fSoundData );
+	virtual void PlayDecal( void );
+	virtual void PrimaryAttack( void );
+	virtual BOOL Deploy( void );
+	virtual void Holster( int skiplocal = 0 );
+	virtual BOOL IsUseable( void ) { return TRUE; }
 
-	int classid;
+	BOOL m_bHullHit;
 	unsigned short m_usAxe;
 	unsigned short m_usAxeDecal;
-
-private:
-	BOOL m_bHullHit;
+	int classid;
 };
 
 enum knife_e {

@@ -305,6 +305,12 @@ void CBasePlayerWeapon::SendWeaponAnim( int iAnim, int skiplocal, int body )
 	HUD_SendWeaponAnim( iAnim, body, 0 );
 }
 
+CLaserSpot *CLaserSpot::CreateSpot( void )
+{
+	g_Spot.pev->effects &= ~EF_NODRAW;
+	return &g_Spot;
+}
+
 /*
 =====================
 CBaseEntity::FireBulletsPlayer

@@ -52,7 +52,7 @@ int CTFAxe::GetItemInfo( ItemInfo *p )
 	return 1;
 }
 
-void CTFAxe::Holster( void )
+void CTFAxe::Holster( int skiplocal )
 {
 	m_pPlayer->m_flNextAttack = 0.5f;
 	SendWeaponAnim( CROWBAR_HOLSTER, 1 );
@@ -60,7 +60,22 @@ void CTFAxe::Holster( void )
 
 void CTFAxe::Smack( void )
 {
-	//PlayDecal();
+
+}
+
+void CTFAxe::PlayAnim( int iAnimType )
+{
+
+}
+
+void CTFAxe::PlaySound( int iSoundType, float fSoundData )
+{
+
+}
+
+void CTFAxe::PlayDecal( void )
+{
+
 }
 
 BOOL CTFAxe::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr )
@@ -190,17 +205,16 @@ void CTFSpanner::Holster( void )
 
 int CTFSpanner::GetItemInfo( ItemInfo *p )
 {
-	p->pszAmmo1 = "uranium";
-	p->iAmmo1 = -1;
-	p->pszName = STRING( pev->classname );
-	p->pszAmmo2 = NULL;
-	p->iAmmo2 = -1;
-	p->iMaxClip = -1;
 	p->iSlot = 0;
 	p->iPosition = 2;
-	// Velaron: these are not set in the code?
-	// p->iFlags = 0;
+	p->pszAmmo1 = "uranium";
+	p->iAmmo1 = -1;
+	p->pszAmmo2 = NULL;
+	p->iAmmo2 = -1;
+	p->pszName = STRING( pev->classname );
+	p->iMaxClip = -1;
 	p->iId = m_iId = WEAPON_SPANNER;
+	p->iFlags = 0;
 	p->iWeight = 0;
 	return 1;
 }

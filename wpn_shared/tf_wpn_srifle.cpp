@@ -8,46 +8,6 @@
 #include "gamerules.h"
 #include "tf_defs.h"
 
-LINK_ENTITY_TO_CLASS( laser_spot, CLaserSpot )
-
-CLaserSpot *CLaserSpot::CreateSpot( void )
-{
-	CLaserSpot *pSpot = GetClassPtr( (CLaserSpot *)NULL );
-	pSpot->Spawn();
-	pSpot->pev->classname = MAKE_STRING( "laser_spot" );
-	return pSpot;
-}
-
-void CLaserSpot::Spawn( void )
-{
-	Precache();
-	pev->movetype = MOVETYPE_NONE;
-	pev->solid = SOLID_NOT;
-	pev->rendermode = kRenderGlow;
-	pev->renderfx = kRenderFxNoDissipation;
-	pev->renderamt = 255;
-	SET_MODEL( ENT( pev ), "sprites/laserdot.spr" );
-	UTIL_SetOrigin( pev, pev->origin );
-}
-
-void CLaserSpot::Suspend( float flSuspendTime )
-{
-	pev->effects |= EF_NODRAW;
-	SetThink( &CLaserSpot::Revive );
-	pev->nextthink = gpGlobals->time + flSuspendTime;
-}
-
-void CLaserSpot::Revive( void )
-{
-	pev->effects &= ~EF_NODRAW;
-	SetThink( NULL );
-}
-
-void CLaserSpot::Precache( void )
-{
-	PRECACHE_MODEL( "sprites/laserdot.spr" );
-}
-
 LINK_ENTITY_TO_CLASS( tf_weapon_sniperrifle, CTFSniperRifle )
 
 void CTFSniperRifle::Spawn( void )

@@ -1,0 +1,1 @@
+LINK_ENTITY_TO_CLASS( laser_spot, CLaserSpot )

@@ -90,6 +90,17 @@ int CBaseToggle::Restore( class CRestore & ) { return 1; }
 int CBaseToggle::Save( class CSave & ) { return 1; }
 void CBaseToggle::KeyValue( struct KeyValueData_s * ) { }
 
+// CCrowbar Stubs
+BOOL CCrowbar::Deploy( void ) { return TRUE; }
+int CCrowbar::GetItemInfo( ItemInfo *p ) { return 1; }
+void CCrowbar::Holster( int skiplocal ) { }
+void CCrowbar::Precache( void ) { }
+void CCrowbar::PrimaryAttack( void ) { }
+void CCrowbar::Smack( void ) { }
+void CCrowbar::Spawn( void ) { }
+int CCrowbar::Swing( int fFirst ) { return 0; }
+void CCrowbar::SwingAgain( void ) { }
+
 // CGrenade Stubs
 void CGrenade::BounceSound( void ) { }
 void CGrenade::Explode( Vector, Vector ) { }
@@ -99,6 +110,12 @@ void CGrenade::Spawn( void ) { }
 CGrenade *CGrenade::ShootTimed( entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time ){ return 0; }
 CGrenade *CGrenade::ShootContact( entvars_t *pevOwner, Vector vecStart, Vector vecVelocity ){ return 0; }
 void CGrenade::DetonateUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value ){ }
+
+// CLaserSpot Stubs
+void CLaserSpot::Precache( void ) { }
+void CLaserSpot::Revive( void ) { }
+void CLaserSpot::Spawn( void ) { }
+void CLaserSpot::Suspend( float flSuspendTime ) { }
 
 void UTIL_Remove( CBaseEntity *pEntity ){ }
 struct skilldata_t gSkillData;
