@@ -1588,6 +1588,16 @@ void V_PunchAxis( int axis, float punch )
 	g_ev_punchangle[axis] = punch;
 }
 
+void V_StartPitchDrift( void )
+{
+	if ( gEngfuncs.GetClientTime() != pd.laststop && ( pd.nodrift || pd.pitchvel == 0.0f ) )
+	{
+		pd.driftmove = 0.0f;
+		pd.pitchvel = v_centerspeed->value;
+		pd.nodrift = false;
+	}
+}
+
 /*
 =============
 V_Init
@@ -1595,6 +1605,7 @@ V_Init
 */
 void V_Init( void )
 {
+	gEngfuncs.pfnAddCommand( "centerview", V_StartPitchDrift );
 	scr_ofsx = gEngfuncs.pfnRegisterVariable( "scr_ofsx","0", 0 );
 	scr_ofsy = gEngfuncs.pfnRegisterVariable( "scr_ofsy","0", 0 );
 	scr_ofsz = gEngfuncs.pfnRegisterVariable( "scr_ofsz","0", 0 );

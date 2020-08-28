@@ -69,6 +69,7 @@ set(CLDLL_SOURCES
 	ev_tfc.cpp
 	tfc/tf_baseentity.cpp
 	tfc/tf_events.cpp
+	tfc/tf_objects.cpp
 	tfc/tf_weapons.cpp
 	../public/interface.cpp
 	ammo.cpp

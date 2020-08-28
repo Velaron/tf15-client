@@ -178,13 +178,13 @@ void DLLEXPORT HUD_TxferPredictionData( struct entity_state_s *ps, const struct 
 	ps->playerclass				= pps->playerclass;
 
 	pcd->viewmodel				= ppcd->viewmodel;
-	pcd->m_iId				= ppcd->m_iId;
+	pcd->m_iId					= ppcd->m_iId;
 	pcd->ammo_shells			= ppcd->ammo_shells;
 	pcd->ammo_nails				= ppcd->ammo_nails;
 	pcd->ammo_cells				= ppcd->ammo_cells;
 	pcd->ammo_rockets			= ppcd->ammo_rockets;
 	pcd->m_flNextAttack			= ppcd->m_flNextAttack;
-	pcd->fov				= ppcd->fov;
+	pcd->fov					= ppcd->fov;
 	pcd->weaponanim				= ppcd->weaponanim;
 	pcd->tfstate				= ppcd->tfstate;
 	pcd->maxspeed				= ppcd->maxspeed;
@@ -211,7 +211,7 @@ void DLLEXPORT HUD_TxferPredictionData( struct entity_state_s *ps, const struct 
 	}
 
 	// Fire prevention
-	pcd->iuser4 					= ppcd->iuser4;
+	pcd->iuser4					= ppcd->iuser4;
 
 	pcd->fuser2					= ppcd->fuser2;
 	pcd->fuser3					= ppcd->fuser3;
@@ -496,6 +496,9 @@ void Beams( void )
 }
 #endif
 
+
+void Game_AddObjects( void );
+
 /*
 =========================
 HUD_CreateEntities
@@ -505,26 +508,8 @@ Gives us a chance to add additional entities to the render this frame
 */
 void DLLEXPORT HUD_CreateEntities( void )
 {
-	// e.g., create a persistent cl_entity_t somewhere.
-	// Load an appropriate model into it ( gEngfuncs.CL_LoadModel )
-	// Call gEngfuncs.CL_CreateVisibleEntity to add it to the visedicts list
-/*
-#if defined( TEST_IT )
-	MoveModel();
-#endif
-#if defined( TRACE_TEST )
-	TraceModel();
-#endif
-*/
-/*
-	Particles();
-*/
-/*
-	TempEnts();
-*/
-#if defined( BEAM_TEST )
-	Beams();
-#endif
+	//Bench_AddObjects();
+	Game_AddObjects();
 }
 
 /*

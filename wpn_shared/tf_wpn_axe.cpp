@@ -27,15 +27,18 @@ void CTFAxe::Precache( void )
 	PRECACHE_MODEL( "models/v_tfc_crowbar.mdl" );
 	PRECACHE_MODEL( "models/p_crowbar.mdl" );
 	PRECACHE_MODEL( "models/p_crowbar2.mdl" );
+
 	PRECACHE_SOUND( "weapons/cbar_hit1.wav" );
 	PRECACHE_SOUND( "weapons/cbar_hit2.wav" );
 	PRECACHE_SOUND( "weapons/cbar_hitbod1.wav" );
 	PRECACHE_SOUND( "weapons/cbar_hitbod2.wav" );
 	PRECACHE_SOUND( "weapons/cbar_hitbod3.wav" );
 	PRECACHE_SOUND( "weapons/cbar_miss1.wav" );
-	classid = 3;
+
 	m_usAxe = PRECACHE_EVENT( 1, "events/wpn/tf_axe.sc" );
 	m_usAxeDecal = PRECACHE_EVENT( 1, "events/wpn/tf_axedecal.sc" );
+
+	classid = 3;
 }
 
 int CTFAxe::GetItemInfo( ItemInfo *p )
@@ -47,7 +50,7 @@ int CTFAxe::GetItemInfo( ItemInfo *p )
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->pszName = STRING( pev->classname );
-	p->iMaxClip = -1;
+	p->iMaxClip = WEAPON_NOCLIP;
 	p->iId = m_iId = WEAPON_AXE;
 	p->iFlags = 0;
 	p->iWeight = 0;

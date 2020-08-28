@@ -36,6 +36,8 @@
 #include "r_studioint.h"
 #include "com_model.h"
 
+#include "progdefs.h"
+
 extern engine_studio_api_t IEngineStudio;
 
 extern "C" char PM_FindTextureType( char *name );
@@ -60,6 +62,11 @@ qboolean g_bACSpinning[33];
 extern float g_flSpinDownTime[33];
 extern float g_flSpinUpTime[33];
 extern cvar_t *cl_lw;
+
+extern globalvars_t *gpGlobals;
+float g_flNextEventListThink;
+float g_nTime;
+eventnode_t *g_pEventListHead;
 
 const Vector g_vRed = Vector( 255.0f, 0.0f, 0.0f );
 const Vector g_vBlue = Vector( 0.0f, 0.0f, 255.0f );
@@ -308,7 +315,7 @@ char *EV_TFC_DamageDecal( int entity )
 		}
 		else
 		{
-			sprintf( decalname, "{shot%i", gEngfuncs.pfnRandomLong( 1, 5 ) );
+			sprintf( decalname, "{shot%i", gEngfuncs.pfnRandomLong( 0, 4 ) + 1 );
 		}
 	}
 
@@ -998,7 +1005,7 @@ void EV_TFC_TraceAttack( int idx, float *vecDir, pmtrace_t *ptr, float flDamage 
 	Vector dir;
 	Vector vecOrigin;
 
-	if ( cl_localblood || cl_localblood->value != 0.0f )
+	if ( !cl_localblood || cl_localblood->value != 0.0f )
 	{
 		VectorScale( vecDir, -4.0, dir );
 		vecOrigin = ptr->endpos - dir;
@@ -2319,10 +2326,57 @@ const Vector& GetTeamColor( int team_no )
 
 void ClearEventList( void )
 {
+/*
+	if ( g_pEventListHead )
+	{
+		delete[] g_pEventListHead;
+	}
 
+	g_flNextEventListThink = 0.0f;
+*/
 }
 
 void RunEventList( void )
 {
+/*
+	eventnode_t *ptr;
 
+	if ( g_flNextEventListThink == 0.0f || g_flNextEventListThink <= gpGlobals->time )
+	{
+		ptr = g_pEventListHead;
+		g_flNextEventListThink = gpGlobals->time + 0.1f;
+
+		if ( !ptr ) { return; }
+
+		while ( true )
+		{
+			if ( ptr->data->iparam1 & 16 && ( ptr->data->fparam2 == 0.0f || ptr->data->fparam2 <= gpGlobals->time ) )
+			{
+				if ( gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) > 0.98f )
+				{
+					ptr->data->fparam2 = gpGlobals->time + 6.0f;
+					gEngfuncs.pEventAPI->EV_PlaySound( -1, ptr->data->origin, CHAN_STATIC, "misc/teleport_ready.wav", VOL_NORM, 0.5f, 0, PITCH_NORM );
+				}
+			}
+
+			if ( ptr->data->iparam1 & 128 )
+			{
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, ptr->data->origin, CHAN_STATIC, "misc/teleport_out.wav", VOL_NORM, 0.5f, 0, PITCH_NORM );
+				ptr->data->iparam1 &= ~128;
+				ptr->data->iparam1 |= 4;
+			}
+
+			if ( !( ptr->data->iparam1 & 64 ) )
+			{
+				if ( !( ptr->data->iparam1 & 32 ) )
+				{
+					if ( ptr->data->iparam1 & 1 )
+					{
+						DoSparkSmokeEffect( ptr->data );
+					}
+				}
+			}
+		}
+	}
+*/
 }

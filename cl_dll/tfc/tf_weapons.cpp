@@ -35,6 +35,8 @@
 #include "../com_weapons.h"
 #include "../demo.h"
 
+#include "entity_types.h"
+
 extern globalvars_t *gpGlobals;
 extern int g_iUser1;
 
@@ -203,32 +205,26 @@ CBasePlayerWeapon::CanDeploy
 */
 BOOL CBasePlayerWeapon::CanDeploy( void )
 {
-	BOOL bHasAmmo = 0;
+	int bHasAmmo;
+	ItemInfo info;
 
-	if ( !pszAmmo1() )
-	{
-		// this weapon doesn't use ammo, can always deploy.
-		return TRUE;
-	}
+	GetItemInfo( &info );
 
-	if ( pszAmmo1() )
+	if ( info.pszAmmo1 && info.iAmmo1 != -1 && this != &g_Sniper )
 	{
-		bHasAmmo |= ( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] != 0 );
-	}
-	if ( pszAmmo2() )
-	{
-		bHasAmmo |= ( m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] != 0 );
-	}
-	if ( m_iClip > 0 )
-	{
-		bHasAmmo |= 1;
-	}
-	if ( !bHasAmmo )
-	{
-		return FALSE;
+		if ( current_ammo )
+			bHasAmmo = *current_ammo;
+		else
+			bHasAmmo = m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] != 0;
+
+		if ( info.pszAmmo2 )
+			bHasAmmo |= m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] != 0;
+
+		if ( m_iClip <= 0 )
+			return bHasAmmo;
 	}
 
-	return TRUE;
+	return true;
 }
 
 /*
@@ -243,9 +239,8 @@ BOOL CBasePlayerWeapon::DefaultDeploy( const char *szViewModel, const char *szWe
 		return FALSE;
 
 	gEngfuncs.CL_LoadModel( szViewModel, &m_pPlayer->pev->viewmodel );
-
+	m_pPlayer->current_weapon = m_iId;
 	SendWeaponAnim( iAnim, skiplocal, body );
-
 	m_pPlayer->m_flNextAttack = 0.5f;
 	m_flTimeWeaponIdle = 1.0f;
 	return TRUE;
@@ -288,7 +283,8 @@ Put away weapon
 */
 void CBasePlayerWeapon::Holster( int skiplocal /* = 0 */ )
 {
-	m_fInReload = FALSE; // cancel any reload in progress.
+	m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
+	m_fInReload = false;
 	m_pPlayer->pev->viewmodel = 0;
 }
 
@@ -302,8 +298,7 @@ Animate weapon model
 void CBasePlayerWeapon::SendWeaponAnim( int iAnim, int skiplocal, int body )
 {
 	m_pPlayer->pev->weaponanim = iAnim;
-
-	HUD_SendWeaponAnim( iAnim, body, 0 );
+	HUD_SendWeaponAnim( iAnim, ( this != &g_Tranq ) + 1, 0 );
 }
 
 CLaserSpot *CLaserSpot::CreateSpot( void )
@@ -488,6 +483,10 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 	// Holster weapon immediately, to allow it to cleanup
 	if ( m_pActiveItem )
 		m_pActiveItem->Holster();
+
+	tfstate &= ~TFSTATE_AIMING;
+	TeamFortress_SetSpeed();
+	gEngfuncs.pEventAPI->EV_StopSound( gEngfuncs.GetLocalPlayer()->index, CHAN_STATIC, "weapons/timer.wav" );
 }
 
 /*
@@ -514,36 +513,19 @@ void CBasePlayer::TeamFortress_SetSpeed( void )
 	{
 		switch ( pev->playerclass )
 		{
-		case 1:
-			pev->maxspeed = 400.0f;
-			break;
-		case 2:
-			pev->maxspeed = 300.0f;
-			break;
-		case 3:
-			pev->maxspeed = 240.0f;
-			break;
-		case 4:
-			pev->maxspeed = 280.0f;
-			break;
-		case 5:
-			pev->maxspeed = 320.0f;
-			break;
-		case 6:
-			pev->maxspeed = 230.0f;
-			break;
-		case 7:
-		case 8:
-		case 9:
-			pev->maxspeed = 300.0f;
-			break;
-		case 11:
-			pev->maxspeed = 240.0f;
-			break;
+		case PC_SCOUT: pev->maxspeed = PC_SCOUT_MAXSPEED; break;
+		case PC_SNIPER: pev->maxspeed = PC_SNIPER_MAXSPEED; break;
+		case PC_SOLDIER: pev->maxspeed = PC_SOLDIER_MAXSPEED; break;
+		case PC_DEMOMAN: pev->maxspeed = PC_DEMOMAN_MAXSPEED; break;
+		case PC_MEDIC: pev->maxspeed = PC_MEDIC_MAXSPEED; break;
+		case PC_HVYWEAP: pev->maxspeed = PC_HVYWEAP_MAXSPEED; break;
+		case PC_PYRO: pev->maxspeed = PC_PYRO_MAXSPEED; break;
+		case PC_ENGINEER: pev->maxspeed = PC_ENGINEER_MAXSPEED; break;
+		case PC_SPY: pev->maxspeed = PC_SPY_MAXSPEED; break;
+		case PC_CIVILIAN: pev->maxspeed = PC_CIVILIAN_MAXSPEED; break;
 		}
-		
-		if ( tfstate & TFSTATE_AIMING && pev->maxspeed > 80.0f )
-			pev->maxspeed = 80.0f;
+
+		if ( tfstate & TFSTATE_AIMING && pev->maxspeed > 80.0f ) { pev->maxspeed = 80.0f; }
 	}
 }
 
@@ -706,6 +688,71 @@ void HUD_InitClientWeapons( void )
 	g_Spot.pev->effects |= EF_NODRAW;
 }
 
+int HUD_NeedSpot( int *damage )
+{
+	*damage = g_laserdot.laserdotintensity;
+	return g_laserdot.laserdotactive;
+}
+
+int HUD_CreateSniperDot( int damage, Vector p_viewangles, Vector p_origin, float *dotorigin )
+{
+	static cl_entity_t dot;
+	int index;
+	Vector forward, right, up;
+	Vector farpoint;
+	pmtrace_t tr;
+	int contents;
+	qboolean ret = FALSE;
+
+	memset( &dot, 0, sizeof( cl_entity_t ) );
+	// if ( !Bench_Active() )
+	dot.model = gEngfuncs.CL_LoadModel( "sprites/laserdot.spr", &index );
+
+	if ( dot.model && gEngfuncs.GetLocalPlayer() )
+	{
+		dot.curstate.modelindex = index;
+		dot.curstate.movetype = MOVETYPE_NONE;
+		dot.curstate.solid = SOLID_NOT;
+		dot.curstate.rendermode = kRenderGlow;
+		dot.curstate.renderfx = kRenderFxNoDissipation;
+		dot.curstate.renderamt = damage;
+
+		farpoint = forward * 8192.0f + p_origin;
+
+		gEngfuncs.pfnAngleVectors( p_viewangles, forward, right, up );
+		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( 0, 1 );
+		gEngfuncs.pEventAPI->EV_PushPMStates();
+		gEngfuncs.pEventAPI->EV_SetSolidPlayers( gEngfuncs.GetLocalPlayer()->index - 1 );
+		gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
+		gEngfuncs.pEventAPI->EV_PlayerTrace( p_origin, farpoint, PM_STUDIO_BOX, -1, &tr );
+
+		if ( tr.fraction != 1.0f )
+		{
+			contents = gEngfuncs.PM_PointContents( tr.endpos, 0 );
+
+			if ( contents != CONTENTS_SKY &&
+				( contents == CONTENTS_WATER ) == ( gEngfuncs.PM_PointContents( p_origin, 0 ) == CONTENTS_WATER ) )
+			{
+				/*
+				if ( Bench_Active() && Bench_InStage( 3 ) )
+				{
+				}
+				*/
+				dot.origin = tr.endpos;
+				dot.curstate.origin = tr.endpos;
+				memcpy( &dot.prevstate, &dot.curstate, sizeof( entity_state_t ) );
+				gEngfuncs.CL_CreateVisibleEntity( ET_NORMAL, &dot );
+				dotorigin = dot.origin;
+				ret = TRUE;
+			}
+		}
+
+		gEngfuncs.pEventAPI->EV_PopPMStates();
+	}
+
+	return ret;
+}
+
 /*
 =====================
 HUD_GetLastOrg
@@ -740,6 +787,11 @@ void HUD_SetLastOrg( void )
 	{
 		g_laserdot.previousorigin[i] = g_finalstate->playerstate.origin[i] + g_finalstate->client.view_ofs[i];
 	}
+}
+
+BOOL HUD_SpotActive( void )
+{
+	return g_Spot.pev->effects >= 0;
 }
 
 /*
@@ -832,16 +884,14 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	// If so, run the appropriate player killed or spawn function
 	if ( g_runfuncs )
 	{
-		if ( to->client.health > 0.0f && lasthealth <= 0 && player.m_pActiveItem )
+		if ( to->client.health <= 0 && lasthealth > 0 )
 		{
-			player.m_pActiveItem->Deploy();
-		}
-		else
-		{
-			if ( player.m_pActiveItem )
-				player.m_pActiveItem->Holster();
+			player.Killed( NULL, 0 );
 
-			// Velaron: TeamFortress_SetSpeed
+		}
+		else if ( to->client.health > 0 && lasthealth <= 0 )
+		{
+			player.Spawn();
 		}
 
 		gEngfuncs.pEventAPI->EV_StopSound( gEngfuncs.GetLocalPlayer()->index, CHAN_STATIC, "weapons/timer.wav" );
@@ -889,7 +939,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	// Get old buttons from previous state.
 	player.m_afButtonLast = from->playerstate.oldbuttons;
 
-	// Which buttsons chave changed
+	// Which buttsons have changed
 	buttonsChanged = ( player.m_afButtonLast ^ cmd->buttons );	// These buttons have changed this frame
 
 	// Debounced button codes for pressed/released
@@ -967,6 +1017,12 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 		}
 	}
 
+	// Store off the last position from the predicted state.
+	HUD_SetLastOrg();
+
+	// Wipe it so we can't use it after this frame
+	g_finalstate = NULL;
+
 	if ( g_runfuncs )
 	{
 		g_laserdot.laserdotactive = false;
@@ -974,7 +1030,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 		if ( to->client.m_iId == WEAPON_SNIPER_RIFLE )
 		{
-			if ( !( g_Spot.pev->effects & EF_NODRAW ) )
+			if ( HUD_SpotActive() )
 			{
 				if ( !CL_IsDead() && cmd->buttons & IN_ATTACK )
 				{
@@ -1111,12 +1167,6 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 			to->client.fuser3 = -0.001f;
 		}
 	*/
-
-	// Store off the last position from the predicted state.
-	HUD_SetLastOrg();
-
-	// Wipe it so we can't use it after this frame
-	g_finalstate = NULL;
 }
 
 /*
@@ -1137,14 +1187,14 @@ void _DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state_s
 #if defined( CLIENT_WEAPONS )
 	if ( cl_lw && cl_lw->value )
 	{
-		HUD_WeaponsPostThink( from, to, cmd, time, random_seed );
+		if ( !to->client.iuser4 )
+			HUD_WeaponsPostThink( from, to, cmd, time, random_seed );
+		g_lastFOV = to->client.fov;
 	}
 	else
 #endif
 	{
 		to->client.fov = g_lastFOV;
+		g_laserdot.laserdotactive = false;
 	}
-
-	// All games can use FOV state
-	g_lastFOV = to->client.fov;
 }
