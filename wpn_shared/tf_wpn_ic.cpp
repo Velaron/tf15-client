@@ -15,7 +15,7 @@ LINK_ENTITY_TO_CLASS( tf_weapon_ic, CTFIncendiaryC )
 void CTFIncendiaryC::Spawn( void )
 {
 	Precache();
-	m_iId = WEAPON_FLAMETHROWER;
+	m_iId = WEAPON_INCENDIARY;
 	SET_MODEL( ENT( pev ), "models/w_rpg.mdl" );
 	m_iDefaultAmmo = 50;
 	pev->solid = SOLID_TRIGGER;
@@ -25,16 +25,17 @@ int CTFIncendiaryC::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "rockets";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
+	if ( m_pPlayer ) {
 		p->iAmmo1 = m_pPlayer->maxammo_rockets;
-	else
+	} else {
 		p->iAmmo1 = 20;
+	}
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
 	p->iSlot = 4;
 	p->iPosition = 2;
-	p->iId = m_iId = WEAPON_FLAMETHROWER;
+	p->iId = m_iId = WEAPON_INCENDIARY;
 	p->iFlags = 0;
 	p->iWeight = 20;
 	return 1;

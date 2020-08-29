@@ -725,8 +725,8 @@ public:
 };
 
 enum flamethrower_e {
-	FLAME_IDLE1 = 0,
-	FLAME_FIDGET1 = 1,
+	FLAME_IDLE = 0,
+	FLAME_FIDGET = 1,
 	FLAME_NONE1 = 2,
 	FLAME_NONE2 = 3,
 	FLAME_NONE3 = 4,
@@ -743,7 +743,7 @@ class CTFFlamethrower : public CBasePlayerWeapon
 public:
 	void Spawn( void );
 	int GetItemInfo( ItemInfo *p );
-	BOOL CanHolster( void ) { return 1; };
+	BOOL CanHolster( void ) { return TRUE; };
 	void Holster( void );
 	void PrimaryAttack( void );
 	BOOL Deploy( void );

@@ -1458,7 +1458,7 @@ void EV_TFC_FireIC( event_args_t *args )
 
 	if( EV_IsLocal( idx ) )
 	{
-		gEngfuncs.pEventAPI->EV_WeaponAnimation( RPG_FIRE, 2 );
+		gEngfuncs.pEventAPI->EV_WeaponAnimation( RPG_HOLSTER, 2 );
 	}
 
 	gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_WEAPON, "weapons/sgun1.wav", 0.9f, ATTN_NORM, 0, PITCH_NORM );

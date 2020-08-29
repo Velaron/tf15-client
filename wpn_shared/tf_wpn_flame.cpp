@@ -33,7 +33,7 @@ int CTFFlamethrower::GetItemInfo( ItemInfo *p )
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->pszName = STRING( pev->classname );
-	p->iMaxClip = -1;
+	p->iMaxClip = WEAPON_NOCLIP;
 	p->iId = m_iId = WEAPON_FLAMETHROWER;
 	p->iFlags = 0;
 	p->iWeight = 20;
@@ -108,12 +108,12 @@ void CTFFlamethrower::WeaponIdle( void )
 		if ( UTIL_SharedRandomLong( m_pPlayer->random_seed, 0, 4 ) )
 		{
 			m_flTimeWeaponIdle = 12.5f;
-			SendWeaponAnim( FLAME_IDLE1, 1 );
+			SendWeaponAnim( FLAME_IDLE, 1 );
 		}
 		else
 		{
 			m_flTimeWeaponIdle = 3.0f;
-			SendWeaponAnim( FLAME_FIDGET1, 1 );
+			SendWeaponAnim( FLAME_FIDGET, 1 );
 		}
 	}
 }

@@ -63,8 +63,8 @@ enum ac_e {
 };
 
 enum flamethrower_e {
-	FLAME_IDLE1 = 0,
-	FLAME_FIDGET1 = 1,
+	FLAME_IDLE = 0,
+	FLAME_FIDGET = 1,
 	FLAME_NONE1 = 2,
 	FLAME_NONE2 = 3,
 	FLAME_NONE3 = 4,
