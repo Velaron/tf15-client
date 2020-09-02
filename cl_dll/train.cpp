@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -46,10 +46,10 @@ int CHudTrain::VidInit( void )
 
 int CHudTrain::Draw( float fTime )
 {
-	if( !m_hSprite )
+	if ( !m_hSprite )
 		m_hSprite = LoadSprite( "sprites/%d_train.spr" );
 
-	if( m_iPos )
+	if ( m_iPos )
 	{
 		int r, g, b, x, y;
 
@@ -73,7 +73,7 @@ int CHudTrain::MsgFunc_Train( const char *pszName, int iSize, void *pbuf )
 	// update Train data
 	m_iPos = READ_BYTE();
 
-	if( m_iPos )
+	if ( m_iPos )
 		m_iFlags |= HUD_ACTIVE;
 	else
 		m_iFlags &= ~HUD_ACTIVE;

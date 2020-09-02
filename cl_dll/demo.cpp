@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -26,7 +26,7 @@ float g_demozoom;
 
 // FIXME:  There should be buffer helper functions to avoid all of the *(int *)& crap.
 
-extern "C" 
+extern "C"
 {
 	void DLLEXPORT Demo_ReadBuffer( int size, unsigned char *buffer );
 }
@@ -43,12 +43,12 @@ void Demo_WriteBuffer( int type, int size, unsigned char *buffer )
 	int pos = 0;
 	unsigned char buf[32 * 1024];
 	*(int *)&buf[pos] = type;
-	pos += sizeof(int);
+	pos += sizeof( int );
 
 	memcpy( &buf[pos], buffer, size );
 
 	// Write full buffer out
-	gEngfuncs.pDemoAPI->WriteBuffer( size + sizeof(int), buf );
+	gEngfuncs.pDemoAPI->WriteBuffer( size + sizeof( int ), buf );
 }
 
 /*
@@ -64,28 +64,28 @@ void DLLEXPORT Demo_ReadBuffer( int size, unsigned char *buffer )
 	int i = 0;
 
 	type = *(int *)buffer;
-	i += sizeof(int);
-	switch( type )
+	i += sizeof( int );
+	switch ( type )
 	{
 	case TYPE_SNIPERDOT:
 		g_demosniper = *(int *)&buffer[i];
-		i += sizeof(int);
-		
-		if( g_demosniper )
+		i += sizeof( int );
+
+		if ( g_demosniper )
 		{
 			g_demosniperdamage = *(int *)&buffer[i];
-			i += sizeof(int);
+			i += sizeof( int );
 
 			g_demosniperangles[0] = *(float *)&buffer[i];
-			i += sizeof(float);
+			i += sizeof( float );
 			g_demosniperangles[1] = *(float *)&buffer[i];
-			i += sizeof(float);
+			i += sizeof( float );
 			g_demosniperangles[2] = *(float *)&buffer[i];
-			i += sizeof(float);
+			i += sizeof( float );
 			g_demosniperorg[0] = *(float *)&buffer[i];
-			i += sizeof(float);
+			i += sizeof( float );
 			g_demosniperorg[1] = *(float *)&buffer[i];
-			i += sizeof(float);
+			i += sizeof( float );
 			g_demosniperorg[2] = *(float *)&buffer[i];
 			// i += sizeof(float);
 		}

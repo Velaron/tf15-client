@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -29,7 +29,7 @@ private:
 	WEAPON		rgWeapons[MAX_WEAPONS];	// Weapons Array
 
 	// counts of weapons * ammo
-	WEAPON*		rgSlots[MAX_WEAPON_SLOTS + 1][MAX_WEAPON_POSITIONS + 1];	// The slots currently in use by weapons.  The value is a pointer to the weapon;  if it's NULL, no weapon is there
+	WEAPON *rgSlots[MAX_WEAPON_SLOTS + 1][MAX_WEAPON_POSITIONS + 1];	// The slots currently in use by weapons.  The value is a pointer to the weapon;  if it's NULL, no weapon is there
 	int			riAmmo[MAX_AMMO_TYPES];					// count of each ammo type
 
 public:
@@ -46,13 +46,13 @@ public:
 		memset( riAmmo, 0, sizeof riAmmo );
 	}
 
-///// WEAPON /////
+	///// WEAPON /////
 	int			iOldWeaponBits;
 
 	WEAPON *GetWeapon( int iId ) { return &rgWeapons[iId]; }
-	void AddWeapon( WEAPON *wp ) 
-	{ 
-		rgWeapons[wp->iId] = *wp;	
+	void AddWeapon( WEAPON *wp )
+	{
+		rgWeapons[wp->iId] = *wp;
 		LoadWeaponSprites( &rgWeapons[wp->iId] );
 	}
 
@@ -68,31 +68,31 @@ public:
 
 	void DropAllWeapons( void )
 	{
-		for( int i = 0; i < MAX_WEAPONS; i++ )
+		for ( int i = 0; i < MAX_WEAPONS; i++ )
 		{
-			if( rgWeapons[i].iId )
+			if ( rgWeapons[i].iId )
 				DropWeapon( &rgWeapons[i] );
 		}
 	}
 
-	WEAPON* GetWeaponSlot( int slot, int pos ) { return rgSlots[slot][pos]; }
+	WEAPON *GetWeaponSlot( int slot, int pos ) { return rgSlots[slot][pos]; }
 
-	void LoadWeaponSprites( WEAPON* wp );
+	void LoadWeaponSprites( WEAPON *wp );
 	void LoadAllWeaponSprites( void );
-	WEAPON* GetFirstPos( int iSlot );
+	WEAPON *GetFirstPos( int iSlot );
 	void SelectSlot( int iSlot, int fAdvance, int iDirection );
-	WEAPON* GetNextActivePos( int iSlot, int iSlotPos );
+	WEAPON *GetNextActivePos( int iSlot, int iSlotPos );
 
 	int HasAmmo( WEAPON *p );
 
-///// AMMO /////
+	///// AMMO /////
 	AMMO GetAmmo( int iId ) { return iId; }
 
-	void SetAmmo( int iId, int iCount ) { riAmmo[ iId ] = iCount;	}
+	void SetAmmo( int iId, int iCount ) { riAmmo[iId] = iCount; }
 
 	int CountAmmo( int iId );
 
-	HSPRITE* GetAmmoPicFromWeapon( int iAmmoId, wrect_t& rect );
+	HSPRITE *GetAmmoPicFromWeapon( int iAmmoId, wrect_t &rect );
 };
 
 extern WeaponsResource gWR;

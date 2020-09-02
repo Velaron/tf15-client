@@ -12,7 +12,7 @@
 #endif
 
 
-#include "vgui_inputsignal.h"
+#include <VGUI_InputSignal.h>
 
 
 namespace vgui
@@ -21,17 +21,17 @@ namespace vgui
 	class CDefaultInputSignal : public vgui::InputSignal
 	{
 	public:
-		virtual void cursorMoved(int x,int y,Panel* panel)				{}
-		virtual void cursorEntered(Panel* panel)						{}
-		virtual void cursorExited(Panel* panel)							{}
-		virtual void mousePressed(MouseCode code,Panel* panel)			{}
-		virtual void mouseDoublePressed(MouseCode code,Panel* panel)	{}
-		virtual void mouseReleased(MouseCode code,Panel* panel)			{}
-		virtual void mouseWheeled(int delta,Panel* panel)				{}
-		virtual void keyPressed(KeyCode code,Panel* panel)				{}
-		virtual void keyTyped(KeyCode code,Panel* panel)				{}
-		virtual void keyReleased(KeyCode code,Panel* panel)				{}
-		virtual void keyFocusTicked(Panel* panel)						{}
+		virtual void cursorMoved( int x, int y, Panel *panel ) {}
+		virtual void cursorEntered( Panel *panel ) {}
+		virtual void cursorExited( Panel *panel ) {}
+		virtual void mousePressed( MouseCode code, Panel *panel ) {}
+		virtual void mouseDoublePressed( MouseCode code, Panel *panel ) {}
+		virtual void mouseReleased( MouseCode code, Panel *panel ) {}
+		virtual void mouseWheeled( int delta, Panel *panel ) {}
+		virtual void keyPressed( KeyCode code, Panel *panel ) {}
+		virtual void keyTyped( KeyCode code, Panel *panel ) {}
+		virtual void keyReleased( KeyCode code, Panel *panel ) {}
+		virtual void keyFocusTicked( Panel *panel ) {}
 	};
 }
 

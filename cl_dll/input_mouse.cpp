@@ -4,36 +4,36 @@
 #include "cl_util.h"
 
 // shared between backends
-Vector dead_viewangles(0, 0, 0);
-cvar_t      *sensitivity;
-cvar_t  *in_joystick;
+Vector dead_viewangles( 0, 0, 0 );
+cvar_t *sensitivity;
+cvar_t *in_joystick;
 
 FWGSInput fwgsInput;
 
 #ifdef SUPPORT_GOLDSOURCE_INPUT
 GoldSourceInput goldSourceInput;
-AbstractInput* currentInput = &goldSourceInput;
+AbstractInput *currentInput = &goldSourceInput;
 #else
-AbstractInput* currentInput = &fwgsInput;
+AbstractInput *currentInput = &fwgsInput;
 #endif
 extern "C"  void DLLEXPORT IN_ClientMoveEvent( float forwardmove, float sidemove )
 {
-	currentInput->IN_ClientMoveEvent(forwardmove, sidemove);
+	currentInput->IN_ClientMoveEvent( forwardmove, sidemove );
 }
 
 extern "C" void DLLEXPORT IN_ClientLookEvent( float relyaw, float relpitch )
 {
-	currentInput->IN_ClientLookEvent(relyaw, relpitch);
+	currentInput->IN_ClientLookEvent( relyaw, relpitch );
 }
 
 void IN_Move( float frametime, usercmd_t *cmd )
 {
-	currentInput->IN_Move(frametime, cmd);
+	currentInput->IN_Move( frametime, cmd );
 }
 
 extern "C" void DLLEXPORT IN_MouseEvent( int mstate )
 {
-	currentInput->IN_MouseEvent(mstate);
+	currentInput->IN_MouseEvent( mstate );
 }
 
 extern "C" void DLLEXPORT IN_ClearStates( void )
@@ -69,10 +69,11 @@ void IN_Shutdown( void )
 void IN_Init( void )
 {
 #ifdef SUPPORT_GOLDSOURCE_INPUT
-	if (IsXashFWGS()) {
+	if ( IsXashFWGS() ) {
 		gEngfuncs.Con_Printf( "FWGS Xash3D input is in use\n" );
 		currentInput = &fwgsInput;
-	} else {
+	}
+	else {
 		gEngfuncs.Con_Printf( "GoldSource input is in use\n" );
 		currentInput = &goldSourceInput;
 	}

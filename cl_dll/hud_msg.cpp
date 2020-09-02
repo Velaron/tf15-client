@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -36,9 +36,9 @@ int CHud::MsgFunc_ResetHUD( const char *pszName, int iSize, void *pbuf )
 	// clear all hud data
 	HUDLIST *pList = m_pHudList;
 
-	while( pList )
+	while ( pList )
 	{
-		if( pList->p )
+		if ( pList->p )
 			pList->p->Reset();
 		pList = pList->pNext;
 	}
@@ -68,9 +68,9 @@ void CHud::MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 	// prepare all hud data
 	HUDLIST *pList = m_pHudList;
 
-	while( pList )
+	while ( pList )
 	{
-		if( pList->p )
+		if ( pList->p )
 			pList->p->InitHUDData();
 		pList = pList->pNext;
 	}
@@ -78,7 +78,7 @@ void CHud::MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 	ClearEventList();
 
 	// catch up on any building events that are going on
-	gEngfuncs.pfnServerCmd("sendevents");
+	gEngfuncs.pfnServerCmd( "sendevents" );
 }
 
 int CHud::MsgFunc_GameMode( const char *pszName, int iSize, void *pbuf )
@@ -100,12 +100,12 @@ int CHud::MsgFunc_Damage( const char *pszName, int iSize, void *pbuf )
 	armor = READ_BYTE();
 	blood = READ_BYTE();
 
-	for( i = 0; i < 3; i++)
+	for ( i = 0; i < 3; i++ )
 		from[i] = READ_COORD();
 
 	count = ( blood * 0.5 ) + ( armor * 0.5 );
 
-	if( count < 10 )
+	if ( count < 10 )
 		count = 10;
 
 	// TODO: kick viewangles,  show damage visually
@@ -117,7 +117,7 @@ int CHud::MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf )
 	int r, g, b;
 	BEGIN_READ( pbuf, iSize );
 	m_iConcussionEffect = READ_BYTE();
-	if( m_iConcussionEffect )
+	if ( m_iConcussionEffect )
 	{
 		UnpackRGB( r, g, b, RGB_YELLOWISH );	// Vit_amiN: fixed
 		this->m_StatusIcons.EnableIcon( "dmg_concuss", r, g, b );

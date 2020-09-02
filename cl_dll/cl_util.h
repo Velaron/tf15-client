@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -40,9 +40,9 @@
 								gHUD.y.UserCmd_##x( ); \
 							}
 
-inline float CVAR_GET_FLOAT( const char *x ) {	return gEngfuncs.pfnGetCvarFloat( (char*)x ); }
-inline char* CVAR_GET_STRING( const char *x ) {	return gEngfuncs.pfnGetCvarString( (char*)x ); }
-inline struct cvar_s *CVAR_CREATE( const char *cv, const char *val, const int flags ) {	return gEngfuncs.pfnRegisterVariable( (char*)cv, (char*)val, flags ); }
+inline float CVAR_GET_FLOAT( const char *x ) { return gEngfuncs.pfnGetCvarFloat( (char *)x ); }
+inline char *CVAR_GET_STRING( const char *x ) { return gEngfuncs.pfnGetCvarString( (char *)x ); }
+inline struct cvar_s *CVAR_CREATE( const char *cv, const char *val, const int flags ) { return gEngfuncs.pfnRegisterVariable( (char *)cv, (char *)val, flags ); }
 
 #define SPR_Load ( *gEngfuncs.pfnSPR_Load )
 #define SPR_Set ( *gEngfuncs.pfnSPR_Set )
@@ -85,39 +85,39 @@ extern cvar_t *hud_textmode;
 extern float g_hud_text_color[3];
 inline void DrawSetTextColor( float r, float g, float b )
 {
-	if( hud_textmode->value == 1 )
+	if ( hud_textmode->value == 1 )
 		g_hud_text_color[0] = r, g_hud_text_color[1] = g, g_hud_text_color[2] = b;
 	else
 		gEngfuncs.pfnDrawSetTextColor( r, g, b );
 }
 
 // Gets the height & width of a sprite,  at the specified frame
-inline int SPR_Height( HSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Height(x, f); }
-inline int SPR_Width( HSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Width(x, f); }
+inline int SPR_Height( HSPRITE x, int f ) { return gEngfuncs.pfnSPR_Height( x, f ); }
+inline int SPR_Width( HSPRITE x, int f ) { return gEngfuncs.pfnSPR_Width( x, f ); }
 
 inline client_textmessage_t *TextMessageGet( const char *pName )
 {
 	return gEngfuncs.pfnTextMessageGet( pName );
 }
 
-inline int TextMessageDrawChar( int x, int y, int number, int r, int g, int b ) 
+inline int TextMessageDrawChar( int x, int y, int number, int r, int g, int b )
 {
-	return gEngfuncs.pfnDrawCharacter( x, y, number, r, g, b ); 
+	return gEngfuncs.pfnDrawCharacter( x, y, number, r, g, b );
 }
 
 inline int DrawConsoleString( int x, int y, const char *string )
 {
-	if( hud_textmode->value == 1 )
-		return gHUD.DrawHudString( x, y, 9999, (char*)string, 255 * g_hud_text_color[0], 255 * g_hud_text_color[1], 255 * g_hud_text_color[2] );
-	return gEngfuncs.pfnDrawConsoleString( x, y, (char*) string );
+	if ( hud_textmode->value == 1 )
+		return gHUD.DrawHudString( x, y, 9999, (char *)string, 255 * g_hud_text_color[0], 255 * g_hud_text_color[1], 255 * g_hud_text_color[2] );
+	return gEngfuncs.pfnDrawConsoleString( x, y, (char *)string );
 }
 
 inline void GetConsoleStringSize( const char *string, int *width, int *height )
 {
-	if( hud_textmode->value == 1 )
-		*height = 13, *width = gHUD.DrawHudStringLen( (char*)string );
+	if ( hud_textmode->value == 1 )
+		*height = 13, *width = gHUD.DrawHudStringLen( (char *)string );
 	else
-		gEngfuncs.pfnDrawConsoleStringLen( (char*)string, width, height );
+		gEngfuncs.pfnDrawConsoleStringLen( (char *)string, width, height );
 }
 
 int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b );
@@ -125,8 +125,8 @@ int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g
 inline int ConsoleStringLen( const char *string )
 {
 	int _width = 0, _height = 0;
-	if( hud_textmode->value == 1 )
-		return gHUD.DrawHudStringLen( (char*)string );
+	if ( hud_textmode->value == 1 )
+		return gHUD.DrawHudStringLen( (char *)string );
 	GetConsoleStringSize( string, &_width, &_height );
 	return _width;
 }
@@ -174,9 +174,9 @@ extern vec3_t vec3_origin;
 
 inline void UnpackRGB( int &r, int &g, int &b, unsigned long ulRGB )\
 {\
-	r = ( ulRGB & 0xFF0000 ) >> 16;\
-	g = ( ulRGB & 0xFF00 ) >> 8;\
-	b = ulRGB & 0xFF;\
+r = ( ulRGB & 0xFF0000 ) >> 16; \
+g = ( ulRGB & 0xFF00 ) >> 8; \
+b = ulRGB & 0xFF; \
 }
 
 HSPRITE LoadSprite( const char *pszName );

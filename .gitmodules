@@ -1,4 +1,6 @@
-[submodule "mainui"]
-	path = mainui
-	url = https://github.com/Velaron/mainui_cpp
-	branch = master
+[submodule "vgui_dll"]
+	path = vgui_dll
+	url = https://github.com/Velaron/vgui_dll
+[submodule "android/hlsdk-xash3d"]
+	path = android/hlsdk-xash3d
+	url = https://github.com/FWGS/hlsdk-xash3d

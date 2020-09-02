@@ -49,9 +49,8 @@ void Game_AddObjects( void )
 		}
 	}
 
-	if ( gEngfuncs.pDemoAPI->IsPlayingback() )
+	if ( gEngfuncs.pDemoAPI->IsPlayingback() && g_demosniper )
 	{
-		if ( g_demosniper )
-			HUD_CreateSniperDot( g_demosniperdamage, g_demosniperangles, g_demosniperorg, p_dot );
+		HUD_CreateSniperDot( g_demosniperdamage, g_demosniperangles, g_demosniperorg, p_dot );
 	}
 }

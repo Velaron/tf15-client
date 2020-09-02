@@ -54,7 +54,7 @@ matrix:
         - cmake --build . --config Debug
       before_deploy:
         - mkdir -p tfc/cl_dll
-        - mv -t tfc/cl_dll **/*client*.so **/*menu*.so
+        - mv -t tfc/cl_dll **/*client*.so
         - tar -czvf tf15-client.tar.gz tfc
         - export TRAVIS_TAG=travis-ci
         - git tag -f $TRAVIS_TAG
@@ -75,7 +75,7 @@ matrix:
       before_deploy:
         - mkdir -p tfc/cl_dll
         - shopt -s globstar
-        - mv -t tfc/cl_dll **/*client*.dll **/*menu*.dll **/*client*.pdb **/*menu*.pdb
+        - mv -t tfc/cl_dll **/*client*.dll **/*client*.pdb
         - 7z a -tzip tf15-client.zip tfc
         - export TRAVIS_TAG=travis-ci
         - git tag -f $TRAVIS_TAG

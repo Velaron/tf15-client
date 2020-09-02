@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -47,7 +47,7 @@ int CHudGeiger::VidInit( void )
 	return 1;
 }
 
-int CHudGeiger::MsgFunc_Geiger( const char *pszName,  int iSize, void *pbuf )
+int CHudGeiger::MsgFunc_Geiger( const char *pszName, int iSize, void *pbuf )
 {
 
 	BEGIN_READ( pbuf, iSize );
@@ -68,14 +68,14 @@ int CHudGeiger::Draw( float flTime )
 	//int rg[3];
 	int i = 0;
 
-	if( m_iGeigerRange < 1000 && m_iGeigerRange > 0 )
+	if ( m_iGeigerRange < 1000 && m_iGeigerRange > 0 )
 	{
 		// peicewise linear is better than continuous formula for this
-		if( m_iGeigerRange > 800 )
+		if ( m_iGeigerRange > 800 )
 		{
 			pct = 0;	//Con_Printf( "range > 800\n" );
 		}
-		else if( m_iGeigerRange > 600 )
+		else if ( m_iGeigerRange > 600 )
 		{
 			pct = 2;
 			flvol = 0.4f;	//Con_Printf( "range > 600\n" );
@@ -83,7 +83,7 @@ int CHudGeiger::Draw( float flTime )
 			//rg[1] = 1;
 			i = 2;
 		}
-		else if( m_iGeigerRange > 500 )
+		else if ( m_iGeigerRange > 500 )
 		{
 			pct = 4;
 			flvol = 0.5f;	//Con_Printf( "range > 500\n" );
@@ -91,7 +91,7 @@ int CHudGeiger::Draw( float flTime )
 			//rg[1] = 2;
 			i = 2;
 		}
-		else if( m_iGeigerRange > 400 )
+		else if ( m_iGeigerRange > 400 )
 		{
 			pct = 8;
 			flvol = 0.6f;	//Con_Printf( "range > 400\n" );
@@ -100,7 +100,7 @@ int CHudGeiger::Draw( float flTime )
 			//rg[2] = 3;
 			i = 3;
 		}
-		else if( m_iGeigerRange > 300 )
+		else if ( m_iGeigerRange > 300 )
 		{
 			pct = 8;
 			flvol = 0.7f;	//Con_Printf( "range > 300\n" );
@@ -109,7 +109,7 @@ int CHudGeiger::Draw( float flTime )
 			//rg[2] = 4;
 			i = 3;
 		}
-		else if( m_iGeigerRange > 200 )
+		else if ( m_iGeigerRange > 200 )
 		{
 			pct = 28;
 			flvol = 0.78f;	//Con_Printf( "range > 200\n" );
@@ -118,7 +118,7 @@ int CHudGeiger::Draw( float flTime )
 			//rg[2] = 4;
 			i = 3;
 		}
-		else if( m_iGeigerRange > 150 )
+		else if ( m_iGeigerRange > 150 )
 		{
 			pct = 40;
 			flvol = 0.80f;	//Con_Printf( "range > 150\n" );
@@ -127,7 +127,7 @@ int CHudGeiger::Draw( float flTime )
 			//rg[2] = 5;
 			i = 3;
 		}
-		else if( m_iGeigerRange > 100 )
+		else if ( m_iGeigerRange > 100 )
 		{
 			pct = 60;
 			flvol = 0.85;	//Con_Printf( "range > 100\n" );
@@ -136,7 +136,7 @@ int CHudGeiger::Draw( float flTime )
 			//rg[2] = 5;
 			i = 3;
 		}
-		else if( m_iGeigerRange > 75 )
+		else if ( m_iGeigerRange > 75 )
 		{
 			pct = 80;
 			flvol = 0.9f;	//Con_Printf( "range > 75\n" );
@@ -146,7 +146,7 @@ int CHudGeiger::Draw( float flTime )
 			//rg[2] = 6;
 			i = 3;
 		}
-		else if( m_iGeigerRange > 50 )
+		else if ( m_iGeigerRange > 50 )
 		{
 			pct = 90;
 			flvol = 0.95f;	//Con_Printf( "range > 50\n" );
@@ -165,13 +165,13 @@ int CHudGeiger::Draw( float flTime )
 
 		flvol = ( flvol * ( ( rand() & 127 ) ) / 255 ) + 0.25f; // UTIL_RandomFloat( 0.25f, 0.5f );
 
-		if( ( rand() & 127 ) < pct || ( rand() & 127 ) < pct )
+		if ( ( rand() & 127 ) < pct || ( rand() & 127 ) < pct )
 		{
 			//S_StartDynamicSound( -1, 0, rgsfx[rand() % i], r_origin, flvol, 1.0f, 0, 100 );
 			char sz[256];
 
 			int j = rand() & 1;
-			if( i > 2 )
+			if ( i > 2 )
 				j += rand() & 1;
 
 			sprintf( sz, "player/geiger%d.wav", j + 1 );

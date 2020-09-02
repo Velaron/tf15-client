@@ -42,7 +42,7 @@ public:
 	CBitVecAccessor	operator[]( int i );
 
 	// Operations on other bit vectors.
-	CBitVec& operator=( CBitVec<NUM_BITS> const &other );
+	CBitVec &operator=( CBitVec<NUM_BITS> const &other );
 	bool operator==( CBitVec<NUM_BITS> const &other );
 	bool operator!=( CBitVec<NUM_BITS> const &other );
 
@@ -64,7 +64,7 @@ private:
 // ------------------------------------------------------------------------ //
 // CBitVecAccessor inlines.
 // ------------------------------------------------------------------------ //
-inline CBitVecAccessor::CBitVecAccessor(unsigned long *pDWords, int iBit)
+inline CBitVecAccessor::CBitVecAccessor( unsigned long *pDWords, int iBit )
 {
 	m_pDWords = pDWords;
 	m_iBit = iBit;
@@ -72,7 +72,7 @@ inline CBitVecAccessor::CBitVecAccessor(unsigned long *pDWords, int iBit)
 
 inline void CBitVecAccessor::operator=( int val )
 {
-	if( val )
+	if ( val )
 		m_pDWords[m_iBit >> 5] |= ( 1 << ( m_iBit & 31 ) );
 	else
 		m_pDWords[m_iBit >> 5] &= ~(unsigned long)( 1 << ( m_iBit & 31 ) );
@@ -95,28 +95,28 @@ inline int CBitVec<NUM_BITS>::GetNumBits()
 template<int NUM_BITS>
 inline CBitVec<NUM_BITS>::CBitVec()
 {
-	for( int i = 0; i < NUM_DWORDS; i++ )
+	for ( int i = 0; i < NUM_DWORDS; i++ )
 		m_DWords[i] = 0;
 }
 
 template<int NUM_BITS>
 inline void CBitVec<NUM_BITS>::Init( int val )
 {
-	for( int i = 0; i < GetNumBits(); i++ )
+	for ( int i = 0; i < GetNumBits(); i++ )
 	{
 		( *this )[i] = val;
 	}
 }
 
 template<int NUM_BITS>
-inline CBitVec<NUM_BITS>& CBitVec<NUM_BITS>::operator=( CBitVec<NUM_BITS> const &other )
+inline CBitVec<NUM_BITS> &CBitVec<NUM_BITS>::operator=( CBitVec<NUM_BITS> const &other )
 {
-	memcpy( m_DWords, other.m_DWords, sizeof(m_DWords) );
+	memcpy( m_DWords, other.m_DWords, sizeof( m_DWords ) );
 	return *this;
 }
 
 template<int NUM_BITS>
-inline CBitVecAccessor CBitVec<NUM_BITS>::operator[]( int i )	
+inline CBitVecAccessor CBitVec<NUM_BITS>::operator[]( int i )
 {
 	assert( i >= 0 && i < GetNumBits() );
 	return CBitVecAccessor( m_DWords, i );
@@ -125,8 +125,8 @@ inline CBitVecAccessor CBitVec<NUM_BITS>::operator[]( int i )
 template<int NUM_BITS>
 inline bool CBitVec<NUM_BITS>::operator==( CBitVec<NUM_BITS> const &other )
 {
-	for( int i = 0; i < NUM_DWORDS; i++ )
-		if( m_DWords[i] != other.m_DWords[i] )
+	for ( int i = 0; i < NUM_DWORDS; i++ )
+		if ( m_DWords[i] != other.m_DWords[i] )
 			return false;
 
 	return true;

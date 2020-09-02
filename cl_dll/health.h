@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -94,7 +94,7 @@ typedef struct
 	float fBaseline;
 	int	x, y;
 }DAMAGE_IMAGE;
-	
+
 //
 //-----------------------------------------------------
 //
@@ -105,8 +105,8 @@ public:
 	virtual int VidInit( void );
 	virtual int Draw( float fTime );
 	virtual void Reset( void );
-	int MsgFunc_Health( const char *pszName,  int iSize, void *pbuf );
-	int MsgFunc_Damage( const char *pszName,  int iSize, void *pbuf );
+	int MsgFunc_Health( const char *pszName, int iSize, void *pbuf );
+	int MsgFunc_Damage( const char *pszName, int iSize, void *pbuf );
 	int m_iHealth;
 	int m_HUD_dmg_bio;
 	int m_HUD_cross;
@@ -117,7 +117,7 @@ public:
 private:
 	HSPRITE m_hSprite;
 	HSPRITE m_hDamage;
-	
+
 	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
 	int m_bitsDamage;
 	int DrawPain( float fTime );

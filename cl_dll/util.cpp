@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -46,7 +46,7 @@ float Length( const float *v )
 	float	length;
 
 	length = 0.0f;
-	for( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 		length += v[i] * v[i];
 	length = sqrt( length );		// FIXME
 
@@ -57,23 +57,23 @@ void VectorAngles( const float *forward, float *angles )
 {
 	float tmp, yaw, pitch;
 
-	if( forward[1] == 0.0f && forward[0] == 0.0f )
+	if ( forward[1] == 0.0f && forward[0] == 0.0f )
 	{
 		yaw = 0.0f;
-		if( forward[2] > 0.0f )
+		if ( forward[2] > 0.0f )
 			pitch = 90.0f;
 		else
 			pitch = 270.0f;
 	}
 	else
 	{
-		yaw = ( atan2( forward[1], forward[0]) * 180.0f / M_PI_F );
-		if( yaw < 0.0f )
+		yaw = ( atan2( forward[1], forward[0] ) * 180.0f / M_PI_F );
+		if ( yaw < 0.0f )
 			yaw += 360.0f;
 
 		tmp = sqrt( forward[0] * forward[0] + forward[1] * forward[1] );
 		pitch = ( atan2( forward[2], tmp ) * 180.0f / M_PI_F );
-		if( pitch < 0.0f )
+		if ( pitch < 0.0f )
 			pitch += 360.0f;
 	}
 
@@ -89,7 +89,7 @@ float VectorNormalize( float *v )
 	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 	length = sqrt( length );		// FIXME
 
-	if( length )
+	if ( length )
 	{
 		ilength = 1.0f / length;
 		v[0] *= ilength;
@@ -126,7 +126,7 @@ HSPRITE LoadSprite( const char *pszName )
 	int i;
 	char sz[256];
 
-	if( ScreenWidth < 640 )
+	if ( ScreenWidth < 640 )
 		i = 320;
 	else
 		i = 640;

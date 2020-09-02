@@ -35,7 +35,7 @@ public class LauncherActivity extends Activity
 
 		intent.putExtra( "pakfile", getExternalFilesDir( null ).getAbsolutePath() + "/extras.pak" );
 		intent.putExtra( "gamedir", "tfc" );
-		intent.putExtra( "argv", "-log -dev 5" );
+		intent.putExtra( "argv", "-log -dev 2" );
 
 		try
 		{

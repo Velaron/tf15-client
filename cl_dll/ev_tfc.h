@@ -191,7 +191,7 @@ void EV_TFC_TranqNailTouch( tempent_s *ent, pmtrace_t *ptr );
 void EV_TFC_PlayAxeSound( int idx, int classid, float *origin, int iSoundType, float fSoundData );
 void EV_TFC_AxeHit( int idx, float *origin, float *forward, float *right, int entity, float *vecDir, pmtrace_t *ptr );
 int EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, int entity, float *vecDir, pmtrace_t *ptr );
-tempent_s* EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, int ishead );
+tempent_s *EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, int ishead );
 void EV_TFC_GibTouchCallback( tempent_s *ent, pmtrace_t *ptr );
 void EV_TFC_GibCallback( tempent_s *ent, float frametime, float currenttime );
 void EV_TFC_BloodDecalTrace( pmtrace_t *pTrace, int bloodColor );

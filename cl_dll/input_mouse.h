@@ -63,16 +63,16 @@ public:
 	virtual void IN_Init( void );
 
 protected:
-	void IN_GetMouseDelta( int *pOutX, int *pOutY);
-	void IN_MouseMove ( float frametime, usercmd_t *cmd);
-	void IN_StartupMouse (void);
+	void IN_GetMouseDelta( int *pOutX, int *pOutY );
+	void IN_MouseMove( float frametime, usercmd_t *cmd );
+	void IN_StartupMouse( void );
 
 	int         mouse_buttons;
 	int         mouse_oldbuttonstate;
 	POINT       current_pos;
 	int         old_mouse_x, old_mouse_y, mx_accum, my_accum;
 	int         mouseinitialized;
-	void* sdl2Lib;
+	void *sdl2Lib;
 };
 #endif
 

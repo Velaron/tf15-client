@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -48,7 +48,7 @@ void COM_Log( const char *pszFile, const char *fmt, ... )
 	FILE *fp;
 	const char *pfilename;
 
-	if( !pszFile )
+	if ( !pszFile )
 	{
 		pfilename = "c:\\hllog.txt";
 	}
@@ -61,8 +61,8 @@ void COM_Log( const char *pszFile, const char *fmt, ... )
 	vsprintf( string, fmt, argptr );
 	va_end( argptr );
 
-	fp = fopen( pfilename, "a+t");
-	if( fp )
+	fp = fopen( pfilename, "a+t" );
+	if ( fp )
 	{
 		fprintf( fp, "%s", string );
 		fclose( fp );
@@ -83,7 +83,7 @@ Change weapon model animation
 void HUD_SendWeaponAnim( int iAnim, int body, int force )
 {
 	// Don't actually change it.
-	if( !g_runfuncs && !force )
+	if ( !g_runfuncs && !force )
 		return;
 
 	g_currentanim = iAnim;
@@ -113,7 +113,7 @@ Play a sound, if we are seeing this command for the first time
 */
 void HUD_PlaySound( const char *sound, float volume )
 {
-	if( !g_runfuncs || !g_finalstate )
+	if ( !g_runfuncs || !g_finalstate )
 		return;
 
 	gEngfuncs.pfnPlaySoundByNameAtLocation( sound, volume, g_finalstate->playerstate.origin );
@@ -132,12 +132,12 @@ void HUD_PlaybackEvent( int flags, const edict_t *pInvoker, unsigned short event
 	vec3_t org;
 	vec3_t ang;
 
-	if( !g_runfuncs || !g_finalstate )
-	     return;
+	if ( !g_runfuncs || !g_finalstate )
+		return;
 
 	// Weapon prediction events are assumed to occur at the player's origin
-	org			= g_finalstate->playerstate.origin;
-	ang			= v_angles;
+	org = g_finalstate->playerstate.origin;
+	ang = v_angles;
 	gEngfuncs.pfnPlaybackEvent( flags, pInvoker, eventindex, delay, org, ang, fparam1, fparam2, iparam1, iparam2, bparam1, bparam2 );
 }
 
@@ -164,7 +164,7 @@ float UTIL_WeaponTimeBase( void )
 	return 0.0f;
 }
 
-static unsigned int glSeed = 0; 
+static unsigned int glSeed = 0;
 
 unsigned int seed_table[256] =
 {
@@ -186,13 +186,13 @@ unsigned int seed_table[256] =
 	25678, 18555, 13256, 23316, 22407, 16727, 991, 9236, 5373, 29402, 6117, 15241, 27715, 19291, 19888, 19847
 };
 
-unsigned int U_Random( void ) 
+unsigned int U_Random( void )
 {
-	glSeed *= 69069; 
+	glSeed *= 69069;
 	glSeed += seed_table[glSeed & 0xff];
 
 	return ( ++glSeed & 0x0fffffff );
-} 
+}
 
 void U_Srand( unsigned int seed )
 {
@@ -211,7 +211,7 @@ int UTIL_SharedRandomLong( unsigned int seed, int low, int high )
 	U_Srand( (int)seed + low + high );
 
 	range = high - low + 1;
-	if( !( range - 1 ) )
+	if ( !( range - 1 ) )
 	{
 		return low;
 	}
@@ -243,7 +243,7 @@ float UTIL_SharedRandomFloat( unsigned int seed, float low, float high )
 	U_Random();
 
 	range = high - low;
-	if( !range )
+	if ( !range )
 	{
 		return low;
 	}
@@ -268,12 +268,12 @@ stub functions for such things as precaching.  So we don't have to modify weapon
  is compiled into both game and client .dlls.
 ======================
 */
-int stub_PrecacheModel( const char* s )
+int stub_PrecacheModel( const char *s )
 {
 	return 0;
 }
 
-int stub_PrecacheSound( const char* s )
+int stub_PrecacheSound( const char *s )
 {
 	return 0;
 }

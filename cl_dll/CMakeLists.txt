@@ -99,7 +99,6 @@ set(CLDLL_SOURCES
 	input_xash3d.cpp
 	menu.cpp
 	message.cpp
-	overview.cpp
 	parsemsg.cpp
 	../pm_shared/pm_debug.c
 	../pm_shared/pm_math.c
@@ -114,10 +113,29 @@ set(CLDLL_SOURCES
 	tri.cpp
 	util.cpp
 	view.cpp
-	scoreboard.cpp
-	MOTD.cpp)
+	../game_shared/vgui_checkbutton2.cpp
+	../game_shared/vgui_grid.cpp
+	../game_shared/vgui_helpers.cpp
+	../game_shared/vgui_listbox.cpp
+	../game_shared/vgui_loadtga.cpp
+	../game_shared/vgui_scrollbar2.cpp
+	../game_shared/vgui_slider2.cpp
+	../game_shared/voice_banmgr.cpp
+	vgui_ClassMenu.cpp
+	vgui_ConsolePanel.cpp
+	vgui_ControlConfigPanel.cpp
+	vgui_CustomObjects.cpp
+	vgui_int.cpp
+	vgui_MOTDWindow.cpp
+	vgui_SchemeManager.cpp
+	vgui_ScorePanel.cpp
+	vgui_SpectatorPanel.cpp
+	vgui_TeamFortressViewport.cpp
+	vgui_teammenu.cpp
+	../game_shared/voice_banmgr.cpp
+	../game_shared/voice_status.cpp)
 
-include_directories(. hl/ ../dlls ../dlls/tfc ../common ../engine ../pm_shared ../game_shared ../public ../utils/false_vgui/include)
+include_directories(. hl/ ../dlls ../dlls/tfc ../common ../engine ../pm_shared ../game_shared ../public ../vgui_dll/include)
 
 if(USE_VOICEMGR)
 	#set(CLDLL_SOURCES
@@ -126,7 +144,11 @@ if(USE_VOICEMGR)
 	#	../game_shared/voice_status.cpp)
 endif()
 
-add_library(${CLDLL_LIBRARY} MODULE ${CLDLL_SOURCES})
+if(ANDROID)
+	add_library(${CLDLL_LIBRARY} MODULE ${CLDLL_SOURCES} $<TARGET_OBJECTS:vgui_support>)
+else()
+	add_library(${CLDLL_LIBRARY} MODULE ${CLDLL_SOURCES})
+endif()
 
 if(GOLDSOURCE_SUPPORT)
 	target_link_libraries(${CLDLL_LIBRARY} ${CMAKE_DL_LIBS})
@@ -134,6 +156,10 @@ endif()
 
 if(WIN32)
 	target_link_libraries(${CLDLL_LIBRARY} user32.lib)
+endif()
+
+if(BUILD_VGUI)
+	target_link_libraries(${CLDLL_LIBRARY} vgui)
 endif()
 
 set_target_properties (${CLDLL_LIBRARY} PROPERTIES

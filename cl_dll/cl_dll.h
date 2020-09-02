@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -50,12 +50,10 @@ typedef float vec_t;
 #include <math.h>
 #endif
 #if defined(__LP64__) || defined(__LLP64__) || defined(_WIN64) || (defined(__x86_64__) && !defined(__ILP32__) ) || defined(_M_X64) || defined(__ia64) || defined (_M_IA64) || defined(__aarch64__) || defined(__powerpc64__)
-  #define XASH_64BIT
+#define XASH_64BIT
 #endif
 
 extern cl_enginefunc_t gEngfuncs;
 #include "../engine/mobility_int.h"
 extern mobile_engfuncs_t *gMobileEngfuncs;
-#include "IGameMenuExports.h"
-extern IGameMenuExports *g_pMainUI;
 #endif

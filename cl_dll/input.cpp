@@ -24,11 +24,13 @@ extern "C"
 #include "const.h"
 #include "camera.h"
 #include "in_defs.h"
-//#include "view.h"
+#include "view.h"
 #include <string.h>
 #include <ctype.h>
 
-extern "C" 
+#include "vgui_TeamFortressViewport.h"
+
+extern "C"
 {
 	struct kbutton_s DLLEXPORT *KB_Find( const char *name );
 	void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active );
@@ -57,24 +59,24 @@ extern cvar_t *in_joystick;
 int	in_impulse = 0;
 int	in_cancel = 0;
 
-cvar_t	*m_pitch;
-cvar_t	*m_yaw;
-cvar_t	*m_forward;
-cvar_t	*m_side;
+cvar_t *m_pitch;
+cvar_t *m_yaw;
+cvar_t *m_forward;
+cvar_t *m_side;
 
-cvar_t	*lookstrafe;
-cvar_t	*lookspring;
-cvar_t	*cl_pitchup;
-cvar_t	*cl_pitchdown;
-cvar_t	*cl_upspeed;
-cvar_t	*cl_forwardspeed;
-cvar_t	*cl_backspeed;
-cvar_t	*cl_sidespeed;
-cvar_t	*cl_movespeedkey;
-cvar_t	*cl_yawspeed;
-cvar_t	*cl_pitchspeed;
-cvar_t	*cl_anglespeedkey;
-cvar_t	*cl_vsmoothing;
+cvar_t *lookstrafe;
+cvar_t *lookspring;
+cvar_t *cl_pitchup;
+cvar_t *cl_pitchdown;
+cvar_t *cl_upspeed;
+cvar_t *cl_forwardspeed;
+cvar_t *cl_backspeed;
+cvar_t *cl_sidespeed;
+cvar_t *cl_movespeedkey;
+cvar_t *cl_yawspeed;
+cvar_t *cl_pitchspeed;
+cvar_t *cl_anglespeedkey;
+cvar_t *cl_vsmoothing;
 
 /*
 ===============================================================================
@@ -150,18 +152,18 @@ int KB_ConvertString( char *in, char **ppout )
 	char *pEnd;
 	const char *pBinding;
 
-	if( !ppout )
+	if ( !ppout )
 		return 0;
 
 	*ppout = NULL;
 	p = in;
 	pOut = sz;
-	while( *p )
+	while ( *p )
 	{
-		if( *p == '+' )
+		if ( *p == '+' )
 		{
 			pEnd = binding;
-			while( *p && ( isalnum( *p ) || ( pEnd == binding ) ) && ( ( pEnd - binding ) < 63 ) )
+			while ( *p && ( isalnum( *p ) || ( pEnd == binding ) ) && ( ( pEnd - binding ) < 63 ) )
 			{
 				*pEnd++ = *p++;
 			}
@@ -169,13 +171,13 @@ int KB_ConvertString( char *in, char **ppout )
 			*pEnd = '\0';
 
 			pBinding = NULL;
-			if( binding[1] != '\0' )
+			if ( binding[1] != '\0' )
 			{
 				// See if there is a binding for binding?
 				pBinding = gEngfuncs.Key_LookupBinding( binding + 1 );
 			}
 
-			if( pBinding )
+			if ( pBinding )
 			{
 				*pOut++ = '[';
 				pEnd = (char *)pBinding;
@@ -185,12 +187,12 @@ int KB_ConvertString( char *in, char **ppout )
 				pEnd = binding;
 			}
 
-			while( *pEnd )
+			while ( *pEnd )
 			{
 				*pOut++ = *pEnd++;
 			}
 
-			if( pBinding )
+			if ( pBinding )
 			{
 				*pOut++ = ']';
 			}
@@ -221,9 +223,9 @@ struct kbutton_s DLLEXPORT *KB_Find( const char *name )
 {
 	kblist_t *p;
 	p = g_kbkeys;
-	while( p )
+	while ( p )
 	{
-		if( !stricmp( name, p->name ) )
+		if ( !stricmp( name, p->name ) )
 			return p->pkey;
 
 		p = p->next;
@@ -240,16 +242,16 @@ Add a kbutton_t * to the list of pointers the engine can retrieve via KB_Find
 */
 void KB_Add( const char *name, kbutton_t *pkb )
 {
-	kblist_t *p;	
+	kblist_t *p;
 	kbutton_t *kb;
 
 	kb = KB_Find( name );
 
-	if( kb )
+	if ( kb )
 		return;
 
-	p = (kblist_t *)malloc( sizeof(kblist_t) );
-	memset( p, 0, sizeof(*p) );
+	p = (kblist_t *)malloc( sizeof( kblist_t ) );
+	memset( p, 0, sizeof( *p ) );
 
 	strcpy( p->name, name );
 	p->pkey = pkb;
@@ -285,7 +287,7 @@ void KB_Shutdown( void )
 {
 	kblist_t *p, *n;
 	p = g_kbkeys;
-	while( p )
+	while ( p )
 	{
 		n = p->next;
 		free( p );
@@ -302,28 +304,28 @@ KeyDown
 void KeyDown( kbutton_t *b )
 {
 	int	k;
-	char	*c;
+	char *c;
 
 	c = gEngfuncs.Cmd_Argv( 1 );
-	if( c[0] )
+	if ( c[0] )
 		k = atoi( c );
 	else
 		k = -1;		// typed manually at the console for continuous down
 
-	if( k == b->down[0] || k == b->down[1] )
+	if ( k == b->down[0] || k == b->down[1] )
 		return;		// repeating key
-	
-	if( !b->down[0] )
+
+	if ( !b->down[0] )
 		b->down[0] = k;
-	else if( !b->down[1] )
+	else if ( !b->down[1] )
 		b->down[1] = k;
 	else
 	{
 		gEngfuncs.Con_DPrintf( "Three keys down for a button '%c' '%c' '%c'!\n", b->down[0], b->down[1], c );
 		return;
 	}
-	
-	if( b->state & 1 )
+
+	if ( b->state & 1 )
 		return;		// still down
 	b->state |= 1 + 2;	// down + impulse down
 }
@@ -336,11 +338,11 @@ KeyUp
 void KeyUp( kbutton_t *b )
 {
 	int	k;
-	char	*c;
-	
+	char *c;
+
 	c = gEngfuncs.Cmd_Argv( 1 );
-	if( c[0] )
-		k = atoi(c);
+	if ( c[0] )
+		k = atoi( c );
 	else
 	{
 		// typed manually at the console, assume for unsticking, so clear all
@@ -349,19 +351,19 @@ void KeyUp( kbutton_t *b )
 		return;
 	}
 
-	if( b->down[0] == k )
+	if ( b->down[0] == k )
 		b->down[0] = 0;
-	else if( b->down[1] == k )
+	else if ( b->down[1] == k )
 		b->down[1] = 0;
 	else
 		return;		// key up without coresponding down (menu pass through)
-	if( b->down[0] || b->down[1] )
+	if ( b->down[0] || b->down[1] )
 	{
 		//Con_Printf ( "Keys down for button: '%c' '%c' '%c' (%d,%d,%d)!\n", b->down[0], b->down[1], c, b->down[0], b->down[1], c );
 		return;		// some other key is still holding it down
 	}
 
-	if( !( b->state & 1 ) )
+	if ( !( b->state & 1 ) )
 		return;		// still up (this should not happen)
 
 	b->state &= ~1;		// now up
@@ -376,7 +378,8 @@ Return 1 to allow engine to process the key, otherwise, act on it as needed
 ============
 */
 int DLLEXPORT HUD_Key_Event( int down, int keynum, const char *pszCurrentBinding )
-{	
+{
+	if ( gViewPort ) { return gViewPort->KeyInput( down, keynum, pszCurrentBinding ); }
 	return 1;
 }
 
@@ -647,16 +650,22 @@ void IN_Impulse( void )
 void IN_ScoreDown( void )
 {
 	KeyDown( &in_score );
+	if ( gViewPort ) { gViewPort->ShowScoreBoard(); }
 }
 
 void IN_ScoreUp( void )
 {
 	KeyUp( &in_score );
+	if ( gViewPort ) { gViewPort->HideScoreBoard(); }
 }
 
 void IN_MLookUp( void )
 {
 	KeyUp( &in_mlook );
+	if ( !( in_mlook.state & 1 ) && lookspring->value )
+	{
+		V_StartPitchDrift();
+	}
 }
 
 /*
@@ -678,40 +687,40 @@ float CL_KeyState( kbutton_t *key )
 	impulseup = key->state & 4;
 	down = key->state & 1;
 
-	if( impulsedown && !impulseup )
+	if ( impulsedown && !impulseup )
 	{
 		// pressed and held this frame?
 		val = down ? 0.5 : 0.0;
 	}
 
-	if( impulseup && !impulsedown )
+	if ( impulseup && !impulsedown )
 	{
 		// released this frame?
 		val = down ? 0.0 : 0.0;
 	}
 
-	if( !impulsedown && !impulseup )
+	if ( !impulsedown && !impulseup )
 	{
 		// held the entire frame?
 		val = down ? 1.0 : 0.0;
 	}
 
-	if( impulsedown && impulseup )
+	if ( impulsedown && impulseup )
 	{
-		if( down )
+		if ( down )
 		{
 			// released and re-pressed this frame
-			val = 0.75;	
+			val = 0.75;
 		}
 		else
 		{
 			// pressed and released this frame
-			val = 0.25;	
+			val = 0.25;
 		}
 	}
 
 	// clear impulses
-	key->state &= 1;		
+	key->state &= 1;
 	return val;
 }
 
@@ -727,7 +736,7 @@ void CL_AdjustAngles( float frametime, float *viewangles )
 	float speed;
 	float up, down;
 
-	if( in_speed.state & 1 )
+	if ( in_speed.state & 1 )
 	{
 		speed = frametime * cl_anglespeedkey->value;
 	}
@@ -736,15 +745,16 @@ void CL_AdjustAngles( float frametime, float *viewangles )
 		speed = frametime;
 	}
 
-	if( !( in_strafe.state & 1 ) )
+	if ( !( in_strafe.state & 1 ) )
 	{
 		viewangles[YAW] -= speed * cl_yawspeed->value * CL_KeyState( &in_right );
 		viewangles[YAW] += speed * cl_yawspeed->value * CL_KeyState( &in_left );
 		viewangles[YAW] = anglemod( viewangles[YAW] );
 	}
 
-	if( in_klook.state & 1 )
+	if ( in_klook.state & 1 )
 	{
+		V_StopPitchDrift();
 		viewangles[PITCH] -= speed * cl_pitchspeed->value * CL_KeyState( &in_forward );
 		viewangles[PITCH] += speed * cl_pitchspeed->value * CL_KeyState( &in_back );
 	}
@@ -755,14 +765,16 @@ void CL_AdjustAngles( float frametime, float *viewangles )
 	viewangles[PITCH] -= speed * cl_pitchspeed->value * up;
 	viewangles[PITCH] += speed * cl_pitchspeed->value * down;
 
-	if( viewangles[PITCH] > cl_pitchdown->value )
+	if ( up || down ) { V_StopPitchDrift(); }
+
+	if ( viewangles[PITCH] > cl_pitchdown->value )
 		viewangles[PITCH] = cl_pitchdown->value;
-	if( viewangles[PITCH] < -cl_pitchup->value )
+	if ( viewangles[PITCH] < -cl_pitchup->value )
 		viewangles[PITCH] = -cl_pitchup->value;
 
-	if( viewangles[ROLL] > 50 )
+	if ( viewangles[ROLL] > 50 )
 		viewangles[ROLL] = 50;
-	if( viewangles[ROLL] < -50 )
+	if ( viewangles[ROLL] < -50 )
 		viewangles[ROLL] = -50;
 }
 
@@ -781,7 +793,7 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 	vec3_t viewangles;
 	static vec3_t oldangles;
 
-	if( active )
+	if ( active )
 	{
 		//memset( viewangles, 0, sizeof(vec3_t) );
 		//viewangles[0] = viewangles[1] = viewangles[2] = 0.0;
@@ -789,11 +801,11 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 
 		CL_AdjustAngles( frametime, viewangles );
 
-		memset( cmd, 0, sizeof(*cmd) );
+		memset( cmd, 0, sizeof( *cmd ) );
 
 		gEngfuncs.SetViewAngles( (float *)viewangles );
 
-		if( in_strafe.state & 1 )
+		if ( in_strafe.state & 1 )
 		{
 			cmd->sidemove += cl_sidespeed->value * CL_KeyState( &in_right );
 			cmd->sidemove -= cl_sidespeed->value * CL_KeyState( &in_left );
@@ -805,14 +817,14 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 		cmd->upmove += cl_upspeed->value * CL_KeyState( &in_up );
 		cmd->upmove -= cl_upspeed->value * CL_KeyState( &in_down );
 
-		if( !(in_klook.state & 1 ) )
-		{	
+		if ( !( in_klook.state & 1 ) )
+		{
 			cmd->forwardmove += cl_forwardspeed->value * CL_KeyState( &in_forward );
 			cmd->forwardmove -= cl_backspeed->value * CL_KeyState( &in_back );
 		}
 
 		// adjust for speed key
-		if( in_speed.state & 1 )
+		if ( in_speed.state & 1 )
 		{
 			cmd->forwardmove *= cl_movespeedkey->value;
 			cmd->sidemove *= cl_movespeedkey->value;
@@ -821,12 +833,12 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 
 		// clip to maxspeed
 		spd = gEngfuncs.GetClientMaxspeed();
-		if( spd != 0.0f )
+		if ( spd != 0.0f )
 		{
 			// scale the 3 speeds so that the total velocity is not > cl.maxspeed
 			float fmov = sqrt( ( cmd->forwardmove * cmd->forwardmove ) + ( cmd->sidemove * cmd->sidemove ) + ( cmd->upmove * cmd->upmove ) );
 
-			if( fmov > spd )
+			if ( fmov > spd )
 			{
 				float fratio = spd / fmov;
 				cmd->forwardmove *= fratio;
@@ -850,13 +862,13 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 	cmd->buttons = CL_ButtonBits( 1 );
 
 	// Using joystick?
-	if( in_joystick->value )
+	if ( in_joystick->value )
 	{
-		if( cmd->forwardmove > 0 )
+		if ( cmd->forwardmove > 0 )
 		{
 			cmd->buttons |= IN_FORWARD;
 		}
-		else if( cmd->forwardmove < 0 )
+		else if ( cmd->forwardmove < 0 )
 		{
 			cmd->buttons |= IN_BACK;
 		}
@@ -865,7 +877,7 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 	gEngfuncs.GetViewAngles( (float *)viewangles );
 	// Set current view angles.
 
-	if( g_iAlive )
+	if ( g_iAlive )
 	{
 		VectorCopy( viewangles, cmd->viewangles );
 		VectorCopy( viewangles, oldangles );
@@ -901,91 +913,88 @@ int CL_ButtonBits( int bResetState )
 {
 	int bits = 0;
 
-	if( in_attack.state & 3 )
+	if ( in_attack.state & 3 )
 	{
-		if( gHUD.m_MOTD.m_bShow )
-			gHUD.m_MOTD.Reset();
-		else
-			bits |= IN_ATTACK;
+		bits |= IN_ATTACK;
 	}
 
-	if( in_duck.state & 3 )
+	if ( in_duck.state & 3 )
 	{
 		bits |= IN_DUCK;
 	}
 
-	if( in_jump.state & 3 )
+	if ( in_jump.state & 3 )
 	{
 		bits |= IN_JUMP;
 	}
 
-	if( in_forward.state & 3 )
+	if ( in_forward.state & 3 )
 	{
 		bits |= IN_FORWARD;
 	}
 
-	if( in_back.state & 3 )
+	if ( in_back.state & 3 )
 	{
 		bits |= IN_BACK;
 	}
 
-	if( in_use.state & 3 )
+	if ( in_use.state & 3 )
 	{
 		bits |= IN_USE;
 	}
 
-	if( in_cancel )
+	if ( in_cancel )
 	{
 		bits |= IN_CANCEL;
 	}
 
-	if( in_left.state & 3 )
+	if ( in_left.state & 3 )
 	{
 		bits |= IN_LEFT;
 	}
-	
-	if( in_right.state & 3 )
+
+	if ( in_right.state & 3 )
 	{
 		bits |= IN_RIGHT;
 	}
 
-	if( in_moveleft.state & 3 )
+	if ( in_moveleft.state & 3 )
 	{
 		bits |= IN_MOVELEFT;
 	}
-	
-	if( in_moveright.state & 3 )
+
+	if ( in_moveright.state & 3 )
 	{
 		bits |= IN_MOVERIGHT;
 	}
 
-	if( in_attack2.state & 3 )
+	if ( in_attack2.state & 3 )
 	{
 		bits |= IN_ATTACK2;
 	}
 
-	if( in_reload.state & 3 )
+	if ( in_reload.state & 3 )
 	{
 		bits |= IN_RELOAD;
 	}
 
-	if( in_alt1.state & 3 )
+	if ( in_alt1.state & 3 )
 	{
 		bits |= IN_ALT1;
 	}
 
-	if( in_score.state & 3 )
+	if ( in_score.state & 3 )
 	{
 		bits |= IN_SCORE;
 	}
 
 	// Dead or in intermission? Shore scoreboard, too
-	if( CL_IsDead() || gHUD.m_iIntermission )
+	if ( CL_IsDead() || gHUD.m_iIntermission )
 	{
 		bits |= IN_SCORE;
 	}
 
-	if( bResetState )
+	if ( bResetState )
 	{
 		in_attack.state &= ~2;
 		in_duck.state &= ~2;
@@ -1017,10 +1026,10 @@ void CL_ResetButtonBits( int bits )
 	int bitsNew = CL_ButtonBits( 0 ) ^ bits;
 
 	// Has the attack button been changed
-	if( bitsNew & IN_ATTACK )
+	if ( bitsNew & IN_ATTACK )
 	{
 		// Was it pressed? or let go?
-		if( bits & IN_ATTACK )
+		if ( bits & IN_ATTACK )
 		{
 			KeyDown( &in_attack );
 		}
@@ -1084,30 +1093,34 @@ void InitInput( void )
 	gEngfuncs.pfnAddCommand( "-reload", IN_ReloadUp );
 	gEngfuncs.pfnAddCommand( "+alt1", IN_Alt1Down );
 	gEngfuncs.pfnAddCommand( "-alt1", IN_Alt1Up );
+	gEngfuncs.pfnAddCommand( "+score", IN_ScoreDown );
+	gEngfuncs.pfnAddCommand( "-score", IN_ScoreUp );
+	gEngfuncs.pfnAddCommand( "+showscores", IN_ScoreDown );
+	gEngfuncs.pfnAddCommand( "-showscores", IN_ScoreUp );
 	gEngfuncs.pfnAddCommand( "+graph", IN_GraphDown );
 	gEngfuncs.pfnAddCommand( "-graph", IN_GraphUp );
 	gEngfuncs.pfnAddCommand( "+break", IN_BreakDown );
 	gEngfuncs.pfnAddCommand( "-break", IN_BreakUp );
 
-	lookstrafe		= gEngfuncs.pfnRegisterVariable( "lookstrafe", "0", FCVAR_ARCHIVE );
-	lookspring		= gEngfuncs.pfnRegisterVariable( "lookspring", "0", FCVAR_ARCHIVE );
-	cl_anglespeedkey	= gEngfuncs.pfnRegisterVariable( "cl_anglespeedkey", "0.67", 0 );
-	cl_yawspeed		= gEngfuncs.pfnRegisterVariable( "cl_yawspeed", "210", 0 );
-	cl_pitchspeed		= gEngfuncs.pfnRegisterVariable( "cl_pitchspeed", "225", 0 );
-	cl_upspeed		= gEngfuncs.pfnRegisterVariable( "cl_upspeed", "320", 0 );
-	cl_forwardspeed		= gEngfuncs.pfnRegisterVariable( "cl_forwardspeed", "400", FCVAR_ARCHIVE );
-	cl_backspeed		= gEngfuncs.pfnRegisterVariable( "cl_backspeed", "400", FCVAR_ARCHIVE );
-	cl_sidespeed		= gEngfuncs.pfnRegisterVariable( "cl_sidespeed", "400", 0 );
-	cl_movespeedkey		= gEngfuncs.pfnRegisterVariable( "cl_movespeedkey", "0.3", 0 );
-	cl_pitchup		= gEngfuncs.pfnRegisterVariable( "cl_pitchup", "89", 0 );
-	cl_pitchdown		= gEngfuncs.pfnRegisterVariable( "cl_pitchdown", "89", 0 );
+	lookstrafe = gEngfuncs.pfnRegisterVariable( "lookstrafe", "0", FCVAR_ARCHIVE );
+	lookspring = gEngfuncs.pfnRegisterVariable( "lookspring", "0", FCVAR_ARCHIVE );
+	cl_anglespeedkey = gEngfuncs.pfnRegisterVariable( "cl_anglespeedkey", "0.67", 0 );
+	cl_yawspeed = gEngfuncs.pfnRegisterVariable( "cl_yawspeed", "210", 0 );
+	cl_pitchspeed = gEngfuncs.pfnRegisterVariable( "cl_pitchspeed", "225", 0 );
+	cl_upspeed = gEngfuncs.pfnRegisterVariable( "cl_upspeed", "320", 0 );
+	cl_forwardspeed = gEngfuncs.pfnRegisterVariable( "cl_forwardspeed", "400", FCVAR_ARCHIVE );
+	cl_backspeed = gEngfuncs.pfnRegisterVariable( "cl_backspeed", "400", FCVAR_ARCHIVE );
+	cl_sidespeed = gEngfuncs.pfnRegisterVariable( "cl_sidespeed", "400", 0 );
+	cl_movespeedkey = gEngfuncs.pfnRegisterVariable( "cl_movespeedkey", "0.3", 0 );
+	cl_pitchup = gEngfuncs.pfnRegisterVariable( "cl_pitchup", "89", 0 );
+	cl_pitchdown = gEngfuncs.pfnRegisterVariable( "cl_pitchdown", "89", 0 );
 
-	cl_vsmoothing		= gEngfuncs.pfnRegisterVariable( "cl_vsmoothing", "0.05", FCVAR_ARCHIVE );
+	cl_vsmoothing = gEngfuncs.pfnRegisterVariable( "cl_vsmoothing", "0.05", FCVAR_ARCHIVE );
 
-	m_pitch			= gEngfuncs.pfnRegisterVariable( "m_pitch","0.022", FCVAR_ARCHIVE );
-	m_yaw			= gEngfuncs.pfnRegisterVariable( "m_yaw","0.022", FCVAR_ARCHIVE );
-	m_forward		= gEngfuncs.pfnRegisterVariable( "m_forward","1", FCVAR_ARCHIVE );
-	m_side			= gEngfuncs.pfnRegisterVariable( "m_side","0.8", FCVAR_ARCHIVE );
+	m_pitch = gEngfuncs.pfnRegisterVariable( "m_pitch", "0.022", FCVAR_ARCHIVE );
+	m_yaw = gEngfuncs.pfnRegisterVariable( "m_yaw", "0.022", FCVAR_ARCHIVE );
+	m_forward = gEngfuncs.pfnRegisterVariable( "m_forward", "1", FCVAR_ARCHIVE );
+	m_side = gEngfuncs.pfnRegisterVariable( "m_side", "0.8", FCVAR_ARCHIVE );
 
 	// Initialize third person camera controls.
 	CAM_Init();

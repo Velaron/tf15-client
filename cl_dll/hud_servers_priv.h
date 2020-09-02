@@ -16,16 +16,16 @@ class CHudServers
 public:
 	typedef struct request_s
 	{
-		struct request_s	*next;
+		struct request_s *next;
 		netadr_t		remote_address;
 		int			context;
 	} request_t;
 
 	typedef struct server_s
 	{
-		struct server_s		*next;
+		struct server_s *next;
 		netadr_t		remote_address;
-		char			*info;
+		char *info;
 		int			ping;
 	} server_t;
 
@@ -59,7 +59,7 @@ public:
 	request_t *FindRequest( int context, request_t *pList );
 
 	int	ServerListSize( void );
-	char	*GetServerInfo( int server );
+	char *GetServerInfo( int server );
 	int	GetServerCount( void );
 	void	SortServers( const char *fieldname );
 
@@ -69,7 +69,7 @@ public:
 	void	RulesResponse( struct net_response_s *response );
 	void	PlayersResponse( struct net_response_s *response );
 private:
-	
+
 	server_t *GetServer( int server );
 
 	//
@@ -79,10 +79,10 @@ private:
 
 	double		m_dStarted;
 
-	request_t	*m_pServerList;
-	request_t	*m_pActiveList;
-	
-	server_t	*m_pServers;
+	request_t *m_pServerList;
+	request_t *m_pActiveList;
+
+	server_t *m_pServers;
 
 	int		m_nServerCount;
 
@@ -90,8 +90,8 @@ private:
 	int		m_nQuerying;
 	double		m_fElapsed;
 
-	request_t	*m_pPingRequest;
-	request_t	*m_pRulesRequest;
-	request_t	*m_pPlayersRequest;
+	request_t *m_pPingRequest;
+	request_t *m_pRulesRequest;
+	request_t *m_pPlayersRequest;
 };
 #endif // HUD_SERVERS_PRIVH

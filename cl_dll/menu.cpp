@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -23,6 +23,8 @@
 #include "parsemsg.h"
 #include <string.h>
 #include <stdio.h>
+
+#include "vgui_TeamFortressViewport.h"
 
 #define MAX_MENU_STRING	512
 char g_szMenuString[MAX_MENU_STRING];
@@ -66,9 +68,9 @@ int CHudMenu::Draw( float flTime )
 	int i;
 
 	// check for if menu is set to disappear
-	if( m_flShutoffTime > 0 )
+	if ( m_flShutoffTime > 0 )
 	{
-		if( m_flShutoffTime <= gHUD.m_flTime )
+		if ( m_flShutoffTime <= gHUD.m_flTime )
 		{
 			// times up, shutoff
 			m_fMenuDisplayed = 0;
@@ -78,12 +80,15 @@ int CHudMenu::Draw( float flTime )
 	}
 
 	// don't draw the menu if the scoreboard is being shown
+	if ( gViewPort && gViewPort->IsScoreBoardVisible() )
+		return 1;
+
 	// draw the menu, along the left-hand side of the screen
 	// count the number of newlines
 	int nlc = 0;
-	for( i = 0; i < MAX_MENU_STRING && g_szMenuString[i] != '\0'; i++ )
+	for ( i = 0; i < MAX_MENU_STRING && g_szMenuString[i] != '\0'; i++ )
 	{
-		if( g_szMenuString[i] == '\n' )
+		if ( g_szMenuString[i] == '\n' )
 			nlc++;
 	}
 
@@ -92,14 +97,14 @@ int CHudMenu::Draw( float flTime )
 	int x = 20;
 
 	i = 0;
-	while( i < MAX_MENU_STRING && g_szMenuString[i] != '\0' )
+	while ( i < MAX_MENU_STRING && g_szMenuString[i] != '\0' )
 	{
 		gHUD.DrawHudString( x, y, 320, g_szMenuString + i, 255, 255, 255 );
 		y += 12;
 
-		while( i < MAX_MENU_STRING && g_szMenuString[i] != '\0' && g_szMenuString[i] != '\n' )
+		while ( i < MAX_MENU_STRING && g_szMenuString[i] != '\0' && g_szMenuString[i] != '\n' )
 			i++;
-		if( g_szMenuString[i] == '\n' )
+		if ( g_szMenuString[i] == '\n' )
 			i++;
 	}
 
@@ -110,7 +115,7 @@ int CHudMenu::Draw( float flTime )
 void CHudMenu::SelectMenuItem( int menu_item )
 {
 	// if menu_item is in a valid slot,  send a menuselect command to the server
-	if( ( menu_item > 0 ) && ( m_bitsValidSlots & ( 1 << ( menu_item - 1 ) ) ) )
+	if ( ( menu_item > 0 ) && ( m_bitsValidSlots & ( 1 << ( menu_item - 1 ) ) ) )
 	{
 		char szbuf[32];
 		sprintf( szbuf, "menuselect %d\n", menu_item );
@@ -139,14 +144,14 @@ int CHudMenu::MsgFunc_ShowMenu( const char *pszName, int iSize, void *pbuf )
 	int DisplayTime = READ_CHAR();
 	int NeedMore = READ_BYTE();
 
-	if( DisplayTime > 0 )
+	if ( DisplayTime > 0 )
 		m_flShutoffTime = DisplayTime + gHUD.m_flTime;
 	else
 		m_flShutoffTime = -1;
 
-	if( m_bitsValidSlots )
+	if ( m_bitsValidSlots )
 	{
-		if( !m_fWaitingForMore ) // this is the start of a new menu
+		if ( !m_fWaitingForMore ) // this is the start of a new menu
 		{
 			strncpy( g_szPrelocalisedMenuString, READ_STRING(), MAX_MENU_STRING );
 		}
@@ -157,14 +162,14 @@ int CHudMenu::MsgFunc_ShowMenu( const char *pszName, int iSize, void *pbuf )
 		}
 		g_szPrelocalisedMenuString[MAX_MENU_STRING - 1] = 0;  // ensure null termination (strncat/strncpy does not)
 
-		if( !NeedMore )
+		if ( !NeedMore )
 		{
 			// we have the whole string, so we can localise it now
 			strncpy( g_szMenuString, gHUD.m_TextMessage.BufferedLocaliseTextString( g_szPrelocalisedMenuString ), MAX_MENU_STRING );
 			g_szMenuString[MAX_MENU_STRING - 1] = '\0';
 
 			// Swap in characters
-			if( KB_ConvertString( g_szMenuString, &temp ) )
+			if ( KB_ConvertString( g_szMenuString, &temp ) )
 			{
 				strncpy( g_szMenuString, temp, MAX_MENU_STRING );
 				g_szMenuString[MAX_MENU_STRING - 1] = '\0';

@@ -20,6 +20,7 @@
 #define HSPRITE HSPRITE_win32
 #include <windows.h>
 #undef HSPRITE
+#undef LoadImage // BRUH
 #else
 typedef struct point_s
 {

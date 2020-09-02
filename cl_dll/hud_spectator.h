@@ -45,7 +45,7 @@ typedef struct overviewInfo_s
 typedef struct overviewEntity_s
 {
 	HSPRITE					hSprite;
-	struct cl_entity_s *	entity;
+	struct cl_entity_s *entity;
 	double					killTime;
 } overviewEntity_t;
 
@@ -58,7 +58,7 @@ public:
 	int  ToggleInset( bool allowOff );
 	void CheckSettings();
 	void InitHUDData( void );
-	bool AddOverviewEntityToList( HSPRITE sprite, cl_entity_t * ent, double killTime );
+	bool AddOverviewEntityToList( HSPRITE sprite, cl_entity_t *ent, double killTime );
 	void DeathMessage( int victim );
 	bool AddOverviewEntity( int type, struct cl_entity_s *ent, const char *modelname );
 	void CheckOverviewEntities();
@@ -73,6 +73,7 @@ public:
 	void HandleButtonsDown( int ButtonPressed );
 	void HandleButtonsUp( int ButtonPressed );
 	void FindNextPlayer( bool bReverse );
+	void FindPlayer( const char *name );
 	void DirectorMessage( int iSize, void *pbuf );
 	void SetSpectatorStartPosition();
 	int Init();
@@ -91,11 +92,11 @@ public:
 
 	float			m_mapZoom;		// zoom the user currently uses
 	vec3_t			m_mapOrigin;	// origin where user rotates around
-	cvar_t			*m_drawnames;
-	cvar_t			*m_drawcone;
-	cvar_t			*m_drawstatus;
-	cvar_t			*m_autoDirector;
-	cvar_t			*m_pip;
+	cvar_t *m_drawnames;
+	cvar_t *m_drawcone;
+	cvar_t *m_drawstatus;
+	cvar_t *m_autoDirector;
+	cvar_t *m_pip;
 
 	qboolean			m_chatEnabled;
 
@@ -116,7 +117,7 @@ private:
 
 	wrect_t		m_crosshairRect;
 
-	struct model_s	*m_MapSprite;	// each layer image is saved in one sprite, where each tile is a sprite frame
+	struct model_s *m_MapSprite;	// each layer image is saved in one sprite, where each tile is a sprite frame
 	float		m_flNextObserverInput;
 	float		m_zoomDelta;
 	float		m_moveDelta;

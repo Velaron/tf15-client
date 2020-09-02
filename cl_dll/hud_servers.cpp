@@ -12,7 +12,9 @@
 #include "hud_servers.h"
 #include "net_api.h"
 #include <string.h>
+#define HSPRITE HSPRITE_win32
 #include <winsock.h>
+#undef HSPRITE
 
 static int	context_id;
 
@@ -39,7 +41,7 @@ Callback from engine
 */
 void NET_CALLBACK ListResponse( struct net_response_s *response )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->ListResponse( response );
 	}
@@ -54,7 +56,7 @@ Callback from engine
 */
 void NET_CALLBACK ServerResponse( struct net_response_s *response )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->ServerResponse( response );
 	}
@@ -69,7 +71,7 @@ Callback from engine
 */
 void NET_CALLBACK PingResponse( struct net_response_s *response )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->PingResponse( response );
 	}
@@ -84,7 +86,7 @@ Callback from engine
 */
 void NET_CALLBACK RulesResponse( struct net_response_s *response )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->RulesResponse( response );
 	}
@@ -99,7 +101,7 @@ Callback from engine
 */
 void NET_CALLBACK PlayersResponse( struct net_response_s *response )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->PlayersResponse( response );
 	}
@@ -117,15 +119,15 @@ void CHudServers::ListResponse( struct net_response_s *response )
 	request_t *p;
 	int c = 0;
 
-	if( !( response->error == NET_SUCCESS ) )
+	if ( !( response->error == NET_SUCCESS ) )
 		return;
 
-	if( response->type != NETAPI_REQUEST_SERVERLIST )
+	if ( response->type != NETAPI_REQUEST_SERVERLIST )
 		return;
 
-	if( response->response )
+	if ( response->response )
 	{
-		list = ( request_t * ) response->response;
+		list = (request_t *)response->response;
 		while ( list )
 		{
 			c++;
@@ -167,19 +169,19 @@ void CHudServers::ServerResponse( struct net_response_s *response )
 
 	// Remove from active list
 	p = FindRequest( response->context, m_pActiveList );
-	if( p )
+	if ( p )
 	{
 		RemoveServerFromList( &m_pActiveList, p );
 		m_nActiveQueries--;
 	}
 
-	if( response->error != NET_SUCCESS )
+	if ( response->error != NET_SUCCESS )
 		return;
 
 	switch ( response->type )
 	{
 	case NETAPI_REQUEST_DETAILS:
-		if( response->response )
+		if ( response->response )
 		{
 			szresponse = (char *)response->response;
 			len = strlen( szresponse ) + 100 + 1;
@@ -212,10 +214,10 @@ void CHudServers::PingResponse( struct net_response_s *response )
 {
 	char sz[32];
 
-	if( response->error != NET_SUCCESS )
+	if ( response->error != NET_SUCCESS )
 		return;
 
-	switch( response->type )
+	switch ( response->type )
 	{
 	case NETAPI_REQUEST_PING:
 		sprintf( sz, "%.2f", 1000.0 * response->ping );
@@ -236,14 +238,14 @@ RulesResponse
 void CHudServers::RulesResponse( struct net_response_s *response )
 {
 	char *szresponse;
-	
-	if( response->error != NET_SUCCESS )
+
+	if ( response->error != NET_SUCCESS )
 		return;
-	
-	switch( response->type )
+
+	switch ( response->type )
 	{
 	case NETAPI_REQUEST_RULES:
-		if( response->response )
+		if ( response->response )
 		{
 			szresponse = (char *)response->response;
 
@@ -265,13 +267,13 @@ void CHudServers::PlayersResponse( struct net_response_s *response )
 {
 	char *szresponse;
 
-	if( response->error != NET_SUCCESS )
+	if ( response->error != NET_SUCCESS )
 		return;
 
-	switch( response->type )
+	switch ( response->type )
 	{
 	case NETAPI_REQUEST_PLAYERS:
-		if( response->response )
+		if ( response->response )
 		{
 			szresponse = (char *)response->response;
 
@@ -294,20 +296,20 @@ int CHudServers::CompareServers( server_t *p1, server_t *p2 )
 {
 	const char *n1, *n2;
 
-	if( p1->ping < p2->ping )
+	if ( p1->ping < p2->ping )
 		return 1;
 
-	if( p1->ping == p2->ping )
+	if ( p1->ping == p2->ping )
 	{
 		// Pings equal, sort by second key:  hostname
-		if( p1->info && p2->info )
+		if ( p1->info && p2->info )
 		{
 			n1 = NET_API->ValueForKey( p1->info, "hostname" );
 			n2 = NET_API->ValueForKey( p2->info, "hostname" );
 
-			if( n1 && n2 )
+			if ( n1 && n2 )
 			{
-				if( stricmp( n1, n2 ) < 0 )
+				if ( stricmp( n1, n2 ) < 0 )
 					return 1;
 			}
 		}
@@ -326,7 +328,7 @@ void CHudServers::AddServer( server_t **ppList, server_t *p )
 {
 	server_t *list;
 
-	if( !ppList || ! p )
+	if ( !ppList || !p )
 		return;
 
 	m_nServerCount++;
@@ -335,7 +337,7 @@ void CHudServers::AddServer( server_t **ppList, server_t *p )
 	list = *ppList;
 
 	// Head of list?
-	if( !list )
+	if ( !list )
 	{
 		p->next = NULL;
 		*ppList = p;
@@ -343,17 +345,17 @@ void CHudServers::AddServer( server_t **ppList, server_t *p )
 	}
 
 	// Put on head of list
-	if( CompareServers( p, list ) )
+	if ( CompareServers( p, list ) )
 	{
 		p->next = *ppList;
 		*ppList = p;
 	}
 	else
 	{
-		while( list->next )
+		while ( list->next )
 		{
 			// Insert before list next
-			if( CompareServers( p, list->next ) )
+			if ( CompareServers( p, list->next ) )
 			{
 				p->next = list->next->next;
 				list->next = p;
@@ -379,15 +381,15 @@ void CHudServers::Think( double time )
 {
 	m_fElapsed += time;
 
-	if( !m_nRequesting )
+	if ( !m_nRequesting )
 		return;
 
-	if( !m_nQuerying )
+	if ( !m_nQuerying )
 		return;
 
 	QueryThink();
 
-	if( ServerListSize() > 0 )
+	if ( ServerListSize() > 0 )
 		return;
 
 	m_dStarted = 0.0;
@@ -407,25 +409,25 @@ void CHudServers::QueryThink( void )
 {
 	request_t *p;
 
-	if( !m_nRequesting || m_nDone )
+	if ( !m_nRequesting || m_nDone )
 		return;
 
-	if( !m_nQuerying )
+	if ( !m_nQuerying )
 		return;
 
-	if( m_nActiveQueries > MAX_QUERIES )
+	if ( m_nActiveQueries > MAX_QUERIES )
 		return;
 
 	// Nothing left
-	if( !m_pServerList )
+	if ( !m_pServerList )
 		return;
 
-	while( 1 )
+	while ( 1 )
 	{
 		p = m_pServerList;
 
 		// No more in list?
-		if( !p )
+		if ( !p )
 			break;
 
 		// Move to next
@@ -445,7 +447,7 @@ void CHudServers::QueryThink( void )
 		m_pActiveList = p;
 
 		// Too many active?
-		if( m_nActiveQueries > MAX_QUERIES )
+		if ( m_nActiveQueries > MAX_QUERIES )
 			break;
 	}
 }
@@ -463,14 +465,14 @@ int CHudServers::ServerListSize( void )
 	request_t *p;
 
 	p = m_pServerList;
-	while( p )
+	while ( p )
 	{
 		c++;
 		p = p->next;
 	}
 
 	p = m_pActiveList;
-	while( p )
+	while ( p )
 	{
 		c++;
 		p = p->next;
@@ -490,9 +492,9 @@ CHudServers::request_t *CHudServers::FindRequest( int context, request_t *pList 
 {
 	request_t *p;
 	p = pList;
-	while( p )
+	while ( p )
 	{
-		if( context == p->context )
+		if ( context == p->context )
 			return p;
 
 		p = p->next;
@@ -512,14 +514,14 @@ void CHudServers::RemoveServerFromList( request_t **ppList, request_t *item )
 	request_t *p, *n;
 	request_t *newlist = NULL;
 
-	if( !ppList )
+	if ( !ppList )
 		return;
 
 	p = *ppList;
-	while( p )
+	while ( p )
 	{
 		n = p->next;
-		if( p != item )
+		if ( p != item )
 		{
 			p->next = newlist;
 			newlist = p;
@@ -539,11 +541,11 @@ void CHudServers::ClearRequestList( request_t **ppList )
 {
 	request_t *p, *n;
 
-	if( !ppList )
+	if ( !ppList )
 		return;
 
 	p = *ppList;
-	while( p )
+	while ( p )
 	{
 		n = p->next;
 		delete p;
@@ -562,11 +564,11 @@ void CHudServers::ClearServerList( server_t **ppList )
 {
 	server_t *p, *n;
 
-	if( !ppList )
+	if ( !ppList )
 		return;
 
 	p = *ppList;
-	while( p )
+	while ( p )
 	{
 		n = p->next;
 		delete[] p->info;
@@ -587,11 +589,11 @@ int CompareField( CHudServers::server_t *p1, CHudServers::server_t *p2, const ch
 	fv1 = atof( sz1 );
 	fv2 = atof( sz2 );
 
-	if( fv1 && fv2 )
+	if ( fv1 && fv2 )
 	{
-		if( fv1 > fv2 )
+		if ( fv1 > fv2 )
 			return iSortOrder;
-		else if( fv1 < fv2 )
+		else if ( fv1 < fv2 )
 			return -iSortOrder;
 		else
 			return 0;
@@ -603,8 +605,8 @@ int CompareField( CHudServers::server_t *p1, CHudServers::server_t *p2, const ch
 
 int CALLBACK ServerListCompareFunc( CHudServers::server_t *p1, CHudServers::server_t *p2, const char *fieldname )
 {
-	if(!p1 || !p2)  // No meaningful comparison
-		return 0;  
+	if ( !p1 || !p2 )  // No meaningful comparison
+		return 0;
 
 	int iSortOrder = 1;
 
@@ -620,8 +622,8 @@ int __cdecl FnServerCompare( const void *elem1, const void *elem2 )
 {
 	CHudServers::server_t *list1, *list2;
 
-	list1 = *(CHudServers::server_t **)elem1;
-	list2 = *(CHudServers::server_t **)elem2;
+	list1 = *( CHudServers::server_t ** )elem1;
+	list2 = *( CHudServers::server_t ** )elem2;
 
 	return ServerListCompareFunc( list1, list2, g_fieldname );
 }
@@ -630,7 +632,7 @@ void CHudServers::SortServers( const char *fieldname )
 {
 	server_t *p;
 	// Create a list
-	if( !m_pServers )
+	if ( !m_pServers )
 		return;
 
 	strcpy( g_fieldname, fieldname );
@@ -639,21 +641,21 @@ void CHudServers::SortServers( const char *fieldname )
 	int c = 0;
 
 	p = m_pServers;
-	while( p )
+	while ( p )
 	{
 		c++;
 		p = p->next;
 	}
 
 	server_t **pSortArray;
-	
-	pSortArray = new server_t *[c];
-	memset( pSortArray, 0, c * sizeof(server_t*) );
+
+	pSortArray = new server_t * [c];
+	memset( pSortArray, 0, c * sizeof( server_t * ) );
 
 	// Now copy the list into the pSortArray:
 	p = m_pServers;
 	i = 0;
-	while( p )
+	while ( p )
 	{
 		pSortArray[i++] = p;
 		p = p->next;
@@ -661,7 +663,7 @@ void CHudServers::SortServers( const char *fieldname )
 
 	// Now do that actual sorting.
 	size_t nCount = c;
-	size_t nSize  = sizeof(server_t*);
+	size_t nSize = sizeof( server_t * );
 
 	qsort(
 		pSortArray,
@@ -672,7 +674,7 @@ void CHudServers::SortServers( const char *fieldname )
 
 	// Now rebuild the list.
 	m_pServers = pSortArray[0];
-	for( i = 0; i < c - 1; i++ )
+	for ( i = 0; i < c - 1; i++ )
 	{
 		pSortArray[i]->next = pSortArray[i + 1];
 	}
@@ -695,9 +697,9 @@ CHudServers::server_t *CHudServers::GetServer( int server )
 	server_t *p;
 
 	p = m_pServers;
-	while( p )
+	while ( p )
 	{
-		if( c == server )
+		if ( c == server )
 			return p;
 
 		c++;
@@ -716,7 +718,7 @@ Return info ( key/value ) string for particular server
 char *CHudServers::GetServerInfo( int server )
 {
 	server_t *p = GetServer( server );
-	if( p )
+	if ( p )
 	{
 		return p->info;
 	}
@@ -751,8 +753,8 @@ int CHudServers::LoadMasterAddresses( int maxservers, int *count, netadr_t *padr
 	int			i;
 	char		szMaster[256];
 	char		szMasterFile[256];
-	char		*pbuffer = NULL;
-	char		*pstart = NULL ;
+	char *pbuffer = NULL;
+	const char *pstart = NULL;
 	netadr_t	adr;
 	char		szAdr[64];
 	int		nPort;
@@ -766,30 +768,30 @@ int CHudServers::LoadMasterAddresses( int maxservers, int *count, netadr_t *padr
 
 	// See if there is a command line override
 	i = gEngfuncs.CheckParm( "-comm", &pstart );
-	if( i && pstart )
+	if ( i && pstart )
 	{
 		strcpy( szMasterFile, pstart );
 	}
 
 	// Read them in from proper file
 	pbuffer = (char *)gEngfuncs.COM_LoadFile( szMasterFile, 5, NULL ); // Use malloc
-	if( !pbuffer )
+	if ( !pbuffer )
 	{
 		goto finish_master;
 	}
 
 	pstart = pbuffer;
 
-	while( nCount < maxservers )
+	while ( nCount < maxservers )
 	{
 		pstart = gEngfuncs.COM_ParseFile( pstart, m_szToken );
 
-		if( strlen( m_szToken ) <= 0)
+		if ( strlen( m_szToken ) <= 0 )
 			break;
 
 		bIgnore = true;
 
-		if( !stricmp( m_szToken, "Master" ) )
+		if ( !stricmp( m_szToken, "Master" ) )
 		{
 			nDefaultPort = PORT_MASTER;
 			bIgnore = FALSE;
@@ -797,64 +799,64 @@ int CHudServers::LoadMasterAddresses( int maxservers, int *count, netadr_t *padr
 
 		// Now parse all addresses between { }
 		pstart = gEngfuncs.COM_ParseFile( pstart, m_szToken );
-		if( strlen( m_szToken ) <= 0 )
+		if ( strlen( m_szToken ) <= 0 )
 			break;
 
-		if( stricmp( m_szToken, "{" ) )
+		if ( stricmp( m_szToken, "{" ) )
 			break;
 
 		// Parse addresses until we get to "}"
-		while( nCount < maxservers )
+		while ( nCount < maxservers )
 		{
 			char base[256];
 
 			// Now parse all addresses between { }
 			pstart = gEngfuncs.COM_ParseFile( pstart, m_szToken );
-			
-			if( strlen( m_szToken ) <= 0 )
+
+			if ( strlen( m_szToken ) <= 0 )
 				break;
 
-			if( !stricmp ( m_szToken, "}" ) )
+			if ( !stricmp( m_szToken, "}" ) )
 				break;
 
 			sprintf( base, "%s", m_szToken );
-				
-			pstart = gEngfuncs.COM_ParseFile( pstart, m_szToken );
-			
-			if( strlen( m_szToken ) <= 0 )
-				break;
-
-			if( stricmp( m_szToken, ":" ) )
-				break;
 
 			pstart = gEngfuncs.COM_ParseFile( pstart, m_szToken );
 
-			if( strlen( m_szToken ) <= 0 )
+			if ( strlen( m_szToken ) <= 0 )
+				break;
+
+			if ( stricmp( m_szToken, ":" ) )
+				break;
+
+			pstart = gEngfuncs.COM_ParseFile( pstart, m_szToken );
+
+			if ( strlen( m_szToken ) <= 0 )
 				break;
 
 			nPort = atoi( m_szToken );
-			if( !nPort )
+			if ( !nPort )
 				nPort = nDefaultPort;
 
 			sprintf( szAdr, "%s:%i", base, nPort );
 
 			// Can we resolve it any better
-			if( !NET_API->StringToAdr( szAdr, &adr ) )
+			if ( !NET_API->StringToAdr( szAdr, &adr ) )
 				bIgnore = true;
 
-			if( !bIgnore )
+			if ( !bIgnore )
 			{
 				padr[nCount++] = adr;
 			}
 		}
 	}
 finish_master:
-	if( !nCount )
+	if ( !nCount )
 	{
 		sprintf( szMaster, VALVE_MASTER_ADDRESS );    // IP:PORT string
 
 		// Convert to netadr_t
-		if( NET_API->StringToAdr( szMaster, &adr ) )
+		if ( NET_API->StringToAdr( szMaster, &adr ) )
 		{
 			padr[nCount++] = adr;
 		}
@@ -862,7 +864,7 @@ finish_master:
 
 	*count = nCount;
 
-	if( pbuffer )
+	if ( pbuffer )
 	{
 		gEngfuncs.COM_FreeFile( pbuffer );
 	}
@@ -886,7 +888,7 @@ void CHudServers::RequestList( void )
 	int	count = 0;
 	netadr_t adr;
 
-	if( !LoadMasterAddresses( 1, &count, &adr ) )
+	if ( !LoadMasterAddresses( 1, &count, &adr ) )
 	{
 		gEngfuncs.Con_DPrintf( "SendRequest:  Unable to read master server addresses\n" );
 		return;
@@ -914,9 +916,9 @@ void CHudServers::RequestBroadcastList( int clearpending )
 	m_nDone = 0;
 	m_dStarted = m_fElapsed;
 
-	netadr_t adr = {0};
+	netadr_t adr = { 0 };
 
-	if( clearpending )
+	if ( clearpending )
 	{
 		ClearRequestList( &m_pActiveList );
 		ClearRequestList( &m_pServerList );
@@ -931,7 +933,7 @@ void CHudServers::RequestBroadcastList( int clearpending )
 	// Make sure networking system has started.
 	NET_API->InitNetworking();
 
-	if( clearpending )
+	if ( clearpending )
 	{
 		// Kill off left overs if any
 		NET_API->CancelAllRequests();
@@ -953,7 +955,7 @@ void CHudServers::ServerPing( int server )
 	server_t *p;
 
 	p = GetServer( server );
-	if( !p )
+	if ( !p )
 		return;
 
 	// Make sure networking system has started.
@@ -968,7 +970,7 @@ void CHudServers::ServerRules( int server )
 	server_t *p;
 
 	p = GetServer( server );
-	if( !p )
+	if ( !p )
 		return;
 
 	// Make sure networking system has started.
@@ -983,7 +985,7 @@ void CHudServers::ServerPlayers( int server )
 	server_t *p;
 
 	p = GetServer( server );
-	if( !p )
+	if ( !p )
 		return;
 
 	// Make sure networking system has started.
@@ -1018,20 +1020,20 @@ CHudServers
 */
 CHudServers::CHudServers( void )
 {
-	m_nRequesting		= 0;
-	m_dStarted		= 0.0;
-	m_nDone			= 0;
-	m_pServerList		= NULL;
-	m_pServers		= NULL;
-	m_pActiveList		= NULL;
-	m_nQuerying		= 0;
-	m_nActiveQueries	= 0;
+	m_nRequesting = 0;
+	m_dStarted = 0.0;
+	m_nDone = 0;
+	m_pServerList = NULL;
+	m_pServers = NULL;
+	m_pActiveList = NULL;
+	m_nQuerying = 0;
+	m_nActiveQueries = 0;
 
-	m_fElapsed		= 0.0;
+	m_fElapsed = 0.0;
 
-	m_pPingRequest		= NULL;
-	m_pRulesRequest		= NULL;
-	m_pPlayersRequest	= NULL;
+	m_pPingRequest = NULL;
+	m_pRulesRequest = NULL;
+	m_pPlayersRequest = NULL;
 }
 
 /*
@@ -1048,19 +1050,19 @@ CHudServers::~CHudServers( void )
 
 	m_nServerCount = 0;
 
-	if( m_pPingRequest )
+	if ( m_pPingRequest )
 	{
 		delete m_pPingRequest;
 		m_pPingRequest = NULL;
 	}
 
-	if( m_pRulesRequest )
+	if ( m_pRulesRequest )
 	{
 		delete m_pRulesRequest;
 		m_pRulesRequest = NULL;
 	}
 
-	if( m_pPlayersRequest )
+	if ( m_pPlayersRequest )
 	{
 		delete m_pPlayersRequest;
 		m_pPlayersRequest = NULL;
@@ -1081,7 +1083,7 @@ ServersGetCount
 */
 int ServersGetCount( void )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		return g_pServers->GetServerCount();
 	}
@@ -1090,7 +1092,7 @@ int ServersGetCount( void )
 
 int ServersIsQuerying( void )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		return g_pServers->isQuerying();
 	}
@@ -1105,7 +1107,7 @@ ServersGetInfo
 */
 const char *ServersGetInfo( int server )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		return g_pServers->GetServerInfo( server );
 	}
@@ -1115,7 +1117,7 @@ const char *ServersGetInfo( int server )
 
 void SortServers( const char *fieldname )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->SortServers( fieldname );
 	}
@@ -1129,7 +1131,7 @@ ServersShutdown
 */
 void ServersShutdown( void )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		delete g_pServers;
 		g_pServers = NULL;
@@ -1158,7 +1160,7 @@ ServersThink
 */
 void ServersThink( double time )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->Think( time );
 	}
@@ -1172,7 +1174,7 @@ ServersCancel
 */
 void ServersCancel( void )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->CancelRequest();
 	}
@@ -1187,7 +1189,7 @@ ServersList
 */
 void ServersList( void )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->RequestList();
 	}
@@ -1195,7 +1197,7 @@ void ServersList( void )
 
 void BroadcastServersList( int clearpending )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->RequestBroadcastList( clearpending );
 	}
@@ -1203,7 +1205,7 @@ void BroadcastServersList( int clearpending )
 
 void ServerPing( int server )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->ServerPing( server );
 	}
@@ -1211,7 +1213,7 @@ void ServerPing( int server )
 
 void ServerRules( int server )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->ServerRules( server );
 	}
@@ -1219,7 +1221,7 @@ void ServerRules( int server )
 
 void ServerPlayers( int server )
 {
-	if( g_pServers )
+	if ( g_pServers )
 	{
 		g_pServers->ServerPlayers( server );
 	}

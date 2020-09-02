@@ -30,16 +30,8 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "netadr.h"
+#include "vgui_int.h"
 #include "parsemsg.h"
-
-#include "IGameMenuExports.h"
-#include "IGameClientExports.h"
-
-#if defined(GOLDSOURCE_SUPPORT) && (defined(_WIN32) || defined(__linux__) || defined(__APPLE__)) && (defined(__i386) || defined(_M_IX86))
-#define USE_VGUI_FOR_GOLDSOURCE_SUPPORT
-#include "VGUI_Panel.h"
-#include "VGUI_App.h"
-#endif
 
 extern "C"
 {
@@ -48,15 +40,12 @@ extern "C"
 
 #include <string.h>
 
+#include "vgui_TeamFortressViewport.h"
+
 cl_enginefunc_t gEngfuncs;
 CHud gHUD;
+TeamFortressViewport *gViewPort = NULL;
 mobile_engfuncs_t *gMobileEngfuncs = NULL;
-
-HINTERFACEMODULE g_hMainUIModule = NULL;
-IGameMenuExports *g_pMainUI = NULL;
-
-void CL_LoadMainUI( void );
-void CL_UnloadMainUI( void );
 
 extern "C" int g_bhopcap;
 void InitInput( void );
@@ -178,7 +167,6 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	memcpy( &gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t) );
 
 	EV_HookEvents();
-	CL_LoadMainUI();
 
 	return 1;
 }
@@ -202,48 +190,6 @@ int *HUD_GetRect( void )
 	return extent;
 }
 
-#ifdef USE_VGUI_FOR_GOLDSOURCE_SUPPORT
-class TeamFortressViewport : public vgui::Panel
-{
-public:
-	TeamFortressViewport(int x,int y,int wide,int tall);
-	void Initialize( void );
-
-	virtual void paintBackground();
-	void *operator new( size_t stAllocateBlock );
-};
-
-static TeamFortressViewport* gViewPort = NULL;
-
-TeamFortressViewport::TeamFortressViewport(int x, int y, int wide, int tall) : Panel(x, y, wide, tall)
-{
-	gViewPort = this;
-	Initialize();
-}
-
-void TeamFortressViewport::Initialize()
-{
-	//vgui::App::getInstance()->setCursorOveride( vgui::App::getInstance()->getScheme()->getCursor(vgui::Scheme::scu_none) );
-}
-
-void TeamFortressViewport::paintBackground()
-{
-//	int wide, tall;
-//	getParent()->getSize( wide, tall );
-//	setSize( wide, tall );
-	int extents[4];
-	getParent()->getAbsExtents(extents[0],extents[1],extents[2],extents[3]);
-	gEngfuncs.VGui_ViewportPaintBackground(extents);
-}
-
-void *TeamFortressViewport::operator new( size_t stAllocateBlock )
-{
-	void *mem = ::operator new( stAllocateBlock );
-	memset( mem, 0, stAllocateBlock );
-	return mem;
-}
-#endif
-
 /*
 ==========================
 	HUD_VidInit
@@ -257,25 +203,9 @@ so the HUD can reinitialize itself.
 int DLLEXPORT HUD_VidInit( void )
 {
 	gHUD.VidInit();
-#ifdef USE_VGUI_FOR_GOLDSOURCE_SUPPORT
-	vgui::Panel* root=(vgui::Panel*)gEngfuncs.VGui_GetPanel();
-	if (root) {
-		gEngfuncs.Con_Printf( "Root VGUI panel exists\n" );
-		root->setBgColor(128,128,0,0);
 
-		if (gViewPort != NULL)
-		{
-			gViewPort->Initialize();
-		}
-		else
-		{
-			gViewPort = new TeamFortressViewport(0,0,root->getWide(),root->getTall());
-			gViewPort->setParent(root);
-		}
-	} else {
-		gEngfuncs.Con_Printf( "Root VGUI panel does not exist\n" );
-	}
-#endif
+	VGui_Startup();
+
 	return 1;
 }
 
@@ -293,6 +223,7 @@ void DLLEXPORT HUD_Init( void )
 {
 	InitInput();
 	gHUD.Init();
+	Scheme_Init();
 
 	gEngfuncs.pfnHookUserMsg( "Bhopcap", __MsgFunc_Bhopcap );
 }
@@ -356,12 +287,14 @@ Called by engine every frame that client .dll is loaded
 
 void DLLEXPORT HUD_Frame( double time )
 {
+/*
 #ifdef USE_VGUI_FOR_GOLDSOURCE_SUPPORT
 	if (!gViewPort)
 		gEngfuncs.VGui_ViewportPaintBackground(HUD_GetRect());
 #else
 	gEngfuncs.VGui_ViewportPaintBackground(HUD_GetRect());
 #endif
+*/
 }
 
 /*
@@ -416,105 +349,3 @@ bool IsXashFWGS()
 {
 	return gMobileEngfuncs != NULL;
 }
-
-void CL_UnloadMainUI( void )
-{
-	Sys_FreeModule( g_hMainUIModule );
-
-	g_pMainUI = NULL;
-	g_hMainUIModule = NULL;
-}
-
-void CL_LoadMainUI( void )
-{
-	char szDir[MAX_PATH];
-
-#if defined(__ANDROID__)
-	snprintf( szDir, 1024, "%s/%s", getenv("XASH3D_GAMELIBDIR"), MAINUI_DLLNAME );
-#else
-	if ( gEngfuncs.COM_ExpandFilename( MAINUI_DLLNAME, szDir, sizeof( szDir ) ) == false )
-	{
-		g_pMainUI = NULL;
-		g_hMainUIModule = NULL;
-		return;
-	}
-#endif
-
-	g_hMainUIModule = Sys_LoadModule( szDir );
-	CreateInterfaceFn MainUIFactory = Sys_GetFactory( g_hMainUIModule );
-
-	if ( MainUIFactory == NULL )
-	{
-		g_pMainUI = NULL;
-		g_hMainUIModule = NULL;
-		return;
-	}
-
-	g_pMainUI = (IGameMenuExports *)MainUIFactory( GAMEMENUEXPORTS_INTERFACE_VERSION, NULL );
-
-	if ( g_pMainUI )
-	{
-		g_pMainUI->Initialize( CreateInterface );
-	}
-}
-
-class CClientExports : public IGameClientExports
-{
-public:
-	char *LocaliseTextString( const char *msg ) override
-	{
-		return gHUD.m_TextMessage.BufferedLocaliseTextString( msg );
-	}
-
-	int GetRandomClass() override
-	{
-		return gHUD.m_iRandomPC;
-	}
-
-	char **GetTeamNames() override
-	{
-		return gHUD.m_szTeamNames;
-	}
-
-	int GetNumberOfTeams() override
-	{
-		return gHUD.m_iNumberOfTeams;
-	}
-
-	int GetPlayerClass() override
-	{
-		return g_iPlayerClass;
-	}
-
-	int GetAllowSpectators() override
-	{
-		return gHUD.m_iAllowSpectators;
-	}
-
-	int GetIsFeigning() override
-	{
-		return gHUD.m_iIsFeigning;
-	}
-
-	const char *GetLevelName() override
-	{
-		return gEngfuncs.pfnGetLevelName();
-	}
-
-	int GetTeamNumber() override
-	{
-		return g_iTeamNumber;
-	}
-	
-	int GetBuildState() override
-	{
-		return gHUD.m_iBuildState;
-	}
-
-	int GetIsSettingDetpack() override
-	{
-		return gHUD.m_iIsSettingDetpack;
-	}
-};
-
-EXPOSE_SINGLE_INTERFACE( CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION );

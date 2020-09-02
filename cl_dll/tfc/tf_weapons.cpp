@@ -717,9 +717,10 @@ int HUD_CreateSniperDot( int damage, Vector p_viewangles, Vector p_origin, float
 		dot.curstate.renderfx = kRenderFxNoDissipation;
 		dot.curstate.renderamt = damage;
 
+		gEngfuncs.pfnAngleVectors( p_viewangles, forward, right, up );
+
 		farpoint = forward * 8192.0f + p_origin;
 
-		gEngfuncs.pfnAngleVectors( p_viewangles, forward, right, up );
 		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( 0, 1 );
 		gEngfuncs.pEventAPI->EV_PushPMStates();
 		gEngfuncs.pEventAPI->EV_SetSolidPlayers( gEngfuncs.GetLocalPlayer()->index - 1 );
@@ -740,7 +741,7 @@ int HUD_CreateSniperDot( int damage, Vector p_viewangles, Vector p_origin, float
 				*/
 				dot.origin = tr.endpos;
 				dot.curstate.origin = tr.endpos;
-				memcpy( &dot.prevstate, &dot.curstate, sizeof( entity_state_t ) );
+				dot.prevstate = dot.curstate;
 				gEngfuncs.CL_CreateVisibleEntity( ET_NORMAL, &dot );
 				dotorigin = dot.origin;
 				ret = TRUE;
