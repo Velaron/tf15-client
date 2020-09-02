@@ -1,6 +1,3 @@
 [submodule "vgui_dll"]
 	path = vgui_dll
 	url = https://github.com/Velaron/vgui_dll
-[submodule "android/hlsdk-xash3d"]
-	path = android/hlsdk-xash3d
-	url = https://github.com/FWGS/hlsdk-xash3d
