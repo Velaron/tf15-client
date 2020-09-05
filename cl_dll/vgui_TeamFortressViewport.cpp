@@ -59,6 +59,7 @@
 #include "screenfade.h"
 
 #include "progdefs.h"
+#include <voice_status.h>
 
 //extern int g_iVisibleMouse;
 class CCommandMenu;
@@ -1422,7 +1423,7 @@ void TeamFortressViewport::HideScoreBoard( void )
 	{
 		m_pScoreBoard->setVisible( false );
 
-		//GetClientVoiceMgr()->StopSquelchMode();
+		GetClientVoiceMgr()->StopSquelchMode();
 
 		UpdateCursorState();
 	}
@@ -2047,7 +2048,7 @@ void TeamFortressViewport::UpdateOnPlayerInfo()
 void TeamFortressViewport::UpdateCursorState()
 {
 	// Need cursor if any VGUI window is up
-	if ( m_pSpectatorPanel->m_menuVisible || m_pCurrentMenu || m_pTeamMenu->isVisible() /* || m_pServerBrowser->isVisible() || GetClientVoiceMgr()->IsInSquelchMode() */ )
+	if ( m_pSpectatorPanel->m_menuVisible || m_pCurrentMenu || m_pTeamMenu->isVisible() /* || m_pServerBrowser->isVisible() */ || GetClientVoiceMgr()->IsInSquelchMode() )
 	{
 		//g_iVisibleMouse = true;
 		App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor( Scheme::scu_arrow ) );

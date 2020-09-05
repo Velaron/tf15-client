@@ -41,6 +41,7 @@ extern "C"
 #include <string.h>
 
 #include "vgui_TeamFortressViewport.h"
+#include <voice_status.h>
 
 cl_enginefunc_t gEngfuncs;
 CHud gHUD;
@@ -287,14 +288,7 @@ Called by engine every frame that client .dll is loaded
 
 void DLLEXPORT HUD_Frame( double time )
 {
-/*
-#ifdef USE_VGUI_FOR_GOLDSOURCE_SUPPORT
-	if (!gViewPort)
-		gEngfuncs.VGui_ViewportPaintBackground(HUD_GetRect());
-#else
-	gEngfuncs.VGui_ViewportPaintBackground(HUD_GetRect());
-#endif
-*/
+	GetClientVoiceMgr()->Frame( time );
 }
 
 /*
@@ -307,7 +301,7 @@ Called when a player starts or stops talking.
 
 void DLLEXPORT HUD_VoiceStatus( int entindex, qboolean bTalking )
 {
-
+	GetClientVoiceMgr()->UpdateSpeakerStatus( entindex, bTalking );
 }
 
 /*

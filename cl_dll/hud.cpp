@@ -30,12 +30,58 @@
 #include "demo.h"
 #include "demo_api.h"
 #include "vgui_ScorePanel.h"
+#include <voice_status.h>
 
 hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS + 1];	   // player info from the engine
 extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS + 1];   // additional player info sent directly to the client dll
 
 cvar_t *hud_textmode;
 float g_hud_text_color[3];
+
+class CHLVoiceStatusHelper : public IVoiceStatusHelper
+{
+public:
+	virtual void GetPlayerTextColor( int entindex, int color[3] )
+	{
+		color[0] = color[1] = color[2] = 255;
+
+		if ( entindex >= 0 && entindex < sizeof( g_PlayerExtraInfo ) / sizeof( g_PlayerExtraInfo[0] ) )
+		{
+			int iTeam = g_PlayerExtraInfo[entindex].teamnumber;
+
+			if ( iTeam < 0 )
+			{
+				iTeam = 0;
+			}
+
+			iTeam = iTeam % iNumberOfTeamColors;
+
+			color[0] = iTeamColors[iTeam][0];
+			color[1] = iTeamColors[iTeam][1];
+			color[2] = iTeamColors[iTeam][2];
+		}
+	}
+
+	virtual void UpdateCursorState()
+	{
+		gViewPort->UpdateCursorState();
+	}
+
+	virtual int	GetAckIconHeight()
+	{
+		return ScreenHeight - gHUD.m_iFontHeight * 3 - 6;
+	}
+
+	virtual bool			CanShowSpeakerLabels()
+	{
+		if ( gViewPort && gViewPort->m_pScoreBoard )
+			return !gViewPort->m_pScoreBoard->isVisible();
+		else
+			return false;
+	}
+};
+
+static CHLVoiceStatusHelper g_VoiceStatusHelper;
 
 extern client_sprite_t *GetSpriteList( client_sprite_t *pList, const char *psz, int iRes, int iCount );
 
@@ -297,6 +343,8 @@ void CHud::Init( void )
 	m_AmmoSecondary.Init();
 	m_TextMessage.Init();
 	m_StatusIcons.Init();
+	GetClientVoiceMgr()->Init( &g_VoiceStatusHelper, (vgui::Panel **)&gViewPort );
+
 	m_Menu.Init();
 
 	//ServersInit();
@@ -479,7 +527,7 @@ void CHud::VidInit( void )
 	m_AmmoSecondary.VidInit();
 	m_TextMessage.VidInit();
 	m_StatusIcons.VidInit();
-	//m_Benchmark.VidInit();
+	GetClientVoiceMgr()->VidInit();
 }
 
 int CHud::MsgFunc_Logo( const char *pszName, int iSize, void *pbuf )
