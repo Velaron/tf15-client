@@ -144,11 +144,11 @@ else()
 endif()
 
 if(GOLDSOURCE_SUPPORT)
-	target_link_libraries(${CLDLL_LIBRARY} ${CMAKE_DL_LIBS} winmm.lib)
+	target_link_libraries(${CLDLL_LIBRARY} ${CMAKE_DL_LIBS})
 endif()
 
 if(WIN32)
-	target_link_libraries(${CLDLL_LIBRARY} user32.lib)
+	target_link_libraries(${CLDLL_LIBRARY} user32.lib winmm.lib)
 endif()
 
 if(BUILD_VGUI)

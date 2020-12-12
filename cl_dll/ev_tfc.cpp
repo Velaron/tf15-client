@@ -154,7 +154,7 @@ float EV_TFC_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *ve
 	char texname[64];
 	char szbuffer[64];
 
-	chTextureType = NULL;
+	chTextureType = '\0';
 	entity = gEngfuncs.pEventAPI->EV_IndexFromTrace( ptr );
 
 	if ( entity >= 1 && entity <= gEngfuncs.GetMaxClients() )
@@ -309,7 +309,7 @@ char *EV_TFC_DamageDecal( int entity )
 	static char decalname[32];
 
 	pe = gEngfuncs.pEventAPI->EV_GetPhysent( entity );
-	*decalname = NULL;
+	*decalname = '\0';
 
 	if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) )
 	{
@@ -440,7 +440,7 @@ int EV_TFC_ShouldShowBlood( int color )
 		}
 	}
 
-	return FALSE;
+	return 0;
 }
 
 void EV_TFC_RandomBloodVector( float *direction )
@@ -482,7 +482,7 @@ void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int c
 			vecEnd[i] = vecSrc[i] + flDistance * vecDir[i];
 		}
 
-		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
+		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( 0, 1 );
 		gEngfuncs.pEventAPI->EV_PushPMStates();
 		gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );
 		gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
@@ -613,7 +613,7 @@ int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 )
 		return iTeam1 == iTeam2;
 	}
 
-	return TRUE;
+	return 1;
 }
 
 int EV_TFC_PlayCrowbarAnim( int iAnimType )
@@ -1085,7 +1085,7 @@ void EV_TFC_Assault_WindUp( event_args_t *args )
 
 	g_flSpinDownTime[idx - 1] = 0.0f;
 	g_flSpinUpTime[idx - 1] = gEngfuncs.GetClientTime() + 3.5f;
-	g_bACSpinning[idx - 1] = FALSE;
+	g_bACSpinning[idx - 1] = 0;
 
 	if ( EV_IsLocal( idx ) )
 	{
@@ -1111,7 +1111,7 @@ void EV_TFC_Assault_WindDown( event_args_t *args )
 		g_flSpinDownTime[idx - 1] = gEngfuncs.GetClientTime() + 3.0f;
 	}
 
-	g_bACSpinning[idx - 1] = FALSE;
+	g_bACSpinning[idx - 1] = 0;
 
 	if ( EV_IsLocal( idx ) )
 	{
@@ -1138,7 +1138,7 @@ void EV_TFC_Assault_Start( event_args_t *args )
 
 	g_flSpinDownTime[idx - 1] = 0.0f;
 	g_flSpinUpTime[idx - 1] = 0.0f;
-	g_bACSpinning[idx - 1] = FALSE;
+	g_bACSpinning[idx - 1] = 0;
 
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan2.wav" );
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan4.wav" );
@@ -1170,7 +1170,7 @@ void EV_TFC_Assault_Fire( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( AC_FIRE, 2 );
 	}
 
-	g_bACSpinning[idx - 1] = false;
+	g_bACSpinning[idx - 1] = 0;
 
 	if ( oddammo )
 	{
@@ -1200,7 +1200,7 @@ void EV_TFC_Assault_Spin( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( AC_FIRE, 2 );
 	}
 
-	g_bACSpinning[idx - 1] = TRUE;
+	g_bACSpinning[idx - 1] = 1;
 }
 
 void EV_TFC_Assault_StartSpin( event_args_t *args )
@@ -1211,7 +1211,7 @@ void EV_TFC_Assault_StartSpin( event_args_t *args )
 	idx = args->entindex;
 	VectorCopy( args->origin, origin );
 
-	g_bACSpinning[idx - 1] = TRUE;
+	g_bACSpinning[idx - 1] = 1;
 
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan2.wav" );
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan4.wav" );
@@ -1427,7 +1427,7 @@ void EV_FireTFCSniper( event_args_t *args )
 	VectorMA( vecSrc, 2.0f, up, vecSrc );
 	VectorMA( vecSrc, 8192.0f, vecDir, vecEnd );
 
-	gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
+	gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( 0, 1 );
 	gEngfuncs.pEventAPI->EV_PushPMStates();
 	gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );
 	gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
@@ -1776,7 +1776,7 @@ void EV_TFC_Flame_Fire( event_args_t *args )
 	Vector vecVelocity;
 	Vector up, right, forward;
 	Vector origin, angles;
-	BOOL underwater;
+	int underwater;
 
 	idx = args->entindex;
 	shell = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/fthrow.spr" );
@@ -2217,7 +2217,7 @@ tempent_s *EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, in
 		ent->entity.curstate.team = 5;
 		ent->die = ent->die + 1.0f;
 		VectorCopy( ent->entity.curstate.velocity, ent->entity.baseline.origin );
-		ent->entity.curstate.solid = false;
+		ent->entity.curstate.solid = 0;
 		ent->entity.curstate.playerclass = 0;
 	}
 
@@ -2242,10 +2242,10 @@ void EV_TFC_Gibs( event_args_t *args )
 
 	for ( int x = 0; x < gibcount; x++ )
 	{
-		EV_TFC_CreateGib( origin, attackdir, multiplier, false );
+		EV_TFC_CreateGib( origin, attackdir, multiplier, 0 );
 	}
 
-	EV_TFC_CreateGib( origin, attackdir, multiplier, true );
+	EV_TFC_CreateGib( origin, attackdir, multiplier, 1 );
 }
 
 void EV_TFC_PlayAxeSound( int idx, int classid, float *origin, int iSoundType, float fSoundData )
@@ -2327,10 +2327,10 @@ int EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, int ent
 	}
 	else
 	{
-		return false;
+		return 0;
 	}
 
-	return true;
+	return 1;
 }
 
 char *EV_TFC_LookupDoorSound( int type, int index )

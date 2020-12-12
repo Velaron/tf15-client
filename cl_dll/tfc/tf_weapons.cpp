@@ -662,7 +662,7 @@ void HUD_InitClientWeapons( void )
 	g_engfuncs.pfnRandomLong = gEngfuncs.pfnRandomLong;
 
 	// Allocate a slot for the local player
-	HUD_PrepEntity( &player, NULL, NULL );
+	HUD_PrepEntity( &player, NULL, 0 );
 	player.tfstate = 0;
 
 	// Allocate slot(s) for each weapon that we are going to be predicting
@@ -679,12 +679,12 @@ void HUD_InitClientWeapons( void )
 	HUD_PrepEntity( &g_AC, &player, 1 );
 	HUD_PrepEntity( &g_GL, &player, 4 );
 	HUD_PrepEntity( &g_PL, &player, 4 );
-	HUD_PrepEntity( &g_Sniper, &player, NULL );
-	HUD_PrepEntity( &g_Knife, &player, NULL );
-	HUD_PrepEntity( &g_Spanner, &player, NULL );
-	HUD_PrepEntity( &g_Medkit, &player, NULL );
-	HUD_PrepEntity( &g_Crowbar, &player, NULL );
-	HUD_PrepEntity( &g_Spot, NULL, NULL );
+	HUD_PrepEntity( &g_Sniper, &player, 0 );
+	HUD_PrepEntity( &g_Knife, &player, 0 );
+	HUD_PrepEntity( &g_Spanner, &player, 0 );
+	HUD_PrepEntity( &g_Medkit, &player, 0 );
+	HUD_PrepEntity( &g_Crowbar, &player, 0 );
+	HUD_PrepEntity( &g_Spot, NULL, 0 );
 
 	g_Tranq.pev->body = 1;
 	g_Sniper.m_fInZoom = 0;
