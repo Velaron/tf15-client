@@ -20,7 +20,7 @@
 # SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 2.6.0)
+cmake_minimum_required(VERSION 2.8.12)
 project(client)
 
 include(FWGSLib)
@@ -144,7 +144,7 @@ else()
 endif()
 
 if(GOLDSOURCE_SUPPORT)
-	target_link_libraries(${CLDLL_LIBRARY} ${CMAKE_DL_LIBS})
+	target_link_libraries(${CLDLL_LIBRARY} ${CMAKE_DL_LIBS} winmm.lib)
 endif()
 
 if(WIN32)

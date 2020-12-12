@@ -50,6 +50,7 @@ EXPORT_FUNCTION IBaseInterface *CreateInterface( const char *pName, int *pReturn
 
 CreateInterfaceFn Sys_GetFactoryThis( void )
 {
+	// Velaron: CreateInterfaceLocal
 	return CreateInterface;
 }
 

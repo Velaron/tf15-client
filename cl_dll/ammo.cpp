@@ -736,7 +736,7 @@ void CHudAmmo::UserCmd_Close( void )
 	{
 		gpLastSel = gpActiveSel;
 		gpActiveSel = NULL;
-		PlaySound( "common/wpn_hudoff.wav", 1 );
+		PlaySound( "common/wpn_hudoff.wav", VOL_NORM );
 	}
 	else
 		ClientCmd( "escape" );

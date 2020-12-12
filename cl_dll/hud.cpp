@@ -87,7 +87,6 @@ extern client_sprite_t *GetSpriteList( client_sprite_t *pList, const char *psz, 
 
 extern cvar_t *sensitivity;
 cvar_t *cl_lw = NULL;
-cvar_t *cl_viewbob = NULL;
 cvar_t *tfc_newmodels;
 void ShutdownInput( void );
 
@@ -159,7 +158,7 @@ void __CmdFunc_ForceCloseCommandMenu( void )
 
 void __CmdFunc_ToggleServerBrowser( void )
 {
-	//if ( gViewPort ) { gViewPort->ToggleServerBrowser(); }
+	//if ( gViewPort ) { gViewPort->ToggleServerBrowser(); } // Velaron: TODO
 }
 
 int __MsgFunc_ValClass( const char *pszName, int iSize, void *pbuf )
@@ -273,6 +272,7 @@ void CHud::Init( void )
 	HOOK_COMMAND( "-commandmenu", CloseCommandMenu );
 	HOOK_COMMAND( "ForceCloseCommandMenu", ForceCloseCommandMenu );
 	HOOK_COMMAND( "special", InputPlayerSpecial );
+	// Velaron: TODO
 	//HOOK_COMMAND( "togglebrowser", ToggleServerBrowser );
 
 	HOOK_MESSAGE( ValClass );
@@ -310,7 +310,6 @@ void CHud::Init( void )
 	m_pCvarStealMouse = CVAR_CREATE( "hud_capturemouse", "1", FCVAR_ARCHIVE );
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	cl_lw = gEngfuncs.pfnGetCvarPointer( "cl_lw" );
-	cl_viewbob = CVAR_CREATE( "cl_viewbob", "0", FCVAR_ARCHIVE );
 	m_pSpriteList = NULL;
 
 	// Clear any old HUD list
@@ -327,7 +326,7 @@ void CHud::Init( void )
 	}
 
 	// In case we get messages before the first update -- time will be valid
-	m_flTime = 1.0;
+	m_flTime = 1.0f;
 
 	m_Ammo.Init();
 	m_Health.Init();
@@ -346,6 +345,8 @@ void CHud::Init( void )
 	GetClientVoiceMgr()->Init( &g_VoiceStatusHelper, (vgui::Panel **)&gViewPort );
 
 	m_Menu.Init();
+	//Velaron: TODO maybe
+	//m_Benchmark.Init();
 
 	//ServersInit();
 

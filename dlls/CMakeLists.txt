@@ -21,9 +21,9 @@
 #
 
 cmake_minimum_required(VERSION 2.6.0)
-project (SVDLL)
+project(server)
 
-set (SVDLL_LIBRARY server)
+set(SVDLL_LIBRARY tfc)
 
 include(CheckIncludeFile)
 check_include_file("tgmath.h" HAVE_TGMATH_H)
@@ -43,7 +43,7 @@ else()
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE)
 endif()
 
-set (SVDLL_SOURCES
+set(SVDLL_SOURCES
 	airtank.cpp
 	animating.cpp
 	animation.cpp
@@ -116,20 +116,20 @@ set (SVDLL_SOURCES
 	tfc/tf_gamerules.cpp
 	tfc/tf_item.cpp
 	tfc/tf_sbar.cpp
-	tfc/tf_wpn_ac.cpp
-	tfc/tf_wpn_ar.cpp
-	tfc/tf_wpn_axe.cpp
-	tfc/tf_wpn_flame.cpp
-	tfc/tf_wpn_gl.cpp
-	tfc/tf_wpn_grenades.cpp
-	tfc/tf_wpn_ic.cpp
-	tfc/tf_wpn_nails.cpp
-	tfc/tf_wpn_ng.cpp
-	tfc/tf_wpn_railgun.cpp
-	tfc/tf_wpn_rpg.cpp
-	tfc/tf_wpn_sg.cpp
-	tfc/tf_wpn_srifle.cpp
-	tfc/tf_wpn_tranq.cpp
+	../wpn_shared/tf_wpn_ac.cpp
+	../wpn_shared/tf_wpn_ar.cpp
+	../wpn_shared/tf_wpn_axe.cpp
+	../wpn_shared/tf_wpn_flame.cpp
+	../wpn_shared/tf_wpn_gl.cpp
+	../wpn_shared/tf_wpn_grenades.cpp
+	../wpn_shared/tf_wpn_ic.cpp
+	../wpn_shared/tf_wpn_nails.cpp
+	../wpn_shared/tf_wpn_ng.cpp
+	../wpn_shared/tf_wpn_railgun.cpp
+	../wpn_shared/tf_wpn_rpg.cpp
+	../wpn_shared/tf_wpn_sg.cpp
+	../wpn_shared/tf_wpn_srifle.cpp
+	../wpn_shared/tf_wpn_tranq.cpp
 	tfc/tfort.cpp
 	tfc/tfortmap.cpp
 	tfc/tforttm.cpp
@@ -148,14 +148,13 @@ else()
 	add_definitions(-DNO_VOICEGAMEMGR)
 endif()
 
-add_library (${SVDLL_LIBRARY} SHARED ${SVDLL_SOURCES})
+add_library(${SVDLL_LIBRARY} MODULE ${SVDLL_SOURCES})
 
-set_target_properties (${SVDLL_LIBRARY} PROPERTIES
+set_target_properties(${SVDLL_LIBRARY} PROPERTIES
 	POSITION_INDEPENDENT_CODE 1)
 
 if(APPLE OR WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	set(SVDLL_NAME "${SERVER_LIBRARY_NAME}")
-
 	set_target_properties(${SVDLL_LIBRARY} PROPERTIES
 		OUTPUT_NAME ${SVDLL_NAME}
 		PREFIX "")
@@ -166,3 +165,9 @@ install( TARGETS ${SVDLL_LIBRARY}
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 	    GROUP_READ GROUP_EXECUTE
 		WORLD_READ WORLD_EXECUTE)
+
+# Install PDB file on Windows
+if(WIN32 AND MSVC)
+	install(FILES $<TARGET_PDB_FILE:${SVDLL_LIBRARY}>
+		DESTINATION "${GAMEDIR}/${SERVER_INSTALL_DIR}/" OPTIONAL)
+endif()

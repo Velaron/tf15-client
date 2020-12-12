@@ -113,9 +113,8 @@ Render any triangles with transparent rendermode needs here
 */
 void DLLEXPORT HUD_DrawTransparentTriangles( void )
 {
-#if defined( TEST_IT )
-	//	Draw_Triangles();
-#endif
-
 	RunEventList();
+
+	// Velaron: todo maybe
+	//if ( g_pParticleMan ) { g_pParticleMan-> }
 }

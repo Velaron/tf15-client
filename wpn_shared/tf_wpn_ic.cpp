@@ -82,7 +82,7 @@ void CTFIncendiaryC::WeaponIdle( void )
 BOOL CTFIncendiaryC::Deploy( void )
 {
 	if ( m_pPlayer->ammo_rockets )
-		return DefaultDeploy( "models/v_rpg.mdl", "models/p_rpg.mdl", RPG_HOLSTER_UL, "rpg", 1 );
+		return DefaultDeploy( "models/v_rpg.mdl", "models/p_rpg.mdl", RPG_HOLSTER_UL, "rpg", 1 ); // Velaron: fix enum
 	else
 		return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_rpg.mdl", RPG_RELOAD_START, "rpg", 1 );
 }

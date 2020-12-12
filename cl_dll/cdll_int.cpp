@@ -53,15 +53,6 @@ void InitInput( void );
 void EV_HookEvents( void );
 void IN_Commands( void );
 
-int __MsgFunc_Bhopcap( const char *pszName, int iSize, void *pbuf )
-{
-	BEGIN_READ( pbuf, iSize );
-
-	g_bhopcap = READ_BYTE();
-
-	return 1;
-}
-
 /*
 ========================== 
     Initialize
@@ -225,8 +216,6 @@ void DLLEXPORT HUD_Init( void )
 	InitInput();
 	gHUD.Init();
 	Scheme_Init();
-
-	gEngfuncs.pfnHookUserMsg( "Bhopcap", __MsgFunc_Bhopcap );
 }
 
 /*
@@ -288,6 +277,8 @@ Called by engine every frame that client .dll is loaded
 
 void DLLEXPORT HUD_Frame( double time )
 {
+	// Velaron: TODO
+	//ServersThink( time );
 	GetClientVoiceMgr()->Frame( time );
 }
 

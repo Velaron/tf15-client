@@ -164,11 +164,6 @@ extern globalvars_t *gpGlobals;
 int CL_IsDead( void );
 extern Vector dead_viewangles;
 
-void V_StopPitchDrift( void )
-{
-
-}
-
 // mouse variables
 cvar_t *m_filter;
 extern cvar_t *sensitivity;

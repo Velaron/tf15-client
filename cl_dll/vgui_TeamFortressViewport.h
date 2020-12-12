@@ -573,6 +573,7 @@ public:
 	void HideVGUIMenu( void );
 	void HideTopMenu( void );
 
+	// Velaron: TODO
 	//void ToggleServerBrowser( void );
 
 	CMenuPanel *CreateTextWindow( int iTextToShow );

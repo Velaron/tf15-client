@@ -108,7 +108,7 @@ inline int TextMessageDrawChar( int x, int y, int number, int r, int g, int b )
 inline int DrawConsoleString( int x, int y, const char *string )
 {
 	if ( hud_textmode->value == 1 )
-		return gHUD.DrawHudString( x, y, 9999, (char *)string, 255 * g_hud_text_color[0], 255 * g_hud_text_color[1], 255 * g_hud_text_color[2] );
+		return gHUD.DrawHudString( x, y, 9999, (char *)string, (int)(255 * g_hud_text_color[0]), (int)(255 * g_hud_text_color[1]), (int)(255 * g_hud_text_color[2]) );
 	return gEngfuncs.pfnDrawConsoleString( x, y, (char *)string );
 }
 

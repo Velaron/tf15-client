@@ -20,7 +20,7 @@
 # SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 2.6.0)
+cmake_minimum_required(VERSION 2.8.12)
 
 # Install custom module path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
@@ -41,7 +41,7 @@ option(BUILD_CLIENT "Build client dll" ON)
 option(BUILD_SERVER "Build server dll" OFF)
 option(BUILD_MENU "Build menu dll" OFF)
 option(BUILD_VGUI "Build vgui" ON)
-option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" OFF)
+option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" ON)
 set(GAMEDIR "tfc" CACHE STRING "Gamedir path")
 set(SERVER_INSTALL_DIR "dlls" CACHE STRING "Where put server dll")
 set(CLIENT_INSTALL_DIR "cl_dlls" CACHE STRING "Where put client dll")

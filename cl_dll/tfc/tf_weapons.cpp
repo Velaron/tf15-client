@@ -351,24 +351,31 @@ Handles weapon firing, reloading, etc.
 */
 void CBasePlayerWeapon::ItemPostFrame( void )
 {
+	int *ammo;
+	ItemInfo info;
+
+	GetItemInfo( &info );
+	ammo = current_ammo ? current_ammo : &m_pPlayer->m_rgAmmo[this->m_iPrimaryAmmoType];
+
 	if ( ( m_fInReload ) && ( m_pPlayer->m_flNextAttack <= 0.0f ) )
 	{
-#if 0 // FIXME, need ammo on client to make this work right
-		// complete the reload. 
-		int j = min( iMaxClip() - m_iClip, m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] );
+		if ( *ammo <= info.iMaxClip - m_iClip )
+		{
+			m_iClip += *ammo;
+			*ammo -= ( info.iMaxClip - m_iClip );
+		}
+		else
+		{
+			m_iClip = info.iMaxClip;
+		}
 
-		// Add them to the clip
-		m_iClip += j;
-		m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] -= j;
-#else
-		m_iClip += 10;
-#endif
-		m_fInReload = FALSE;
+		m_fInReload = 0;
+		m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
 	}
 
 	if ( ( m_pPlayer->pev->button & IN_ATTACK2 ) && ( m_flNextSecondaryAttack <= 0.0f ) )
 	{
-		if ( pszAmmo2() && !m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()] )
+		if ( info.pszAmmo2 && !m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()] )
 		{
 			m_fFireOnEmpty = TRUE;
 		}
@@ -378,25 +385,30 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 	}
 	else if ( ( m_pPlayer->pev->button & IN_ATTACK ) && ( m_flNextPrimaryAttack <= 0.0f ) )
 	{
-		if ( ( m_iClip == 0 && pszAmmo1() ) || ( iMaxClip() == -1 && !m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()] ) )
+		if ( ( !m_iClip && info.pszAmmo1 ) || ( info.iMaxClip == WEAPON_NOCLIP && !m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()] ) )
 		{
 			m_fFireOnEmpty = TRUE;
 		}
 
+		if ( m_pPlayer->super_damage_finished > gpGlobals->time )
+		{
+			if ( gpGlobals->time > m_pPlayer->m_fSuperSound )
+			{
+				m_fSuperSound = gpGlobals->time + 1.0f;
+			}
+		}
+
 		PrimaryAttack();
 	}
-	else if ( m_pPlayer->pev->button & IN_RELOAD && iMaxClip() != WEAPON_NOCLIP && !m_fInReload )
+	else if ( m_pPlayer->pev->button & IN_RELOAD && info.iMaxClip != WEAPON_NOCLIP && !m_fInReload )
 	{
-		// reload when reload is pressed, or if no buttons are down and weapon is empty.
 		Reload();
 	}
 	else if ( !( m_pPlayer->pev->button & ( IN_ATTACK | IN_ATTACK2 ) ) )
 	{
-		// no fire buttons down
 		m_fFireOnEmpty = FALSE;
 
-		// weapon is useable. Reload if empty and weapon has waited as long as it has to after firing
-		if ( m_iClip == 0 && !( iFlags() & ITEM_FLAG_NOAUTORELOAD ) && m_flNextPrimaryAttack < 0.0f )
+		if ( !m_iClip && !( info.iFlags & ITEM_FLAG_NOAUTORELOAD ) && m_flNextPrimaryAttack < 0.0f )
 		{
 			Reload();
 			return;
@@ -406,11 +418,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		return;
 	}
 
-	// catch all
-	if ( ShouldWeaponIdle() )
-	{
-		WeaponIdle();
-	}
+	if ( ShouldWeaponIdle() ) { WeaponIdle(); }
 }
 
 /*
@@ -640,7 +648,6 @@ void HUD_InitClientWeapons( void )
 	// Fake functions
 	g_engfuncs.pfnPrecacheModel = stub_PrecacheModel;
 	g_engfuncs.pfnPrecacheSound = stub_PrecacheSound;
-	g_engfuncs.pfnPrecacheEvent = stub_PrecacheEvent;
 	g_engfuncs.pfnNameForFunction = stub_NameForFunction;
 	g_engfuncs.pfnSetModel = stub_SetModel;
 	g_engfuncs.pfnSetClientMaxspeed = HUD_SetMaxSpeed;
@@ -683,8 +690,8 @@ void HUD_InitClientWeapons( void )
 	g_Sniper.m_fInZoom = 0;
 	g_Sniper.m_iSpotActive = 0;
 	g_Sniper.m_pSpot = NULL;
-	g_Sniper.m_fAimedDamage = 0;
-	g_Sniper.m_fNextAimBonus = 0;
+	g_Sniper.m_fAimedDamage = 0.0f;
+	g_Sniper.m_fNextAimBonus = 0.0f;
 	g_Spot.pev->effects |= EF_NODRAW;
 }
 
@@ -1196,6 +1203,6 @@ void _DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state_s
 #endif
 	{
 		to->client.fov = g_lastFOV;
-		g_laserdot.laserdotactive = false;
+		g_laserdot.laserdotactive = 0;
 	}
 }

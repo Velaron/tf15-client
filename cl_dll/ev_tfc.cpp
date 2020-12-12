@@ -42,6 +42,8 @@ extern engine_studio_api_t IEngineStudio;
 
 extern "C" char PM_FindTextureType( char *name );
 
+extern "C" int PM_GetPhysEntInfo( int ent );
+
 void V_PunchAxis( int axis, float punch );
 void VectorAngles( const float *forward, float *angles );
 
@@ -111,6 +113,7 @@ extern "C"
 	void EV_TFC_Assault_Spin( struct event_args_s *args );
 	void EV_TFC_Assault_StartSpin( struct event_args_s *args );
 	void EV_TFC_AxeDecal( struct event_args_s *args );
+	void EV_TFC_BuildingEvent( event_args_t *args );
 	void EV_TFC_NapalmFire( struct event_args_s *args );
 	void EV_TFC_MirvGrenadeMain( struct event_args_s *args );
 	void EV_TFC_MirvGrenade( struct event_args_s *args );
@@ -122,6 +125,7 @@ extern "C"
 	void EV_TFC_NailGrenade( struct event_args_s *args );
 	void EV_TFC_Knife( event_args_s *args );
 	void EV_TFC_Gibs( event_args_s *args );
+	void EV_Benchmark( event_args_t *args );
 	void EV_TrainPitchAdjust( struct event_args_s *args );
 }
 
@@ -322,45 +326,38 @@ char *EV_TFC_DamageDecal( int entity )
 	return decalname;
 }
 
-void EV_TFC_GunshotDecalTrace( pmtrace_t *pTrace, char *decalName )
+void EV_TFC_GunshotDecalTrace( pmtrace_t *pTrace, char *name )
 {
 	int iRand;
-	physent_t *pe;
 
-	gEngfuncs.pEfxAPI->R_BulletImpactParticles( pTrace->endpos );
-
-	iRand = gEngfuncs.pfnRandomLong( 0, 0x7FFF );
-	if ( iRand < ( 0x7fff / 2 ) )
+	if ( name && *name && pTrace->fraction != 1.0f )
 	{
-		switch ( iRand % 5 )
-		{
-		case 0:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric1.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
-			break;
-		case 1:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric2.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
-			break;
-		case 2:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric3.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
-			break;
-		case 3:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric4.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
-			break;
-		case 4:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric5.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
-			break;
-		}
-	}
+		gEngfuncs.pEfxAPI->R_BulletImpactParticles( pTrace->endpos );
 
-	pe = gEngfuncs.pEventAPI->EV_GetPhysent( pTrace->ent );
-
-	if ( decalName && decalName[0] && pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) )
-	{
-		if ( CVAR_GET_FLOAT( "r_decals" ) )
+		iRand = gEngfuncs.pfnRandomLong( 0, 0x7FFF );
+		if ( iRand < ( 0x7fff / 2 ) )
 		{
-			gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalName ) ),
-				gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
+			switch ( iRand % 5 )
+			{
+			case 0:
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric1.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				break;
+			case 1:
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric2.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				break;
+			case 2:
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric3.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				break;
+			case 3:
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric4.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				break;
+			case 4:
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric5.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				break;
+			}
 		}
+
+		EV_TFC_DecalTrace( pTrace, name );
 	}
 }
 
@@ -374,7 +371,7 @@ void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 	{
 		switch ( iBulletType )
 		{
-			//case BULLET_PLAYER_TF_ASSAULT:
+			case BULLET_PLAYER_TF_ASSAULT:
 			//	EV_TFC_GunshotDecalTrace( pTrace, "hwshot1" );
 			//	break;
 		default:
@@ -384,17 +381,31 @@ void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 	}
 }
 
+void EV_TFC_DecalTrace( pmtrace_t *pTrace, char *name )
+{
+	physent_s *pe;
+
+	if ( name && *name )
+	{
+		pe = gEngfuncs.pEventAPI->EV_GetPhysent( pTrace->ent );
+
+		if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) && CVAR_GET_FLOAT( "r_decals" ) != 0.0f )
+		{
+			gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( name ) ),
+				gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
+		}
+	}
+}
+
 int EV_TFC_CheckTracer( int idx, float *vecSrc, float *end, float *forward, float *right, int iBulletType, int iTracerFreq, int *tracerCount )
 {
-	int tracer = 0;
+	Vector vecTracerSrc, offset;
 
 	if ( iTracerFreq != 0 && ( ( *tracerCount )++ % iTracerFreq ) == 0 )
 	{
-		vec3_t vecTracerSrc;
-
 		if ( EV_IsPlayer( idx ) )
 		{
-			vec3_t offset( 0, 0, -4 );
+			offset = Vector( 0, 0, -4 );
 
 			for ( int i = 0; i < 3; i++ )
 			{
@@ -406,22 +417,37 @@ int EV_TFC_CheckTracer( int idx, float *vecSrc, float *end, float *forward, floa
 			VectorCopy( vecSrc, vecTracerSrc );
 		}
 
-		if ( iTracerFreq != 1 )
+		if ( iBulletType != BULLET_PLAYER_TF_BUCKSHOT )
 		{
-			tracer = 1;
-		}
-
-		switch ( iBulletType )
-		{
-		case BULLET_PLAYER_TF_BUCKSHOT:
-			break;
-		default:
 			EV_CreateTracer( vecTracerSrc, end );
-			break;
 		}
 	}
 
-	return tracer;
+	return iTracerFreq != 1;
+}
+
+int EV_TFC_ShouldShowBlood( int color )
+{
+	if ( color != DONT_BLEED )
+	{
+		if ( color == BLOOD_COLOR_RED )
+		{
+			return CVAR_GET_FLOAT( "violence_hblood" ) != 0.0f;
+		}
+		else
+		{
+			return CVAR_GET_FLOAT( "violence_ablood" ) != 0.0f;
+		}
+	}
+
+	return FALSE;
+}
+
+void EV_TFC_RandomBloodVector( float *direction )
+{
+	direction[0] = gEngfuncs.pfnRandomFloat( -1.0f, 1.0f );
+	direction[1] = gEngfuncs.pfnRandomFloat( -1.0f, 1.0f );
+	direction[2] = gEngfuncs.pfnRandomFloat( 0.0f, 1.0f );
 }
 
 /*
@@ -435,6 +461,7 @@ void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int c
 {
 	pmtrace_t tr;
 	int tracer, iShot;
+	int cMultiGunShots = 0;
 	//	char decalname[32];
 	//	int decal_index[5];
 
@@ -465,7 +492,7 @@ void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int c
 
 		if ( tr.fraction != 1.0f )
 		{
-			if ( !iDamage )
+			if ( iDamage == 0 )
 			{
 				switch ( iBulletType )
 				{
@@ -486,7 +513,7 @@ void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int c
 			}
 			else
 			{
-				EV_TFC_TraceAttack( idx, vecDir, &tr, iDamage );
+				EV_TFC_TraceAttack( idx, iDamage, vecDir, &tr );
 				EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, iBulletType );
 				EV_TFC_DecalGunshot( &tr, iBulletType );
 			}
@@ -494,6 +521,9 @@ void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int c
 
 		gEngfuncs.pEventAPI->EV_PopPMStates();
 	}
+
+	// Velaron: TODO
+
 	/*
 		if ( cShots != 1 )
 		{
@@ -571,14 +601,11 @@ void EV_TrainPitchAdjust( event_args_t *args )
 
 int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 )
 {
-	long ta;
 	int team_ally[5];
-
-	ta = strtol( gEngfuncs.PhysInfo_ValueForKey( "ta" ), 0, 10 );
 
 	for ( int i = 0; i < 5; i++ )
 	{
-		team_ally[i] = ta >> ( 5 * i ) & 0x1F;
+		team_ally[i] = atoi( gEngfuncs.PhysInfo_ValueForKey( "ta" ) ) >> ( 5 * i ) & 0x1F;
 	}
 
 	if ( !( ( team_ally[iTeam1] >> ( iTeam2 - 1 ) ) & 1 ) )
@@ -586,7 +613,7 @@ int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 )
 		return iTeam1 == iTeam2;
 	}
 
-	return true;
+	return TRUE;
 }
 
 int EV_TFC_PlayCrowbarAnim( int iAnimType )
@@ -725,7 +752,7 @@ void EV_TFC_Axe( event_args_t *args )
 		EV_TFC_AxeHit( idx, origin, forward, right, ent, forward, &tr );
 		break;
 	case 1:
-		EV_TFC_TraceAttack( idx, forward, &tr, 20.0f );
+		EV_TFC_TraceAttack( idx, 20.0f, forward, &tr );
 		break;
 	case 2:
 		gp_tr_decal[idx - 1] = NULL;
@@ -792,7 +819,6 @@ void EV_ReloadTFCShotgun( event_args_t *args )
 {
 	int idx;
 	Vector origin;
-	const char *sound;
 
 	idx = args->entindex;
 	VectorCopy( args->origin, origin );
@@ -802,9 +828,14 @@ void EV_ReloadTFCShotgun( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( SHOTGUN_RELOAD, 2 );
 	}
 
-	sound = gEngfuncs.pfnRandomLong( 0, 1 ) ? "weapons/reload3.wav" : "weapons/reload1.wav";
-
-	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, sound, VOL_NORM, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 31 ) + 85 );
+	if ( gEngfuncs.pfnRandomLong( 0, 1 ) )
+	{
+		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_ITEM, "weapons/reload3.wav", VOL_NORM, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 31 ) + 85 );
+	}
+	else
+	{
+		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_ITEM, "weapons/reload1.wav", VOL_NORM, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 31 ) + 85 );
+	}
 }
 
 void EV_PumpTFCShotgun( event_args_t *args )
@@ -830,17 +861,16 @@ void EV_FireTFCNailgun( event_args_t *args )
 {
 	int idx;
 	int shell;
-	Vector origin, angles, velocity;
+	Vector origin, angles;
 	Vector up, right, forward;
 	Vector ShellVelocity, ShellOrigin;
-	Vector vecSrc, vecAiming;
+	Vector vecSrc, vecAiming, vecVelocity;
 
 	idx = args->entindex;
 	shell = gEngfuncs.pEventAPI->EV_FindModelIndex( "models/nail.mdl" );
 
 	VectorCopy( args->origin, origin );
 	VectorCopy( args->angles, angles );
-	VectorCopy( args->velocity, velocity );
 	AngleVectors( angles, forward, right, up );
 
 	if ( EV_IsLocal( idx ) )
@@ -852,8 +882,8 @@ void EV_FireTFCNailgun( event_args_t *args )
 	VectorMA( ShellOrigin, -4.0f, up, ShellOrigin );
 	VectorMA( ShellOrigin, 2.0f, right, ShellOrigin );
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/airgun_1.wav", gEngfuncs.pfnRandomFloat( 0.95f, 1.0f ), ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 31 ) + 93 );
-	VectorScale( forward, 1000.0f, velocity );
-	gEngfuncs.pEfxAPI->R_Projectile( ShellOrigin, velocity, shell, 6, idx, EV_TFC_NailTouch );
+	VectorScale( forward, 1000.0f, vecVelocity );
+	EV_TFC_ClientProjectile( ShellOrigin, vecVelocity, shell, idx, 6, EV_TFC_NailTouch );
 
 	if ( EV_IsLocal( idx ) )
 	{
@@ -883,17 +913,16 @@ void EV_FireTFCSuperNailgun( event_args_t *args )
 {
 	int idx;
 	int shell;
-	Vector origin, angles, velocity;
+	Vector origin, angles;
 	Vector up, right, forward;
 	Vector ShellVelocity, ShellOrigin;
-	Vector vecSrc, vecAiming;
+	Vector vecSrc, vecAiming, vecVelocity;
 
 	idx = args->entindex;
 	shell = gEngfuncs.pEventAPI->EV_FindModelIndex( "models/nail.mdl" );
 
 	VectorCopy( args->origin, origin );
 	VectorCopy( args->angles, angles );
-	VectorCopy( args->velocity, velocity );
 	AngleVectors( angles, forward, right, up );
 
 
@@ -906,8 +935,8 @@ void EV_FireTFCSuperNailgun( event_args_t *args )
 	VectorMA( ShellOrigin, -4.0f, up, ShellOrigin );
 	VectorMA( ShellOrigin, 2.0f, right, ShellOrigin );
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/spike2.wav", VOL_NORM, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 15 ) + 94 );
-	VectorScale( forward, 1000.0f, velocity );
-	gEngfuncs.pEfxAPI->R_Projectile( ShellOrigin, velocity, shell, 6, idx, EV_TFC_NailTouch );
+	VectorScale( forward, 1000.0f, vecVelocity );
+	EV_TFC_ClientProjectile( ShellOrigin, vecVelocity, shell, idx, 6, EV_TFC_NailTouch );
 
 	if ( EV_IsLocal( idx ) )
 	{
@@ -979,7 +1008,7 @@ void EV_FireTFCAutoRifle( event_args_t *args )
 
 	if ( tr.fraction != 1.0 )
 	{
-		EV_TFC_TraceAttack( idx, vecAiming, &tr, 8.0f );
+		EV_TFC_TraceAttack( idx, 8.0f, vecAiming, &tr );
 		EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, BULLET_PLAYER_357 );
 		EV_TFC_DecalGunshot( &tr, BULLET_PLAYER_357 );
 	}
@@ -987,48 +1016,63 @@ void EV_FireTFCAutoRifle( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PopPMStates();
 }
 
-void EV_TFC_TraceAttack( int idx, float *vecDir, pmtrace_t *ptr, float flDamage )
+void EV_TFC_TraceAttack( int idx, float flDamage, float *vecDir, pmtrace_t *ptr, int bitsDamageType )
 {
 	int entity;
-	Vector dir;
-	Vector vecOrigin;
+	Vector vecOrigin, dir;
 
 	if ( !cl_localblood || cl_localblood->value != 0.0f )
 	{
 		VectorScale( vecDir, -4.0, dir );
 		vecOrigin = ptr->endpos - dir;
-
 		entity = gEngfuncs.pEventAPI->EV_IndexFromTrace( ptr );
 
-		if ( EV_IsPlayer( entity ) )
+		if ( EV_IsPlayer( entity ) && !EV_TFC_IsAlly( idx, entity ) )
 		{
-			if ( !EV_TFC_IsAlly( idx, entity ) )
-			{
-				EV_TFC_BloodDrips( vecOrigin, flDamage );
-			}
+			EV_TFC_SpawnBlood( vecOrigin, BLOOD_COLOR_RED, flDamage );
 		}
 	}
 }
 
-void EV_TFC_BloodDrips( float *origin, int amount )
+void EV_TFC_BloodDrips( float *origin, int color, int amount )
 {
-	int modelIndex, modelIndex2;
 	float scale;
 
-	if ( gEngfuncs.pfnGetCvarFloat( "violence_hblood" ) != 0.0f )
+	if ( EV_TFC_ShouldShowBlood( color ) && amount )
 	{
-		if ( gEngfuncs.GetMaxClients() > 1 )
-		{
-			amount *= 2;
-		}
+		if ( gEngfuncs.GetMaxClients() > 1 ) { amount *= 2; }
+		scale = Q_min( Q_max( 3.0f, amount / 10.0f ), 16.0f );
 
-		modelIndex = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/bloodspray.spr" );
-		modelIndex2 = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/blood.spr" );
-
-		scale = amount >= 160 ? 16.0f : ( amount >= 30 ? amount / 10 : 3.0f );
-
-		gEngfuncs.pEfxAPI->R_BloodSprite( origin, 247, modelIndex, modelIndex2, scale );
+		gEngfuncs.pEfxAPI->R_BloodSprite( origin, color, gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/bloodspray.spr" ),
+			gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/blood.spr" ), scale );
 	}
+}
+
+void EV_TFC_BubbleTrail( float *from, float *to, int count, int modelindex )
+{
+	float maxz, maxza, maxzb;
+
+	maxz = from[2] + 256.0f;
+	maxza = EV_TFC_WaterLevel( from, from[2], maxz ) - from[2];
+
+	if ( maxza < 8.0f )
+	{
+		maxzb = to[2] + 256.0f;
+
+		if ( EV_TFC_WaterLevel( to, to[2], maxzb ) - to[2] > 8.0f )
+		{
+			maxza = EV_TFC_WaterLevel( to, to[2], maxzb ) - from[2];
+		}
+	}
+
+	count = Q_min( count, 255 );
+	gEngfuncs.pEfxAPI->R_BubbleTrail( from, to, maxza, modelindex, count, 8.0f );
+}
+
+void EV_TFC_ClientProjectile( float *vecOrigin, float *vecVelocity, short sModelIndex, int iOwnerIndex,
+	int iLife, void ( *hitcallback )( struct tempent_s *ent, struct pmtrace_s *ptr ) )
+{
+	gEngfuncs.pEfxAPI->R_Projectile( vecOrigin, vecVelocity, sModelIndex, iLife, iOwnerIndex, hitcallback );
 }
 
 void EV_TFC_Assault_WindUp( event_args_t *args )
@@ -1038,9 +1082,10 @@ void EV_TFC_Assault_WindUp( event_args_t *args )
 
 	idx = args->entindex;
 	VectorCopy( args->origin, origin );
+
 	g_flSpinDownTime[idx - 1] = 0.0f;
 	g_flSpinUpTime[idx - 1] = gEngfuncs.GetClientTime() + 3.5f;
-	g_bACSpinning[idx - 1] = false;
+	g_bACSpinning[idx - 1] = FALSE;
 
 	if ( EV_IsLocal( idx ) )
 	{
@@ -1066,7 +1111,7 @@ void EV_TFC_Assault_WindDown( event_args_t *args )
 		g_flSpinDownTime[idx - 1] = gEngfuncs.GetClientTime() + 3.0f;
 	}
 
-	g_bACSpinning[idx - 1] = false;
+	g_bACSpinning[idx - 1] = FALSE;
 
 	if ( EV_IsLocal( idx ) )
 	{
@@ -1093,7 +1138,7 @@ void EV_TFC_Assault_Start( event_args_t *args )
 
 	g_flSpinDownTime[idx - 1] = 0.0f;
 	g_flSpinUpTime[idx - 1] = 0.0f;
-	g_bACSpinning[idx - 1] = false;
+	g_bACSpinning[idx - 1] = FALSE;
 
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan2.wav" );
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan4.wav" );
@@ -1155,7 +1200,7 @@ void EV_TFC_Assault_Spin( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( AC_FIRE, 2 );
 	}
 
-	g_bACSpinning[idx - 1] = true;
+	g_bACSpinning[idx - 1] = TRUE;
 }
 
 void EV_TFC_Assault_StartSpin( event_args_t *args )
@@ -1166,7 +1211,7 @@ void EV_TFC_Assault_StartSpin( event_args_t *args )
 	idx = args->entindex;
 	VectorCopy( args->origin, origin );
 
-	g_bACSpinning[idx - 1] = true;
+	g_bACSpinning[idx - 1] = TRUE;
 
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan2.wav" );
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan4.wav" );
@@ -1393,7 +1438,7 @@ void EV_FireTFCSniper( event_args_t *args )
 	{
 		if ( cl_localblood && cl_localblood->value != 0.0f )
 		{
-			EV_TFC_TraceAttack( idx, vecDir, &tr, iDamage );
+			EV_TFC_TraceAttack( idx, iDamage, vecDir, &tr );
 		}
 
 		EV_TFC_PlayTextureSound( idx, &tr, vecSrc, vecEnd, BULLET_PLAYER_357 );
@@ -1430,7 +1475,7 @@ void EV_TFC_SniperHit( event_args_s *args )
 	}
 	else
 	{
-		sound = "weapons/bullet_hit1.wav";
+		sound = "weapons/ric3.wav";
 	}
 
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_STATIC, sound, volume, ATTN_NORM, 0, PITCH_NORM );
@@ -1472,7 +1517,7 @@ void EV_TFC_NailgrenadeNail( event_args_t *args )
 		AngleVectors( angles, forward, NULL, NULL );
 		VectorMA( org, 12.0f, forward, origin );
 		VectorScale( forward, 1000.0f, velocity );
-		gEngfuncs.pEfxAPI->R_Projectile( origin, velocity, nail, 6, ( args->iparam1 >> 11 ) & 0x1F, EV_TFC_NailTouch );
+		EV_TFC_ClientProjectile( origin, velocity, nail, ( args->iparam1 >> 11 ) & 0x1F, 6, EV_TFC_NailTouch );
 
 		if ( gEngfuncs.pfnRandomLong( 0, 5 ) == 0 )
 		{
@@ -1610,14 +1655,13 @@ void EV_TFC_EngineerGrenade( event_args_t *args )
 void EV_TFC_Concussion( event_args_t *args )
 {
 	int wave;
-	char sound[32];
 	pmtrace_t tr;
 	Vector vecEnd, vecSpot;
 	Vector origin;
 
 	wave = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/shockwave.spr" );
-	VectorCopy( args->origin, origin )
-		VectorCopy( origin, vecSpot );
+	VectorCopy( args->origin, origin );
+	VectorCopy( origin, vecSpot );
 	VectorCopy( origin, vecEnd );
 
 	vecSpot.z += 8.0f;
@@ -1628,9 +1672,18 @@ void EV_TFC_Concussion( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlayerTrace( vecSpot, vecEnd, PM_STUDIO_BOX, -1, &tr );
 	gEngfuncs.pEventAPI->EV_PopPMStates();
 
-	sprintf( sound, "weapons/concgren_blast%i.wav", gEngfuncs.pfnRandomLong( 1, 3 ) );
-
-	gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_VOICE, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
+	switch ( gEngfuncs.pfnRandomLong( 0, 2 ) )
+	{
+	case 0:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_VOICE, "weapons/concgren_blast1.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
+		break;
+	case 1:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_VOICE, "weapons/concgren_blast2.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
+		break;
+	case 2:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_VOICE, "weapons/concgren_blast3.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
+		break;
+	}
 
 	VectorCopy( origin, vecSpot );
 	VectorCopy( origin, vecEnd );
@@ -1691,8 +1744,8 @@ void EV_TFC_EMP( event_args_t *args )
 	Vector origin;
 
 	wave = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/shockwave.spr" );
-	VectorCopy( args->origin, origin )
-		VectorCopy( origin, vecSpot );
+	VectorCopy( args->origin, origin );
+	VectorCopy( origin, vecSpot );
 	VectorCopy( origin, vecEnd );
 
 	vecSpot.z += 8.0f;
@@ -1717,23 +1770,22 @@ void EV_TFC_EMP( event_args_t *args )
 void EV_TFC_Flame_Fire( event_args_t *args )
 {
 	int idx;
-	float height;
 	int shell, bubble;
 	Vector ShellOrigin;
 	Vector BubbleSpot;
 	Vector vecVelocity;
 	Vector up, right, forward;
 	Vector origin, angles;
-	int underwater;
+	BOOL underwater;
 
 	idx = args->entindex;
-	underwater = args->bparam1;
 	shell = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/fthrow.spr" );
 	bubble = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/bubble.spr" );
+	underwater = args->bparam1;
+
 	VectorCopy( args->origin, origin );
 	VectorCopy( args->angles, angles );
-
-	gEngfuncs.pfnAngleVectors( angles, forward, right, up );
+	AngleVectors( angles, forward, right, up );
 
 	if ( EV_IsLocal( idx ) )
 	{
@@ -1748,53 +1800,41 @@ void EV_TFC_Flame_Fire( event_args_t *args )
 	if ( !underwater )
 	{
 		VectorScale( forward, 600.0f, vecVelocity );
-		gEngfuncs.pEfxAPI->R_Projectile( ShellOrigin, vecVelocity, shell, 1, idx, NULL );
+		EV_TFC_ClientProjectile( ShellOrigin, vecVelocity, shell, idx, 1, NULL );
 		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/flmfire2.wav", 0.9f, ATTN_NORM, 0, PITCH_NORM );
 		return;
 	}
 
 	VectorMA( ShellOrigin, 128.0f, forward, BubbleSpot );
-	height = EV_TFC_WaterLevel( ShellOrigin, ShellOrigin.z, ShellOrigin.z + 256.0f ) - ShellOrigin.z;
-
-	if ( height >= 8.0f )
-	{
-		gEngfuncs.pEfxAPI->R_BubbleTrail( ShellOrigin, BubbleSpot, height, bubble, 4, 8.0f );
-		return;
-	}
-
-	height = EV_TFC_WaterLevel( BubbleSpot, BubbleSpot.z, BubbleSpot.z + 256.0f ) - BubbleSpot.z;
-
-	if ( height >= 8.0f )
-	{
-		gEngfuncs.pEfxAPI->R_BubbleTrail( ShellOrigin, BubbleSpot, height + BubbleSpot.z - ShellOrigin.z, bubble, 4, 8.0f );
-		return;
-	}
+	EV_TFC_BubbleTrail( ShellOrigin, BubbleSpot, 4, bubble );
 }
 
+//Velaron: TODO
 float EV_TFC_WaterLevel( float *position, float minz, float maxz )
 {
-	float result, x, diff, minz_1;
+	float result; // fst7
+	float v5; // fst7
+	float v6; // fst5
+	float diff; // [esp+28h] [ebp-24h]
+	float minz_1; // [esp+38h] [ebp-14h]
 
 	minz_1 = minz;
 	result = minz;
 
-	if ( gEngfuncs.PM_PointContents( position, NULL ) == CONTENT_WATER )
+	if ( gEngfuncs.PM_PointContents( position, NULL ) == CONTENTS_WATER )
 	{
 		minz_1 = maxz;
 		result = maxz;
-	}
-	else
-	{
 		diff = minz;
-		x = maxz - minz;
 
-		if ( x > 1.0f )
+		v5 = maxz - minz;
+		if ( v5 > 1.0 )
 		{
-			do
+			while ( 1 )
 			{
-				minz_1 = x * 0.5f + diff;
+				minz_1 = v5 * 0.5 + diff;
 
-				if ( gEngfuncs.PM_PointContents( position, NULL ) == CONTENT_WATER )
+				if ( gEngfuncs.PM_PointContents( position, NULL ) == CONTENTS_WATER )
 				{
 					result = minz_1;
 					diff = minz_1;
@@ -1804,9 +1844,11 @@ float EV_TFC_WaterLevel( float *position, float minz, float maxz )
 					result = minz_1;
 					maxz = minz_1;
 				}
-
-				x = maxz - diff;
-			} while ( x > 1.0f );
+				v6 = maxz - diff;
+				if ( v6 <= 1.0 )
+					break;
+				v5 = v6;
+			}
 		}
 		else
 		{
@@ -1900,7 +1942,7 @@ void EV_TFC_RailDie( particle_s *particle )
 		}
 		else
 		{
-			EV_TFC_BloodDrips( tr.endpos, 25.0f );
+			EV_TFC_SpawnBlood( tr.endpos, BLOOD_COLOR_RED, 25.0f );
 		}
 	}
 
@@ -1909,34 +1951,18 @@ void EV_TFC_RailDie( particle_s *particle )
 
 int EV_TFC_IsAlly( int idx1, int idx2 )
 {
-	cl_entity_t *pEnt1, *pEnt2;
-	int iPlayerTeam1, iPlayerTeam2;
-
-	iPlayerTeam1 = iPlayerTeam2 = -1;
-	pEnt1 = gEngfuncs.GetEntityByIndex( idx1 );
-	pEnt2 = gEngfuncs.GetEntityByIndex( idx2 );
-
-	if ( EV_IsPlayer( idx1 ) && pEnt1 )
+	if ( EV_TFC_GetTeamIndex( idx1 ) < 1 || EV_TFC_GetTeamIndex( idx1 ) > 4
+		|| EV_TFC_GetTeamIndex( idx2 ) > 1 || EV_TFC_GetTeamIndex( idx2 ) > 4 )
 	{
-		iPlayerTeam1 = pEnt1->curstate.team;
+		return 0;
 	}
 
-	if ( EV_IsPlayer( idx2 ) && pEnt2 )
+	if ( gEngfuncs.GetLocalPlayer() )
 	{
-		iPlayerTeam2 = pEnt2->curstate.team;
+		return EV_TFC_IsAllyTeam( EV_TFC_GetTeamIndex( idx1 ), EV_TFC_GetTeamIndex( idx2 ) );
 	}
 
-	if ( iPlayerTeam1 < 1 || iPlayerTeam2 < 1 || iPlayerTeam1 > 4 || iPlayerTeam2 > 4 )
-	{
-		return false;
-	}
-
-	if ( !gEngfuncs.GetLocalPlayer() )
-	{
-		return false;
-	}
-
-	return EV_TFC_IsAllyTeam( iPlayerTeam1, iPlayerTeam2 );
+	return 0;
 }
 
 void EV_TFC_Tranquilizer( event_args_t *args )
@@ -1964,7 +1990,7 @@ void EV_TFC_Tranquilizer( event_args_t *args )
 	VectorMA( ShellOrigin, 2.0f, right, ShellOrigin );
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/dartgun.wav", 0.9f, ATTN_NORM, 0, PITCH_NORM );
 	VectorScale( forward, 1500.0f, vecVelocity );
-	gEngfuncs.pEfxAPI->R_Projectile( ShellOrigin, vecVelocity, shell, 6, idx, EV_TFC_TranqNailTouch );
+	EV_TFC_ClientProjectile( ShellOrigin, vecVelocity, shell, idx, 6, EV_TFC_TranqNailTouch );
 
 	if ( EV_IsLocal( idx ) )
 	{
@@ -2062,32 +2088,12 @@ void EV_TFC_BloodDecalTrace( pmtrace_t *pTrace, int bloodColor )
 {
 	const char *format;
 	char decalname[32];
-	physent_s *pe;
 
-	if ( bloodColor != -1 )
+	if ( EV_TFC_ShouldShowBlood( bloodColor ) )
 	{
-		if ( bloodColor == 247 && gEngfuncs.pfnGetCvarFloat( "violence_hblood" ) == 0.0f )
-		{
-			return;
-		}
-		else if ( gEngfuncs.pfnGetCvarFloat( "violence_ablood" ) == 0.0f )
-		{
-			return;
-		}
-
-		format = bloodColor == 247 ? "{blood%i" : "{yblood%i";
-		sprintf( decalname, format, gEngfuncs.pfnRandomLong( 1, 6 ) );
-
-		pe = gEngfuncs.pEventAPI->EV_GetPhysent( pTrace->ent );
-
-		if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) )
-		{
-			if ( gEngfuncs.pfnGetCvarFloat( "r_decals" ) != 0.0f )
-			{
-				gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname ) ),
-					gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
-			}
-		}
+		format = bloodColor == BLOOD_COLOR_RED ? "{blood%i" : "{yblood%i";
+		sprintf( decalname, format, gEngfuncs.pfnRandomLong( 0, 5 ) + 1 );
+		EV_TFC_DecalTrace( pTrace, decalname );
 	}
 }
 
@@ -2095,17 +2101,80 @@ void EV_TFC_GibTouchCallback( tempent_s *ent, pmtrace_t *ptr )
 {
 	if ( Length( ent->entity.baseline.origin ) > 0.0f && ent->entity.curstate.team > 0 )
 	{
-		EV_TFC_BloodDecalTrace( ptr, 247 );
+		EV_TFC_BloodDecalTrace( ptr, BLOOD_COLOR_RED );
 		ent->entity.curstate.team--;
 	}
 }
+
+void EV_TFC_TraceBleed( float flDamage, float *vecDir, pmtrace_t *ptr, int bitsDamageType, int bloodcolor )
+{
+	pmtrace_t Bloodtr;
+	Vector vecTraceDir, trend;
+	float flNoise;
+	int cCount;
+
+	if ( bloodcolor != DONT_BLEED && flDamage != 0.0f && bitsDamageType & 0x8000C7 /* Velaron: idk */ )
+	{
+		if ( flDamage < 10.0f )
+		{
+			flNoise = 0.1f;
+			cCount = 1;
+		}
+		else if ( flDamage >= 25.0f )
+		{
+			flNoise = 0.3f;
+			cCount = 4;
+		}
+		else
+		{
+			flNoise = 0.2f;
+			cCount = 2;
+		}
+
+		for ( int i = 0; i < cCount; i++ )
+		{
+			VectorScale( vecDir, -1.0f, vecTraceDir );
+
+			for ( int j = 0; j < 3; j++ )
+			{
+				vecTraceDir[i] += gEngfuncs.pfnRandomFloat( -flNoise, flNoise );
+			}
+
+			VectorMA( ptr->endpos, -172.0f, vecTraceDir, trend );
+			gEngfuncs.pEventAPI->EV_PlayerTrace( ptr->endpos, trend, PM_STUDIO_BOX, -1, &Bloodtr );
+
+			if ( Bloodtr.fraction != 1.0f )
+			{
+				EV_TFC_BloodDecalTrace( &Bloodtr, bloodcolor );
+			}
+		}
+	}
+}
+
+void EV_TFC_SpawnBlood( float *vecSpot, int bloodColor, float flDamage )
+{
+	EV_TFC_BloodDrips( vecSpot, bloodColor, flDamage );
+}
+
+int EV_TFC_GetTeamIndex( int idx )
+{
+	cl_entity_s *pEnt;
+
+	if ( EV_IsPlayer( idx ) && ( pEnt = GetEntity( idx ) ) )
+	{
+		return pEnt->curstate.team;
+	}
+
+	return -1;
+}
+
 
 tempent_s *EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, int ishead )
 {
 	int modelindex;
 	tempent_s *ent;
 	float mins[3], maxs[3];
-	float vmultiple, scale, len;
+	float vmultiple;
 
 	model_s *gib = gEngfuncs.CL_LoadModel( "models/hgibs.mdl", &modelindex );
 
@@ -2142,13 +2211,7 @@ tempent_s *EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, in
 			ent->entity.baseline.angles[1] = gEngfuncs.pfnRandomFloat( 100.0f, 200.0f );
 		}
 
-		len = Length( ent->entity.curstate.velocity );
-		if ( len > 1500.0f )
-		{
-			scale = 1500.0f / len;
-			VectorScale( ent->entity.curstate.velocity, scale, ent->entity.curstate.velocity );
-		}
-
+		EV_TFC_GibVelocityCheck( ent->entity.curstate.velocity );
 		ent->flags |= ( FTENT_GRAVITY | FTENT_ROTATE | FTENT_COLLIDEWORLD );
 		ent->hitcallback = EV_TFC_GibTouchCallback;
 		ent->entity.curstate.team = 5;
@@ -2169,10 +2232,10 @@ void EV_TFC_Gibs( event_args_t *args )
 
 	idx = args->entindex;
 	multiplier = args->iparam1;
-	VectorCopy( args->origin, origin )
-		VectorCopy( args->angles, attackdir )
+	VectorCopy( args->origin, origin );
+	VectorCopy( args->angles, attackdir );
 
-		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "common/bodysplat.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
+	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "common/bodysplat.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 
 	gibcount = cl_gibcount->value;
 	gibcount = gibcount > 64 ? 64 : gibcount;
@@ -2223,12 +2286,12 @@ void EV_TFC_AxeHit( int idx, float *origin, float *forward, float *right, int en
 
 		if ( up[0] * forward[1] - forward[0] * up[1] <= 0.0f )
 		{
-			EV_TFC_TraceAttack( idx, vecDir, ptr, 40.0f );
+			EV_TFC_TraceAttack( idx, 40.0f, vecDir, ptr );
 			iAnim = KNIFE_ATTACK1;
 		}
 		else
 		{
-			EV_TFC_TraceAttack( idx, vecDir, ptr, 120.0f );
+			EV_TFC_TraceAttack( idx, 120.0f, vecDir, ptr );
 			iAnim = KNIFE_ATTACK2;
 		}
 
@@ -2239,7 +2302,7 @@ void EV_TFC_AxeHit( int idx, float *origin, float *forward, float *right, int en
 	}
 	else
 	{
-		EV_TFC_TraceAttack( idx, vecDir, ptr, 20.0f );
+		EV_TFC_TraceAttack( idx, 20.0f, vecDir, ptr );
 	}
 }
 
@@ -2254,7 +2317,7 @@ int EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, int ent
 		{
 			if ( !cl_localblood || cl_localblood->value != 0.0f )
 			{
-				EV_TFC_TraceAttack( idx, vecDir, ptr, 10.0f );
+				EV_TFC_TraceAttack( idx, 10.0f, vecDir, ptr );
 			}
 			if ( pEnt->curstate.playerclass != 5 ) // PC_MEDIC
 			{
@@ -2295,6 +2358,12 @@ void EV_TFC_Knife( event_args_t *args )
 
 }
 
+// Velaron: unused maybe idk
+void EV_TFC_ExplodeFire( float *org, int dmg, qboolean bDontSpark, pmtrace_t *pTrace, int bitsDamageType )
+{
+	EV_TFC_Explode( org, dmg, pTrace, 3.0f );
+}
+
 const Vector &GetTeamColor( int team_no )
 {
 	switch ( team_no )
@@ -2310,6 +2379,178 @@ const Vector &GetTeamColor( int team_no )
 	default:
 		return g_vBlack;
 	}
+}
+
+void EV_TFC_GibVelocityCheck( float *vel )
+{
+	float scale;
+
+	if ( Length( vel ) > 1500.0f )
+	{
+		scale = 1500.0f / Length( vel );
+		VectorScale( vel, scale, vel );
+	}
+}
+
+int EV_TFC_PlayKnifeAnim( int iAnimType )
+{
+	switch ( iAnimType )
+	{
+	case ANIM_MISS: return KNIFE_ATTACK1;
+	case ANIM_HIT: return KNIFE_ATTACK1;
+	default: return -1;
+	}
+}
+
+int EV_TFC_PlayMedkitAnim( int iAnimType )
+{
+	switch ( iAnimType )
+	{
+	case ANIM_MISS: return MEDIKIT_USE_SHORT;
+	case ANIM_HIT: return MEDIKIT_USE_LONG;
+	default: return -1;
+	}
+}
+
+int EV_TFC_PlaySpannerAnim( int iAnimType )
+{
+	switch ( iAnimType )
+	{
+	case ANIM_MISS: return SPANNER_ATTACK1;
+	case ANIM_HIT: return SPANNER_USE1;
+	default: return -1;
+	}
+}
+
+int EV_TFC_PlayAxeAnim( int iAnimType )
+{
+	return 0;
+}
+
+int EV_TFC_Spanner( int idx, float *origin, float *forward, float *right, int entity, float *vecDir, pmtrace_t *ptr )
+{
+	EV_TFC_TraceAttack( idx, 20.0f, vecDir, ptr );
+	return 1;
+}
+
+// Velaron: todo maybe
+//void EV_TFC_BenchmarkWallMark( pmtrace_t *pTrace, char *name )
+//void EV_TFC_BenchMarkTrace( pmtrace_t *pTrace )
+
+void EV_Benchmark( event_args_t *args )
+{
+
+}
+
+void EV_TFC_BuildingEvent( event_args_t *args )
+{
+
+}
+
+void RandomSparkSound( float *origin )
+{
+	switch( (int)( gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) * 6.0f ) )
+	{
+		case 0:
+			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark1.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+			break;
+		case 1:
+			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark2.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+			break;
+		case 2:
+			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark3.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+			break;
+		case 3:
+			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark4.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+			break;
+		case 4:
+			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark5.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+			break;
+		case 5:
+			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark6.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+			break;
+	}
+}
+
+void DoSparkSmokeEffect( event_args_t *args )
+{
+	pmtrace_t tr;
+	Vector vecstart, vecend;
+
+	if ( !args ) { return; }
+
+	if ( gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) > 0.8f )
+	{
+		vecstart = args->origin;
+		vecend.x = vecstart.x + gEngfuncs.pfnRandomLong( -50, 50 );
+		vecend.y = vecstart.y + gEngfuncs.pfnRandomLong( -50, 50 );
+		vecend.z = vecstart.z + gEngfuncs.pfnRandomLong( 15, 50 );
+
+		gEngfuncs.pEventAPI->EV_PushPMStates();
+		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+		gEngfuncs.pEventAPI->EV_PlayerTrace( vecend, vecstart, PM_NORMAL, -1, &tr );
+		gEngfuncs.pEventAPI->EV_PopPMStates();
+
+		if ( args->entindex == PM_GetPhysEntInfo( tr.ent ) )
+		{
+			gEngfuncs.pEfxAPI->R_SparkEffect( tr.endpos, 8, -200, 200 );
+			RandomSparkSound( tr.endpos );
+
+			if ( args->iparam1 & 2 )
+			{
+				tr.endpos.z -= 8.0f;
+				gEngfuncs.pEfxAPI->R_Sprite_Smoke( gEngfuncs.pEfxAPI->R_DefaultSprite( tr.endpos, gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/steam1.spr" ), 15.0f ), 0.8f );
+			}
+		}
+	}
+}
+
+void DoTeleporterRings( event_args_t *args )
+{
+	static int iEntryCount = 0, iExitCount = 0;
+	Vector vecSpot, vecEnd;
+	Vector color;
+
+	if ( !args ) { return; }
+
+	if ( args->iparam1 & 4 )
+	{
+		if ( ++iEntryCount > 6 ) { iEntryCount = 0; }
+	}
+	else
+	{
+		if ( --iExitCount < 0 ) { iExitCount = 6; }
+	}
+	
+	vecSpot = vecEnd = args->origin;
+	vecSpot.z += ( -14 * ( ( args->iparam1 & 4 ) ? iEntryCount : iExitCount ) + 98 );
+	vecEnd.z = vecSpot.z + 125.0f;
+	color = GetTeamColor( args->iparam2 - 1 );
+
+	gEngfuncs.pEfxAPI->R_BeamCirclePoints( FBEAM_SINENOISE | FBEAM_FADEIN | FBEAM_STARTENTITY, vecSpot, vecEnd,
+		gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/shellchrome.spr" ), 0.2f, 10.0f, 0.0f, 1.0f, 0.0f, 0, 0.0f, color.x, color.y, color.z );
+}
+
+void DoTeleporterParticles( event_args_t *args )
+{
+	// Velaron: big todo ( particleman )
+	if ( !args ) { return; }
+}
+
+void PlayTeleporterAmbientSound( event_args_t *args )
+{
+	if ( !args ) { return; }
+
+	if ( ( args->fparam2 == 0.0f || args->fparam2 <= gpGlobals->time ) && gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) > 1.0f )
+	{
+		args->fparam2 = gpGlobals->time + 6.0f;
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, "misc/teleport_ready.wav", VOL_NORM, 0.5f, 0, PITCH_NORM );
+	}
+}
+
+void CheckEventsFinished( eventnode_t *node )
+{
+	
 }
 
 void ClearEventList( void )

@@ -47,10 +47,8 @@ int CHudFlashlight::Init( void )
 
 void CHudFlashlight::Reset( void )
 {
-	m_fFade = 0;
+	m_fFade = 0.0f;
 	m_fOn = 0;
-	m_iBat = 100;
-	m_flBat = 1.0f;
 }
 
 int CHudFlashlight::VidInit( void )

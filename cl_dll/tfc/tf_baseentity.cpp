@@ -336,7 +336,7 @@ int CBasePlayerItem::Restore( class CRestore & ) { return 1; }
 int CBasePlayerItem::Save( class CSave & ) { return 1; }
 int CBasePlayerWeapon::Restore( class CRestore & ) { return 1; }
 int CBasePlayerWeapon::Save( class CSave & ) { return 1; }
-float CBasePlayerWeapon::GetNextAttackDelay( float flTime ) { return flTime; }
+float CBasePlayerWeapon::GetNextAttackDelay( float delay ) { return delay; }
 void CBasePlayerItem::SetObjectCollisionBox( void ) { }
 void CBasePlayerItem::FallInit( void ) { }
 void CBasePlayerItem::FallThink( void ) { }

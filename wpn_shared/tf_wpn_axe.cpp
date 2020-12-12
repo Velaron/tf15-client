@@ -16,7 +16,7 @@ void CTFAxe::Spawn( void )
 {
 	Precache();
 	m_iId = WEAPON_AXE;
-	m_iClip = -1;
+	m_iClip = WEAPON_NOCLIP;
 	pev->solid = SOLID_TRIGGER;
 }
 
@@ -65,7 +65,7 @@ void CTFAxe::Holster( int skiplocal )
 
 void CTFAxe::Smack( void )
 {
-
+	PlayDecal();
 }
 
 void CTFAxe::PlayAnim( int iAnimType )
@@ -85,21 +85,16 @@ void CTFAxe::PlayDecal( void )
 
 BOOL CTFAxe::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr )
 {
+	Vector vecTargetAngles;
 	ClearMultiDamage();
 
-	if ( m_pPlayer->pev->playerclass != PC_SPY )
-	{
-		pTarget->TraceAttack( m_pPlayer->pev, 20.0f, p_vecDir, ptr, DMG_CLUB );
-		ApplyMultiDamage( m_pPlayer->pev, m_pPlayer->pev );
-		return true;
-	}
-
-	if ( FClassnameIs( pTarget->pev, "player" ) )
+	if ( m_pPlayer->pev->playerclass == PC_SPY && FClassnameIs( pTarget->pev, "player" ) )
 	{
 		UTIL_MakeVectors( pTarget->pev->v_angle );
+		vecTargetAngles = gpGlobals->v_right;
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 
-		if ( gpGlobals->v_right.x * gpGlobals->v_forward.y - gpGlobals->v_right.y * gpGlobals->v_forward.x <= 0.0f )
+		if ( vecTargetAngles.x * gpGlobals->v_forward.y - vecTargetAngles.y * gpGlobals->v_forward.x <= 0.0f )
 		{
 			pTarget->TraceAttack( m_pPlayer->pev, 40.0f, p_vecDir, ptr, DMG_CLUB );
 		}
@@ -121,44 +116,35 @@ BOOL CTFAxe::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr )
 	}
 
 	ApplyMultiDamage( m_pPlayer->pev, m_pPlayer->pev );
-	return true;
+	return TRUE;
 }
 
 void CTFAxe::PrimaryAttack( void )
 {
 	Vector vecSrc, vecEnd;
 	TraceResult tr;
-	edict_t *pent;
 	CBaseEntity *pEntity;
-	int bHit;
+	BOOL bHit;
 
-	m_bHullHit = false;
+	m_bHullHit = FALSE;
 	UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 	vecSrc = m_pPlayer->GetGunPosition();
 	vecEnd = vecSrc + gpGlobals->v_forward * 32.0f;
 	UTIL_TraceLine( vecSrc, vecEnd, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
 	PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usAxe, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, classid, 0, 0, 0 );
 
+	m_flTimeWeaponIdle = 5.0f;
+	m_flNextPrimaryAttack = GetNextAttackDelay( 0.4f );
+	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+
 	if ( tr.flFraction >= 1.0f )
 	{
-		m_bHullHit = true;
-		m_flTimeWeaponIdle = 5.0f;
-		m_flNextPrimaryAttack = GetNextAttackDelay( 0.4f );
-		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+		m_bHullHit = TRUE;
 		return;
 	}
 
-	pent = ENT( 0 );
-
-	if ( tr.pHit || pent )
-	{
-		pEntity = CBaseEntity::Instance( pent );
-	}
-
-	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	pEntity = CBaseEntity::Instance( tr.pHit );
 	bHit = AxeHit( pEntity, gpGlobals->v_forward, &tr );
-	m_flTimeWeaponIdle = 5.0f;
-	m_flNextPrimaryAttack = GetNextAttackDelay( 0.4f );
 
 	if ( bHit && pEntity && pEntity->Classify() && pEntity->Classify() != CLASS_MACHINE )
 	{

@@ -61,6 +61,7 @@ extern "C"
 	void EV_TFC_Assault_Spin( struct event_args_s *args );
 	void EV_TFC_Assault_StartSpin( struct event_args_s *args );
 	void EV_TFC_AxeDecal( struct event_args_s *args );
+	void EV_TFC_BuildingEvent( event_args_t *args );
 	void EV_TFC_NapalmFire( struct event_args_s *args );
 	void EV_TFC_MirvGrenadeMain( struct event_args_s *args );
 	void EV_TFC_MirvGrenade( struct event_args_s *args );
@@ -72,6 +73,7 @@ extern "C"
 	void EV_TFC_NailGrenade( struct event_args_s *args );
 	void EV_TFC_Knife( event_args_s *args );
 	void EV_TFC_Gibs( event_args_s *args );
+	void EV_Benchmark( event_args_t *args );
 	void EV_TrainPitchAdjust( struct event_args_s *args );
 }
 
@@ -119,7 +121,7 @@ void Game_HookEvents( void )
 	gEngfuncs.pfnHookEvent( "events/wpn/tf_medsuper.sc", EV_TFC_SuperShot );
 	gEngfuncs.pfnHookEvent( "events/wpn/tf_medsteam.sc", EV_TFC_SteamShot );
 	gEngfuncs.pfnHookEvent( "events/wpn/tf_axedecal.sc", EV_TFC_AxeDecal );
-	//gEngfuncs.pfnHookEvent( "events/misc/tf_buildingevent.sc", EV_TFC_BuildingEvent );
+	gEngfuncs.pfnHookEvent( "events/misc/tf_buildingevent.sc", EV_TFC_BuildingEvent );
 	gEngfuncs.pfnHookEvent( "events/explode/tf_pipe.sc", EV_TFC_Explosion );
 	gEngfuncs.pfnHookEvent( "events/explode/tf_gren.sc", EV_TFC_Grenade );
 	gEngfuncs.pfnHookEvent( "events/explode/tf_engrgren.sc", EV_TFC_EngineerGrenade );
@@ -137,7 +139,7 @@ void Game_HookEvents( void )
 	gEngfuncs.pfnHookEvent( "events/door/doorhittop.sc", EV_TFC_DoorHitTop );
 	gEngfuncs.pfnHookEvent( "events/door/doorhitbottom.sc", EV_TFC_DoorHitBottom );
 	gEngfuncs.pfnHookEvent( "events/misc/gibs.sc", EV_TFC_Gibs );
-	//gEngfuncs.pfnHookEvent( "events/misc/benchmark.sc", EV_Benchmark );
+	gEngfuncs.pfnHookEvent( "events/misc/benchmark.sc", EV_Benchmark );
 	gEngfuncs.pfnHookEvent( "events/train.sc", EV_TrainPitchAdjust );
 
 	cl_gibcount = gEngfuncs.pfnRegisterVariable( "cl_gibcount", "4", 1 );

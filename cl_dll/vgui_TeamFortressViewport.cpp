@@ -1266,7 +1266,7 @@ CommandButton *TeamFortressViewport::CreateCustomButton( char *pButtonText, char
 
 	return pButton;
 }
-
+// Velaron: TODO
 /*
 void TeamFortressViewport::ToggleServerBrowser()
 {
