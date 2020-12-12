@@ -120,7 +120,7 @@ void CSquadMonster::ScheduleChange ( void )
 //=========================================================
 // Killed
 //=========================================================
-void CSquadMonster::Killed( entvars_t *pevAttacker, int iGib )
+void CSquadMonster::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib )
 {
 	VacateSlot();
 

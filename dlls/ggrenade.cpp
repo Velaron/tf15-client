@@ -151,7 +151,7 @@ void CGrenade::Smoke( void )
 	UTIL_Remove( this );
 }
 
-void CGrenade::Killed( entvars_t *pevAttacker, int iGib )
+void CGrenade::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib )
 {
 	Detonate();
 }

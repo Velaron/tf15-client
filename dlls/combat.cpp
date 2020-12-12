@@ -574,7 +574,7 @@ void CBaseMonster::CallGibMonster( void )
 Killed
 ============
 */
-void CBaseMonster::Killed( entvars_t *pevAttacker, int iGib )
+void CBaseMonster::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib )
 {
 	//unsigned int	cCount = 0;
 	//BOOL		fDone = FALSE;

@@ -27,7 +27,7 @@ class CAirtank : public CGrenade
 	void EXPORT TankThink( void );
 	void EXPORT TankTouch( CBaseEntity *pOther );
 	int  BloodColor( void ) { return DONT_BLEED; };
-	void Killed( entvars_t *pevAttacker, int iGib );
+	void Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib );
 
 	virtual int Save( CSave &save ); 
 	virtual int Restore( CRestore &restore );
@@ -73,7 +73,7 @@ void CAirtank::Precache( void )
 	PRECACHE_SOUND( "doors/aliendoor3.wav" );
 }
 
-void CAirtank::Killed( entvars_t *pevAttacker, int iGib )
+void CAirtank::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib )
 {
 	pev->owner = ENT( pevAttacker );
 

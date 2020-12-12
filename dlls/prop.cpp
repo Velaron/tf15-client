@@ -105,7 +105,7 @@ public:
 	virtual int ObjectCaps( void ) { return ( CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION ) | FCAP_IMPULSE_USE | FCAP_CONTINUOUS_USE; }
 	virtual void BounceSound( void );
 	virtual int BloodColor( void ) { return DONT_BLEED; }
-	virtual void Killed( entvars_t *pevAttacker, int iGib );
+	virtual void Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib );
 	void CheckRotate();
 	void EXPORT RespawnThink();
 	void EXPORT AngleThink();
@@ -575,7 +575,7 @@ void CProp::Die( void )
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 }
 
-void CProp::Killed( entvars_t *pevAttacker, int iGib )
+void CProp::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib )
 {
 	pev->takedamage = DAMAGE_NO;
 	pev->deadflag = DEAD_DEAD;

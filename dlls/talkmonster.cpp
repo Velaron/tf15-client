@@ -597,7 +597,7 @@ void CTalkMonster::RunTask( Task_t *pTask )
 	}
 }
 
-void CTalkMonster::Killed( entvars_t *pevAttacker, int iGib )
+void CTalkMonster::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib )
 {
 	// If a client killed me (unless I was already Barnacle'd), make everyone else mad/afraid of him
 	if( ( pevAttacker->flags & FL_CLIENT) && m_MonsterState != MONSTERSTATE_PRONE )

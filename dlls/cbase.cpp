@@ -583,7 +583,7 @@ int CBaseEntity::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 	return 1;
 }
 
-void CBaseEntity::Killed( entvars_t *pevAttacker, int iGib )
+void CBaseEntity::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib )
 {
 	pev->takedamage = DAMAGE_NO;
 	pev->deadflag = DEAD_DEAD;

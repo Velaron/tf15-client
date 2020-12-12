@@ -82,7 +82,7 @@ void CTFSniperRifle::Holster( int skiplocal )
 
 	if ( m_pSpot )
 	{
-		m_pSpot->Killed( NULL, GIB_NEVER );
+		m_pSpot->Killed( NULL, NULL, GIB_NEVER );
 		m_pSpot = NULL;
 	}
 
