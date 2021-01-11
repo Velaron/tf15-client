@@ -60,17 +60,17 @@ void CTFTranq::WeaponIdle( void )
 		if ( iRand == 3 * ( iRand / 3 ) )
 		{
 			m_flTimeWeaponIdle = 3.0625f;
-			SendWeaponAnim( TRANQ_IDLE3, 1 );
+			SendWeaponAnim( TRANQ_IDLE3 );
 		}
 		else if ( iRand + 1 == 3 * ( ( iRand + 1 ) / 3 ) )
 		{
 			m_flTimeWeaponIdle = 3.75f;
-			SendWeaponAnim( TRANQ_IDLE1, 1 );
+			SendWeaponAnim( TRANQ_IDLE1 );
 		}
 		else
 		{
 			m_flTimeWeaponIdle = 2.5f;
-			SendWeaponAnim( TRANQ_IDLE2, 1 );
+			SendWeaponAnim( TRANQ_IDLE2 );
 		}
 	}
 }

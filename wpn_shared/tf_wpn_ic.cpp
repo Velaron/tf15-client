@@ -45,7 +45,7 @@ void CTFIncendiaryC::Holster( void )
 {
 	m_fInReload = 0;
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( RPG_DRAW, 1 ); //Velaron: fix?
+	SendWeaponAnim( RPG_DRAW ); //Velaron: fix?
 }
 
 void CTFIncendiaryC::Precache( void )
@@ -74,7 +74,7 @@ void CTFIncendiaryC::WeaponIdle( void )
 		else
 		{
 			m_flTimeWeaponIdle = 3.0f;
-			SendWeaponAnim( RPG_FIDGET, 1 );
+			SendWeaponAnim( RPG_FIDGET );
 		}
 	}
 }

@@ -155,7 +155,7 @@ void CTFSniperRifle::WeaponIdle( void )
 
 	if ( m_flTimeWeaponIdle < 0.0f && !( m_pPlayer->tfstate & TFSTATE_AIMING ) )
 	{
-		SendWeaponAnim( SRIFLE_IDLE, 1 );
+		SendWeaponAnim( SRIFLE_IDLE );
 		m_flTimeWeaponIdle = 12.5f;
 	}
 }

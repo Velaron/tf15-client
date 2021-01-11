@@ -1,49 +1,53 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion = 29
-    buildToolsVersion = '29.0.3'
-    ndkVersion '21.0.6113669'
+	compileSdkVersion = 29
+	ndkVersion '21.3.6528147'
 
-    defaultConfig {
-        applicationId = 'su.xash.tf15client'
-        minSdkVersion 8
-        targetSdkVersion 29
-        versionCode = 1
-        versionName = '1.0'
+	defaultConfig {
+		applicationId = 'su.xash.tf15client'
+		minSdkVersion 14
+		targetSdkVersion 29
 
-        externalNativeBuild {
-            cmake {
-                arguments '-DMAINUI_USE_CUSTOM_FONT_RENDER=0'
-            }
-        }
-    }
+		externalNativeBuild {
+			ndkBuild {
+				arguments "V=1"
+			}
+		}
+	}
+	
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
+	}
 
-    lintOptions {
-        abortOnError false
-    }
+	buildTypes {
+		debug {
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+		}
+		release {
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+		}
+	}
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
+	externalNativeBuild {
+		cmake {
+			path file('../../CMakeLists.txt')
+		}
+	}
+}
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
-
-    externalNativeBuild {
-        cmake {
-            path file('../../CMakeLists.txt')
-        }
-    }
+dependencies {
+	implementation 'androidx.activity:activity:1.2.0-beta02'
+	implementation 'androidx.appcompat:appcompat:1.2.0'
+	implementation 'androidx.fragment:fragment:1.3.0-beta02'
+	implementation 'com.google.android.material:material:1.2.1'
 }
 
 task makePak(type:Exec) {
-    commandLine 'python', 'makepak.py', 'pak/', 'src/main/assets/extras.pak'
+	commandLine 'python', 'makepak.py', 'pak/', 'src/main/assets/extras.pak'
 } 
 
 preBuild.dependsOn(makePak)

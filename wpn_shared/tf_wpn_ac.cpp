@@ -83,7 +83,7 @@ void CTFAssaultC::Holster( void )
 	WindDown( true );
 	m_fInReload = 0;
 	m_pPlayer->m_flNextAttack = 0.1f;
-	SendWeaponAnim( AC_HOLSTER, 1 );
+	SendWeaponAnim( AC_HOLSTER );
 }
 
 void CTFAssaultC::WeaponIdle( void )
@@ -98,7 +98,7 @@ void CTFAssaultC::WeaponIdle( void )
 		}
 		else
 		{
-			SendWeaponAnim( !UTIL_SharedRandomLong( m_pPlayer->random_seed, AC_IDLE1, AC_IDLE2 ), 1 );
+			SendWeaponAnim( !UTIL_SharedRandomLong( m_pPlayer->random_seed, AC_IDLE1, AC_IDLE2 ) );
 			m_flTimeWeaponIdle = 12.5f;
 		}
 	}

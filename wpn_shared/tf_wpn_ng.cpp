@@ -96,7 +96,7 @@ void CTFNailgun::WeaponIdle( void )
 	if ( m_flTimeWeaponIdle < 0.0f )
 	{
 		m_flTimeWeaponIdle = 15.0f;
-		SendWeaponAnim( NAILGUN_IDLE1, 1 );
+		SendWeaponAnim( NAILGUN_IDLE1 );
 	}
 }
 

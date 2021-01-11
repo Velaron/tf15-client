@@ -63,7 +63,7 @@ void CTFRailgun::WeaponIdle( void )
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
 		m_flTimeWeaponIdle = 12.5f;
-		SendWeaponAnim( RAIL_IDLE, 1 );
+		SendWeaponAnim( RAIL_IDLE );
 	}
 }
 

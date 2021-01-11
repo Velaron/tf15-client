@@ -1148,6 +1148,8 @@ void ClearEventList( void );
 void DLLEXPORT HUD_Shutdown( void )
 {
 	ShutdownInput();
-
 	ClearEventList();
+	//CL_UnloadParticleMan();
+	// Velaron: TODO
+	//if ( g_hTrackerModule ) { Sys_UnloadModule( g_hTrackerModule ); }
 }

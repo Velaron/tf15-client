@@ -44,7 +44,7 @@ void CTFFlamethrower::Holster( void )
 {
 	m_fInReload = 0;
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( FLAME_HOLSTER, 1 );
+	SendWeaponAnim( FLAME_HOLSTER );
 }
 
 void CTFFlamethrower::PrimaryAttack( void )
@@ -108,12 +108,12 @@ void CTFFlamethrower::WeaponIdle( void )
 		if ( UTIL_SharedRandomLong( m_pPlayer->random_seed, 0, 4 ) )
 		{
 			m_flTimeWeaponIdle = 12.5f;
-			SendWeaponAnim( FLAME_IDLE, 1 );
+			SendWeaponAnim( FLAME_IDLE );
 		}
 		else
 		{
 			m_flTimeWeaponIdle = 3.0f;
-			SendWeaponAnim( FLAME_FIDGET, 1 );
+			SendWeaponAnim( FLAME_FIDGET );
 		}
 	}
 }

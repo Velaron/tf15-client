@@ -71,7 +71,7 @@ void CTFGrenadeLauncher::Holster( void )
 	m_fInSpecialReload = 0;
 	m_flTimeWeaponIdle = 1000.0f;
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( m_iAnim_Holster, 1 );
+	SendWeaponAnim( m_iAnim_Holster );
 }
 
 BOOL CTFGrenadeLauncher::Deploy( void )
@@ -108,7 +108,7 @@ void CTFGrenadeLauncher::Reload( void )
 			{
 				m_fInSpecialReload = 1;
 				m_pPlayer->tfstate |= TFSTATE_RELOADING;
-				SendWeaponAnim( m_iAnim_ReloadDown, 1 );
+				SendWeaponAnim( m_iAnim_ReloadDown );
 				m_pPlayer->m_flNextAttack = 0.1f;
 				m_flTimeWeaponIdle = 0.1f;
 				m_flNextSecondaryAttack = 0.1f;
@@ -130,7 +130,7 @@ void CTFGrenadeLauncher::WeaponIdle( void )
 			{
 				if ( m_iClip == 6 )
 				{
-					SendWeaponAnim( m_iAnim_ReloadUp, 1 );
+					SendWeaponAnim( m_iAnim_ReloadUp );
 					m_fInSpecialReload = 0;
 					m_flTimeWeaponIdle = 1.5f;
 					return;
@@ -142,7 +142,7 @@ void CTFGrenadeLauncher::WeaponIdle( void )
 					return;
 				}
 
-				SendWeaponAnim( m_iAnim_ReloadUp, 1 );
+				SendWeaponAnim( m_iAnim_ReloadUp );
 				m_fInSpecialReload = 0;
 				m_flTimeWeaponIdle = 1.5f;
 				return;
@@ -167,7 +167,7 @@ void CTFGrenadeLauncher::WeaponIdle( void )
 		}
 
 		m_flTimeWeaponIdle = 3.0f;
-		SendWeaponAnim( m_iAnim_Idle, 1 );
+		SendWeaponAnim( m_iAnim_Idle );
 	}
 }
 
@@ -207,7 +207,7 @@ void CTFGrenadeLauncher::PrimaryAttack( void )
 	}
 	else
 	{
-		SendWeaponAnim( m_iAnim_Idle, 1 );
+		SendWeaponAnim( m_iAnim_Idle );
 		m_flNextPrimaryAttack = GetNextAttackDelay( 1.0f );
 		PlayEmptySound();
 		m_fInSpecialReload = 0;
@@ -278,7 +278,7 @@ void CTFPipebombLauncher::PrimaryAttack( void )
 		if ( !m_pPlayer->ammo_rockets )
 		{
 			PlayEmptySound();
-			SendWeaponAnim( m_iAnim_Idle, 1 );
+			SendWeaponAnim( m_iAnim_Idle );
 			m_flNextPrimaryAttack = GetNextAttackDelay( 1.0f );
 		}
 	}

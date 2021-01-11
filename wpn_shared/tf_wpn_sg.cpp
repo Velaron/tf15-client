@@ -181,18 +181,18 @@ void CTFShotgun::WeaponIdle( void )
 			if ( iRand == 20 * ( iRand / 20 ) )
 			{
 				m_flTimeWeaponIdle = ( 20.0f / 9.0f );
-				SendWeaponAnim( SHOTGUN_IDLE, 1 );
+				SendWeaponAnim( SHOTGUN_IDLE );
 			}
 			else
 			{
 				m_flTimeWeaponIdle = ( 20.0f / 9.5f );
-				SendWeaponAnim( SHOTGUN_IDLE4, 1 );
+				SendWeaponAnim( SHOTGUN_IDLE4 );
 			}
 		}
 		else
 		{
 			m_flTimeWeaponIdle = 5.0f;
-			SendWeaponAnim( SHOTGUN_IDLE_DEEP, 1 );
+			SendWeaponAnim( SHOTGUN_IDLE_DEEP );
 		}
 	}
 }
@@ -225,7 +225,7 @@ void CTFShotgun::Reload( void )
 			}
 			else
 			{
-				SendWeaponAnim( SHOTGUN_START_RELOAD, 1 );
+				SendWeaponAnim( SHOTGUN_START_RELOAD );
 				m_pPlayer->tfstate |= TFSTATE_RELOADING;
 				m_fInSpecialReload = 1;
 				m_pPlayer->m_flNextAttack = 0.1f;

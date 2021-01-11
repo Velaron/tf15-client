@@ -1,46 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical">
-  <ScrollView android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical"
-              android:layout_weight="1"
-              android:background="#0B0C10">
-    <LinearLayout
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical">
-      <LinearLayout
-        style="@style/option"
-        android:background="@drawable/option_background" >
-        <TextView
-          style="@style/option_label"
-          android:text="@string/dev_level"
-          android:layout_weight="1" />
-        <Spinner
-          style="@style/option_label"
-          android:id="@+id/dev_spinner"
-          android:spinnerMode="dialog"
-          android:gravity="end" />
-      </LinearLayout>
-      <LinearLayout
-        style="@style/option"
-        android:background="@drawable/option_background" >
-        <TextView
-          style="@style/option_label"
-          android:text="@string/enable_logging"
-          android:layout_weight="1" />
-        <CheckBox style="@style/option_label"
-                  android:id="@+id/enable_logging"
-                  android:gravity="end" />
-      </LinearLayout>
-    </LinearLayout>
-  </ScrollView>
-  <Button android:id="@+id/launch"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="@string/launch"
-          android:onClick="startXash" />
-</LinearLayout>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent">
+	
+	<com.google.android.material.textfield.TextInputLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="8dp"
+		android:hint="@string/launch_parameters"
+		app:startIconDrawable="@drawable/baseline_settings_24">
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/launchParameters"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+
+	</com.google.android.material.textfield.TextInputLayout>
+	
+	<com.google.android.material.bottomappbar.BottomAppBar
+		android:id="@+id/bottomAppBar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		style="@style/Widget.MaterialComponents.BottomAppBar.Colored" />
+	
+	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+		android:id="@+id/launchButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/launch"
+		app:icon="@drawable/baseline_play_arrow_24"
+		app:layout_anchor="@id/bottomAppBar" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

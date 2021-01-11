@@ -303,7 +303,7 @@ float EV_TFC_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *ve
 	return fvolbar;
 }
 
-char *EV_TFC_DamageDecal( int entity )
+char *EV_TFC_DamageDecal( int entity, int bitsDamageType )
 {
 	physent_t *pe;
 	static char decalname[32];
@@ -333,8 +333,8 @@ void EV_TFC_GunshotDecalTrace( pmtrace_t *pTrace, char *name )
 	if ( name && *name && pTrace->fraction != 1.0f )
 	{
 		gEngfuncs.pEfxAPI->R_BulletImpactParticles( pTrace->endpos );
-
 		iRand = gEngfuncs.pfnRandomLong( 0, 0x7FFF );
+
 		if ( iRand < ( 0x7fff / 2 ) )
 		{
 			switch ( iRand % 5 )
@@ -375,15 +375,15 @@ void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 			//	EV_TFC_GunshotDecalTrace( pTrace, "hwshot1" );
 			//	break;
 		default:
-			EV_TFC_GunshotDecalTrace( pTrace, EV_TFC_DamageDecal( pTrace->ent ) );
+			EV_TFC_GunshotDecalTrace( pTrace, EV_TFC_DamageDecal( pTrace->ent, 0 ) );
 			break;
 		}
 	}
 }
 
-void EV_TFC_DecalTrace( pmtrace_t *pTrace, char *name )
+void EV_TFC_DecalTrace( pmtrace_t *pTrace, const char *name )
 {
-	physent_s *pe;
+	physent_t *pe;
 
 	if ( name && *name )
 	{
@@ -391,7 +391,7 @@ void EV_TFC_DecalTrace( pmtrace_t *pTrace, char *name )
 
 		if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) && CVAR_GET_FLOAT( "r_decals" ) != 0.0f )
 		{
-			gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( name ) ),
+			gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( (char *)name ) ),
 				gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
 		}
 	}
@@ -695,27 +695,7 @@ void EV_TFC_Axe( event_args_t *args )
 
 	if ( tr.fraction >= 1.0f )
 	{
-		if ( EV_IsLocal( idx ) )
-		{
-			switch ( classid )
-			{
-			case 0: // spy
-				iAnim = KNIFE_ATTACK1;
-				break;
-			case 1: // engineer
-				iAnim = SPANNER_ATTACK1;
-				break;
-			case 2: // medic
-				iAnim = MEDIKIT_USE_SHORT;
-				break;
-			case 3: // everyone else
-				iAnim = EV_TFC_PlayCrowbarAnim( ANIM_MISS );
-				break;
-			}
-
-			gEngfuncs.pEventAPI->EV_WeaponAnimation( iAnim, 2 );
-		}
-
+		EV_TFC_PlayAxeAnim( idx, classid, 0 );
 		EV_TFC_PlayAxeSound( idx, classid, origin, 0, 0.0f );
 		return;
 	}
@@ -725,23 +705,7 @@ void EV_TFC_Axe( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) )
 	{
-		switch ( classid )
-		{
-		case 0:
-			iAnim = KNIFE_ATTACK2;
-			break;
-		case 1:
-			iAnim = SPANNER_ATTACK2;
-			break;
-		case 2:
-			iAnim = MEDIKIT_USE_LONG;
-			break;
-		case 3:
-			iAnim = EV_TFC_PlayCrowbarAnim( ANIM_HIT );
-			break;
-		}
-
-		gEngfuncs.pEventAPI->EV_WeaponAnimation( iAnim, 2 );
+		EV_TFC_PlayAxeAnim( idx, classid, 1 );
 	}
 
 	ent = gEngfuncs.pEventAPI->EV_IndexFromTrace( &tr );
@@ -1265,55 +1229,67 @@ void EV_TFC_DoorHitBottom( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
-void EV_TFC_Explode( float *org, int dmg, pmtrace_t *pTrace, float fExplosionScale )
+void EV_TFC_Explode( float *org, int dmg, float fExplosionScale, qboolean bDontSpark, pmtrace_t *pTrace, int bitsDamageType )
 {
 	Vector origin;
 	float fireball;
-	int explosion;
-	physent_s *pe;
-	int decal;
-	char decalname[32];
-	char soundname[32];
+	qboolean explosion_outside;
 
 	VectorCopy( org, origin );
-
+	
 	if ( pTrace->fraction != 1.0 )
 	{
-		if ( dmg >= 24 )
-		{
-			dmg -= 24;
-		}
-
-		fireball = dmg * 0.6f;
+		fireball = Q_max( dmg - 24, 0 ) * 0.6f;
 		VectorMA( pTrace->endpos, fireball, pTrace->plane.normal, origin );
 	}
+
+	explosion_outside = gEngfuncs.PM_PointContents( origin, NULL ) == CONTENT_SOLID && gEngfuncs.PM_PointContents( org, NULL ) == CONTENT_SOLID;
 
 	if ( fExplosionScale == 0.0f )
 	{
 		fExplosionScale = ( dmg - 50 ) * 0.6f;
 	}
 
-	explosion = gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/explode01.spr" );
+	gEngfuncs.pEfxAPI->R_Explosion( origin, gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/explode01.spr" ),
+		fExplosionScale * 0.1f, 15.0f, TE_EXPLFLAG_NOADDITIVE | TE_EXPLFLAG_NODLIGHTS );
 
-	gEngfuncs.pEfxAPI->R_Explosion( origin, explosion, fExplosionScale * 0.1f, 15.0f, TE_EXPLFLAG_NOADDITIVE | TE_EXPLFLAG_NODLIGHTS );
-
-	if ( gEngfuncs.PM_PointContents( origin, NULL ) != CONTENTS_SOLID && gEngfuncs.PM_PointContents( org, NULL ) != CONTENTS_SOLID )
+	if ( !explosion_outside )
 	{
-		if ( gEngfuncs.pfnGetCvarFloat( "r_decals" ) != 0.0f )
+		if ( gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) > 0.5f )
 		{
-			pe = gEngfuncs.pEventAPI->EV_GetPhysent( pTrace->ent );
-
-			if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) )
-			{
-				sprintf( decalname, "{scorch%i", gEngfuncs.pfnRandomLong( 1, 2 ) );
-				decal = gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( decalname );
-				gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( decal ), gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
-			}
+			EV_TFC_DecalTrace( pTrace, "{scorch2" );
+		}
+		else
+		{
+			EV_TFC_DecalTrace( pTrace, "{scorch1" );
 		}
 	}
 
-	sprintf( soundname, "weapons/debris%i.wav", gEngfuncs.pfnRandomLong( 1, 3 ) );
-	gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_VOICE, soundname, 0.55f, ATTN_NORM, 0, PITCH_NORM );
+	switch ( gEngfuncs.pfnRandomLong( 0, 2 ) )
+	{
+	case 0:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_VOICE, "weapons/debris1.wav", 0.55f, ATTN_NORM, 0, PITCH_NORM );
+		break;
+	case 1:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_VOICE, "weapons/debris2.wav", 0.55f, ATTN_NORM, 0, PITCH_NORM );
+		break;
+	case 2:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_VOICE, "weapons/debris3.wav", 0.55f, ATTN_NORM, 0, PITCH_NORM );
+		break;
+	}
+
+	if ( ( explosion_outside || gEngfuncs.PM_PointContents( org, NULL ) == CONTENT_WATER ) && !bDontSpark )
+	{
+		for ( int i = 0; i < gEngfuncs.pfnRandomLong( 0, 3 ); i++ )
+		{
+			gEngfuncs.pEfxAPI->R_SparkShower( origin );
+		}
+	}
+}
+
+void EV_TFC_ExplodeFire( float *org, int dmg, qboolean bDontSpark, pmtrace_t *pTrace, int bitsDamageType )
+{
+	EV_TFC_Explode(org, dmg, 0.0f, bDontSpark, pTrace, bitsDamageType );
 }
 
 void EV_TFC_Explosion( event_args_t *args )
@@ -1334,7 +1310,7 @@ void EV_TFC_Explosion( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlayerTrace( vecSpot, vecEnd, PM_STUDIO_BOX, -1, &tr );
 	gEngfuncs.pEventAPI->EV_PopPMStates();
 
-	EV_TFC_Explode( origin, 120, &tr, 0.0f );
+	EV_TFC_Explode( origin, 120, 0.0f, TRUE, &tr, 0 );
 }
 
 void EV_TFC_Grenade( event_args_t *args )
@@ -1354,7 +1330,7 @@ void EV_TFC_Grenade( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
 	gEngfuncs.pEventAPI->EV_PlayerTrace( vecSpot, vecEnd, PM_STUDIO_BOX, -1, &tr );
 	gEngfuncs.pEventAPI->EV_PopPMStates();
-	EV_TFC_Explode( origin, 120, &tr, 0.0f );
+	EV_TFC_Explode( origin, 120, 0.0f, TRUE, &tr, 0 );
 }
 
 void EV_TFC_NormalGrenade( event_args_t *args )
@@ -1374,7 +1350,7 @@ void EV_TFC_NormalGrenade( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
 	gEngfuncs.pEventAPI->EV_PlayerTrace( vecSpot, vecEnd, PM_STUDIO_BOX, -1, &tr );
 	gEngfuncs.pEventAPI->EV_PopPMStates();
-	EV_TFC_Explode( origin, 180, &tr, 0.0f );
+	EV_TFC_Explode( origin, 180, 0.0f, TRUE, &tr, 0 );
 }
 
 void EV_TFC_FireRPG( event_args_t *args )
@@ -1402,7 +1378,7 @@ void EV_TFC_FireRPG( event_args_t *args )
 void EV_FireTFCSniper( event_args_t *args )
 {
 	int idx;
-	physent_s *pe;
+	physent_t *pe;
 	pmtrace_t tr;
 	int iDamage;
 	Vector origin, angles;
@@ -1613,7 +1589,7 @@ void EV_TFC_AxeDecal( event_args_t *args )
 {
 	int idx;
 	pmtrace_t *tr;
-	physent_s *pe;
+	physent_t *pe;
 
 	idx = args->entindex;
 	tr = gp_tr_decal[idx - 1];
@@ -1649,7 +1625,7 @@ void EV_TFC_EngineerGrenade( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlayerTrace( vecSpot, vecEnd, PM_STUDIO_BOX, -1, &tr );
 	gEngfuncs.pEventAPI->EV_PopPMStates();
 
-	EV_TFC_Explode( origin, 180, &tr, 78.0f );
+	EV_TFC_Explode( origin, 180, 78.0f, TRUE, &tr, 0 );
 }
 
 void EV_TFC_Concussion( event_args_t *args )
@@ -1722,7 +1698,7 @@ void EV_TFC_NapalmFire( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlayerTrace( vecSpot, vecEnd, PM_STUDIO_BOX, -1, &tr );
 	gEngfuncs.pEventAPI->EV_PopPMStates();
 
-	EV_TFC_Explode( origin, 20, &tr, 30.0f );
+	EV_TFC_Explode( origin, 20, 30.0f, TRUE, &tr, 0 );
 }
 
 void EV_TFC_NapalmBurn( event_args_t *args )
@@ -1938,7 +1914,7 @@ void EV_TFC_RailDie( particle_s *particle )
 
 		if ( !EV_IsPlayer( entity ) || EV_TFC_IsAlly( entity, particle->context ) )
 		{
-			EV_TFC_GunshotDecalTrace( &tr, EV_TFC_DamageDecal( entity ) );
+			EV_TFC_GunshotDecalTrace( &tr, EV_TFC_DamageDecal( entity, 0 ) );
 		}
 		else
 		{
@@ -2000,7 +1976,7 @@ void EV_TFC_Tranquilizer( event_args_t *args )
 
 void EV_TFC_TranqNailTouch( tempent_s *ent, pmtrace_t *ptr )
 {
-	physent_s *pe;
+	physent_t *pe;
 	int entity;
 	char decalname[32];
 
@@ -2039,7 +2015,7 @@ void EV_TFC_NailGrenade( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlayerTrace( vecSpot, vecEnd, PM_STUDIO_BOX, -1, &tr );
 	gEngfuncs.pEventAPI->EV_PopPMStates();
 
-	EV_TFC_Explode( origin, 180, &tr, 78.0f );
+	EV_TFC_Explode( origin, 180, 78.0f, TRUE, &tr, 0 );
 }
 
 void EV_TFC_GibCallback( tempent_s *ent, float frametime, float currenttime )
@@ -2358,12 +2334,6 @@ void EV_TFC_Knife( event_args_t *args )
 
 }
 
-// Velaron: unused maybe idk
-void EV_TFC_ExplodeFire( float *org, int dmg, qboolean bDontSpark, pmtrace_t *pTrace, int bitsDamageType )
-{
-	EV_TFC_Explode( org, dmg, pTrace, 3.0f );
-}
-
 const Vector &GetTeamColor( int team_no )
 {
 	switch ( team_no )
@@ -2422,9 +2392,18 @@ int EV_TFC_PlaySpannerAnim( int iAnimType )
 	}
 }
 
-int EV_TFC_PlayAxeAnim( int iAnimType )
+void EV_TFC_PlayAxeAnim( int idx, int classid, int iAnimType )
 {
-	return 0;
+	if ( EV_IsLocal( idx ) )
+	{
+		switch ( classid )
+		{
+			case 0: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlayKnifeAnim( iAnimType ), 2 ); break;
+			case 1: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlaySpannerAnim( iAnimType ), 2 ); break;
+			case 2: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlayMedkitAnim( iAnimType ), 2 ); break;
+			case 3: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlayCrowbarAnim( iAnimType ), 2 ); break;
+		}
+	}
 }
 
 int EV_TFC_Spanner( int idx, float *origin, float *forward, float *right, int entity, float *vecDir, pmtrace_t *ptr )
@@ -2444,7 +2423,7 @@ void EV_Benchmark( event_args_t *args )
 
 void EV_TFC_BuildingEvent( event_args_t *args )
 {
-
+	if ( !args ) { return; }
 }
 
 void RandomSparkSound( float *origin )
@@ -2548,21 +2527,41 @@ void PlayTeleporterAmbientSound( event_args_t *args )
 	}
 }
 
+void RemoveEvent( eventnode_t *node )
+{
+	if ( node && g_pEventListHead )
+	{
+		if ( node == g_pEventListHead )
+		{
+
+		}
+	}
+}
+
 void CheckEventsFinished( eventnode_t *node )
 {
-	
+	if ( node && !node->data->iparam1 && g_pEventListHead )
+	{
+		if ( node == g_pEventListHead )
+		{
+			
+		}
+	}
 }
 
 void ClearEventList( void )
 {
-	/*
-		if ( g_pEventListHead )
-		{
-			delete[] g_pEventListHead;
-		}
+	eventnode_t *pNext;
 
-		g_flNextEventListThink = 0.0f;
-	*/
+	while ( g_pEventListHead )
+	{
+		pNext = g_pEventListHead->next;
+		delete g_pEventListHead;
+		g_pEventListHead = pNext;
+	}
+
+	g_pEventListHead = NULL;
+	g_flNextEventListThink = 0.0f;
 }
 
 void RunEventList( void )

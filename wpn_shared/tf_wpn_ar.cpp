@@ -53,7 +53,7 @@ void CTFAutoRifle::Holster( void )
 {
 	m_fInReload = 0;
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( ARIFLE_HOLSTER, 1 );
+	SendWeaponAnim( ARIFLE_HOLSTER );
 }
 
 void CTFAutoRifle::PrimaryAttack( void )
@@ -67,7 +67,7 @@ void CTFAutoRifle::PrimaryAttack( void )
 	{
 		m_flNextPrimaryAttack = GetNextAttackDelay( 5.0f );
 		m_flTimeWeaponIdle = 1.0f;
-		SendWeaponAnim( SRIFLE_IDLE, 1 );
+		SendWeaponAnim( SRIFLE_IDLE );
 		PlayEmptySound();
 	}
 	else
@@ -114,7 +114,7 @@ void CTFAutoRifle::WeaponIdle( void )
 
 	if ( m_flTimeWeaponIdle < 0.0f )
 	{
-		SendWeaponAnim( ARIFLE_IDLE, 1 );
+		SendWeaponAnim( ARIFLE_IDLE );
 		m_flTimeWeaponIdle = 12.5f;
 	}
 }

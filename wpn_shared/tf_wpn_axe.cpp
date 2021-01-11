@@ -60,7 +60,7 @@ int CTFAxe::GetItemInfo( ItemInfo *p )
 void CTFAxe::Holster( int skiplocal )
 {
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( CROWBAR_HOLSTER, 1 );
+	SendWeaponAnim( CROWBAR_HOLSTER );
 }
 
 void CTFAxe::Smack( void )
@@ -191,7 +191,7 @@ void CTFSpanner::Precache( void )
 void CTFSpanner::Holster( void )
 {
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( SPANNER_HOLSTER, 1 );
+	SendWeaponAnim( SPANNER_HOLSTER );
 }
 
 int CTFSpanner::GetItemInfo( ItemInfo *p )
@@ -217,7 +217,7 @@ BOOL CTFSpanner::Deploy( void )
 
 void CTFSpanner::PlayAnim( int iAnimType )
 {
-	SendWeaponAnim( iAnimType ? SPANNER_USE1 : SPANNER_ATTACK1, 1 );
+	SendWeaponAnim( iAnimType ? SPANNER_USE1 : SPANNER_ATTACK1 );
 }
 
 void CTFSpanner::WeaponIdle( void )
@@ -225,7 +225,7 @@ void CTFSpanner::WeaponIdle( void )
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
 		m_flTimeWeaponIdle = 12.5f;
-		SendWeaponAnim( SPANNER_IDLE, 1 );
+		SendWeaponAnim( SPANNER_IDLE );
 	}
 }
 
@@ -275,7 +275,7 @@ void CTFKnife::Precache( void )
 void CTFKnife::Holster( void )
 {
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( KNIFE_HOLSTER, 1 );
+	SendWeaponAnim( KNIFE_HOLSTER );
 }
 
 int CTFKnife::GetItemInfo( ItemInfo *p )
@@ -303,7 +303,7 @@ void CTFKnife::PlayAnim( int iAnimType )
 {
 	if ( iAnimType == 0 || iAnimType == 1 )
 	{
-		SendWeaponAnim( KNIFE_ATTACK1, 1 );
+		SendWeaponAnim( KNIFE_ATTACK1 );
 	}
 }
 
@@ -312,7 +312,7 @@ void CTFKnife::WeaponIdle( void )
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
 		m_flTimeWeaponIdle = 7.5f;
-		SendWeaponAnim( RANDOM_LONG( 0, 1 ), 1 );
+		SendWeaponAnim( RANDOM_LONG( KNIFE_IDLE1, KNIFE_IDLE2 ) );
 	}
 }
 
@@ -342,7 +342,7 @@ void CTFMedikit::Precache( void )
 void CTFMedikit::Holster( void )
 {
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( MEDIKIT_HOLSTER, 1 );
+	SendWeaponAnim( MEDIKIT_HOLSTER );
 }
 
 int CTFMedikit::GetItemInfo( ItemInfo *p )
@@ -368,7 +368,7 @@ BOOL CTFMedikit::Deploy( void )
 
 void CTFMedikit::PlayAnim( int iAnimType )
 {
-	SendWeaponAnim( iAnimType ? MEDIKIT_USE_LONG : MEDIKIT_USE_SHORT, 1 );
+	SendWeaponAnim( iAnimType ? MEDIKIT_USE_LONG : MEDIKIT_USE_SHORT );
 }
 
 void CTFMedikit::WeaponIdle( void )
@@ -376,7 +376,7 @@ void CTFMedikit::WeaponIdle( void )
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
 		m_flTimeWeaponIdle = 7.5f;
-		SendWeaponAnim( RANDOM_LONG( 0, 1 ) ? MEDIKIT_IDLE_LONG : MEDIKIT_IDLE_SHORT, 1 );
+		SendWeaponAnim( RANDOM_LONG( MEDIKIT_IDLE_SHORT, MEDIKIT_IDLE_LONG ) );
 	}
 }
 

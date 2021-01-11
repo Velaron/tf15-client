@@ -1,53 +1,33 @@
 package su.xash.tf15client;
-import android.app.*;
-import android.content.*;
-import android.content.pm.*;
-import android.graphics.*;
-import android.os.*;
-import android.text.*;
-import android.text.style.*;
-import android.view.*;
-import android.widget.*;
-import android.widget.LinearLayout.*;
 
-public class LauncherActivity extends Activity
-{	
-    @Override
-    protected void onCreate( Bundle savedInstanceState )
-	{
-        super.onCreate( savedInstanceState );
-		getWindow().requestFeature( Window.FEATURE_NO_TITLE );
-		setContentView( R.layout.activity_launcher );
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.os.Bundle;
+import android.Manifest;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
-		Spinner spinner = (Spinner)findViewById( R.id.dev_spinner );
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource( this, R.array.dev_options, R.layout.spinner_item );
-		adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-		spinner.setAdapter( adapter );
+public class LauncherActivity extends AppCompatActivity {
+	@Override
+	public void onCreate(Bundle savedInstanceBundle) {
+		super.onCreate(savedInstanceBundle);
+		setContentView(R.layout.activity_launcher);
 
-		ExtractAssets.extractPAK( this, false );
-	}
+		ExtractAssets.extractPAK(this, false);
+		PermissionManager.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-    public void startXash( View view )
-    {
-		Intent intent = new Intent();
-		intent.setComponent( new ComponentName( "su.xash.engine", "su.xash.engine.XashActivity" ) ); 
-		intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-
-		intent.putExtra( "pakfile", getExternalFilesDir( null ).getAbsolutePath() + "/extras.pak" );
-		intent.putExtra( "gamedir", "tfc" );
-		intent.putExtra( "argv", "-log -dev 2" );
-
-		try
-		{
-			PackageManager packageManager = getPackageManager();
-			ApplicationInfo applicationInfo = packageManager.getApplicationInfo( getPackageName(), 0 );
-			intent.putExtra( "gamelibdir", applicationInfo.nativeLibraryDir );
-		}
-		catch( Exception e )
-		{
-			intent.putExtra( "gamelibdir", getFilesDir().getParentFile().getPath() + "/lib" );
-		}
-
-		startActivity( intent );
+		TextInputEditText launchParameters = (TextInputEditText)findViewById(R.id.launchParameters);
+		launchParameters.setText("-log -dev 2");
+		
+		ExtendedFloatingActionButton launchButton = (ExtendedFloatingActionButton)findViewById(R.id.launchButton);
+		launchButton.setOnClickListener((view) -> {
+			startActivity(new Intent().setComponent(new ComponentName("su.xash.engine", "su.xash.engine.XashActivity"))
+			.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			.putExtra("pakfile", getExternalFilesDir( null ).getAbsolutePath() + "/extras.pak")
+			.putExtra("gamedir", "tfc")
+			.putExtra("argv", launchParameters.getText())
+			.putExtra("gamelibdir", getApplicationInfo().nativeLibraryDir));
+		});
 	}
 }

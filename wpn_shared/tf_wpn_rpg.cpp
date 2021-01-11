@@ -46,7 +46,7 @@ void CTFRpg::Holster( void )
 	m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
 	m_fInSpecialReload = 0;
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( RPG_HOLSTER, 1 );
+	SendWeaponAnim( RPG_HOLSTER );
 }
 
 void CTFRpg::Precache( void )
@@ -74,7 +74,7 @@ void CTFRpg::Reload( void )
 					if ( m_flTimeWeaponIdle <= gpGlobals->time )
 					{
 						m_fInSpecialReload = 2;
-						SendWeaponAnim( RPG_RELOAD, 1 );
+						SendWeaponAnim( RPG_RELOAD );
 						m_flNextReload = m_fReloadTime;
 						m_flTimeWeaponIdle = m_fReloadTime;
 					}
@@ -89,7 +89,7 @@ void CTFRpg::Reload( void )
 			}
 			else
 			{
-				SendWeaponAnim( RPG_RELOAD_START, 1 );
+				SendWeaponAnim( RPG_RELOAD_START );
 				m_pPlayer->tfstate |= TFSTATE_RELOADING;
 				m_fInSpecialReload = 1;
 				m_pPlayer->m_flNextAttack = 0.1f;
@@ -113,7 +113,7 @@ void CTFRpg::WeaponIdle( void )
 				{
 					m_flTimeWeaponIdle = 3.0f;
 					ResetEmptySound();
-					SendWeaponAnim( m_iClip < 1 ? RPG_FIDGET_UL : RPG_FIDGET, 1 );
+					SendWeaponAnim( m_iClip < 1 ? RPG_FIDGET_UL : RPG_FIDGET );
 				}
 				else
 				{
@@ -124,7 +124,7 @@ void CTFRpg::WeaponIdle( void )
 
 			if ( m_iClip == 4 )
 			{
-				SendWeaponAnim( RPG_RELOAD_END, 1 );
+				SendWeaponAnim( RPG_RELOAD_END );
 				m_fInSpecialReload = 0;
 				m_flTimeWeaponIdle = 1.5f;
 				return;
@@ -142,7 +142,7 @@ void CTFRpg::WeaponIdle( void )
 			{
 				m_flTimeWeaponIdle = 3.0f;
 				ResetEmptySound();
-				SendWeaponAnim( m_iClip < 1 ? RPG_FIDGET_UL : RPG_FIDGET, 1 );
+				SendWeaponAnim( m_iClip < 1 ? RPG_FIDGET_UL : RPG_FIDGET );
 			}
 			else
 			{
@@ -157,7 +157,7 @@ void CTFRpg::WeaponIdle( void )
 			return;
 		}
 
-		SendWeaponAnim( RPG_RELOAD_END, 1 );
+		SendWeaponAnim( RPG_RELOAD_END );
 		m_fInSpecialReload = 0;
 		m_flTimeWeaponIdle = 1.5f;
 		return;
