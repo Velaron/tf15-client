@@ -17,7 +17,7 @@ matrix:
           - extra-google-m2repository
       install:
         - echo y | sdkmanager "ndk-bundle"
-        - echo y | sdkmanager "ndk;21.0.6113669"
+        - echo y | sdkmanager "ndk;21.3.6528147"
       before_script:
         - cd android
       script:
