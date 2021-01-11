@@ -12,7 +12,7 @@ matrix:
         components:
           - tools
           - build-tools-29.0.3
-          - android-5
+          - android-14
           - android-29
           - extra-google-m2repository
       install:
