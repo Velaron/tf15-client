@@ -32,7 +32,7 @@ void CTFSniperRifle::Precache( void )
 	m_usSniperHit = PRECACHE_EVENT( 1, "events/wpn/tf_sniperhit.sc" );
 }
 
-int CTFSniperRifle::GetItemInfo( ItemInfo *p )
+int CTFSniperRifle::GetItemInfo( ItemInfo* p )
 {
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
@@ -70,7 +70,7 @@ void CTFSniperRifle::SecondaryAttack( void )
 	m_flNextSecondaryAttack = 0.3f;
 }
 
-void CTFSniperRifle::Holster( int skiplocal )
+void CTFSniperRifle::Holster( int skiplocal /* = 0 */ )
 {
 	m_fInReload = 0;
 
@@ -93,7 +93,6 @@ void CTFSniperRifle::Holster( int skiplocal )
 
 void CTFSniperRifle::Reload( void )
 {
-
 }
 
 BOOL CTFSniperRifle::Deploy( void )
@@ -110,7 +109,7 @@ BOOL CTFSniperRifle::Deploy( void )
 	return FALSE;
 }
 
-int CTFSniperRifle::AddToPlayer( CBasePlayer *pPlayer )
+int CTFSniperRifle::AddToPlayer( CBasePlayer* pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
@@ -164,7 +163,7 @@ void CTFSniperRifle::PrimaryAttack( void )
 {
 	Vector vecSrc, vecEnd, anglesAim;
 	TraceResult tr;
-	CBaseEntity *pHit;
+	CBaseEntity* pHit;
 	int vol, maxvol;
 	BOOL player;
 
@@ -202,16 +201,22 @@ void CTFSniperRifle::PrimaryAttack( void )
 			m_pPlayer->deathtype = NULL;
 			player = FClassnameIs( pHit->pev, "player" );
 			vol = maxvol = player ? 100 : 90;
-			
+
 			if ( vecEnd.Length() < 1024.0f )
 			{
 				vol = vol * ( 1.0f - vecEnd.Length() / 1024.0f );
-				if ( vol > maxvol ) { vol = maxvol; }
+				if ( vol > maxvol )
+				{
+					vol = maxvol;
+				}
 			}
 
 			if ( player )
 			{
-				if ( pHit->pev->health < -40.0f ) { vol = 0; }
+				if ( pHit->pev->health < -40.0f )
+				{
+					vol = 0;
+				}
 				PLAYBACK_EVENT_FULL( FEV_SERVER | FEV_HOSTONLY, ENT( m_pPlayer->pev ), m_usSniperHit, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, vol, 0, 1, pHit->pev->health < -40.0f );
 			}
 			else
@@ -302,5 +307,8 @@ void CTFSniperRifle::ItemPostFrame( void )
 		return;
 	}
 
-	if ( ShouldWeaponIdle() ) { WeaponIdle(); }
+	if ( ShouldWeaponIdle() )
+	{
+		WeaponIdle();
+	}
 }

@@ -41,14 +41,20 @@ void CTFAssaultC::Precache( void )
 	m_usACStart = PRECACHE_EVENT( 1, "events/wpn/tf_acstart.sc" );
 }
 
-int CTFAssaultC::GetItemInfo( ItemInfo *p )
+int CTFAssaultC::GetItemInfo( ItemInfo* p )
 {
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
+
 	if ( m_pPlayer )
+	{
 		p->iAmmo1 = m_pPlayer->maxammo_shells;
+	}
 	else
+	{
 		p->iAmmo1 = 200;
+	}
+
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
@@ -65,20 +71,20 @@ BOOL CTFAssaultC::Deploy( void )
 	return DefaultDeploy( "models/v_tfac.mdl", "models/p_mini.mdl", AC_DEPLOY, "ac", 1 );
 }
 
-int CTFAssaultC::AddToPlayer( CBasePlayer *pPlayer )
+BOOL CTFAssaultC::AddToPlayer( CBasePlayer* pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, ENT( pPlayer->pev ) );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		return true;
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
-void CTFAssaultC::Holster( void )
+void CTFAssaultC::Holster( int skiplocal /* = 0 */ )
 {
 	WindDown( true );
 	m_fInReload = 0;
@@ -119,7 +125,7 @@ void CTFAssaultC::Fire( void )
 		p_vecSrc = m_pPlayer->GetGunPosition() + gpGlobals->v_up * -4.0f + gpGlobals->v_right * 2.0f;
 		p_VecDirShooting = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 		p_vecSpread = Vector( 0.1f, 0.1f, 0.0f );
-		FireBullets( 5, p_vecSrc, p_VecDirShooting, p_vecSpread, 8192.0f, BULLET_PLAYER_TF_ASSAULT, 8, 7, NULL );
+		m_pPlayer->FireBullets( 5, p_vecSrc, p_VecDirShooting, p_vecSpread, 8192.0f, BULLET_PLAYER_TF_ASSAULT, 8, 7, NULL );
 		m_pPlayer->ammo_shells--;
 	}
 }
@@ -138,31 +144,37 @@ void CTFAssaultC::PrimaryAttack( void )
 		}
 		return;
 	case 2:
-	{
 		if ( m_pPlayer->ammo_shells <= 0 )
+		{
 			StartSpin();
+		}
 		else
+		{
 			Fire();
+		}
 
 		m_flTimeWeaponIdle = 0.1f;
 		m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
 		return;
-	}
 	case 3:
-	{
 		if ( m_pPlayer->ammo_shells <= 0 )
+		{
 			Spin();
+		}
 		else
+		{
 			m_iWeaponState = 1;
+		}
 
 		m_flTimeWeaponIdle = 0.1f;
 		m_flNextPrimaryAttack = GetNextAttackDelay( 0.1f );
 		return;
-	}
 	}
 
 	if ( m_pPlayer->pev->button & IN_ATTACK )
+	{
 		WindUp();
+	}
 
 	m_flTimeWeaponIdle = 0.6f;
 	m_flNextPrimaryAttack = GetNextAttackDelay( 0.5f );

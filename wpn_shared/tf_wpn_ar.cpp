@@ -30,7 +30,7 @@ void CTFAutoRifle::Precache( void )
 	m_usFireAutoRifle = PRECACHE_EVENT( 1, "events/wpn/tf_ar.sc" );
 }
 
-int CTFAutoRifle::GetItemInfo( ItemInfo *p )
+int CTFAutoRifle::GetItemInfo( ItemInfo* p )
 {
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
@@ -49,7 +49,7 @@ int CTFAutoRifle::GetItemInfo( ItemInfo *p )
 	return 1;
 }
 
-void CTFAutoRifle::Holster( void )
+void CTFAutoRifle::Holster( int skiplocal /* = 0 */ )
 {
 	m_fInReload = 0;
 	m_pPlayer->m_flNextAttack = 0.5f;
@@ -60,8 +60,8 @@ void CTFAutoRifle::PrimaryAttack( void )
 {
 	Vector vecSrc, vecEnd;
 	TraceResult tr;
-	edict_t *pent;
-	CBaseEntity *pEntity;
+	edict_t* pent;
+	CBaseEntity* pEntity;
 
 	if ( m_pPlayer->ammo_shells <= 0 )
 	{
@@ -84,7 +84,7 @@ void CTFAutoRifle::PrimaryAttack( void )
 		if ( tr.flFraction != 1.0f )
 		{
 			pent = ENT( 0 );
-			
+
 			if ( tr.pHit || pent )
 			{
 				pEntity = CBaseEntity::Instance( pent );
@@ -119,9 +119,9 @@ void CTFAutoRifle::WeaponIdle( void )
 	}
 }
 
-int CTFAutoRifle::AddToPlayer( CBasePlayer *pPlayer )
+int CTFAutoRifle::AddToPlayer( CBasePlayer* pPlayer )
 {
-	if( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
+	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, ENT( pPlayer->pev ) );
 		WRITE_BYTE( m_iId );

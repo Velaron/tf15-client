@@ -21,13 +21,16 @@ void CTFIncendiaryC::Spawn( void )
 	pev->solid = SOLID_TRIGGER;
 }
 
-int CTFIncendiaryC::GetItemInfo( ItemInfo *p )
+int CTFIncendiaryC::GetItemInfo( ItemInfo* p )
 {
 	p->pszAmmo1 = "rockets";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer ) {
+	if ( m_pPlayer )
+	{
 		p->iAmmo1 = m_pPlayer->maxammo_rockets;
-	} else {
+	}
+	else
+	{
 		p->iAmmo1 = 20;
 	}
 	p->pszAmmo2 = NULL;
@@ -41,7 +44,7 @@ int CTFIncendiaryC::GetItemInfo( ItemInfo *p )
 	return 1;
 }
 
-void CTFIncendiaryC::Holster( void )
+void CTFIncendiaryC::Holster( int skiplocal /* = 0 */ )
 {
 	m_fInReload = 0;
 	m_pPlayer->m_flNextAttack = 0.5f;
@@ -87,7 +90,7 @@ BOOL CTFIncendiaryC::Deploy( void )
 		return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_rpg.mdl", RPG_RELOAD_START, "rpg", 1 );
 }
 
-int CTFIncendiaryC::AddToPlayer( CBasePlayer *pPlayer )
+int CTFIncendiaryC::AddToPlayer( CBasePlayer* pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{

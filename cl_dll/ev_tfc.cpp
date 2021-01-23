@@ -40,35 +40,35 @@
 
 extern engine_studio_api_t IEngineStudio;
 
-extern "C" char PM_FindTextureType( char *name );
+extern "C" char PM_FindTextureType( char* name );
 
 extern "C" int PM_GetPhysEntInfo( int ent );
 
 void V_PunchAxis( int axis, float punch );
-void VectorAngles( const float *forward, float *angles );
+void VectorAngles( const float* forward, float* angles );
 
 extern "C" float anglemod( float a );
 
 struct eventnode_s
 {
-	event_args_t *data;
-	eventnode_s *prev;
-	eventnode_s *next;
+	event_args_t* data;
+	eventnode_s* prev;
+	eventnode_s* next;
 };
 typedef eventnode_s eventnode_t;
 
 static int tracerCount[32];
 static pmtrace_s g_tr_decal[32];
-static pmtrace_t *gp_tr_decal[32];
+static pmtrace_t* gp_tr_decal[32];
 qboolean g_bACSpinning[33];
 extern float g_flSpinDownTime[33];
 extern float g_flSpinUpTime[33];
-extern cvar_t *cl_lw;
+extern cvar_t* cl_lw;
 
-extern globalvars_t *gpGlobals;
+extern globalvars_t* gpGlobals;
 float g_flNextEventListThink;
 float g_nTime;
-eventnode_t *g_pEventListHead;
+eventnode_t* g_pEventListHead;
 
 const Vector g_vRed = Vector( 255.0f, 0.0f, 0.0f );
 const Vector g_vBlue = Vector( 0.0f, 0.0f, 255.0f );
@@ -78,79 +78,79 @@ const Vector g_vBlack = Vector( 0.0f, 0.0f, 0.0f );
 
 extern "C"
 {
-	void EV_TFC_Axe( struct event_args_s *args );
-	void EV_FireTFCShotgun( struct event_args_s *args );
-	void EV_FireTFCSuperShotgun( struct event_args_s *args );
-	void EV_ReloadTFCShotgun( struct event_args_s *args );
-	void EV_PumpTFCShotgun( struct event_args_s *args );
-	void EV_FireTFCNailgun( struct event_args_s *args );
-	void EV_FireTFCSuperNailgun( struct event_args_s *args );
-	void EV_FireTFCAutoRifle( struct event_args_s *args );
-	void EV_TFC_Gas( struct event_args_s *args );
-	void EV_TFC_DoorGoUp( struct event_args_s *args );
-	void EV_TFC_DoorGoDown( struct event_args_s *args );
-	void EV_TFC_DoorHitTop( struct event_args_s *args );
-	void EV_TFC_DoorHitBottom( struct event_args_s *args );
-	void EV_TFC_Explosion( struct event_args_s *args );
-	void EV_TFC_Grenade( struct event_args_s *args );
-	void EV_TFC_NormalGrenade( struct event_args_s *args );
-	void EV_TFC_FireRPG( struct event_args_s *args );
-	void EV_FireTFCSniper( struct event_args_s *args );
-	void EV_TFC_SniperHit( struct event_args_s *args );
-	void EV_TFC_FireIC( struct event_args_s *args );
-	void EV_TFC_NailgrenadeNail( struct event_args_s *args );
-	void EV_TFC_GrenadeLauncher( struct event_args_s *args );
-	void EV_TFC_PipeLauncher( struct event_args_s *args );
-	void EV_TFC_NormalShot( struct event_args_s *args );
-	void EV_TFC_SuperShot( struct event_args_s *args );
-	void EV_TFC_SteamShot( struct event_args_s *args );
-	void EV_TFC_EngineerGrenade( struct event_args_s *args );
-	void EV_TFC_Concussion( struct event_args_s *args );
-	void EV_TFC_Assault_WindUp( struct event_args_s *args );
-	void EV_TFC_Assault_WindDown( struct event_args_s *args );
-	void EV_TFC_Assault_Start( struct event_args_s *args );
-	void EV_TFC_Assault_Fire( struct event_args_s *args );
-	void EV_TFC_Assault_Spin( struct event_args_s *args );
-	void EV_TFC_Assault_StartSpin( struct event_args_s *args );
-	void EV_TFC_AxeDecal( struct event_args_s *args );
-	void EV_TFC_BuildingEvent( event_args_t *args );
-	void EV_TFC_NapalmFire( struct event_args_s *args );
-	void EV_TFC_MirvGrenadeMain( struct event_args_s *args );
-	void EV_TFC_MirvGrenade( struct event_args_s *args );
-	void EV_TFC_NapalmBurn( struct event_args_s *args );
-	void EV_TFC_EMP( struct event_args_s *args );
-	void EV_TFC_Flame_Fire( struct event_args_s *args );
-	void EV_TFC_Railgun( struct event_args_s *args );
-	void EV_TFC_Tranquilizer( struct event_args_s *args );
-	void EV_TFC_NailGrenade( struct event_args_s *args );
-	void EV_TFC_Knife( event_args_s *args );
-	void EV_TFC_Gibs( event_args_s *args );
-	void EV_Benchmark( event_args_t *args );
-	void EV_TrainPitchAdjust( struct event_args_s *args );
+	void EV_TFC_Axe( struct event_args_s* args );
+	void EV_FireTFCShotgun( struct event_args_s* args );
+	void EV_FireTFCSuperShotgun( struct event_args_s* args );
+	void EV_ReloadTFCShotgun( struct event_args_s* args );
+	void EV_PumpTFCShotgun( struct event_args_s* args );
+	void EV_FireTFCNailgun( struct event_args_s* args );
+	void EV_FireTFCSuperNailgun( struct event_args_s* args );
+	void EV_FireTFCAutoRifle( struct event_args_s* args );
+	void EV_TFC_Gas( struct event_args_s* args );
+	void EV_TFC_DoorGoUp( struct event_args_s* args );
+	void EV_TFC_DoorGoDown( struct event_args_s* args );
+	void EV_TFC_DoorHitTop( struct event_args_s* args );
+	void EV_TFC_DoorHitBottom( struct event_args_s* args );
+	void EV_TFC_Explosion( struct event_args_s* args );
+	void EV_TFC_Grenade( struct event_args_s* args );
+	void EV_TFC_NormalGrenade( struct event_args_s* args );
+	void EV_TFC_FireRPG( struct event_args_s* args );
+	void EV_FireTFCSniper( struct event_args_s* args );
+	void EV_TFC_SniperHit( struct event_args_s* args );
+	void EV_TFC_FireIC( struct event_args_s* args );
+	void EV_TFC_NailgrenadeNail( struct event_args_s* args );
+	void EV_TFC_GrenadeLauncher( struct event_args_s* args );
+	void EV_TFC_PipeLauncher( struct event_args_s* args );
+	void EV_TFC_NormalShot( struct event_args_s* args );
+	void EV_TFC_SuperShot( struct event_args_s* args );
+	void EV_TFC_SteamShot( struct event_args_s* args );
+	void EV_TFC_EngineerGrenade( struct event_args_s* args );
+	void EV_TFC_Concussion( struct event_args_s* args );
+	void EV_TFC_Assault_WindUp( struct event_args_s* args );
+	void EV_TFC_Assault_WindDown( struct event_args_s* args );
+	void EV_TFC_Assault_Start( struct event_args_s* args );
+	void EV_TFC_Assault_Fire( struct event_args_s* args );
+	void EV_TFC_Assault_Spin( struct event_args_s* args );
+	void EV_TFC_Assault_StartSpin( struct event_args_s* args );
+	void EV_TFC_AxeDecal( struct event_args_s* args );
+	void EV_TFC_BuildingEvent( event_args_t* args );
+	void EV_TFC_NapalmFire( struct event_args_s* args );
+	void EV_TFC_MirvGrenadeMain( struct event_args_s* args );
+	void EV_TFC_MirvGrenade( struct event_args_s* args );
+	void EV_TFC_NapalmBurn( struct event_args_s* args );
+	void EV_TFC_EMP( struct event_args_s* args );
+	void EV_TFC_Flame_Fire( struct event_args_s* args );
+	void EV_TFC_Railgun( struct event_args_s* args );
+	void EV_TFC_Tranquilizer( struct event_args_s* args );
+	void EV_TFC_NailGrenade( struct event_args_s* args );
+	void EV_TFC_Knife( event_args_s* args );
+	void EV_TFC_Gibs( event_args_s* args );
+	void EV_Benchmark( event_args_t* args );
+	void EV_TrainPitchAdjust( struct event_args_s* args );
 }
 
-#define VECTOR_CONE_1DEGREES Vector( 0.00873, 0.00873, 0.00873 )
-#define VECTOR_CONE_2DEGREES Vector( 0.01745, 0.01745, 0.01745 )
-#define VECTOR_CONE_3DEGREES Vector( 0.02618, 0.02618, 0.02618 )
-#define VECTOR_CONE_4DEGREES Vector( 0.03490, 0.03490, 0.03490 )
-#define VECTOR_CONE_5DEGREES Vector( 0.04362, 0.04362, 0.04362 )
-#define VECTOR_CONE_6DEGREES Vector( 0.05234, 0.05234, 0.05234 )
-#define VECTOR_CONE_7DEGREES Vector( 0.06105, 0.06105, 0.06105 )
-#define VECTOR_CONE_8DEGREES Vector( 0.06976, 0.06976, 0.06976 )
-#define VECTOR_CONE_9DEGREES Vector( 0.07846, 0.07846, 0.07846 )
+#define VECTOR_CONE_1DEGREES  Vector( 0.00873, 0.00873, 0.00873 )
+#define VECTOR_CONE_2DEGREES  Vector( 0.01745, 0.01745, 0.01745 )
+#define VECTOR_CONE_3DEGREES  Vector( 0.02618, 0.02618, 0.02618 )
+#define VECTOR_CONE_4DEGREES  Vector( 0.03490, 0.03490, 0.03490 )
+#define VECTOR_CONE_5DEGREES  Vector( 0.04362, 0.04362, 0.04362 )
+#define VECTOR_CONE_6DEGREES  Vector( 0.05234, 0.05234, 0.05234 )
+#define VECTOR_CONE_7DEGREES  Vector( 0.06105, 0.06105, 0.06105 )
+#define VECTOR_CONE_8DEGREES  Vector( 0.06976, 0.06976, 0.06976 )
+#define VECTOR_CONE_9DEGREES  Vector( 0.07846, 0.07846, 0.07846 )
 #define VECTOR_CONE_10DEGREES Vector( 0.08716, 0.08716, 0.08716 )
 #define VECTOR_CONE_15DEGREES Vector( 0.13053, 0.13053, 0.13053 )
 #define VECTOR_CONE_20DEGREES Vector( 0.17365, 0.17365, 0.17365 )
 
-float EV_TFC_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *vecEnd, int iBulletType )
+float EV_TFC_PlayTextureSound( int idx, pmtrace_t* ptr, float* vecSrc, float* vecEnd, int iBulletType )
 {
 	char chTextureType;
 	float fvol, fvolbar;
-	char *rgsz[4];
+	char* rgsz[4];
 	int cnt;
 	float fattn;
 	int entity;
-	const char *pTextureName;
+	const char* pTextureName;
 	char texname[64];
 	char szbuffer[64];
 
@@ -303,9 +303,9 @@ float EV_TFC_PlayTextureSound( int idx, pmtrace_t *ptr, float *vecSrc, float *ve
 	return fvolbar;
 }
 
-char *EV_TFC_DamageDecal( int entity, int bitsDamageType )
+char* EV_TFC_DamageDecal( int entity, int bitsDamageType )
 {
-	physent_t *pe;
+	physent_t* pe;
 	static char decalname[32];
 
 	pe = gEngfuncs.pEventAPI->EV_GetPhysent( entity );
@@ -326,7 +326,7 @@ char *EV_TFC_DamageDecal( int entity, int bitsDamageType )
 	return decalname;
 }
 
-void EV_TFC_GunshotDecalTrace( pmtrace_t *pTrace, char *name )
+void EV_TFC_GunshotDecalTrace( pmtrace_t* pTrace, char* name )
 {
 	int iRand;
 
@@ -361,9 +361,9 @@ void EV_TFC_GunshotDecalTrace( pmtrace_t *pTrace, char *name )
 	}
 }
 
-void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
+void EV_TFC_DecalGunshot( pmtrace_t* pTrace, int iBulletType )
 {
-	physent_t *pe;
+	physent_t* pe;
 
 	pe = gEngfuncs.pEventAPI->EV_GetPhysent( pTrace->ent );
 
@@ -371,7 +371,7 @@ void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 	{
 		switch ( iBulletType )
 		{
-			case BULLET_PLAYER_TF_ASSAULT:
+		case BULLET_PLAYER_TF_ASSAULT:
 			//	EV_TFC_GunshotDecalTrace( pTrace, "hwshot1" );
 			//	break;
 		default:
@@ -381,9 +381,9 @@ void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 	}
 }
 
-void EV_TFC_DecalTrace( pmtrace_t *pTrace, const char *name )
+void EV_TFC_DecalTrace( pmtrace_t* pTrace, const char* name )
 {
-	physent_t *pe;
+	physent_t* pe;
 
 	if ( name && *name )
 	{
@@ -391,13 +391,13 @@ void EV_TFC_DecalTrace( pmtrace_t *pTrace, const char *name )
 
 		if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) && CVAR_GET_FLOAT( "r_decals" ) != 0.0f )
 		{
-			gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( (char *)name ) ),
-				gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
+			gEngfuncs.pEfxAPI->R_DecalShoot( gEngfuncs.pEfxAPI->Draw_DecalIndex( gEngfuncs.pEfxAPI->Draw_DecalIndexFromName( (char*)name ) ),
+			                                 gEngfuncs.pEventAPI->EV_IndexFromTrace( pTrace ), 0, pTrace->endpos, 0 );
 		}
 	}
 }
 
-int EV_TFC_CheckTracer( int idx, float *vecSrc, float *end, float *forward, float *right, int iBulletType, int iTracerFreq, int *tracerCount )
+int EV_TFC_CheckTracer( int idx, float* vecSrc, float* end, float* forward, float* right, int iBulletType, int iTracerFreq, int* tracerCount )
 {
 	Vector vecTracerSrc, offset;
 
@@ -443,7 +443,7 @@ int EV_TFC_ShouldShowBlood( int color )
 	return 0;
 }
 
-void EV_TFC_RandomBloodVector( float *direction )
+void EV_TFC_RandomBloodVector( float* direction )
 {
 	direction[0] = gEngfuncs.pfnRandomFloat( -1.0f, 1.0f );
 	direction[1] = gEngfuncs.pfnRandomFloat( -1.0f, 1.0f );
@@ -457,7 +457,7 @@ FireBullets
 Go to the trouble of combining multiple pellets into a single damage call.
 ================
 */
-void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int cShots, float *vecSrc, float *vecDirShooting, float *vecSpread, float flDistance, int iBulletType, int iTracerFreq, int *tracerCount, int iDamage )
+void EV_TFC_FireBullets( int idx, float* forward, float* right, float* up, int cShots, float* vecSrc, float* vecDirShooting, float* vecSpread, float flDistance, int iBulletType, int iTracerFreq, int* tracerCount, int iDamage )
 {
 	pmtrace_t tr;
 	int tracer, iShot;
@@ -470,7 +470,8 @@ void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int c
 		Vector vecDir, vecEnd;
 		float x, y, z;
 
-		do {
+		do
+		{
 			x = gEngfuncs.pfnRandomFloat( -0.5f, 0.5f ) + gEngfuncs.pfnRandomFloat( -0.5f, 0.5f );
 			y = gEngfuncs.pfnRandomFloat( -0.5f, 0.5f ) + gEngfuncs.pfnRandomFloat( -0.5f, 0.5f );
 			z = x * x + y * y;
@@ -538,9 +539,9 @@ void EV_TFC_FireBullets( int idx, float *forward, float *right, float *up, int c
 	*/
 }
 
-#define SND_CHANGE_PITCH	(1 << 7)
+#define SND_CHANGE_PITCH ( 1 << 7 )
 
-void EV_TrainPitchAdjust( event_args_t *args )
+void EV_TrainPitchAdjust( event_args_t* args )
 {
 	int idx;
 	vec3_t origin;
@@ -651,7 +652,7 @@ enum soundtypes_e
 	SOUND_HIT_WALL,
 };
 
-void EV_TFC_Axe( event_args_t *args )
+void EV_TFC_Axe( event_args_t* args )
 {
 	int idx;
 	float fSoundData;
@@ -744,7 +745,7 @@ void EV_TFC_Axe( event_args_t *args )
 	}
 }
 
-void EV_FireTFCShotgun( event_args_t *args )
+void EV_FireTFCShotgun( event_args_t* args )
 {
 	int idx;
 	int shell;
@@ -779,7 +780,7 @@ void EV_FireTFCShotgun( event_args_t *args )
 	EV_TFC_FireBullets( idx, forward, right, up, 6, vecSrc, vecAiming, Vector( 0.04f, 0.04f, 0.0f ), 2048.0f, BULLET_PLAYER_TF_BUCKSHOT, 0, &tracerCount[idx - 1], 4 );
 }
 
-void EV_ReloadTFCShotgun( event_args_t *args )
+void EV_ReloadTFCShotgun( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -802,7 +803,7 @@ void EV_ReloadTFCShotgun( event_args_t *args )
 	}
 }
 
-void EV_PumpTFCShotgun( event_args_t *args )
+void EV_PumpTFCShotgun( event_args_t* args )
 {
 	int full;
 	int idx;
@@ -821,7 +822,7 @@ void EV_PumpTFCShotgun( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/scock1.wav", VOL_NORM, ATTN_NORM, 0, gEngfuncs.pfnRandomLong( 0, 31 ) + 95 );
 }
 
-void EV_FireTFCNailgun( event_args_t *args )
+void EV_FireTFCNailgun( event_args_t* args )
 {
 	int idx;
 	int shell;
@@ -855,9 +856,9 @@ void EV_FireTFCNailgun( event_args_t *args )
 	}
 }
 
-void EV_TFC_NailTouch( struct tempent_s *ent, pmtrace_t *ptr )
+void EV_TFC_NailTouch( struct tempent_s* ent, pmtrace_t* ptr )
 {
-	physent_t *pe;
+	physent_t* pe;
 	char decalname[32];
 
 	pe = gEngfuncs.pEventAPI->EV_GetPhysent( ptr->ent );
@@ -873,7 +874,7 @@ void EV_TFC_NailTouch( struct tempent_s *ent, pmtrace_t *ptr )
 	}
 }
 
-void EV_FireTFCSuperNailgun( event_args_t *args )
+void EV_FireTFCSuperNailgun( event_args_t* args )
 {
 	int idx;
 	int shell;
@@ -888,7 +889,6 @@ void EV_FireTFCSuperNailgun( event_args_t *args )
 	VectorCopy( args->origin, origin );
 	VectorCopy( args->angles, angles );
 	AngleVectors( angles, forward, right, up );
-
 
 	if ( EV_IsLocal( idx ) )
 	{
@@ -908,7 +908,7 @@ void EV_FireTFCSuperNailgun( event_args_t *args )
 	}
 }
 
-void EV_FireTFCSuperShotgun( event_args_t *args )
+void EV_FireTFCSuperShotgun( event_args_t* args )
 {
 	int idx;
 	int shell;
@@ -942,7 +942,7 @@ void EV_FireTFCSuperShotgun( event_args_t *args )
 	EV_TFC_FireBullets( idx, forward, right, up, 14, vecSrc, vecAiming, Vector( 0.04f, 0.04f, 0.0f ), 2048.0f, BULLET_PLAYER_TF_BUCKSHOT, 4, &tracerCount[idx - 1], 4 );
 }
 
-void EV_FireTFCAutoRifle( event_args_t *args )
+void EV_FireTFCAutoRifle( event_args_t* args )
 {
 	int idx;
 	pmtrace_t tr;
@@ -980,7 +980,7 @@ void EV_FireTFCAutoRifle( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PopPMStates();
 }
 
-void EV_TFC_TraceAttack( int idx, float flDamage, float *vecDir, pmtrace_t *ptr, int bitsDamageType )
+void EV_TFC_TraceAttack( int idx, float flDamage, float* vecDir, pmtrace_t* ptr, int bitsDamageType )
 {
 	int entity;
 	Vector vecOrigin, dir;
@@ -998,21 +998,24 @@ void EV_TFC_TraceAttack( int idx, float flDamage, float *vecDir, pmtrace_t *ptr,
 	}
 }
 
-void EV_TFC_BloodDrips( float *origin, int color, int amount )
+void EV_TFC_BloodDrips( float* origin, int color, int amount )
 {
 	float scale;
 
 	if ( EV_TFC_ShouldShowBlood( color ) && amount )
 	{
-		if ( gEngfuncs.GetMaxClients() > 1 ) { amount *= 2; }
+		if ( gEngfuncs.GetMaxClients() > 1 )
+		{
+			amount *= 2;
+		}
 		scale = Q_min( Q_max( 3.0f, amount / 10.0f ), 16.0f );
 
 		gEngfuncs.pEfxAPI->R_BloodSprite( origin, color, gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/bloodspray.spr" ),
-			gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/blood.spr" ), scale );
+		                                  gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/blood.spr" ), scale );
 	}
 }
 
-void EV_TFC_BubbleTrail( float *from, float *to, int count, int modelindex )
+void EV_TFC_BubbleTrail( float* from, float* to, int count, int modelindex )
 {
 	float maxz, maxza, maxzb;
 
@@ -1033,13 +1036,13 @@ void EV_TFC_BubbleTrail( float *from, float *to, int count, int modelindex )
 	gEngfuncs.pEfxAPI->R_BubbleTrail( from, to, maxza, modelindex, count, 8.0f );
 }
 
-void EV_TFC_ClientProjectile( float *vecOrigin, float *vecVelocity, short sModelIndex, int iOwnerIndex,
-	int iLife, void ( *hitcallback )( struct tempent_s *ent, struct pmtrace_s *ptr ) )
+void EV_TFC_ClientProjectile( float* vecOrigin, float* vecVelocity, short sModelIndex, int iOwnerIndex,
+                              int iLife, void ( *hitcallback )( struct tempent_s* ent, struct pmtrace_s* ptr ) )
 {
 	gEngfuncs.pEfxAPI->R_Projectile( vecOrigin, vecVelocity, sModelIndex, iLife, iOwnerIndex, hitcallback );
 }
 
-void EV_TFC_Assault_WindUp( event_args_t *args )
+void EV_TFC_Assault_WindUp( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1062,7 +1065,7 @@ void EV_TFC_Assault_WindUp( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/asscan1.wav", 0.98f, ATTN_NORM, 0, 125 );
 }
 
-void EV_TFC_Assault_WindDown( event_args_t *args )
+void EV_TFC_Assault_WindDown( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1075,12 +1078,12 @@ void EV_TFC_Assault_WindDown( event_args_t *args )
 		g_flSpinDownTime[idx - 1] = gEngfuncs.GetClientTime() + 3.0f;
 	}
 
-	g_bACSpinning[idx - 1] = 0;
-
 	if ( EV_IsLocal( idx ) )
 	{
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( AC_SPINDOWN, 2 );
 	}
+
+	g_bACSpinning[idx - 1] = FALSE;
 
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan2.wav" );
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan4.wav" );
@@ -1092,7 +1095,7 @@ void EV_TFC_Assault_WindDown( event_args_t *args )
 	}
 }
 
-void EV_TFC_Assault_Start( event_args_t *args )
+void EV_TFC_Assault_Start( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1102,14 +1105,14 @@ void EV_TFC_Assault_Start( event_args_t *args )
 
 	g_flSpinDownTime[idx - 1] = 0.0f;
 	g_flSpinUpTime[idx - 1] = 0.0f;
-	g_bACSpinning[idx - 1] = 0;
+	g_bACSpinning[idx - 1] = FALSE;
 
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan2.wav" );
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan4.wav" );
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_STATIC, "weapons/asscan2.wav", 0.98f, ATTN_NORM, 0, 125 );
 }
 
-void EV_TFC_Assault_Fire( event_args_t *args )
+void EV_TFC_Assault_Fire( event_args_t* args )
 {
 	int idx;
 	int oddammo;
@@ -1118,6 +1121,7 @@ void EV_TFC_Assault_Fire( event_args_t *args )
 	Vector up, right, forward;
 	Vector vecSrc, vecAiming;
 	Vector origin, angles, velocity;
+	Vector vecSpread;
 
 	idx = args->entindex;
 	shell = gEngfuncs.pEventAPI->EV_FindModelIndex( "models/shell.mdl" );
@@ -1134,7 +1138,7 @@ void EV_TFC_Assault_Fire( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( AC_FIRE, 2 );
 	}
 
-	g_bACSpinning[idx - 1] = 0;
+	g_bACSpinning[idx - 1] = FALSE;
 
 	if ( oddammo )
 	{
@@ -1150,10 +1154,12 @@ void EV_TFC_Assault_Fire( event_args_t *args )
 		vecSrc[i] = right[i] * 2.0f + up[i] * -4.0f + vecSrc[i];
 	}
 
-	EV_TFC_FireBullets( idx, forward, right, up, 5, vecSrc, vecAiming, Vector( 0.1f, 0.1f, 0.0f ), 8192.0f, BULLET_PLAYER_TF_ASSAULT, 8, &tracerCount[idx - 1], 8 );
+	vecSpread = Vector( 0.1f, 0.1f, 0.0f );
+
+	EV_TFC_FireBullets( idx, forward, right, up, 5, vecSrc, vecAiming, vecSpread, 8192.0f, BULLET_PLAYER_TF_ASSAULT, 8, &tracerCount[idx - 1], 8 );
 }
 
-void EV_TFC_Assault_Spin( event_args_t *args )
+void EV_TFC_Assault_Spin( event_args_t* args )
 {
 	int idx;
 
@@ -1164,10 +1170,10 @@ void EV_TFC_Assault_Spin( event_args_t *args )
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( AC_FIRE, 2 );
 	}
 
-	g_bACSpinning[idx - 1] = 1;
+	g_bACSpinning[idx - 1] = TRUE;
 }
 
-void EV_TFC_Assault_StartSpin( event_args_t *args )
+void EV_TFC_Assault_StartSpin( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1175,14 +1181,14 @@ void EV_TFC_Assault_StartSpin( event_args_t *args )
 	idx = args->entindex;
 	VectorCopy( args->origin, origin );
 
-	g_bACSpinning[idx - 1] = 1;
+	g_bACSpinning[idx - 1] = TRUE;
 
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan2.wav" );
 	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_STATIC, "weapons/asscan4.wav" );
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_STATIC, "weapons/asscan4.wav", 0.98f, ATTN_NORM, 0, 125 );
 }
 
-void EV_TFC_Gas( event_args_t *args )
+void EV_TFC_Gas( event_args_t* args )
 {
 	Vector origin;
 
@@ -1191,37 +1197,27 @@ void EV_TFC_Gas( event_args_t *args )
 	gEngfuncs.pEfxAPI->R_ParticleBurst( origin, 240, 195, 2.0f );
 }
 
-void EV_TFC_DoorGoUp( event_args_t *args )
+void EV_TFC_DoorGoUp( event_args_t* args )
 {
-	const char *sound;
+	const char* sound;
 
 	sound = EV_TFC_LookupDoorSound( 0, args->iparam1 );
 	gEngfuncs.pEventAPI->EV_StopSound( -1, CHAN_STATIC, sound );
 	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
-void EV_TFC_DoorGoDown( event_args_t *args )
+void EV_TFC_DoorGoDown( event_args_t* args )
 {
-	const char *sound;
+	const char* sound;
 
 	sound = EV_TFC_LookupDoorSound( 0, args->iparam1 );
 	gEngfuncs.pEventAPI->EV_StopSound( -1, CHAN_STATIC, sound );
 	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
-void EV_TFC_DoorHitTop( event_args_t *args )
+void EV_TFC_DoorHitTop( event_args_t* args )
 {
-	const char *sound;
-
-	sound = EV_TFC_LookupDoorSound( 0, args->iparam1 );
-	gEngfuncs.pEventAPI->EV_StopSound( -1, CHAN_STATIC, sound );
-	sound = EV_TFC_LookupDoorSound( 1, args->iparam1 );
-	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
-}
-
-void EV_TFC_DoorHitBottom( event_args_t *args )
-{
-	const char *sound;
+	const char* sound;
 
 	sound = EV_TFC_LookupDoorSound( 0, args->iparam1 );
 	gEngfuncs.pEventAPI->EV_StopSound( -1, CHAN_STATIC, sound );
@@ -1229,14 +1225,24 @@ void EV_TFC_DoorHitBottom( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
-void EV_TFC_Explode( float *org, int dmg, float fExplosionScale, qboolean bDontSpark, pmtrace_t *pTrace, int bitsDamageType )
+void EV_TFC_DoorHitBottom( event_args_t* args )
+{
+	const char* sound;
+
+	sound = EV_TFC_LookupDoorSound( 0, args->iparam1 );
+	gEngfuncs.pEventAPI->EV_StopSound( -1, CHAN_STATIC, sound );
+	sound = EV_TFC_LookupDoorSound( 1, args->iparam1 );
+	gEngfuncs.pEventAPI->EV_PlaySound( -1, args->origin, CHAN_STATIC, sound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
+}
+
+void EV_TFC_Explode( float* org, int dmg, float fExplosionScale, qboolean bDontSpark, pmtrace_t* pTrace, int bitsDamageType )
 {
 	Vector origin;
 	float fireball;
 	qboolean explosion_outside;
 
 	VectorCopy( org, origin );
-	
+
 	if ( pTrace->fraction != 1.0 )
 	{
 		fireball = Q_max( dmg - 24, 0 ) * 0.6f;
@@ -1251,7 +1257,7 @@ void EV_TFC_Explode( float *org, int dmg, float fExplosionScale, qboolean bDontS
 	}
 
 	gEngfuncs.pEfxAPI->R_Explosion( origin, gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/explode01.spr" ),
-		fExplosionScale * 0.1f, 15.0f, TE_EXPLFLAG_NOADDITIVE | TE_EXPLFLAG_NODLIGHTS );
+	                                fExplosionScale * 0.1f, 15.0f, TE_EXPLFLAG_NOADDITIVE | TE_EXPLFLAG_NODLIGHTS );
 
 	if ( !explosion_outside )
 	{
@@ -1287,12 +1293,12 @@ void EV_TFC_Explode( float *org, int dmg, float fExplosionScale, qboolean bDontS
 	}
 }
 
-void EV_TFC_ExplodeFire( float *org, int dmg, qboolean bDontSpark, pmtrace_t *pTrace, int bitsDamageType )
+void EV_TFC_ExplodeFire( float* org, int dmg, qboolean bDontSpark, pmtrace_t* pTrace, int bitsDamageType )
 {
-	EV_TFC_Explode(org, dmg, 0.0f, bDontSpark, pTrace, bitsDamageType );
+	EV_TFC_Explode( org, dmg, 0.0f, bDontSpark, pTrace, bitsDamageType );
 }
 
-void EV_TFC_Explosion( event_args_t *args )
+void EV_TFC_Explosion( event_args_t* args )
 {
 	pmtrace_t tr;
 	Vector vecEnd, vecSpot;
@@ -1313,7 +1319,7 @@ void EV_TFC_Explosion( event_args_t *args )
 	EV_TFC_Explode( origin, 120, 0.0f, TRUE, &tr, 0 );
 }
 
-void EV_TFC_Grenade( event_args_t *args )
+void EV_TFC_Grenade( event_args_t* args )
 {
 	pmtrace_t tr;
 	Vector vecEnd, vecSpot;
@@ -1333,7 +1339,7 @@ void EV_TFC_Grenade( event_args_t *args )
 	EV_TFC_Explode( origin, 120, 0.0f, TRUE, &tr, 0 );
 }
 
-void EV_TFC_NormalGrenade( event_args_t *args )
+void EV_TFC_NormalGrenade( event_args_t* args )
 {
 	pmtrace_t tr;
 	Vector vecEnd, vecSpot;
@@ -1353,7 +1359,7 @@ void EV_TFC_NormalGrenade( event_args_t *args )
 	EV_TFC_Explode( origin, 180, 0.0f, TRUE, &tr, 0 );
 }
 
-void EV_TFC_FireRPG( event_args_t *args )
+void EV_TFC_FireRPG( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1375,10 +1381,10 @@ void EV_TFC_FireRPG( event_args_t *args )
 	}
 }
 
-void EV_FireTFCSniper( event_args_t *args )
+void EV_FireTFCSniper( event_args_t* args )
 {
 	int idx;
-	physent_t *pe;
+	physent_t* pe;
 	pmtrace_t tr;
 	int iDamage;
 	Vector origin, angles;
@@ -1428,11 +1434,11 @@ void EV_FireTFCSniper( event_args_t *args )
 	}
 }
 
-void EV_TFC_SniperHit( event_args_s *args )
+void EV_TFC_SniperHit( event_args_s* args )
 {
 	int idx;
 	float volume;
-	char *sound;
+	char* sound;
 	Vector origin;
 
 	idx = args->entindex;
@@ -1457,7 +1463,7 @@ void EV_TFC_SniperHit( event_args_s *args )
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_STATIC, sound, volume, ATTN_NORM, 0, PITCH_NORM );
 }
 
-void EV_TFC_FireIC( event_args_t *args )
+void EV_TFC_FireIC( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1478,7 +1484,7 @@ void EV_TFC_FireIC( event_args_t *args )
 	}
 }
 
-void EV_TFC_NailgrenadeNail( event_args_t *args )
+void EV_TFC_NailgrenadeNail( event_args_t* args )
 {
 	int nail;
 	Vector origin, angles, forward, velocity, org;
@@ -1509,7 +1515,7 @@ void EV_TFC_NailgrenadeNail( event_args_t *args )
 	}
 }
 
-void EV_TFC_GrenadeLauncher( event_args_t *args )
+void EV_TFC_GrenadeLauncher( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1530,7 +1536,7 @@ void EV_TFC_GrenadeLauncher( event_args_t *args )
 	}
 }
 
-void EV_TFC_PipeLauncher( event_args_t *args )
+void EV_TFC_PipeLauncher( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1551,7 +1557,7 @@ void EV_TFC_PipeLauncher( event_args_t *args )
 	}
 }
 
-void EV_TFC_NormalShot( event_args_t *args )
+void EV_TFC_NormalShot( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1562,8 +1568,7 @@ void EV_TFC_NormalShot( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_ITEM, "items/medshot4.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
-
-void EV_TFC_SuperShot( event_args_t *args )
+void EV_TFC_SuperShot( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1574,7 +1579,7 @@ void EV_TFC_SuperShot( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_ITEM, "items/medshot5.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
-void EV_TFC_SteamShot( event_args_t *args )
+void EV_TFC_SteamShot( event_args_t* args )
 {
 	int idx;
 	Vector origin;
@@ -1585,11 +1590,11 @@ void EV_TFC_SteamShot( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_ITEM, "items/steamburst1.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 }
 
-void EV_TFC_AxeDecal( event_args_t *args )
+void EV_TFC_AxeDecal( event_args_t* args )
 {
 	int idx;
-	pmtrace_t *tr;
-	physent_t *pe;
+	pmtrace_t* tr;
+	physent_t* pe;
 
 	idx = args->entindex;
 	tr = gp_tr_decal[idx - 1];
@@ -1607,7 +1612,7 @@ void EV_TFC_AxeDecal( event_args_t *args )
 	}
 }
 
-void EV_TFC_EngineerGrenade( event_args_t *args )
+void EV_TFC_EngineerGrenade( event_args_t* args )
 {
 	pmtrace_t tr;
 	Vector vecEnd, vecSpot;
@@ -1628,7 +1633,7 @@ void EV_TFC_EngineerGrenade( event_args_t *args )
 	EV_TFC_Explode( origin, 180, 78.0f, TRUE, &tr, 0 );
 }
 
-void EV_TFC_Concussion( event_args_t *args )
+void EV_TFC_Concussion( event_args_t* args )
 {
 	int wave;
 	pmtrace_t tr;
@@ -1670,17 +1675,17 @@ void EV_TFC_Concussion( event_args_t *args )
 	gEngfuncs.pEfxAPI->R_BeamCirclePoints( TE_BEAMCYLINDER, vecSpot, vecEnd, wave, 0.2f, 70.0f, 0.0f, 1.0f, 0.0f, 0, 0.0f, 1.0f, 1.0f, 1.0f );
 }
 
-void EV_TFC_MirvGrenadeMain( event_args_t *args )
+void EV_TFC_MirvGrenadeMain( event_args_t* args )
 {
 	EV_TFC_NormalGrenade( args );
 }
 
-void EV_TFC_MirvGrenade( event_args_t *args )
+void EV_TFC_MirvGrenade( event_args_t* args )
 {
 	EV_TFC_NormalGrenade( args );
 }
 
-void EV_TFC_NapalmFire( event_args_t *args )
+void EV_TFC_NapalmFire( event_args_t* args )
 {
 	pmtrace_t tr;
 	Vector vecSpot, vecEnd;
@@ -1701,7 +1706,7 @@ void EV_TFC_NapalmFire( event_args_t *args )
 	EV_TFC_Explode( origin, 20, 30.0f, TRUE, &tr, 0 );
 }
 
-void EV_TFC_NapalmBurn( event_args_t *args )
+void EV_TFC_NapalmBurn( event_args_t* args )
 {
 	int sprite;
 	Vector origin;
@@ -1712,7 +1717,7 @@ void EV_TFC_NapalmBurn( event_args_t *args )
 	gEngfuncs.pEfxAPI->R_FireField( origin, 100, sprite, 12, TEFIRE_FLAG_PLANAR | TEFIRE_FLAG_SOMEFLOAT, 0.8f );
 }
 
-void EV_TFC_EMP( event_args_t *args )
+void EV_TFC_EMP( event_args_t* args )
 {
 	int wave;
 	pmtrace_t tr;
@@ -1743,7 +1748,7 @@ void EV_TFC_EMP( event_args_t *args )
 	gEngfuncs.pEfxAPI->R_BeamCirclePoints( TE_BEAMCYLINDER, vecSpot, vecEnd, wave, 0.2f, 70.0f, 0.0f, 1.0f, 0.0f, 0, 0.0f, 1.0f, 1.0f, 1.0f );
 }
 
-void EV_TFC_Flame_Fire( event_args_t *args )
+void EV_TFC_Flame_Fire( event_args_t* args )
 {
 	int idx;
 	int shell, bubble;
@@ -1786,12 +1791,12 @@ void EV_TFC_Flame_Fire( event_args_t *args )
 }
 
 //Velaron: TODO
-float EV_TFC_WaterLevel( float *position, float minz, float maxz )
+float EV_TFC_WaterLevel( float* position, float minz, float maxz )
 {
 	float result; // fst7
-	float v5; // fst7
-	float v6; // fst5
-	float diff; // [esp+28h] [ebp-24h]
+	float v5;     // fst7
+	float v6;     // fst5
+	float diff;   // [esp+28h] [ebp-24h]
 	float minz_1; // [esp+38h] [ebp-14h]
 
 	minz_1 = minz;
@@ -1835,7 +1840,7 @@ float EV_TFC_WaterLevel( float *position, float minz, float maxz )
 	return result;
 }
 
-void EV_TFC_Railgun( event_args_t *args )
+void EV_TFC_Railgun( event_args_t* args )
 {
 	int idx;
 	pmtrace_t tr;
@@ -1880,9 +1885,9 @@ void EV_TFC_Railgun( event_args_t *args )
 	}
 }
 
-void EV_TFC_RailDie( particle_s *particle )
+void EV_TFC_RailDie( particle_s* particle )
 {
-	physent_t *pe;
+	physent_t* pe;
 	int entity;
 	pmtrace_t tr;
 	Vector forward, back;
@@ -1928,7 +1933,7 @@ void EV_TFC_RailDie( particle_s *particle )
 int EV_TFC_IsAlly( int idx1, int idx2 )
 {
 	if ( EV_TFC_GetTeamIndex( idx1 ) < 1 || EV_TFC_GetTeamIndex( idx1 ) > 4
-		|| EV_TFC_GetTeamIndex( idx2 ) > 1 || EV_TFC_GetTeamIndex( idx2 ) > 4 )
+	     || EV_TFC_GetTeamIndex( idx2 ) > 1 || EV_TFC_GetTeamIndex( idx2 ) > 4 )
 	{
 		return 0;
 	}
@@ -1941,7 +1946,7 @@ int EV_TFC_IsAlly( int idx1, int idx2 )
 	return 0;
 }
 
-void EV_TFC_Tranquilizer( event_args_t *args )
+void EV_TFC_Tranquilizer( event_args_t* args )
 {
 	int idx;
 	int shell;
@@ -1974,9 +1979,9 @@ void EV_TFC_Tranquilizer( event_args_t *args )
 	}
 }
 
-void EV_TFC_TranqNailTouch( tempent_s *ent, pmtrace_t *ptr )
+void EV_TFC_TranqNailTouch( tempent_s* ent, pmtrace_t* ptr )
 {
-	physent_t *pe;
+	physent_t* pe;
 	int entity;
 	char decalname[32];
 
@@ -1997,7 +2002,7 @@ void EV_TFC_TranqNailTouch( tempent_s *ent, pmtrace_t *ptr )
 	}
 }
 
-void EV_TFC_NailGrenade( event_args_t *args )
+void EV_TFC_NailGrenade( event_args_t* args )
 {
 	pmtrace_t tr;
 	Vector vecEnd, vecSpot;
@@ -2018,7 +2023,7 @@ void EV_TFC_NailGrenade( event_args_t *args )
 	EV_TFC_Explode( origin, 180, 78.0f, TRUE, &tr, 0 );
 }
 
-void EV_TFC_GibCallback( tempent_s *ent, float frametime, float currenttime )
+void EV_TFC_GibCallback( tempent_s* ent, float frametime, float currenttime )
 {
 	switch ( ent->entity.curstate.playerclass )
 	{
@@ -2060,9 +2065,9 @@ void EV_TFC_GibCallback( tempent_s *ent, float frametime, float currenttime )
 	}
 }
 
-void EV_TFC_BloodDecalTrace( pmtrace_t *pTrace, int bloodColor )
+void EV_TFC_BloodDecalTrace( pmtrace_t* pTrace, int bloodColor )
 {
-	const char *format;
+	const char* format;
 	char decalname[32];
 
 	if ( EV_TFC_ShouldShowBlood( bloodColor ) )
@@ -2073,7 +2078,7 @@ void EV_TFC_BloodDecalTrace( pmtrace_t *pTrace, int bloodColor )
 	}
 }
 
-void EV_TFC_GibTouchCallback( tempent_s *ent, pmtrace_t *ptr )
+void EV_TFC_GibTouchCallback( tempent_s* ent, pmtrace_t* ptr )
 {
 	if ( Length( ent->entity.baseline.origin ) > 0.0f && ent->entity.curstate.team > 0 )
 	{
@@ -2082,7 +2087,7 @@ void EV_TFC_GibTouchCallback( tempent_s *ent, pmtrace_t *ptr )
 	}
 }
 
-void EV_TFC_TraceBleed( float flDamage, float *vecDir, pmtrace_t *ptr, int bitsDamageType, int bloodcolor )
+void EV_TFC_TraceBleed( float flDamage, float* vecDir, pmtrace_t* ptr, int bitsDamageType, int bloodcolor )
 {
 	pmtrace_t Bloodtr;
 	Vector vecTraceDir, trend;
@@ -2127,14 +2132,14 @@ void EV_TFC_TraceBleed( float flDamage, float *vecDir, pmtrace_t *ptr, int bitsD
 	}
 }
 
-void EV_TFC_SpawnBlood( float *vecSpot, int bloodColor, float flDamage )
+void EV_TFC_SpawnBlood( float* vecSpot, int bloodColor, float flDamage )
 {
 	EV_TFC_BloodDrips( vecSpot, bloodColor, flDamage );
 }
 
 int EV_TFC_GetTeamIndex( int idx )
 {
-	cl_entity_s *pEnt;
+	cl_entity_s* pEnt;
 
 	if ( EV_IsPlayer( idx ) && ( pEnt = GetEntity( idx ) ) )
 	{
@@ -2144,15 +2149,14 @@ int EV_TFC_GetTeamIndex( int idx )
 	return -1;
 }
 
-
-tempent_s *EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, int ishead )
+tempent_s* EV_TFC_CreateGib( float* origin, float* attackdir, int multiplier, int ishead )
 {
 	int modelindex;
-	tempent_s *ent;
+	tempent_s* ent;
 	float mins[3], maxs[3];
 	float vmultiple;
 
-	model_s *gib = gEngfuncs.CL_LoadModel( "models/hgibs.mdl", &modelindex );
+	model_s* gib = gEngfuncs.CL_LoadModel( "models/hgibs.mdl", &modelindex );
 
 	if ( gib == NULL )
 		return NULL;
@@ -2200,7 +2204,7 @@ tempent_s *EV_TFC_CreateGib( float *origin, float *attackdir, int multiplier, in
 	return ent;
 }
 
-void EV_TFC_Gibs( event_args_t *args )
+void EV_TFC_Gibs( event_args_t* args )
 {
 	int idx;
 	int multiplier, gibcount;
@@ -2224,7 +2228,7 @@ void EV_TFC_Gibs( event_args_t *args )
 	EV_TFC_CreateGib( origin, attackdir, multiplier, 1 );
 }
 
-void EV_TFC_PlayAxeSound( int idx, int classid, float *origin, int iSoundType, float fSoundData )
+void EV_TFC_PlayAxeSound( int idx, int classid, float* origin, int iSoundType, float fSoundData )
 {
 	static char sound[32];
 
@@ -2248,10 +2252,10 @@ void EV_TFC_PlayAxeSound( int idx, int classid, float *origin, int iSoundType, f
 	}
 }
 
-void EV_TFC_AxeHit( int idx, float *origin, float *forward, float *right, int entity, float *vecDir, pmtrace_t *ptr )
+void EV_TFC_AxeHit( int idx, float* origin, float* forward, float* right, int entity, float* vecDir, pmtrace_t* ptr )
 {
 	int iAnim;
-	cl_entity_s *pEnt;
+	cl_entity_s* pEnt;
 	Vector up;
 
 	pEnt = GetEntity( entity - 1 );
@@ -2282,9 +2286,9 @@ void EV_TFC_AxeHit( int idx, float *origin, float *forward, float *right, int en
 	}
 }
 
-int EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, int entity, float *vecDir, pmtrace_t *ptr )
+int EV_TFC_Medkit( int idx, float* origin, float* forward, float* right, int entity, float* vecDir, pmtrace_t* ptr )
 {
-	cl_entity_s *pEnt;
+	cl_entity_s* pEnt;
 
 	if ( entity > 0 && entity <= gEngfuncs.GetMaxClients() )
 	{
@@ -2309,7 +2313,7 @@ int EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, int ent
 	return 1;
 }
 
-char *EV_TFC_LookupDoorSound( int type, int index )
+char* EV_TFC_LookupDoorSound( int type, int index )
 {
 	int idx;
 	static char sound[32];
@@ -2329,12 +2333,11 @@ char *EV_TFC_LookupDoorSound( int type, int index )
 	return sound;
 }
 
-void EV_TFC_Knife( event_args_t *args )
+void EV_TFC_Knife( event_args_t* args )
 {
-
 }
 
-const Vector &GetTeamColor( int team_no )
+const Vector& GetTeamColor( int team_no )
 {
 	switch ( team_no )
 	{
@@ -2351,7 +2354,7 @@ const Vector &GetTeamColor( int team_no )
 	}
 }
 
-void EV_TFC_GibVelocityCheck( float *vel )
+void EV_TFC_GibVelocityCheck( float* vel )
 {
 	float scale;
 
@@ -2398,15 +2401,15 @@ void EV_TFC_PlayAxeAnim( int idx, int classid, int iAnimType )
 	{
 		switch ( classid )
 		{
-			case 0: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlayKnifeAnim( iAnimType ), 2 ); break;
-			case 1: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlaySpannerAnim( iAnimType ), 2 ); break;
-			case 2: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlayMedkitAnim( iAnimType ), 2 ); break;
-			case 3: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlayCrowbarAnim( iAnimType ), 2 ); break;
+		case 0: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlayKnifeAnim( iAnimType ), 2 ); break;
+		case 1: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlaySpannerAnim( iAnimType ), 2 ); break;
+		case 2: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlayMedkitAnim( iAnimType ), 2 ); break;
+		case 3: gEngfuncs.pEventAPI->EV_WeaponAnimation( EV_TFC_PlayCrowbarAnim( iAnimType ), 2 ); break;
 		}
 	}
 }
 
-int EV_TFC_Spanner( int idx, float *origin, float *forward, float *right, int entity, float *vecDir, pmtrace_t *ptr )
+int EV_TFC_Spanner( int idx, float* origin, float* forward, float* right, int entity, float* vecDir, pmtrace_t* ptr )
 {
 	EV_TFC_TraceAttack( idx, 20.0f, vecDir, ptr );
 	return 1;
@@ -2416,47 +2419,52 @@ int EV_TFC_Spanner( int idx, float *origin, float *forward, float *right, int en
 //void EV_TFC_BenchmarkWallMark( pmtrace_t *pTrace, char *name )
 //void EV_TFC_BenchMarkTrace( pmtrace_t *pTrace )
 
-void EV_Benchmark( event_args_t *args )
+void EV_Benchmark( event_args_t* args )
 {
-
 }
 
-void EV_TFC_BuildingEvent( event_args_t *args )
+void EV_TFC_BuildingEvent( event_args_t* args )
 {
-	if ( !args ) { return; }
-}
-
-void RandomSparkSound( float *origin )
-{
-	switch( (int)( gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) * 6.0f ) )
+	if ( !args )
 	{
-		case 0:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark1.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
-			break;
-		case 1:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark2.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
-			break;
-		case 2:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark3.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
-			break;
-		case 3:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark4.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
-			break;
-		case 4:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark5.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
-			break;
-		case 5:
-			gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark6.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
-			break;
+		return;
 	}
 }
 
-void DoSparkSmokeEffect( event_args_t *args )
+void RandomSparkSound( float* origin )
+{
+	switch ( (int)( gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) * 6.0f ) )
+	{
+	case 0:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark1.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+		break;
+	case 1:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark2.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+		break;
+	case 2:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark3.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+		break;
+	case 3:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark4.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+		break;
+	case 4:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark5.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+		break;
+	case 5:
+		gEngfuncs.pEventAPI->EV_PlaySound( -1, origin, CHAN_STATIC, "buttons/spark6.wav", gEngfuncs.pfnRandomFloat( 0.2f, 0.45f ), ATTN_NORM, 0, PITCH_NORM );
+		break;
+	}
+}
+
+void DoSparkSmokeEffect( event_args_t* args )
 {
 	pmtrace_t tr;
 	Vector vecstart, vecend;
 
-	if ( !args ) { return; }
+	if ( !args )
+	{
+		return;
+	}
 
 	if ( gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) > 0.8f )
 	{
@@ -2466,7 +2474,7 @@ void DoSparkSmokeEffect( event_args_t *args )
 		vecend.z = vecstart.z + gEngfuncs.pfnRandomLong( 15, 50 );
 
 		gEngfuncs.pEventAPI->EV_PushPMStates();
-		gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+		gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
 		gEngfuncs.pEventAPI->EV_PlayerTrace( vecend, vecstart, PM_NORMAL, -1, &tr );
 		gEngfuncs.pEventAPI->EV_PopPMStates();
 
@@ -2484,41 +2492,56 @@ void DoSparkSmokeEffect( event_args_t *args )
 	}
 }
 
-void DoTeleporterRings( event_args_t *args )
+void DoTeleporterRings( event_args_t* args )
 {
 	static int iEntryCount = 0, iExitCount = 0;
 	Vector vecSpot, vecEnd;
 	Vector color;
 
-	if ( !args ) { return; }
+	if ( !args )
+	{
+		return;
+	}
 
 	if ( args->iparam1 & 4 )
 	{
-		if ( ++iEntryCount > 6 ) { iEntryCount = 0; }
+		if ( ++iEntryCount > 6 )
+		{
+			iEntryCount = 0;
+		}
 	}
 	else
 	{
-		if ( --iExitCount < 0 ) { iExitCount = 6; }
+		if ( --iExitCount < 0 )
+		{
+			iExitCount = 6;
+		}
 	}
-	
+
 	vecSpot = vecEnd = args->origin;
 	vecSpot.z += ( -14 * ( ( args->iparam1 & 4 ) ? iEntryCount : iExitCount ) + 98 );
 	vecEnd.z = vecSpot.z + 125.0f;
 	color = GetTeamColor( args->iparam2 - 1 );
 
 	gEngfuncs.pEfxAPI->R_BeamCirclePoints( FBEAM_SINENOISE | FBEAM_FADEIN | FBEAM_STARTENTITY, vecSpot, vecEnd,
-		gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/shellchrome.spr" ), 0.2f, 10.0f, 0.0f, 1.0f, 0.0f, 0, 0.0f, color.x, color.y, color.z );
+	                                       gEngfuncs.pEventAPI->EV_FindModelIndex( "sprites/shellchrome.spr" ), 0.2f, 10.0f, 0.0f, 1.0f, 0.0f, 0, 0.0f, color.x, color.y, color.z );
 }
 
-void DoTeleporterParticles( event_args_t *args )
+void DoTeleporterParticles( event_args_t* args )
 {
 	// Velaron: big todo ( particleman )
-	if ( !args ) { return; }
+	if ( !args )
+	{
+		return;
+	}
 }
 
-void PlayTeleporterAmbientSound( event_args_t *args )
+void PlayTeleporterAmbientSound( event_args_t* args )
 {
-	if ( !args ) { return; }
+	if ( !args )
+	{
+		return;
+	}
 
 	if ( ( args->fparam2 == 0.0f || args->fparam2 <= gpGlobals->time ) && gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) > 1.0f )
 	{
@@ -2527,31 +2550,29 @@ void PlayTeleporterAmbientSound( event_args_t *args )
 	}
 }
 
-void RemoveEvent( eventnode_t *node )
+void RemoveEvent( eventnode_t* node )
 {
 	if ( node && g_pEventListHead )
 	{
 		if ( node == g_pEventListHead )
 		{
-
 		}
 	}
 }
 
-void CheckEventsFinished( eventnode_t *node )
+void CheckEventsFinished( eventnode_t* node )
 {
 	if ( node && !node->data->iparam1 && g_pEventListHead )
 	{
 		if ( node == g_pEventListHead )
 		{
-			
 		}
 	}
 }
 
 void ClearEventList( void )
 {
-	eventnode_t *pNext;
+	eventnode_t* pNext;
 
 	while ( g_pEventListHead )
 	{

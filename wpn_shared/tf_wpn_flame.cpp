@@ -21,7 +21,7 @@ void CTFFlamethrower::Spawn( void )
 	pev->solid = SOLID_TRIGGER;
 }
 
-int CTFFlamethrower::GetItemInfo( ItemInfo *p )
+int CTFFlamethrower::GetItemInfo( ItemInfo* p )
 {
 	p->iSlot = 3;
 	p->iPosition = 2;
@@ -40,7 +40,7 @@ int CTFFlamethrower::GetItemInfo( ItemInfo *p )
 	return 1;
 }
 
-void CTFFlamethrower::Holster( void )
+void CTFFlamethrower::Holster( int skiplocal /* = 0 */ )
 {
 	m_fInReload = 0;
 	m_pPlayer->m_flNextAttack = 0.5f;
@@ -118,9 +118,9 @@ void CTFFlamethrower::WeaponIdle( void )
 	}
 }
 
-int CTFFlamethrower::AddToPlayer( CBasePlayer *pPlayer )
+int CTFFlamethrower::AddToPlayer( CBasePlayer* pPlayer )
 {
-	if( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
+	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );

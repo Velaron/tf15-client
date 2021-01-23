@@ -41,7 +41,7 @@ void CTFAxe::Precache( void )
 	classid = 3;
 }
 
-int CTFAxe::GetItemInfo( ItemInfo *p )
+int CTFAxe::GetItemInfo( ItemInfo* p )
 {
 	p->iSlot = 0;
 	p->iPosition = 3;
@@ -57,7 +57,7 @@ int CTFAxe::GetItemInfo( ItemInfo *p )
 	return 1;
 }
 
-void CTFAxe::Holster( int skiplocal )
+void CTFAxe::Holster( int skiplocal /* = 0 */ )
 {
 	m_pPlayer->m_flNextAttack = 0.5f;
 	SendWeaponAnim( CROWBAR_HOLSTER );
@@ -70,20 +70,17 @@ void CTFAxe::Smack( void )
 
 void CTFAxe::PlayAnim( int iAnimType )
 {
-
 }
 
 void CTFAxe::PlaySound( int iSoundType, float fSoundData )
 {
-
 }
 
 void CTFAxe::PlayDecal( void )
 {
-
 }
 
-BOOL CTFAxe::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr )
+BOOL CTFAxe::AxeHit( CBaseEntity* pTarget, Vector p_vecDir, TraceResult* ptr )
 {
 	Vector vecTargetAngles;
 	ClearMultiDamage();
@@ -123,7 +120,7 @@ void CTFAxe::PrimaryAttack( void )
 {
 	Vector vecSrc, vecEnd;
 	TraceResult tr;
-	CBaseEntity *pEntity;
+	CBaseEntity* pEntity;
 	BOOL bHit;
 
 	m_bHullHit = FALSE;
@@ -150,7 +147,7 @@ void CTFAxe::PrimaryAttack( void )
 	{
 		m_pPlayer->m_iWeaponVolume = 128;
 
-		if( !pEntity->IsAlive() )
+		if ( !pEntity->IsAlive() )
 			return;
 	}
 
@@ -188,13 +185,13 @@ void CTFSpanner::Precache( void )
 	m_usAxeDecal = PRECACHE_EVENT( 1, "events/wpn/tf_axedecal.sc" );
 }
 
-void CTFSpanner::Holster( void )
+void CTFSpanner::Holster( int skiplocal /* = 0 */ )
 {
 	m_pPlayer->m_flNextAttack = 0.5f;
 	SendWeaponAnim( SPANNER_HOLSTER );
 }
 
-int CTFSpanner::GetItemInfo( ItemInfo *p )
+int CTFSpanner::GetItemInfo( ItemInfo* p )
 {
 	p->iSlot = 0;
 	p->iPosition = 2;
@@ -229,7 +226,7 @@ void CTFSpanner::WeaponIdle( void )
 	}
 }
 
-BOOL CTFSpanner::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr )
+BOOL CTFSpanner::AxeHit( CBaseEntity* pTarget, Vector p_vecDir, TraceResult* ptr )
 {
 	if ( pTarget->goal_activation & TFGA_SPANNER )
 	{
@@ -249,7 +246,6 @@ BOOL CTFSpanner::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr
 		ApplyMultiDamage( m_pPlayer->pev, m_pPlayer->pev );
 		return true;
 	}
-	
 }
 
 LINK_ENTITY_TO_CLASS( tf_weapon_knife, CTFKnife )
@@ -272,13 +268,13 @@ void CTFKnife::Precache( void )
 	m_usKnife = PRECACHE_EVENT( 1, "events/wpn/tf_knife.sc" );
 }
 
-void CTFKnife::Holster( void )
+void CTFKnife::Holster( int skiplocal /* = 0 */ )
 {
 	m_pPlayer->m_flNextAttack = 0.5f;
 	SendWeaponAnim( KNIFE_HOLSTER );
 }
 
-int CTFKnife::GetItemInfo( ItemInfo *p )
+int CTFKnife::GetItemInfo( ItemInfo* p )
 {
 	p->pszAmmo1 = NULL;
 	p->pszName = STRING( pev->classname );
@@ -339,13 +335,13 @@ void CTFMedikit::Precache( void )
 	m_usSteamShot = PRECACHE_EVENT( 1, "events/wpn/tf_medsteam.sc" );
 }
 
-void CTFMedikit::Holster( void )
+void CTFMedikit::Holster( int skiplocal /* = 0 */ )
 {
 	m_pPlayer->m_flNextAttack = 0.5f;
 	SendWeaponAnim( MEDIKIT_HOLSTER );
 }
 
-int CTFMedikit::GetItemInfo( ItemInfo *p )
+int CTFMedikit::GetItemInfo( ItemInfo* p )
 {
 	p->pszAmmo1 = NULL;
 	p->iAmmo1 = -1;
@@ -380,7 +376,7 @@ void CTFMedikit::WeaponIdle( void )
 	}
 }
 
-BOOL CTFMedikit::AxeHit( CBaseEntity *pTarget, Vector *p_vecDir, TraceResult *ptr )
+BOOL CTFMedikit::AxeHit( CBaseEntity* pTarget, Vector* p_vecDir, TraceResult* ptr )
 {
 	//if
 	return true;

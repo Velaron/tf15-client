@@ -45,7 +45,7 @@ void CTFGrenadeLauncher::Precache( void )
 	PRECACHE_EVENT( 1, "events/wpn/tf_pipel.sc" );
 }
 
-int CTFGrenadeLauncher::GetItemInfo( ItemInfo *p )
+int CTFGrenadeLauncher::GetItemInfo( ItemInfo* p )
 {
 	p->pszAmmo1 = "rockets";
 	p->pszName = STRING( pev->classname );
@@ -64,7 +64,7 @@ int CTFGrenadeLauncher::GetItemInfo( ItemInfo *p )
 	return 1;
 }
 
-void CTFGrenadeLauncher::Holster( void )
+void CTFGrenadeLauncher::Holster( int skiplocal /* = 0 */ )
 {
 	m_pPlayer->m_iGLClip = m_iClip;
 	m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
@@ -171,7 +171,7 @@ void CTFGrenadeLauncher::WeaponIdle( void )
 	}
 }
 
-int CTFGrenadeLauncher::AddToPlayer( CBasePlayer *pPlayer )
+int CTFGrenadeLauncher::AddToPlayer( CBasePlayer* pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
@@ -232,7 +232,7 @@ void CTFPipebombLauncher::Spawn( void )
 	m_usFireGL = PRECACHE_EVENT( 1, "events/wpn/tf_pipel.sc" );
 }
 
-int CTFPipebombLauncher::GetItemInfo( ItemInfo *p )
+int CTFPipebombLauncher::GetItemInfo( ItemInfo* p )
 {
 	p->pszAmmo1 = "rockets";
 	p->pszName = STRING( pev->classname );

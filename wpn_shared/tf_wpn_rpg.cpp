@@ -22,7 +22,7 @@ void CTFRpg::Spawn( void )
 	pev->solid = SOLID_TRIGGER;
 }
 
-int CTFRpg::GetItemInfo( ItemInfo *p )
+int CTFRpg::GetItemInfo( ItemInfo* p )
 {
 	p->pszAmmo1 = "rockets";
 	p->pszName = STRING( pev->classname );
@@ -41,7 +41,7 @@ int CTFRpg::GetItemInfo( ItemInfo *p )
 	return 1;
 }
 
-void CTFRpg::Holster( void )
+void CTFRpg::Holster( int skiplocal /* = 0 */ )
 {
 	m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
 	m_fInSpecialReload = 0;
@@ -172,7 +172,7 @@ BOOL CTFRpg::Deploy( void )
 		return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_srpg.mdl", RPG_DRAW_UL, "rpg", 1 );
 }
 
-int CTFRpg::AddToPlayer( CBasePlayer *pPlayer )
+int CTFRpg::AddToPlayer( CBasePlayer* pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
