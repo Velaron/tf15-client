@@ -371,6 +371,9 @@ void EV_TFC_DecalGunshot( pmtrace_t* pTrace, int iBulletType )
 	{
 		switch ( iBulletType )
 		{
+		case BULLET_PLAYER_CROWBAR:
+			EV_TFC_DecalTrace( pTrace, EV_TFC_DamageDecal( pTrace->ent, 0 ) );
+			break;
 		case BULLET_PLAYER_TF_ASSAULT:
 			//	EV_TFC_GunshotDecalTrace( pTrace, "hwshot1" );
 			//	break;
@@ -1597,19 +1600,8 @@ void EV_TFC_AxeDecal( event_args_t* args )
 	physent_t* pe;
 
 	idx = args->entindex;
-	tr = gp_tr_decal[idx - 1];
-
-	if ( tr )
-	{
-		pe = gEngfuncs.pEventAPI->EV_GetPhysent( tr->ent );
-
-		if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) )
-		{
-			EV_TFC_DecalGunshot( tr, BULLET_PLAYER_CROWBAR );
-		}
-
-		gp_tr_decal[idx - 1] = NULL;
-	}
+	EV_TFC_DecalGunshot( gp_tr_decal[idx - 1], BULLET_PLAYER_CROWBAR );
+	gp_tr_decal[idx - 1] = NULL;
 }
 
 void EV_TFC_EngineerGrenade( event_args_t* args )
