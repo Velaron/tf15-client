@@ -53,8 +53,8 @@ matrix:
         - cd build
         - cmake --build . --config Debug
       before_deploy:
-        - mkdir -p tfc/cl_dll
-        - mv -t tfc/cl_dll **/*client*.so
+        - mkdir -p tfc/cl_dlls
+        - mv -t tfc/cl_dlls **/*client*.so
         - tar -czvf tf15-client.tar.gz tfc
         - export TRAVIS_TAG=travis-ci
         - git tag -f $TRAVIS_TAG
@@ -73,9 +73,9 @@ matrix:
         - cd build
         - cmake --build . --config Debug
       before_deploy:
-        - mkdir -p tfc/cl_dll
+        - mkdir -p tfc/cl_dlls
         - shopt -s globstar
-        - mv -t tfc/cl_dll **/*client*.dll **/*client*.pdb
+        - mv -t tfc/cl_dlls **/*client*.dll **/*client*.pdb
         - 7z a -tzip tf15-client.zip tfc
         - export TRAVIS_TAG=travis-ci
         - git tag -f $TRAVIS_TAG

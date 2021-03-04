@@ -340,19 +340,19 @@ void EV_TFC_GunshotDecalTrace( pmtrace_t* pTrace, char* name )
 			switch ( iRand % 5 )
 			{
 			case 0:
-				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric1.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric1.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 				break;
 			case 1:
-				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric2.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric2.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 				break;
 			case 2:
-				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric3.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric3.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 				break;
 			case 3:
-				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric4.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric4.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 				break;
 			case 4:
-				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric5.wav", 1.0, ATTN_NORM, 0, PITCH_NORM );
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, pTrace->endpos, 0, "weapons/ric5.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 				break;
 			}
 		}
@@ -2019,10 +2019,11 @@ void EV_TFC_GibCallback( tempent_s* ent, float frametime, float currenttime )
 {
 	switch ( ent->entity.curstate.playerclass )
 	{
+	default:
 	case 0:
-		if ( Length( ent->entity.baseline.origin ) == 0.0f )
+		if ( ent->entity.baseline.origin.Length() == 0.0f )
 		{
-			ent->entity.curstate.playerclass = 1;
+			ent->entity.curstate.playerclass++;
 			ent->entity.baseline.fuser1 = cl_giblife->value;
 		}
 		ent->die = gEngfuncs.GetClientTime() + 1.0f;
@@ -2031,12 +2032,12 @@ void EV_TFC_GibCallback( tempent_s* ent, float frametime, float currenttime )
 		ent->entity.baseline.fuser1 -= frametime;
 		if ( ent->entity.baseline.fuser1 <= 0.0f )
 		{
-			ent->entity.curstate.playerclass = 2;
+			ent->entity.curstate.playerclass++;
 		}
 		ent->die = gEngfuncs.GetClientTime() + 1.0f;
 		break;
 	case 2:
-		ent->entity.curstate.playerclass = 3;
+		ent->entity.curstate.playerclass++;
 		ent->entity.curstate.renderamt = 255;
 		ent->entity.curstate.rendermode = kRenderFxPulseFast;
 		ent->die = gEngfuncs.GetClientTime() + 2.5f;
@@ -2044,15 +2045,17 @@ void EV_TFC_GibCallback( tempent_s* ent, float frametime, float currenttime )
 	case 3:
 		if ( ent->entity.curstate.renderamt <= 7 )
 		{
-			ent->entity.curstate.playerclass = 4;
+			ent->entity.curstate.playerclass++;
 			ent->entity.curstate.renderamt = 0;
 			ent->die = gEngfuncs.GetClientTime() + 0.2f;
 		}
 		else
 		{
-			ent->entity.curstate.renderamt = ent->entity.curstate.renderamt - frametime * 70.0f;
+			ent->entity.curstate.renderamt -= ( frametime * 70.0f );
 			ent->die = gEngfuncs.GetClientTime() + 1.0f;
 		}
+		break;
+	case 4:
 		break;
 	}
 }
