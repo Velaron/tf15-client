@@ -52,6 +52,12 @@ if(GOLDSOURCE_SUPPORT)
 	add_definitions(-DGOLDSOURCE_SUPPORT)
 endif()
 
+if(GOLDSOURCE_DEFAULT_FLAGS)
+	add_definitions(-DPOSIX -D_POSIX -DGNUC)
+	add_compile_options(-fpermissive -fno-strict-aliasing -fexpensive-optimizations)
+	add_compile_options(-Werror=return-type -w -gdwarf-2 -g2 -march=pentium-m -mfpmath=387)
+	add_link_options(-gdwarf-2 -g2)
+endif()
 
 set(CLDLL_SOURCES
 	../wpn_shared/tf_wpn_ac.cpp
@@ -154,9 +160,6 @@ endif()
 if(BUILD_VGUI)
 	target_link_libraries(${CLDLL_LIBRARY} vgui)
 endif()
-
-set_target_properties (${CLDLL_LIBRARY} PROPERTIES
-	POSITION_INDEPENDENT_CODE 1)
 
 if(APPLE OR WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	set(CLDLL_NAME "client")
