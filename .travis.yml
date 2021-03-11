@@ -75,7 +75,7 @@ matrix:
       before_deploy:
         - mkdir -p tfc/cl_dlls
         - shopt -s globstar
-        - mv -t tfc/cl_dlls **/*client*.dll **/*client*.pdb
+        - mv -t tfc/cl_dlls **/*client*.dll
         - 7z a -tzip tf15-client.zip tfc
         - export TRAVIS_TAG=travis-ci
         - git tag -f $TRAVIS_TAG
