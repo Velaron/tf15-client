@@ -51,7 +51,7 @@ matrix:
       script:
         - cmake -H. -Bbuild -G Ninja
         - cd build
-        - cmake --build . --config Debug
+        - cmake --build . --config Release
       before_deploy:
         - mkdir -p tfc/cl_dlls
         - mv -t tfc/cl_dlls **/*client*.so
@@ -71,7 +71,7 @@ matrix:
       script:
         - cmake -A Win32 -H. -Bbuild
         - cd build
-        - cmake --build . --config Debug
+        - cmake --build . --config Release
       before_deploy:
         - mkdir -p tfc/cl_dlls
         - shopt -s globstar
