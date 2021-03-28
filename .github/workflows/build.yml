@@ -27,10 +27,28 @@ jobs:
         with:
           submodules: recursive
       - uses: ilammy/msvc-dev-cmd@v1
-      - run: cmake -A Win32 -S. -Bbuild
+      - run: cmake -A Win32 -S . -B build
       - run: cmake --build . --config Release
         working-directory: build
       - uses: actions/upload-artifact@v2
         with:
           name: Windows
           path: build/cl_dll/Release/client.dll
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: sudo apt-get install gcc-multilib g++-multilib cmake ninja-build
+      - run: |
+          export CC="gcc -m32"
+          export CXX="g++ -m32"
+          cmake -S . -B build -G Ninja
+      - run: cmake --build . --config Release
+        working-directory: build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Linux
+          path: build/cl_dll/Release/client.so
