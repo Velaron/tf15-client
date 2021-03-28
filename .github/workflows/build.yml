@@ -27,7 +27,7 @@ jobs:
         with:
           submodules: recursive
       - uses: ilammy/msvc-dev-cmd@v1
-      - run: cmake -A Win32 -H. -Bbuild
+      - run: cmake -A Win32 -S. -Bbuild
       - run: cmake --build . --config Release
         working-directory: build
       - uses: actions/upload-artifact@v2
