@@ -19,3 +19,18 @@ jobs:
         with:
           name: Android
           path: android/app/build/outputs/apk/debug/app-debug.apk
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - uses: ilammy/msvc-dev-cmd@v1
+      - run: cmake -A Win32 -H. -Bbuild
+      - run: cmake --build . --config Release
+        working-directory: build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Windows
+          path: build/cl_dll/Release/client.dll
