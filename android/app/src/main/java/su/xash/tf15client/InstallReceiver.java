@@ -12,5 +12,5 @@ public class InstallReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent arg1) {
 		Log.d(TAG, "Install received, extracting PAK...");
 		ExtractAssets.extractPAK(context, true);
-    }
+	}
 }

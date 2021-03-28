@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="fill_parent" 
+	android:id="@+id/coordinatorLayout"
+	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	
+
 	<com.google.android.material.textfield.TextInputLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -18,19 +18,13 @@
 			android:layout_height="wrap_content" />
 
 	</com.google.android.material.textfield.TextInputLayout>
-	
-	<com.google.android.material.bottomappbar.BottomAppBar
-		android:id="@+id/bottomAppBar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="bottom"
-		style="@style/Widget.MaterialComponents.BottomAppBar.Colored" />
-	
+
 	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 		android:id="@+id/launchButton"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_gravity="bottom|end"
+		android:layout_margin="16dp"
 		android:text="@string/launch"
-		app:icon="@drawable/baseline_play_arrow_24"
-		app:layout_anchor="@id/bottomAppBar" />
+		app:icon="@drawable/baseline_play_arrow_24" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

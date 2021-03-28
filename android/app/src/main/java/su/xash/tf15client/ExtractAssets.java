@@ -3,6 +3,7 @@ package su.xash.tf15client;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+
 import java.io.InputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,7 +16,7 @@ public class ExtractAssets {
 			InputStream in = context.getAssets().open(filename);
 			File outFile = new File(context.getExternalFilesDir(null), filename);
 
-			if(outFile.isFile() && !overwrite) {
+			if (outFile.isFile() && !overwrite) {
 				return;
 			}
 
@@ -31,15 +32,15 @@ public class ExtractAssets {
 			in.close();
 			out.flush();
 			out.close();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			Log.e(TAG, "Failed to extract file" + filename + ":" + e);
 		}
 	}
 
-	public static void extractPAK( Context context, boolean overwrite ) {
+	public static void extractPAK(Context context, boolean overwrite) {
 		try {
 			extractFile(context, "extras.pak", overwrite);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			Log.e(TAG, "Failed to extract PAK:" + e);
 		}
 	}

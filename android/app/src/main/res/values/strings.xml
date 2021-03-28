@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">TF15Client</string>
-  <string name="launch">LAUNCH</string>
-  <string name="launch_parameters">COMMAND-LINE ARGUMENTS</string>
+    <string name="app_name">TF15Client</string>
+    <string name="launch">LAUNCH</string>
+    <string name="launch_parameters">COMMAND-LINE ARGUMENTS</string>
+    <string name="checking_for_updates">Checking for updates...</string>
+    <string name="update_required">An update is required</string>
+    <string name="update_available">An update is available on github</string>
+    <string name="update">Update</string>
+    <string name="exit">Exit</string>
 </resources>

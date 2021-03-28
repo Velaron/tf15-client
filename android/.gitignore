@@ -1,11 +1,6 @@
-# Gradle
-.gradle
-**/build/
-!src/**/build/
-gradle-app.setting
-!gradle-wrapper.jar
-.gradletasknamecache
-
-# Android
+.gradle/
+build/
 .externalNativeBuild
 .cxx/
+.idea/*
+local.properties
