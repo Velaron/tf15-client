@@ -30,10 +30,10 @@ jobs:
       - run: cmake -A Win32 -S . -B build
       - run: cmake --build . --config Release
         working-directory: build
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Windows
-          path: build/cl_dll/Release/client.dll
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: Windows
+#          path: build/cl_dll/Release/client.dll
   linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
           cmake -S . -B build -G Ninja
       - run: cmake --build . --config Release
         working-directory: build
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Linux
-          path: build/cl_dll/Release/client.so
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: Linux
+#          path: build/cl_dll/Release/client.so
