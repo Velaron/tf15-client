@@ -83,7 +83,7 @@ public class LauncherActivity extends AppCompatActivity {
 								.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
 									@Override
 									public void onClick(DialogInterface dialog, int which) {
-										String url = "https://github.com/Velaron/tf15-client/releases/download/travis-ci/tf15-client.apk";
+										String url = "https://github.com/Velaron/tf15-client/actions";
 										startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
 									}
 								}).show();
