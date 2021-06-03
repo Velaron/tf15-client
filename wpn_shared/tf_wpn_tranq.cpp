@@ -34,10 +34,7 @@ int CTFTranq::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_shells;
-	else
-		p->iAmmo1 = 200;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_shells : 200;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
@@ -51,11 +48,13 @@ int CTFTranq::GetItemInfo( ItemInfo *p )
 
 void CTFTranq::WeaponIdle( void )
 {
+	int iRand;
+
 	ResetEmptySound();
 
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
-		int iRand = UTIL_SharedRandomLong( m_pPlayer->random_seed, 0, 20 );
+		iRand = UTIL_SharedRandomLong( m_pPlayer->random_seed, 0, 3 );
 
 		if ( iRand == 3 * ( iRand / 3 ) )
 		{
@@ -77,24 +76,22 @@ void CTFTranq::WeaponIdle( void )
 
 BOOL CTFTranq::Deploy( void )
 {
-	BOOL result;
-
 	pev->body = 1;
-	result = DefaultDeploy( "models/v_tfc_pistol.mdl", "models/p_spygun.mdl", TRANQ_DRAW, "onehanded", 1 );
 
-	if ( result )
+	if ( DefaultDeploy( "models/v_tfc_pistol.mdl", "models/p_spygun.mdl", TRANQ_DRAW, "onehanded", 1 ) )
 	{
 		SendWeaponAnim( TRANQ_DRAW, 0 );
+		return TRUE;
 	}
 
-	return result;
+	return FALSE;
 }
 
 void CTFTranq::PrimaryAttack( void )
 {
 	Vector p_vecOrigin, p_vecAngles;
 
-	if ( m_pPlayer->ammo_shells <= 0)
+	if ( m_pPlayer->ammo_shells <= 0 )
 	{
 		PlayEmptySound();
 		m_flNextPrimaryAttack = GetNextAttackDelay( 0.2f );

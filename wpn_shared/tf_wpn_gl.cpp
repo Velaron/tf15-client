@@ -45,14 +45,11 @@ void CTFGrenadeLauncher::Precache( void )
 	PRECACHE_EVENT( 1, "events/wpn/tf_pipel.sc" );
 }
 
-int CTFGrenadeLauncher::GetItemInfo( ItemInfo* p )
+int CTFGrenadeLauncher::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "rockets";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_rockets;
-	else
-		p->iAmmo1 = 50;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_rockets : 50;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = 6;
@@ -124,46 +121,18 @@ void CTFGrenadeLauncher::WeaponIdle( void )
 
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
-		if ( m_iClip )
+		if ( m_fInSpecialReload )
 		{
-			if ( m_fInSpecialReload )
-			{
-				if ( m_iClip == 6 )
-				{
-					SendWeaponAnim( m_iAnim_ReloadUp );
-					m_fInSpecialReload = 0;
-					m_flTimeWeaponIdle = 1.5f;
-					return;
-				}
-
-				if ( m_pPlayer->ammo_rockets > 0 )
-				{
-					Reload();
-					return;
-				}
-
-				SendWeaponAnim( m_iAnim_ReloadUp );
-				m_fInSpecialReload = 0;
-				m_flTimeWeaponIdle = 1.5f;
-				return;
-			}
-		}
-		else
-		{
-			if ( m_fInSpecialReload )
-			{
-				if ( m_pPlayer->ammo_rockets > 0 )
-				{
-					Reload();
-					return;
-				}
-			}
-
-			if ( m_pPlayer->ammo_rockets > 0 )
+			if ( m_iClip < 6 && m_pPlayer->ammo_rockets > 0 )
 			{
 				Reload();
 				return;
 			}
+
+			SendWeaponAnim( m_iAnim_ReloadUp );
+			m_fInSpecialReload = 0;
+			m_flTimeWeaponIdle = 1.5f;
+			return;
 		}
 
 		m_flTimeWeaponIdle = 3.0f;
@@ -171,17 +140,20 @@ void CTFGrenadeLauncher::WeaponIdle( void )
 	}
 }
 
-int CTFGrenadeLauncher::AddToPlayer( CBasePlayer* pPlayer )
+BOOL CTFGrenadeLauncher::AddToPlayer( CBasePlayer *pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		return true;
+
+		current_ammo = &m_pPlayer->ammo_rockets;
+
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
 void CTFGrenadeLauncher::PrimaryAttack( void )
@@ -197,6 +169,7 @@ void CTFGrenadeLauncher::PrimaryAttack( void )
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		p_VecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_right * 8.0f + gpGlobals->v_up * -16.0f;
 		p_VecAngles = m_pPlayer->pev->v_angle;
+		// Velaron: TODO
 		//CTFGrenade::CreateTFGrenade( &p_VecOrigin, &p_VecAngles, m_pPlayer, this );
 		m_fInSpecialReload = 0;
 		m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
@@ -232,14 +205,11 @@ void CTFPipebombLauncher::Spawn( void )
 	m_usFireGL = PRECACHE_EVENT( 1, "events/wpn/tf_pipel.sc" );
 }
 
-int CTFPipebombLauncher::GetItemInfo( ItemInfo* p )
+int CTFPipebombLauncher::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "rockets";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_rockets;
-	else
-		p->iAmmo1 = 50;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_rockets : 50;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = 6;
@@ -264,6 +234,7 @@ void CTFPipebombLauncher::PrimaryAttack( void )
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		p_VecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_right * 8.0f + gpGlobals->v_up * -16.0f;
 		p_VecAngles = m_pPlayer->pev->v_angle;
+		// Velaron: TODO
 		//CTFGrenade::CreateTFPipebomb( &p_VecOrigin, &p_VecAngles, m_pPlayer, this );
 		m_fInSpecialReload = 0;
 		m_pPlayer->tfstate &= ~TFSTATE_RELOADING;

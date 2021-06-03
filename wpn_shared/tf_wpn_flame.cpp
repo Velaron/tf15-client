@@ -21,15 +21,12 @@ void CTFFlamethrower::Spawn( void )
 	pev->solid = SOLID_TRIGGER;
 }
 
-int CTFFlamethrower::GetItemInfo( ItemInfo* p )
+int CTFFlamethrower::GetItemInfo( ItemInfo *p )
 {
 	p->iSlot = 3;
 	p->iPosition = 2;
 	p->pszAmmo1 = "uranium";
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_cells;
-	else
-		p->iAmmo1 = 200;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_cells : 200;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->pszName = STRING( pev->classname );
@@ -72,7 +69,9 @@ void CTFFlamethrower::PrimaryAttack( void )
 		}
 		else
 		{
+			// Velaron: TODO
 			//CTFFlamethrowerBurst::CreateBurst( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
+			//DB_LogShots( 1 );
 			m_flNextPrimaryAttack = GetNextAttackDelay( 0.15f );
 			m_flTimeWeaponIdle = 0.15f;
 		}
@@ -118,15 +117,18 @@ void CTFFlamethrower::WeaponIdle( void )
 	}
 }
 
-int CTFFlamethrower::AddToPlayer( CBasePlayer* pPlayer )
+BOOL CTFFlamethrower::AddToPlayer( CBasePlayer *pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		return true;
+
+		current_ammo = &m_pPlayer->ammo_cells;
+
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }

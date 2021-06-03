@@ -323,7 +323,8 @@ Vector CBaseEntity::FireBulletsPlayer( ULONG cShots, Vector vecSrc, Vector vecDi
 		if ( pevAttacker == NULL )
 		{
 			// get circular gaussian spread
-			do {
+			do
+			{
 				x = RANDOM_FLOAT( -0.5f, 0.5f ) + RANDOM_FLOAT( -0.5f, 0.5f );
 				y = RANDOM_FLOAT( -0.5f, 0.5f ) + RANDOM_FLOAT( -0.5f, 0.5f );
 				z = x * x + y * y;
@@ -418,7 +419,10 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		return;
 	}
 
-	if ( ShouldWeaponIdle() ) { WeaponIdle(); }
+	if ( ShouldWeaponIdle() )
+	{
+		WeaponIdle();
+	}
 }
 
 /*
@@ -533,7 +537,10 @@ void CBasePlayer::TeamFortress_SetSpeed( void )
 		case PC_CIVILIAN: pev->maxspeed = PC_CIVILIAN_MAXSPEED; break;
 		}
 
-		if ( tfstate & TFSTATE_AIMING && pev->maxspeed > 80.0f ) { pev->maxspeed = 80.0f; }
+		if ( tfstate & TFSTATE_AIMING && pev->maxspeed > 80.0f )
+		{
+			pev->maxspeed = 80.0f;
+		}
 	}
 }
 
@@ -728,7 +735,7 @@ int HUD_CreateSniperDot( int damage, Vector p_viewangles, Vector p_origin, float
 
 		farpoint = forward * 8192.0f + p_origin;
 
-		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( 0, 1 );
+		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
 		gEngfuncs.pEventAPI->EV_PushPMStates();
 		gEngfuncs.pEventAPI->EV_SetSolidPlayers( gEngfuncs.GetLocalPlayer()->index - 1 );
 		gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
@@ -738,8 +745,7 @@ int HUD_CreateSniperDot( int damage, Vector p_viewangles, Vector p_origin, float
 		{
 			contents = gEngfuncs.PM_PointContents( tr.endpos, 0 );
 
-			if ( contents != CONTENTS_SKY &&
-				( contents == CONTENTS_WATER ) == ( gEngfuncs.PM_PointContents( p_origin, 0 ) == CONTENTS_WATER ) )
+			if ( contents != CONTENTS_SKY && ( contents == CONTENTS_WATER ) == ( gEngfuncs.PM_PointContents( p_origin, 0 ) == CONTENTS_WATER ) )
 			{
 				/*
 				if ( Bench_Active() && Bench_InStage( 3 ) )
@@ -946,7 +952,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	player.m_afButtonLast = from->playerstate.oldbuttons;
 
 	// Which buttsons have changed
-	buttonsChanged = ( player.m_afButtonLast ^ cmd->buttons );	// These buttons have changed this frame
+	buttonsChanged = ( player.m_afButtonLast ^ cmd->buttons ); // These buttons have changed this frame
 
 	// Debounced button codes for pressed/released
 	// The changed ones still down are "pressed"
@@ -985,9 +991,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	// Don't go firing anything if we have died.
 	// Or if we don't have a weapon model deployed
-	if ( ( player.pev->deadflag != ( DEAD_DISCARDBODY + 1 ) ) &&
-		!CL_IsDead() && player.pev->viewmodel && !g_iUser1 &&
-		player.m_flNextAttack <= 0.0 )
+	if ( ( player.pev->deadflag != ( DEAD_DISCARDBODY + 1 ) ) && !CL_IsDead() && player.pev->viewmodel && !g_iUser1 && player.m_flNextAttack <= 0.0 )
 	{
 		pWeapon->ItemPostFrame();
 	}
@@ -1108,7 +1112,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 		pto->m_flTimeWeaponIdle -= cmd->msec / 1000.0f;
 		//pto->fuser1 -= cmd->msec / 1000.0f;
 
-/*
+		/*
 		to->client.vuser3[2] = pCurrent->m_iSecondaryAmmoType;
 		to->client.vuser4[0] = pCurrent->m_iPrimaryAmmoType;
 		to->client.vuser4[1] = player.m_rgAmmo[pCurrent->m_iPrimaryAmmoType];

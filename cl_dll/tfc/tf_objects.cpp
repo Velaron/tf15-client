@@ -10,6 +10,7 @@ int HUD_NeedSpot( int *damage );
 void HUD_GetLastOrg( float *org );
 int HUD_CreateSniperDot( int damage, Vector p_viewangles, Vector p_origin, float *dotorigin );
 
+// Velaron: TODO
 void Game_AddObjects( void )
 {
 	int damage;
@@ -30,7 +31,7 @@ void Game_AddObjects( void )
 			if ( HUD_CreateSniperDot( damage, viewangles, origin, p_dot ) )
 			{
 				//p_target = g_aimorg;
-				//Bench_SpotPosition( p_dot, p_target );
+				// SpotPosition( p_dot, p_target );
 			}
 
 			if ( gEngfuncs.pDemoAPI->IsRecording() )

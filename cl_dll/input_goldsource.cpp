@@ -898,17 +898,6 @@ void GoldSourceInput::IN_MouseMove( float frametime, usercmd_t *cmd )
 	}
 
 	dead_viewangles = viewangles; // keep them actual
-/*
-//#define TRACE_TEST
-#if defined( TRACE_TEST )
-	{
-		int mx, my;
-		void V_Move( int mx, int my );
-		IN_GetMousePos( &mx, &my );
-		V_Move( mx, my );
-	}
-#endif
-*/
 }
 
 /*

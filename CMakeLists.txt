@@ -83,6 +83,8 @@ endif()
 if(NOT MSVC)
 	#add_compile_options(-Wempty-body) # GCC/Clang flag
 	add_compile_options(-Wreturn-type) # GCC/Clang flag
+else()
+	add_definitions(-D_CRT_SILENCE_NONCONFORMING_TGMATH_H -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 

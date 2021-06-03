@@ -14,8 +14,8 @@ LINK_ENTITY_TO_CLASS( tf_weapon_sniperrifle, CTFSniperRifle )
 
 void CTFSniperRifle::Spawn( void )
 {
-	m_fAimedDamage = 0.0f;
 	Precache();
+	m_fAimedDamage = 0.0f;
 	m_iId = WEAPON_SNIPER_RIFLE;
 	m_iDefaultAmmo = 5;
 	m_fNextAimBonus = -1.0f;
@@ -32,14 +32,11 @@ void CTFSniperRifle::Precache( void )
 	m_usSniperHit = PRECACHE_EVENT( 1, "events/wpn/tf_sniperhit.sc" );
 }
 
-int CTFSniperRifle::GetItemInfo( ItemInfo* p )
+int CTFSniperRifle::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_shells;
-	else
-		p->iAmmo1 = 75;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_shells : 75;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = WEAPON_NOCLIP;
@@ -75,7 +72,9 @@ void CTFSniperRifle::Holster( int skiplocal /* = 0 */ )
 	m_fInReload = 0;
 
 	if ( m_fInZoom )
+	{
 		SecondaryAttack();
+	}
 
 	m_pPlayer->tfstate &= ~TFSTATE_AIMING;
 	m_pPlayer->TeamFortress_SetSpeed();
@@ -109,7 +108,7 @@ BOOL CTFSniperRifle::Deploy( void )
 	return FALSE;
 }
 
-int CTFSniperRifle::AddToPlayer( CBasePlayer* pPlayer )
+int CTFSniperRifle::AddToPlayer( CBasePlayer *pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
@@ -163,7 +162,7 @@ void CTFSniperRifle::PrimaryAttack( void )
 {
 	Vector vecSrc, vecEnd, anglesAim;
 	TraceResult tr;
-	CBaseEntity* pHit;
+	CBaseEntity *pHit;
 	int vol, maxvol;
 	BOOL player;
 
@@ -198,7 +197,7 @@ void CTFSniperRifle::PrimaryAttack( void )
 				deathtype = m_pPlayer->deathtype;
 
 			ApplyMultiDamage( pev, m_pPlayer->pev );
-			m_pPlayer->deathtype = NULL;
+			m_pPlayer->deathtype = 0;
 			player = FClassnameIs( pHit->pev, "player" );
 			vol = maxvol = player ? 100 : 90;
 
@@ -230,6 +229,7 @@ void CTFSniperRifle::PrimaryAttack( void )
 	m_flNextPrimaryAttack = GetNextAttackDelay( 1.5f );
 }
 
+// Velaron: TODO
 void CTFSniperRifle::ItemPostFrame( void )
 {
 	ItemInfo info;

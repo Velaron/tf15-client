@@ -25,8 +25,8 @@ void CTFNailgun::Precache( void )
 	PRECACHE_MODEL( "models/v_tfc_nailgun.mdl" );
 	PRECACHE_MODEL( "models/v_tfc_supernailgun.mdl" );
 	PRECACHE_MODEL( "models/p_nailgun.mdl" );
-	PRECACHE_MODEL( "models/p_nailgun2.mdl" );	
-	PRECACHE_MODEL( "models/p_snailgun.mdl" );	
+	PRECACHE_MODEL( "models/p_nailgun2.mdl" );
+	PRECACHE_MODEL( "models/p_snailgun.mdl" );
 	PRECACHE_MODEL( "models/p_snailgun2.mdl" );
 	PRECACHE_SOUND( "items/9mmclip1.wav" );
 	PRECACHE_SOUND( "items/clipinsert1.wav" );
@@ -41,10 +41,7 @@ int CTFNailgun::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "9mm";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_nails;
-	else
-		p->iAmmo1 = 200;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_nails : 200;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = 0;
@@ -56,11 +53,12 @@ int CTFNailgun::GetItemInfo( ItemInfo *p )
 	return 1;
 }
 
+// Velaron: TODO
 void CTFNailgun::PrimaryAttack( void )
 {
 	Vector p_vecOrigin, p_vecAngles;
 
-	if( m_pPlayer->ammo_nails <= 0 )
+	if ( m_pPlayer->ammo_nails <= 0 )
 	{
 		PlayEmptySound();
 	}
@@ -100,30 +98,29 @@ void CTFNailgun::WeaponIdle( void )
 	}
 }
 
-int CTFNailgun::AddToPlayer( CBasePlayer *pPlayer )
+BOOL CTFNailgun::AddToPlayer( CBasePlayer *pPlayer )
 {
-	if( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
+	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		return true;
+
+		current_ammo = &m_pPlayer->ammo_nails;
+
+		return TRUE;
 	}
-	
-	return false;
+
+	return FALSE;
 }
 
 LINK_ENTITY_TO_CLASS( tf_weapon_superng, CTFSuperNailgun )
-
 
 int CTFSuperNailgun::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "9mm";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_nails;
-	else
-		p->iAmmo1 = 150;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_nails : 150;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = 0;

@@ -296,6 +296,9 @@ public:
 	int AmmoInventory( int iAmmoIndex );
 	int Illumination( void );
 
+	//void Spy_DisguiseExternalWeaponModel();
+	//void Spy_ResetExternalWeaponModel();
+
 	void ResetAutoaim( void );
 	Vector GetAutoaimVector( float flDelta  );
 	Vector AutoaimDeflection( Vector &vecSrc, float flDist, float flDelta  );
@@ -306,8 +309,9 @@ public:
 
 	void SetCustomDecalFrames( int nFrames );
 	int GetCustomDecalFrames( void );
-
+	
 	void TeamFortress_SetSpeed( void );
+	void TeamFortress_SetSkin( void );
 	BOOL EngineerUse( CBasePlayer *pPlayer );
 
 	void TabulateAmmo( void );

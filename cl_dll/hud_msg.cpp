@@ -21,11 +21,14 @@
 #include "parsemsg.h"
 #include "r_efx.h"
 
+#include "particleman.h"
+extern IParticleMan* g_pParticleMan;
+
 #define MAX_CLIENTS 32
 
 void ClearEventList( void );
 
-extern float g_lastFOV;			// Vit_amiN
+extern float g_lastFOV; // Vit_amiN
 
 /// USER-DEFINED SERVER MESSAGE HANDLERS
 
@@ -44,13 +47,13 @@ int CHud::MsgFunc_ResetHUD( const char *pszName, int iSize, void *pbuf )
 	}
 
 	// reset sensitivity
-	m_flMouseSensitivity = 0;
+	m_flMouseSensitivity = 0.0f;
 
 	// reset concussion effect
 	m_iConcussionEffect = 0;
 
 	// Vit_amiN: reset the FOV
-	m_iFOV = 0;	// default_fov
+	m_iFOV = 0; // default_fov
 	g_lastFOV = 0.0f;
 
 	return 1;
@@ -79,6 +82,10 @@ void CHud::MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 
 	// catch up on any building events that are going on
 	gEngfuncs.pfnServerCmd( "sendevents" );
+	
+	if ( g_pParticleMan )
+		g_pParticleMan->ResetParticles();
+
 }
 
 int CHud::MsgFunc_GameMode( const char *pszName, int iSize, void *pbuf )
@@ -91,10 +98,10 @@ int CHud::MsgFunc_GameMode( const char *pszName, int iSize, void *pbuf )
 
 int CHud::MsgFunc_Damage( const char *pszName, int iSize, void *pbuf )
 {
-	int		armor, blood;
-	Vector	from;
-	int		i;
-	float	count;
+	int armor, blood;
+	Vector from;
+	int i;
+	float count;
 
 	BEGIN_READ( pbuf, iSize );
 	armor = READ_BYTE();
@@ -117,12 +124,16 @@ int CHud::MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf )
 	int r, g, b;
 	BEGIN_READ( pbuf, iSize );
 	m_iConcussionEffect = READ_BYTE();
+
 	if ( m_iConcussionEffect )
 	{
-		UnpackRGB( r, g, b, RGB_YELLOWISH );	// Vit_amiN: fixed
+		UnpackRGB( r, g, b, RGB_YELLOWISH ); // Vit_amiN: fixed
 		this->m_StatusIcons.EnableIcon( "dmg_concuss", r, g, b );
 	}
 	else
+	{
 		this->m_StatusIcons.DisableIcon( "dmg_concuss" );
+	}
+
 	return 1;
 }

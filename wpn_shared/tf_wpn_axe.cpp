@@ -41,7 +41,7 @@ void CTFAxe::Precache( void )
 	classid = 3;
 }
 
-int CTFAxe::GetItemInfo( ItemInfo* p )
+int CTFAxe::GetItemInfo( ItemInfo *p )
 {
 	p->iSlot = 0;
 	p->iPosition = 3;
@@ -80,7 +80,7 @@ void CTFAxe::PlayDecal( void )
 {
 }
 
-BOOL CTFAxe::AxeHit( CBaseEntity* pTarget, Vector p_vecDir, TraceResult* ptr )
+BOOL CTFAxe::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr )
 {
 	Vector vecTargetAngles;
 	ClearMultiDamage();
@@ -120,7 +120,7 @@ void CTFAxe::PrimaryAttack( void )
 {
 	Vector vecSrc, vecEnd;
 	TraceResult tr;
-	CBaseEntity* pEntity;
+	CBaseEntity *pEntity;
 	BOOL bHit;
 
 	m_bHullHit = FALSE;
@@ -191,7 +191,7 @@ void CTFSpanner::Holster( int skiplocal /* = 0 */ )
 	SendWeaponAnim( SPANNER_HOLSTER );
 }
 
-int CTFSpanner::GetItemInfo( ItemInfo* p )
+int CTFSpanner::GetItemInfo( ItemInfo *p )
 {
 	p->iSlot = 0;
 	p->iPosition = 2;
@@ -226,14 +226,14 @@ void CTFSpanner::WeaponIdle( void )
 	}
 }
 
-BOOL CTFSpanner::AxeHit( CBaseEntity* pTarget, Vector p_vecDir, TraceResult* ptr )
+BOOL CTFSpanner::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr )
 {
 	if ( pTarget->goal_activation & TFGA_SPANNER )
 	{
 		pTarget->do_triggerwork = 1;
 		pTarget->Use( m_pPlayer, m_pPlayer, USE_TOGGLE, 8.0f );
 		pTarget->do_triggerwork = 0;
-		return true;
+		return TRUE;
 	}
 	else if ( m_pPlayer->IsAlly( pTarget ) )
 	{
@@ -244,7 +244,7 @@ BOOL CTFSpanner::AxeHit( CBaseEntity* pTarget, Vector p_vecDir, TraceResult* ptr
 		ClearMultiDamage();
 		pTarget->TraceAttack( m_pPlayer->pev, 20.0f, p_vecDir, ptr, DMG_CLUB );
 		ApplyMultiDamage( m_pPlayer->pev, m_pPlayer->pev );
-		return true;
+		return TRUE;
 	}
 }
 
@@ -252,6 +252,7 @@ LINK_ENTITY_TO_CLASS( tf_weapon_knife, CTFKnife )
 
 void CTFKnife::Spawn( void )
 {
+	Precache();
 	m_iClip = -1;
 	m_iId = WEAPON_KNIFE;
 	pev->solid = SOLID_TRIGGER;
@@ -274,7 +275,7 @@ void CTFKnife::Holster( int skiplocal /* = 0 */ )
 	SendWeaponAnim( KNIFE_HOLSTER );
 }
 
-int CTFKnife::GetItemInfo( ItemInfo* p )
+int CTFKnife::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = NULL;
 	p->pszName = STRING( pev->classname );
@@ -297,7 +298,7 @@ BOOL CTFKnife::Deploy( void )
 
 void CTFKnife::PlayAnim( int iAnimType )
 {
-	if ( iAnimType == 0 || iAnimType == 1 )
+	if ( iAnimType == 0 || iAnimType == 1 ) //Velaron: ANIM_HIT
 	{
 		SendWeaponAnim( KNIFE_ATTACK1 );
 	}
@@ -341,7 +342,7 @@ void CTFMedikit::Holster( int skiplocal /* = 0 */ )
 	SendWeaponAnim( MEDIKIT_HOLSTER );
 }
 
-int CTFMedikit::GetItemInfo( ItemInfo* p )
+int CTFMedikit::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = NULL;
 	p->iAmmo1 = -1;
@@ -376,7 +377,7 @@ void CTFMedikit::WeaponIdle( void )
 	}
 }
 
-BOOL CTFMedikit::AxeHit( CBaseEntity* pTarget, Vector* p_vecDir, TraceResult* ptr )
+BOOL CTFMedikit::AxeHit( CBaseEntity *pTarget, Vector *p_vecDir, TraceResult *ptr )
 {
 	//if
 	return true;

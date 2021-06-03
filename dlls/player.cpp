@@ -37,6 +37,8 @@
 #include "pm_shared.h"
 #include "hltv.h"
 
+#include "tf_defs.h"
+
 // #define DUCKFIX
 
 extern DLL_GLOBAL ULONG g_ulModelIndexPlayer;
@@ -397,6 +399,16 @@ void CBasePlayer::DeathSound( void )
 int CBasePlayer::TakeHealth( float flHealth, int bitsDamageType )
 {
 	return CBaseMonster::TakeHealth( flHealth, bitsDamageType );
+}
+
+void CBasePlayer::TeamFortress_SetSkin( void )
+{
+	immune_to_check = gpGlobals->time + 10.0f;
+
+	if ( pev->playerclass == PC_SPY )
+	{
+		
+	}
 }
 
 Vector CBasePlayer::GetGunPosition()

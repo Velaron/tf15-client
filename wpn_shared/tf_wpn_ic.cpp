@@ -21,18 +21,11 @@ void CTFIncendiaryC::Spawn( void )
 	pev->solid = SOLID_TRIGGER;
 }
 
-int CTFIncendiaryC::GetItemInfo( ItemInfo* p )
+int CTFIncendiaryC::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "rockets";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-	{
-		p->iAmmo1 = m_pPlayer->maxammo_rockets;
-	}
-	else
-	{
-		p->iAmmo1 = 20;
-	}
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_rockets : 20;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
@@ -90,17 +83,20 @@ BOOL CTFIncendiaryC::Deploy( void )
 		return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_rpg.mdl", RPG_RELOAD_START, "rpg", 1 );
 }
 
-int CTFIncendiaryC::AddToPlayer( CBasePlayer* pPlayer )
+BOOL CTFIncendiaryC::AddToPlayer( CBasePlayer *pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		return true;
+
+		current_ammo = &m_pPlayer->ammo_rockets;
+
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
 void CTFIncendiaryC::PrimaryAttack( void )
@@ -113,13 +109,14 @@ void CTFIncendiaryC::PrimaryAttack( void )
 	}
 	else
 	{
-		m_pPlayer->m_iWeaponVolume = 1000;
-		m_pPlayer->m_iWeaponFlash = 512;
+		m_pPlayer->m_iWeaponVolume = LOUD_GUN_VOLUME;
+		m_pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
 		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireIC, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		p_vecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16.0f + gpGlobals->v_right * 8.0f + gpGlobals->v_up * -8.0f;
 		p_vecAngles = m_pPlayer->pev->v_angle;
+		// Velaron: TODO
 		//CTFIncendiaryRocket::CreateRpgRocket( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		m_pPlayer->ammo_rockets--;

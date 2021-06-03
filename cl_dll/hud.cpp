@@ -32,8 +32,8 @@
 #include "vgui_ScorePanel.h"
 #include <voice_status.h>
 
-hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS + 1];	   // player info from the engine
-extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS + 1];   // additional player info sent directly to the client dll
+hud_player_info_t g_PlayerInfoList[MAX_PLAYERS + 1];    // player info from the engine
+extra_player_info_t g_PlayerExtraInfo[MAX_PLAYERS + 1]; // additional player info sent directly to the client dll
 
 cvar_t *hud_textmode;
 float g_hud_text_color[3];
@@ -67,12 +67,12 @@ public:
 		gViewPort->UpdateCursorState();
 	}
 
-	virtual int	GetAckIconHeight()
+	virtual int GetAckIconHeight()
 	{
 		return ScreenHeight - gHUD.m_iFontHeight * 3 - 6;
 	}
 
-	virtual bool			CanShowSpeakerLabels()
+	virtual bool CanShowSpeakerLabels()
 	{
 		if ( gViewPort && gViewPort->m_pScoreBoard )
 			return !gViewPort->m_pScoreBoard->isVisible();
@@ -138,22 +138,34 @@ int __MsgFunc_GameMode( const char *pszName, int iSize, void *pbuf )
 
 void __CmdFunc_OpenCommandMenu( void )
 {
-	if ( gViewPort ) { gViewPort->ShowCommandMenu( gViewPort->m_StandardMenu ); }
+	if ( gViewPort )
+	{
+		gViewPort->ShowCommandMenu( gViewPort->m_StandardMenu );
+	}
 }
 
 void __CmdFunc_InputPlayerSpecial( void )
 {
-	if ( gViewPort ) { gViewPort->InputPlayerSpecial(); }
+	if ( gViewPort )
+	{
+		gViewPort->InputPlayerSpecial();
+	}
 }
 
 void __CmdFunc_CloseCommandMenu( void )
 {
-	if ( gViewPort ) { gViewPort->InputSignalHideCommandMenu(); }
+	if ( gViewPort )
+	{
+		gViewPort->InputSignalHideCommandMenu();
+	}
 }
 
 void __CmdFunc_ForceCloseCommandMenu( void )
 {
-	if ( gViewPort ) { gViewPort->HideCommandMenu(); }
+	if ( gViewPort )
+	{
+		gViewPort->HideCommandMenu();
+	}
 }
 
 void __CmdFunc_ToggleServerBrowser( void )
@@ -163,97 +175,145 @@ void __CmdFunc_ToggleServerBrowser( void )
 
 int __MsgFunc_ValClass( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_ValClass( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_ValClass( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_TeamNames( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_TeamNames( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_TeamNames( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_Feign( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_Feign( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_Feign( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_Detpack( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_Detpack( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_Detpack( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_VGUIMenu( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_VGUIMenu( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_VGUIMenu( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_MOTD( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_MOTD( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_MOTD( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_BuildSt( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_BuildSt( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_BuildSt( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_RandomPC( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_RandomPC( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_RandomPC( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_ServerName( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_ServerName( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_ServerName( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_ScoreInfo( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_ScoreInfo( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_ScoreInfo( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_TeamScore( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_TeamScore( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_TeamScore( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_TeamInfo( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { gViewPort->MsgFunc_TeamInfo( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		gViewPort->MsgFunc_TeamInfo( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_Spectator( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { return gViewPort->MsgFunc_Spectator( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		return gViewPort->MsgFunc_Spectator( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_SpecFade( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { return gViewPort->MsgFunc_SpecFade( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		return gViewPort->MsgFunc_SpecFade( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_ResetFade( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { return gViewPort->MsgFunc_ResetFade( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		return gViewPort->MsgFunc_ResetFade( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
 int __MsgFunc_AllowSpec( const char *pszName, int iSize, void *pbuf )
 {
-	if ( gViewPort ) { return gViewPort->MsgFunc_AllowSpec( pszName, iSize, pbuf ); }
+	if ( gViewPort )
+	{
+		return gViewPort->MsgFunc_AllowSpec( pszName, iSize, pbuf );
+	}
 	return 0;
 }
 
@@ -296,8 +356,8 @@ void CHud::Init( void )
 	// VGUI Menus
 	HOOK_MESSAGE( VGUIMenu );
 
-	CVAR_CREATE( "hud_classautokill", "1", FCVAR_ARCHIVE | FCVAR_USERINFO );		// controls whether or not to suicide immediately on TF class switch
-	CVAR_CREATE( "hud_takesshots", "0", FCVAR_ARCHIVE );		// controls whether or not to automatically take screenshots at the end of a round
+	CVAR_CREATE( "hud_classautokill", "1", FCVAR_ARCHIVE | FCVAR_USERINFO ); // controls whether or not to suicide immediately on TF class switch
+	CVAR_CREATE( "hud_takesshots", "0", FCVAR_ARCHIVE );                     // controls whether or not to automatically take screenshots at the end of a round
 	tfc_newmodels = CVAR_CREATE( "tfc_newmodels", "1", FCVAR_ARCHIVE | FCVAR_CLIENTDLL );
 	hud_textmode = CVAR_CREATE( "hud_textmode", "0", FCVAR_ARCHIVE );
 
@@ -345,10 +405,8 @@ void CHud::Init( void )
 	GetClientVoiceMgr()->Init( &g_VoiceStatusHelper, (vgui::Panel **)&gViewPort );
 
 	m_Menu.Init();
-	//Velaron: TODO maybe
-	//m_Benchmark.Init();
 
-	//ServersInit();
+	// ServersInit();
 
 	MsgFunc_ResetHUD( 0, 0, NULL );
 }
@@ -373,7 +431,7 @@ CHud::~CHud()
 		m_pHudList = NULL;
 	}
 
-	//ServersShutdown();
+	// ServersShutdown();
 }
 
 // GetSpriteIndex()
@@ -560,10 +618,10 @@ void COM_FileBase( const char *in, char *out )
 	while ( end && in[end] != '.' && in[end] != '/' && in[end] != '\\' )
 		end--;
 
-	if ( in[end] != '.' )		// no '.', copy to end
+	if ( in[end] != '.' ) // no '.', copy to end
 		end = len - 1;
 	else
-		end--;					// Found ',', copy to left of '.'
+		end--; // Found ',', copy to left of '.'
 
 	// Scan backward for '/'
 	start = len - 1;

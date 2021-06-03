@@ -12,5 +12,10 @@ CTestTestfile.cmake
 _deps
 
 # VS Code
-.vscode
+.vscode/
+.cache/
 build
+
+# Visual Studio
+.vs/
+CMakeSettings.json

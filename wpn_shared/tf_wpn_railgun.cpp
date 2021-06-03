@@ -14,7 +14,7 @@ LINK_ENTITY_TO_CLASS( tf_weapon_railgun, CTFRailgun )
 
 void CTFRailgun::Spawn( void )
 {
-	pev->classname = MAKE_STRING(" tf_weapon_railgun" );
+	pev->classname = MAKE_STRING( " tf_weapon_railgun" );
 	Precache();
 	SET_MODEL( ENT( pev ), "models/w_gauss.mdl" );
 	m_iId = WEAPON_LASER;
@@ -36,10 +36,7 @@ int CTFRailgun::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "9mm";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_nails;
-	else
-		p->iAmmo1 = 50;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_nails : 50;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
@@ -78,14 +75,15 @@ void CTFRailgun::PrimaryAttack( void )
 	}
 	else
 	{
-		m_pPlayer->m_iWeaponVolume = 600;
-		m_pPlayer->m_iWeaponFlash = 256;
+		m_pPlayer->m_iWeaponVolume = NORMAL_GUN_VOLUME;
+		m_pPlayer->m_iWeaponFlash = NORMAL_GUN_FLASH;
 		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireRail, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 		m_pPlayer->pev->effects |= EF_MUZZLEFLASH;
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		p_vecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_right * 2.0f + gpGlobals->v_up * -4.0f;
 		p_vecAngles = m_pPlayer->pev->v_angle;
+		// Velaron: TODO
 		//CTFNailgunNail::CreateRailgunNail( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
 		m_pPlayer->ammo_nails--;
 		m_flTimeWeaponIdle = 12.5f;

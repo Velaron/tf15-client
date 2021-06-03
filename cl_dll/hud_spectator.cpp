@@ -1,6 +1,6 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -26,11 +26,11 @@
 #include "studio_util.h"
 #include "screenfade.h"
 
-#pragma warning(disable: 4244)
+#pragma warning( disable : 4244 )
 
-extern "C" int		iJumpSpectator;
-extern "C" float	vJumpOrigin[3];
-extern "C" float	vJumpAngles[3];
+extern "C" int iJumpSpectator;
+extern "C" float vJumpOrigin[3];
+extern "C" float vJumpAngles[3];
 
 extern void V_GetInEyePos( int entity, float *origin, float *angles );
 extern void V_ResetChaseCam();
@@ -39,10 +39,10 @@ extern void VectorAngles( const float *forward, float *angles );
 extern "C" void NormalizeAngles( float *angles );
 extern float *GetClientColor( int clientIndex );
 
-extern vec3_t v_origin;		// last view origin
-extern vec3_t v_angles;		// last view angle
-extern vec3_t v_cl_angles;	// last client/mouse angle
-extern vec3_t v_sim_org;	// last sim origin
+extern vec3_t v_origin;    // last view origin
+extern vec3_t v_angles;    // last view angle
+extern vec3_t v_cl_angles; // last client/mouse angle
+extern vec3_t v_sim_org;   // last sim origin
 
 void SpectatorMode( void )
 {
@@ -74,7 +74,7 @@ void SpectatorSpray( void )
 	if ( trace->fraction != 1.0f )
 	{
 		sprintf( string, "drc_spray %.2f %.2f %.2f %i",
-			(double)trace->endpos[0], (double)trace->endpos[1], (double)trace->endpos[2], trace->ent );
+		         (double)trace->endpos[0], (double)trace->endpos[1], (double)trace->endpos[2], trace->ent );
 		gEngfuncs.pfnServerCmd( string );
 	}
 }
@@ -127,7 +127,7 @@ void ToggleScores( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CHudSpectator::Init()
 {
@@ -137,6 +137,7 @@ int CHudSpectator::Init()
 	m_flNextObserverInput = 0.0f;
 	m_zoomDelta = 0.0f;
 	m_moveDelta = 0.0f;
+	m_FOV = 90.0f;
 	m_chatEnabled = ( gHUD.m_SayText.m_HUD_saytext->value != 0 );
 	iJumpSpectator = 0;
 
@@ -171,7 +172,7 @@ int CHudSpectator::Init()
 void UTIL_StringToVector( float *pVector, const char *pString )
 {
 	char *pstr, *pfront, tempString[128];
-	int	j;
+	int j;
 
 	strcpy( tempString, pString );
 	pstr = pfront = tempString;
@@ -197,11 +198,11 @@ void UTIL_StringToVector( float *pVector, const char *pString )
 
 int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
 {
-	int			n, found = 0;
-	char			keyname[256];
-	char			token[2048];
+	int n, found = 0;
+	char keyname[256];
+	char token[2048];
 
-	cl_entity_t *pEnt = gEngfuncs.GetEntityByIndex( 0 );	// get world model
+	cl_entity_t *pEnt = gEngfuncs.GetEntityByIndex( 0 ); // get world model
 
 	if ( !pEnt )
 		return 0;
@@ -230,7 +231,7 @@ int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
 			return 0;
 		}
 
-		// we parse the first { now parse entities properties		
+		// we parse the first { now parse entities properties
 		while ( 1 )
 		{
 			// parse key
@@ -254,7 +255,7 @@ int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
 				n--;
 			}
 
-			// parse value	
+			// parse value
 			data = gEngfuncs.COM_ParseFile( data, token );
 			if ( !data )
 			{
@@ -272,7 +273,7 @@ int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
 			{
 				if ( !strcmp( token, name ) )
 				{
-					found = 1;	// thats our entity
+					found = 1; // thats our entity
 				}
 			}
 
@@ -288,7 +289,8 @@ int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
 				else if ( (int)y == -1 )
 				{
 					angle[0] = -90.0f;
-					angle[1] = 0.0f;;
+					angle[1] = 0.0f;
+					;
 				}
 				else
 				{
@@ -314,11 +316,11 @@ int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
 			return 1;
 	}
 
-	return 0;	// we search all entities, but didn't found the correct
+	return 0; // we search all entities, but didn't found the correct
 }
 
 //-----------------------------------------------------------------------------
-// SetSpectatorStartPosition(): 
+// SetSpectatorStartPosition():
 // Get valid map position and 'beam' spectator to this position
 //-----------------------------------------------------------------------------
 void CHudSpectator::SetSpectatorStartPosition()
@@ -345,7 +347,180 @@ void CHudSpectator::SetSpectatorStartPosition()
 	VectorCopy( m_cameraOrigin, vJumpOrigin );
 	VectorCopy( m_cameraAngles, vJumpAngles );
 
-	iJumpSpectator = 1;	// jump anyway
+	iJumpSpectator = 1; // jump anyway
+}
+
+void CHudSpectator::SetCameraView( vec3_t pos, vec3_t angle, float fov )
+{
+	m_FOV = fov;
+	VectorCopy( pos, vJumpOrigin );
+	VectorCopy( angle, vJumpAngles );
+	gEngfuncs.SetViewAngles( vJumpAngles );
+	iJumpSpectator = 1; // jump anyway
+}
+
+void CHudSpectator::AddWaypoint( float time, vec3_t pos, vec3_t angle, float fov, int flags )
+{
+	if ( flags == 0 && time == 0.0f )
+	{
+		// switch instantly to this camera view
+		SetCameraView( pos, angle, fov );
+		return;
+	}
+
+	if ( m_NumWayPoints >= MAX_CAM_WAYPOINTS )
+	{
+		gEngfuncs.Con_Printf( "Too many camera waypoints!\n" );
+		return;
+	}
+
+	VectorCopy( angle, m_CamPath[m_NumWayPoints].angle );
+	VectorCopy( pos, m_CamPath[m_NumWayPoints].position );
+	m_CamPath[m_NumWayPoints].flags = flags;
+	m_CamPath[m_NumWayPoints].fov = fov;
+	m_CamPath[m_NumWayPoints].time = time;
+
+	gEngfuncs.Con_DPrintf( "Added waypoint %i\n", m_NumWayPoints );
+
+	m_NumWayPoints++;
+}
+
+void CHudSpectator::SetWayInterpolation( cameraWayPoint_t *prev, cameraWayPoint_t *start, cameraWayPoint_t *end, cameraWayPoint_t *next )
+{
+	m_WayInterpolation.SetViewAngles( start->angle, end->angle );
+
+	m_WayInterpolation.SetFOVs( start->fov, end->fov );
+
+	m_WayInterpolation.SetSmoothing( ( start->flags & DRC_FLAG_SLOWSTART ) != 0,
+	                                 ( start->flags & DRC_FLAG_SLOWEND ) != 0 );
+
+	if ( prev && next )
+	{
+		m_WayInterpolation.SetWaypoints( &prev->position, start->position, end->position, &next->position );
+	}
+	else if ( prev )
+	{
+		m_WayInterpolation.SetWaypoints( &prev->position, start->position, end->position, NULL );
+	}
+	else if ( next )
+	{
+		m_WayInterpolation.SetWaypoints( NULL, start->position, end->position, &next->position );
+	}
+	else
+	{
+		m_WayInterpolation.SetWaypoints( NULL, start->position, end->position, NULL );
+	}
+}
+
+bool CHudSpectator::GetDirectorCamera( vec3_t &position, vec3_t &angle )
+{
+	float now = gHUD.m_flTime;
+	float fov = 90.0f;
+
+	if ( m_ChaseEntity )
+	{
+		cl_entity_t *ent = gEngfuncs.GetEntityByIndex( m_ChaseEntity );
+
+		if ( ent )
+		{
+			vec3_t vt = ent->curstate.origin;
+
+			if ( m_ChaseEntity <= gEngfuncs.GetMaxClients() )
+			{
+				if ( ent->curstate.solid == SOLID_NOT )
+				{
+					vt[2] += -8; // PM_DEAD_VIEWHEIGHT
+				}
+				else if ( ent->curstate.usehull == 1 )
+				{
+					vt[2] += 12; // VEC_DUCK_VIEW;
+				}
+				else
+				{
+					vt[2] += 28; // DEFAULT_VIEWHEIGHT
+				}
+			}
+
+			vt = vt - position;
+			VectorAngles( vt, angle );
+			angle[0] = -angle[0];
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	if ( !m_IsInterpolating )
+		return false;
+
+	if ( m_WayPoint < 0 || m_WayPoint >= ( m_NumWayPoints - 1 ) )
+		return false;
+
+	cameraWayPoint_t *wp1 = &m_CamPath[m_WayPoint];
+	cameraWayPoint_t *wp2 = &m_CamPath[m_WayPoint + 1];
+
+	if ( now < wp1->time )
+		return false;
+
+	while ( now > wp2->time )
+	{
+		// go to next waypoint, if possible
+		m_WayPoint++;
+
+		if ( m_WayPoint >= ( m_NumWayPoints - 1 ) )
+		{
+			m_IsInterpolating = false;
+			return false; // there is no following waypoint
+		}
+
+		wp1 = wp2;
+		wp2 = &m_CamPath[m_WayPoint + 1];
+
+		if ( m_WayPoint > 0 )
+		{
+			// we have a predecessor
+
+			if ( m_WayPoint < ( m_NumWayPoints - 1 ) )
+			{
+				// we have also a successor
+				SetWayInterpolation( &m_CamPath[m_WayPoint - 1], wp1, wp2, &m_CamPath[m_WayPoint + 2] );
+			}
+			else
+			{
+				SetWayInterpolation( &m_CamPath[m_WayPoint - 1], wp1, wp2, NULL );
+			}
+		}
+		else if ( m_WayPoint < ( m_NumWayPoints - 1 ) )
+		{
+			// we only have a successor
+			SetWayInterpolation( NULL, wp1, wp2, &m_CamPath[m_WayPoint + 2] );
+		}
+		else
+		{
+			// we have only two waypoints
+			SetWayInterpolation( NULL, wp1, wp2, NULL );
+		}
+	}
+
+	if ( wp2->time <= wp1->time )
+		return false;
+
+	float fraction = ( now - wp1->time ) / ( wp2->time - wp1->time );
+
+	if ( fraction < 0.0f )
+		fraction = 0.0f;
+	else if ( fraction > 1.0f )
+		fraction = 1.0f;
+
+	m_WayInterpolation.Interpolate( fraction, position, angle, &fov );
+
+	// gEngfuncs.Con_Printf("Interpolate time: %.2f, fraction %.2f, point : %.2f,%.2f,%.2f\n", now, fraction, position[0], position[1], position[2] );
+
+	SetCameraView( position, angle, fov );
+
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -362,13 +537,25 @@ int CHudSpectator::VidInit()
 	m_hsprCamera = SPR_Load( "sprites/camera.spr" );
 	m_hCrosshair = SPR_Load( "sprites/crosshairs.spr" );
 
+	m_lastPrimaryObject = m_lastSecondaryObject = 0;
+	m_flNextObserverInput = 0.0f;
+	m_lastHudMessage = 0;
+	m_iSpectatorNumber = 0;
+	iJumpSpectator = 0;
+	g_iUser1 = g_iUser2 = 0;
+
 	return 1;
 }
 
+float CHudSpectator::GetFOV()
+{
+	return m_FOV;
+}
+
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flTime - 
-//			intermission - 
+// Purpose:
+// Input  : flTime -
+//			intermission -
 //-----------------------------------------------------------------------------
 int CHudSpectator::Draw( float flTime )
 {
@@ -417,16 +604,13 @@ int CHudSpectator::Draw( float flTime )
 	// loop through all the players and draw additional infos to their sprites on the map
 	for ( int i = 0; i < MAX_PLAYERS; i++ )
 	{
-		if ( m_vPlayerPos[i][2] < 0 )	// marked as invisible ?
+		if ( m_vPlayerPos[i][2] < 0 ) // marked as invisible ?
 			continue;
 
 		// check if name would be in inset window
 		if ( m_pip->value != INSET_OFF )
 		{
-			if ( m_vPlayerPos[i][0] > XRES( m_OverviewData.insetWindowX ) &&
-				m_vPlayerPos[i][1] > YRES( m_OverviewData.insetWindowY ) &&
-				m_vPlayerPos[i][0] < XRES( m_OverviewData.insetWindowX + m_OverviewData.insetWindowWidth ) &&
-				m_vPlayerPos[i][1] < YRES( m_OverviewData.insetWindowY + m_OverviewData.insetWindowHeight ) )
+			if ( m_vPlayerPos[i][0] > XRES( m_OverviewData.insetWindowX ) && m_vPlayerPos[i][1] > YRES( m_OverviewData.insetWindowY ) && m_vPlayerPos[i][0] < XRES( m_OverviewData.insetWindowX + m_OverviewData.insetWindowWidth ) && m_vPlayerPos[i][1] < YRES( m_OverviewData.insetWindowY + m_OverviewData.insetWindowHeight ) )
 				continue;
 		}
 
@@ -448,15 +632,16 @@ void CHudSpectator::DirectorMessage( int iSize, void *pbuf )
 {
 	float value;
 	char *string;
+	int i;
 
 	BEGIN_READ( pbuf, iSize );
 
 	int cmd = READ_BYTE();
 
-	switch ( cmd )	// director command byte 
+	switch ( cmd ) // director command byte
 	{
 	case DRC_CMD_START:
-		// now we have to do some things clientside, since the proxy doesn't know our mod 
+		// now we have to do some things clientside, since the proxy doesn't know our mod
 		g_iPlayerClass = 0;
 		g_iTeamNumber = 0;
 
@@ -476,6 +661,8 @@ void CHudSpectator::DirectorMessage( int iSize, void *pbuf )
 
 			g_iUser2 = m_lastPrimaryObject;
 			g_iUser3 = m_lastSecondaryObject;
+			m_IsInterpolating = false;
+			m_ChaseEntity = 0;
 		}
 
 		// gEngfuncs.Con_Printf( "Director Camera: %i %i\n", firstObject, secondObject );
@@ -489,41 +676,41 @@ void CHudSpectator::DirectorMessage( int iSize, void *pbuf )
 	case DRC_CMD_CAMERA:
 		if ( m_autoDirector->value )
 		{
-			vJumpOrigin[0] = READ_COORD();	// position
+			vJumpOrigin[0] = READ_COORD(); // position
 			vJumpOrigin[1] = READ_COORD();
 			vJumpOrigin[2] = READ_COORD();
 
-			vJumpAngles[0] = READ_COORD();	// view angle
+			vJumpAngles[0] = READ_COORD(); // view angle
 			vJumpAngles[1] = READ_COORD();
 			vJumpAngles[2] = READ_COORD();
 
-			gEngfuncs.SetViewAngles( vJumpAngles );
-
-			iJumpSpectator = 1;
+			SetModes( OBS_ROAMING, -1 );
+			SetCameraView( vJumpOrigin, vJumpAngles, READ_BYTE() );
+			m_ChaseEntity = READ_WORD();
 		}
 		break;
 	case DRC_CMD_MESSAGE:
 	{
 		client_textmessage_t *msg = &m_HUDMessages[m_lastHudMessage];
 
-		msg->effect = READ_BYTE();		// effect
+		msg->effect = READ_BYTE(); // effect
 
-		UnpackRGB( (int &)msg->r1, (int &)msg->g1, (int &)msg->b1, READ_LONG() );	// color
+		UnpackRGB( (int &)msg->r1, (int &)msg->g1, (int &)msg->b1, READ_LONG() ); // color
 		msg->r2 = msg->r1;
 		msg->g2 = msg->g1;
 		msg->b2 = msg->b1;
-		msg->a2 = msg->a1 = 0xFF;	// not transparent
+		msg->a2 = msg->a1 = 0xFF; // not transparent
 
-		msg->x = READ_FLOAT();	// x pos
-		msg->y = READ_FLOAT();	// y pos
+		msg->x = READ_FLOAT(); // x pos
+		msg->y = READ_FLOAT(); // y pos
 
-		msg->fadein = READ_FLOAT();	// fadein
-		msg->fadeout = READ_FLOAT();	// fadeout
-		msg->holdtime = READ_FLOAT();	// holdtime
-		msg->fxtime = READ_FLOAT();	// fxtime;
+		msg->fadein = READ_FLOAT();   // fadein
+		msg->fadeout = READ_FLOAT();  // fadeout
+		msg->holdtime = READ_FLOAT(); // holdtime
+		msg->fxtime = READ_FLOAT();   // fxtime;
 
 		strncpy( m_HUDMessageText[m_lastHudMessage], READ_STRING(), 128 );
-		m_HUDMessageText[m_lastHudMessage][127] = 0;	// text 
+		m_HUDMessageText[m_lastHudMessage][127] = 0; // text
 
 		msg->pMessage = m_HUDMessageText[m_lastHudMessage];
 		msg->pName = "HUD_MESSAGE";
@@ -545,9 +732,9 @@ void CHudSpectator::DirectorMessage( int iSize, void *pbuf )
 		value = READ_FLOAT();
 		break;
 	case DRC_CMD_STATUS:
-		READ_LONG(); // total number of spectator slots
+		READ_LONG();                      // total number of spectator slots
 		m_iSpectatorNumber = READ_LONG(); // total number of spectator
-		READ_WORD(); // total number of relay proxies
+		READ_WORD();                      // total number of relay proxies
 
 		gViewPort->UpdateSpectatorPanel();
 		break;
@@ -556,10 +743,64 @@ void CHudSpectator::DirectorMessage( int iSize, void *pbuf )
 		gViewPort->m_pSpectatorPanel->m_TopBanner->LoadImage( READ_STRING() );
 		gViewPort->UpdateSpectatorPanel();
 		break;
-	case DRC_CMD_FADE:
-		break;
 	case DRC_CMD_STUFFTEXT:
 		ClientCmd( READ_STRING() );
+		break;
+	case DRC_CMD_CAMPATH:
+		if ( m_autoDirector->value )
+		{
+			vJumpOrigin[0] = READ_COORD(); // position
+			vJumpOrigin[1] = READ_COORD();
+			vJumpOrigin[2] = READ_COORD();
+
+			vJumpAngles[0] = READ_COORD(); // view angle
+			vJumpAngles[1] = READ_COORD();
+			vJumpAngles[2] = READ_COORD();
+			SetModes( OBS_ROAMING, -1 );
+			SetCameraView( vJumpOrigin, vJumpAngles, READ_BYTE() );
+		}
+		break;
+	case DRC_CMD_WAYPOINTS:
+		i = READ_BYTE();
+		m_NumWayPoints = 0;
+		m_WayPoint = 0;
+
+		for ( int x = 0; x < i; x++ )
+		{
+			value = gHUD.m_flTime + (float)( READ_SHORT() ) / 100.0f;
+
+			vJumpOrigin[0] = READ_COORD(); // position
+			vJumpOrigin[1] = READ_COORD();
+			vJumpOrigin[2] = READ_COORD();
+
+			vJumpAngles[0] = READ_COORD(); // view angle
+			vJumpAngles[1] = READ_COORD();
+			vJumpAngles[2] = READ_COORD();
+
+			AddWaypoint( value, vJumpOrigin, vJumpAngles, READ_BYTE(), READ_BYTE() );
+		}
+
+		// gEngfuncs.Con_Printf("CHudSpectator::DirectorMessage: waypoints %i.\n", m_NumWayPoints );
+		if ( !m_autoDirector->value )
+		{
+			// ignore waypoints
+			m_NumWayPoints = 0;
+			break;
+		}
+
+		SetModes( OBS_ROAMING, -1 );
+
+		m_IsInterpolating = true;
+
+		if ( m_NumWayPoints > 2 )
+		{
+			SetWayInterpolation( NULL, &m_CamPath[0], &m_CamPath[1], &m_CamPath[2] );
+		}
+		else
+		{
+			SetWayInterpolation( NULL, &m_CamPath[0], &m_CamPath[1], NULL );
+		}
+
 		break;
 	default:
 		gEngfuncs.Con_DPrintf( "CHudSpectator::DirectorMessage: unknown command %i.\n", cmd );
@@ -571,7 +812,7 @@ void CHudSpectator::FindNextPlayer( bool bReverse )
 	// MOD AUTHORS: Modify the logic of this function if you want to restrict the observer to watching
 	//				only a subset of the players. e.g. Make it check the target's team.
 
-	int		iStart;
+	int iStart;
 	cl_entity_t *pEnt = NULL;
 
 	// if we are NOT in HLTV mode, spectator targets are set on server
@@ -622,7 +863,7 @@ void CHudSpectator::FindNextPlayer( bool bReverse )
 	if ( !g_iUser2 )
 	{
 		gEngfuncs.Con_DPrintf( "No observer targets.\n" );
-		// take save camera position 
+		// take save camera position
 		VectorCopy( m_cameraOrigin, vJumpOrigin );
 		VectorCopy( m_cameraAngles, vJumpAngles );
 	}
@@ -671,14 +912,13 @@ void CHudSpectator::FindPlayer( const char *name )
 			g_iUser2 = i;
 			break;
 		}
-
 	}
 
 	// Did we find a target?
 	if ( !g_iUser2 )
 	{
 		gEngfuncs.Con_DPrintf( "No observer targets.\n" );
-		// take save camera position 
+		// take save camera position
 		VectorCopy( m_cameraOrigin, vJumpOrigin );
 		VectorCopy( m_cameraAngles, vJumpAngles );
 	}
@@ -702,7 +942,10 @@ void CHudSpectator::HandleButtonsDown( int ButtonPressed )
 
 	// gEngfuncs.Con_Printf( " HandleButtons:%i\n", ButtonPressed );
 
-	if ( !gViewPort ) { return; }
+	if ( !gViewPort )
+	{
+		return;
+	}
 
 	//Not in intermission.
 	if ( gHUD.m_iIntermission )
@@ -714,7 +957,7 @@ void CHudSpectator::HandleButtonsDown( int ButtonPressed )
 	// don't handle buttons during normal demo playback
 	if ( gEngfuncs.pDemoAPI->IsPlayingback() && !gEngfuncs.IsSpectateOnly() )
 		return;
-	// Slow down mouse clicks. 
+	// Slow down mouse clicks.
 	if ( m_flNextObserverInput > time )
 		return;
 
@@ -747,7 +990,7 @@ void CHudSpectator::HandleButtonsDown( int ButtonPressed )
 			else if ( g_iUser1 == OBS_MAP_FREE )
 				newMainMode = OBS_MAP_CHASE;
 			else
-				newMainMode = OBS_CHASE_FREE;	// don't use OBS_CHASE_LOCKED anymore
+				newMainMode = OBS_CHASE_FREE; // don't use OBS_CHASE_LOCKED anymore
 		}
 
 		// Attack moves to the next player
@@ -827,7 +1070,7 @@ void CHudSpectator::SetModes( int iNewMainMode, int iNewInsetMode )
 			return;
 		}
 
-		if ( !g_iUser2 && ( iNewMainMode != OBS_ROAMING ) )	// make sure we have a target
+		if ( !g_iUser2 && ( iNewMainMode != OBS_ROAMING ) ) // make sure we have a target
 		{
 			// choose last Director object if still available
 			if ( IsActivePlayer( gEngfuncs.GetEntityByIndex( m_lastPrimaryObject ) ) )
@@ -847,7 +1090,7 @@ void CHudSpectator::SetModes( int iNewMainMode, int iNewInsetMode )
 		case OBS_CHASE_FREE:
 			g_iUser1 = OBS_CHASE_FREE;
 			break;
-		case OBS_ROAMING:	// jump to current vJumpOrigin/angle
+		case OBS_ROAMING: // jump to current vJumpOrigin/angle
 			g_iUser1 = OBS_ROAMING;
 			if ( g_iUser2 )
 			{
@@ -901,12 +1144,7 @@ void CHudSpectator::SetModes( int iNewMainMode, int iNewInsetMode )
 
 bool CHudSpectator::IsActivePlayer( cl_entity_t *ent )
 {
-	return ( ent &&
-		ent->player &&
-		ent->curstate.solid != SOLID_NOT &&
-		ent != gEngfuncs.GetLocalPlayer() &&
-		g_PlayerInfoList[ent->index].name != NULL
-		);
+	return ( ent && ent->player && ent->curstate.solid != SOLID_NOT && ent != gEngfuncs.GetLocalPlayer() && g_PlayerInfoList[ent->index].name != NULL );
 }
 
 bool CHudSpectator::ParseOverviewFile()
@@ -921,7 +1159,7 @@ bool CHudSpectator::ParseOverviewFile()
 	memset( &m_OverviewData, 0, sizeof( m_OverviewData ) );
 
 	// fill in standrd values
-	m_OverviewData.insetWindowX = 4;	// upper left corner
+	m_OverviewData.insetWindowX = 4; // upper left corner
 	m_OverviewData.insetWindowY = 4;
 	m_OverviewData.insetWindowHeight = 180;
 	m_OverviewData.insetWindowWidth = 240;
@@ -1078,7 +1316,7 @@ void CHudSpectator::DrawOverviewLayer()
 	float screenaspect, xs, ys, xStep, yStep, x, y, z;
 	int ix, iy, i, xTiles, yTiles, frame;
 
-	qboolean	 hasMapImage = m_MapSprite ? TRUE : FALSE;
+	qboolean hasMapImage = m_MapSprite ? TRUE : FALSE;
 	model_t *dummySprite = (struct model_s *)gEngfuncs.GetSpritePointer( m_hsprUnkownMap );
 
 	if ( hasMapImage )
@@ -1099,7 +1337,7 @@ void CHudSpectator::DrawOverviewLayer()
 	xs = m_OverviewData.origin[0];
 	ys = m_OverviewData.origin[1];
 	z = ( 90.0f - v_angles[0] ) / 90.0f;
-	z *= m_OverviewData.layersHeights[0]; // gOverviewData.z_min - 32;	
+	z *= m_OverviewData.layersHeights[0]; // gOverviewData.z_min - 32;
 
 	// i = r_overviewTexture + ( layer * OVERVIEW_X_TILES * OVERVIEW_Y_TILES );
 
@@ -1193,14 +1431,14 @@ void CHudSpectator::DrawOverviewLayer()
 
 void CHudSpectator::DrawOverviewEntities()
 {
-	int			i, ir, ig, ib;
+	int i, ir, ig, ib;
 	struct model_s *hSpriteModel;
-	vec3_t			origin, angles, point, forward, right, left, up, world, screen, offset;
-	float			x, y, z, r, g, b, sizeScale = 4.0f;
+	vec3_t origin, angles, point, forward, right, left, up, world, screen, offset;
+	float x, y, z, r, g, b, sizeScale = 4.0f;
 	cl_entity_t *ent;
-	float rmatrix[3][4];	// transformation matrix
+	float rmatrix[3][4]; // transformation matrix
 
-	float			zScale = ( 90.0f - v_angles[0] ) / 90.0f;
+	float zScale = ( 90.0f - v_angles[0] ) / 90.0f;
 
 	z = m_OverviewData.layersHeights[0] * zScale;
 	// get yellow/brown HUD color
@@ -1212,7 +1450,7 @@ void CHudSpectator::DrawOverviewEntities()
 	gEngfuncs.pTriAPI->CullFace( TRI_NONE );
 
 	for ( i = 0; i < MAX_PLAYERS; i++ )
-		m_vPlayerPos[i][2] = -1;	// mark as invisible 
+		m_vPlayerPos[i][2] = -1; // mark as invisible
 
 	// draw all players
 	for ( i = 0; i < MAX_OVERVIEW_ENTITIES; i++ )
@@ -1300,7 +1538,7 @@ void CHudSpectator::DrawOverviewEntities()
 
 		// calculate screen position for name and infromation in hud::draw()
 		if ( gEngfuncs.pTriAPI->WorldToScreen( origin, screen ) )
-			continue;	// object is behind viewer
+			continue; // object is behind viewer
 
 		screen[0] = XPROJECT( screen[0] );
 		screen[1] = YPROJECT( screen[1] );
@@ -1322,7 +1560,7 @@ void CHudSpectator::DrawOverviewEntities()
 
 		m_vPlayerPos[playerNum][0] = screen[0];
 		m_vPlayerPos[playerNum][1] = screen[1] + Length( offset );
-		m_vPlayerPos[playerNum][2] = 1;	// mark player as visible 
+		m_vPlayerPos[playerNum][2] = 1; // mark player as visible
 	}
 
 	if ( !m_pip->value || !m_drawcone->value )
@@ -1419,8 +1657,8 @@ void CHudSpectator::CheckOverviewEntities()
 
 bool CHudSpectator::AddOverviewEntity( int type, struct cl_entity_s *ent, const char *modelname )
 {
-	HSPRITE	hSprite = 0;
-	double  duration = -1.0;	// duration -1 means show it only this frame;
+	HSPRITE hSprite = 0;
+	double duration = -1.0; // duration -1 means show it only this frame;
 
 	if ( !ent )
 		return false;
@@ -1444,7 +1682,7 @@ bool CHudSpectator::AddOverviewEntity( int type, struct cl_entity_s *ent, const 
 			}
 		}
 		else
-			return false;	// it's an spectator
+			return false; // it's an spectator
 	}
 	else if ( type == ET_NORMAL )
 	{
@@ -1479,7 +1717,7 @@ bool CHudSpectator::AddOverviewEntityToList( HSPRITE sprite, cl_entity_t *ent, d
 		}
 	}
 
-	return false;	// maximum overview entities reached
+	return false; // maximum overview entities reached
 }
 
 void CHudSpectator::CheckSettings()
@@ -1610,7 +1848,7 @@ void CHudSpectator::InitHUDData()
 
 	Reset();
 
-	SetModes( OBS_CHASE_FREE, INSET_OFF );
+	SetModes( OBS_CHASE_LOCKED, INSET_OFF );
 
 	g_iUser2 = 0; // fake not target until first camera command
 

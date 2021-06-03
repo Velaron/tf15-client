@@ -4,8 +4,8 @@
     <string name="launch">LAUNCH</string>
     <string name="launch_parameters">COMMAND-LINE ARGUMENTS</string>
     <string name="checking_for_updates">Checking for updates...</string>
-    <string name="update_required">An update is required</string>
-    <string name="update_available">An update is available on github</string>
+    <string name="update_required">Update installation is required</string>
+    <string name="update_available">An update is required to function properly.</string>
     <string name="update">Update</string>
     <string name="exit">Exit</string>
 </resources>

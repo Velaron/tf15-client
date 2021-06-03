@@ -46,6 +46,8 @@ cvar_t *cl_laddermode;
 int CL_IsDead( void );
 extern Vector dead_viewangles;
 
+int iVisibleMouse = 0;
+
 void IN_ToggleButtons( float forwardmove, float sidemove )
 {
 	static unsigned int moveflags = T | S;
@@ -145,7 +147,7 @@ void FWGSInput::IN_Move( float frametime, usercmd_t *cmd )
 	Vector viewangles;
 	bool fLadder = false;
 
-	if ( gHUD.m_iIntermission )
+	if ( gHUD.m_iIntermission || iVisibleMouse )
 		return; // we can't move during intermission
 
 	if ( cl_laddermode->value != 2 )
@@ -224,6 +226,10 @@ void FWGSInput::IN_Move( float frametime, usercmd_t *cmd )
 void FWGSInput::IN_MouseEvent( int mstate )
 {
 	static int mouse_oldbuttonstate;
+
+	if ( iVisibleMouse )
+		return;
+
 	// perform button actions
 	for ( int i = 0; i < 5; i++ )
 	{

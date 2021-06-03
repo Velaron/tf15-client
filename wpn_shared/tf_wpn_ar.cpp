@@ -30,14 +30,11 @@ void CTFAutoRifle::Precache( void )
 	m_usFireAutoRifle = PRECACHE_EVENT( 1, "events/wpn/tf_ar.sc" );
 }
 
-int CTFAutoRifle::GetItemInfo( ItemInfo* p )
+int CTFAutoRifle::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_shells;
-	else
-		p->iAmmo1 = 75;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_shells : 75;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = -1;
@@ -60,8 +57,8 @@ void CTFAutoRifle::PrimaryAttack( void )
 {
 	Vector vecSrc, vecEnd;
 	TraceResult tr;
-	edict_t* pent;
-	CBaseEntity* pEntity;
+	edict_t *pent;
+	CBaseEntity *pEntity;
 
 	if ( m_pPlayer->ammo_shells <= 0 )
 	{
@@ -73,7 +70,7 @@ void CTFAutoRifle::PrimaryAttack( void )
 	else
 	{
 		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireAutoRifle, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
-		m_pPlayer->m_iWeaponVolume = 600;
+		m_pPlayer->m_iWeaponVolume = NORMAL_GUN_VOLUME;
 		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 		m_flTimeWeaponIdle = 0.2f;
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
@@ -119,7 +116,7 @@ void CTFAutoRifle::WeaponIdle( void )
 	}
 }
 
-int CTFAutoRifle::AddToPlayer( CBasePlayer* pPlayer )
+int CTFAutoRifle::AddToPlayer( CBasePlayer *pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{

@@ -3020,13 +3020,13 @@ void PM_PlayerMove( qboolean server )
 			pmove->movetype = MOVETYPE_WALK;
 		}
 	}
-
+/* Velaron: don't do this in TFC?
 	// Slow down, I'm pulling it! (a box maybe) but only when I'm standing on ground
 	if ( ( pmove->onground != -1 ) && ( pmove->cmd.buttons & IN_USE) )
 	{
 		VectorScale( pmove->velocity, 0.3, pmove->velocity );
 	}
-
+*/
 	// Handle movement
 	switch( pmove->movetype )
 	{

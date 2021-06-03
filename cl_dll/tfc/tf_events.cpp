@@ -142,8 +142,8 @@ void Game_HookEvents( void )
 	gEngfuncs.pfnHookEvent( "events/misc/benchmark.sc", EV_Benchmark );
 	gEngfuncs.pfnHookEvent( "events/train.sc", EV_TrainPitchAdjust );
 
-	cl_gibcount = gEngfuncs.pfnRegisterVariable( "cl_gibcount", "4", 1 );
-	cl_giblife = gEngfuncs.pfnRegisterVariable( "cl_giblife", "25", 1 );
-	cl_gibvelscale = gEngfuncs.pfnRegisterVariable( "cl_gibvelscale", "1.0", 1 );
-	cl_localblood = gEngfuncs.pfnRegisterVariable( "cl_lb", "0.0", 3 );
+	cl_gibcount = gEngfuncs.pfnRegisterVariable( "cl_gibcount", "4", FCVAR_ARCHIVE );
+	cl_giblife = gEngfuncs.pfnRegisterVariable( "cl_giblife", "25", FCVAR_ARCHIVE );
+	cl_gibvelscale = gEngfuncs.pfnRegisterVariable( "cl_gibvelscale", "1.0", FCVAR_ARCHIVE );
+	cl_localblood = gEngfuncs.pfnRegisterVariable( "cl_lb", "0.0", FCVAR_ARCHIVE | FCVAR_USERINFO );
 }

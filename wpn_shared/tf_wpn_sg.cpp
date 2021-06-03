@@ -48,10 +48,7 @@ int CTFShotgun::GetItemInfo( ItemInfo *p )
 	p->iPosition = 3;
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_shells;
-	else
-		p->iAmmo1 = 200;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_shells : 200;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = m_iMaxClipSize;
@@ -103,33 +100,29 @@ void CTFShotgun::PrimaryAttack( void )
 
 void CTFShotgun::ItemPostFrame( void )
 {
-	if ( m_flPumpTime == 1000.0f )
+	if ( m_flPumpTime < 0.0f )
 	{
-		CBasePlayerWeapon::ItemPostFrame();
+		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+		m_flPumpTime = 1000.0f;
 	}
-	else
-	{
-		if ( m_flPumpTime < 0.0f )
-		{
-			PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
-			m_flPumpTime = 1000.0f;
-		}
 
-		CBasePlayerWeapon::ItemPostFrame();
-	}
+	CBasePlayerWeapon::ItemPostFrame();
 }
 
-int CTFShotgun::AddToPlayer( CBasePlayer *pPlayer )
+BOOL CTFShotgun::AddToPlayer( CBasePlayer *pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		return true;
+
+		current_ammo = &m_pPlayer->ammo_shells;
+
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
 void CTFShotgun::WeaponIdle( void )
@@ -138,36 +131,17 @@ void CTFShotgun::WeaponIdle( void )
 
 	if ( m_flTimeWeaponIdle < 0.0f )
 	{
-		if ( m_iClip )
+		if ( m_fInSpecialReload )
 		{
-			if ( m_fInSpecialReload )
+			if ( m_iClip == m_iMaxClipSize || m_pPlayer->ammo_shells < m_iShellsReloaded )
 			{
-				if ( m_iClip == m_iMaxClipSize || m_pPlayer->ammo_shells < m_iShellsReloaded )
-				{
-					PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 1, 0 );
-					m_fInSpecialReload = 0;
-					m_flTimeWeaponIdle = 1.5f;
-					return;
-				}
-
-				Reload();
+				PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 1, 0 );
+				m_fInSpecialReload = 0;
+				m_flTimeWeaponIdle = 1.5f;
 				return;
 			}
-		}
-		else
-		{
-			if ( m_fInSpecialReload )
-			{
-				if ( m_iClip == m_iMaxClipSize || m_pPlayer->ammo_shells < m_iShellsReloaded )
-				{
-					PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usPumpShotgun, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 1, 0 );
-					m_fInSpecialReload = 0;
-					m_flTimeWeaponIdle = 1.5f;
-					return;
-				}
-			}
 
-			if ( m_pPlayer->ammo_shells >= m_iShellsReloaded )
+			if ( m_iClip || m_pPlayer->ammo_shells >= m_iShellsReloaded )
 			{
 				Reload();
 				return;
@@ -275,10 +249,7 @@ int CTFSuperShotgun::GetItemInfo( ItemInfo *p )
 	p->iPosition = 2;
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_shells;
-	else
-		p->iAmmo1 = 200;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_shells : 200;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = m_iMaxClipSize;
@@ -321,7 +292,7 @@ void CTFSuperShotgun::PrimaryAttack( void )
 		m_pPlayer->FireBullets( 14, p_vecSrc, p_vecDirShooting, p_vecSpread, 2048.0f, BULLET_PLAYER_TF_BUCKSHOT, 4, 4, 0 );
 
 		if ( !m_iClip && m_pPlayer->ammo_shells <= 0 )
-			m_pPlayer->SetSuitUpdate( "!HEV_AMO0", false, SUIT_REPEAT_OK );
+			m_pPlayer->SetSuitUpdate( "!HEV_AMO0", 0, SUIT_REPEAT_OK );
 
 		m_iClip -= 2;
 		m_fInSpecialReload = 0;

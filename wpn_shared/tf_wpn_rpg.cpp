@@ -22,14 +22,11 @@ void CTFRpg::Spawn( void )
 	pev->solid = SOLID_TRIGGER;
 }
 
-int CTFRpg::GetItemInfo( ItemInfo* p )
+int CTFRpg::GetItemInfo( ItemInfo *p )
 {
 	p->pszAmmo1 = "rockets";
 	p->pszName = STRING( pev->classname );
-	if ( m_pPlayer )
-		p->iAmmo1 = m_pPlayer->maxammo_rockets;
-	else
-		p->iAmmo1 = 50;
+	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_rockets : 50;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
 	p->iMaxClip = 4;
@@ -172,17 +169,20 @@ BOOL CTFRpg::Deploy( void )
 		return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_srpg.mdl", RPG_DRAW_UL, "rpg", 1 );
 }
 
-int CTFRpg::AddToPlayer( CBasePlayer* pPlayer )
+BOOL CTFRpg::AddToPlayer( CBasePlayer *pPlayer )
 {
 	if ( CBasePlayerWeapon::AddToPlayer( pPlayer ) )
 	{
 		MESSAGE_BEGIN( MSG_ONE, gmsgWeapPickup, NULL, pPlayer->pev );
 		WRITE_BYTE( m_iId );
 		MESSAGE_END();
-		return true;
+
+		current_ammo = &m_pPlayer->ammo_rockets;
+
+		return TRUE;
 	}
 
-	return false;
+	return FALSE;
 }
 
 void CTFRpg::PrimaryAttack( void )
@@ -198,6 +198,7 @@ void CTFRpg::PrimaryAttack( void )
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		p_vecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16.0f + gpGlobals->v_right * 8.0f + gpGlobals->v_up * -8.0f;
 		p_vecAngles = m_pPlayer->pev->v_angle;
+		// Velaron: TODO
 		//CTFRpgRocket::CreateRpgRocket( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		m_fInSpecialReload = 0;

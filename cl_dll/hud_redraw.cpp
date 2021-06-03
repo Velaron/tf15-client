@@ -19,20 +19,16 @@
 
 #include "hud.h"
 #include "cl_util.h"
-//#include "triangleapi.h"
 
 #include "vgui_TeamFortressViewport.h"
 
 #define MAX_LOGO_FRAMES 56
 
-int grgLogoFrame[MAX_LOGO_FRAMES] =
-{
+int grgLogoFrame[MAX_LOGO_FRAMES] = {
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 13, 13, 13, 13, 13, 12, 11, 10, 9, 8, 14, 15,
 	16, 17, 18, 19, 20, 20, 20, 20, 20, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
 	29, 29, 29, 29, 29, 28, 27, 26, 25, 24, 30, 31
 };
-
-//extern int g_iVisibleMouse;
 
 float HUD_GetFOV( void );
 
@@ -43,6 +39,9 @@ void CHud::Think( void )
 {
 	int newfov;
 	HUDLIST *pList = m_pHudList;
+
+	m_scrinfo.iSize = sizeof( m_scrinfo );
+	GetScreenInfo( &m_scrinfo );
 
 	while ( pList )
 	{
@@ -80,6 +79,8 @@ void CHud::Think( void )
 		// only let players adjust up in fov,  and only if they are not overriden by something else
 		m_iFOV = Q_max( default_fov->value, 90 );
 	}
+
+	// Bench_CheckStart();
 }
 
 // Redraw
@@ -87,7 +88,7 @@ void CHud::Think( void )
 // returns 1 if they've changed, 0 otherwise
 int CHud::Redraw( float flTime, int intermission )
 {
-	m_fOldTime = m_flTime;	// save time of previous redraw
+	m_fOldTime = m_flTime; // save time of previous redraw
 	m_flTime = flTime;
 	m_flTimeDelta = (double)( m_flTime - m_fOldTime );
 	static float m_flShotTime = 0;
@@ -116,7 +117,7 @@ int CHud::Redraw( float flTime, int intermission )
 
 			// Take a screenshot if the client's got the cvar set
 			if ( CVAR_GET_FLOAT( "hud_takesshots" ) != 0 )
-				m_flShotTime = flTime + 1.0f;	// Take a screenshot in a second
+				m_flShotTime = flTime + 1.0f; // Take a screenshot in a second
 		}
 	}
 
@@ -137,6 +138,10 @@ int CHud::Redraw( float flTime, int intermission )
 
 		while ( pList )
 		{
+#if 0
+			if ( !Bench_Active() )
+			{
+#endif
 			if ( !intermission )
 			{
 				if ( ( pList->p->m_iFlags & HUD_ACTIVE ) && !( m_iHideHUDDisplay & HIDEHUD_ALL ) )
@@ -148,7 +153,16 @@ int CHud::Redraw( float flTime, int intermission )
 				if ( pList->p->m_iFlags & HUD_INTERMISSION )
 					pList->p->Draw( flTime );
 			}
-
+#if 0
+			}
+			else
+			{
+				if ( ( pList->p == &m_Benchmark ) && ( pList->p->m_iFlags & HUD_ACTIVE ) && !( m_iHideHUDDisplay & HIDEHUD_ALL ) )
+				{
+					pList->p->Draw( flTime );
+				}
+			}
+#endif
 			pList = pList->pNext;
 		}
 	}
@@ -174,28 +188,6 @@ int CHud::Redraw( float flTime, int intermission )
 		SPR_DrawAdditive( i, x, y, NULL );
 	}
 
-	/*
-	if( g_iVisibleMouse )
-	{
-		void IN_GetMousePos( int *mx, int *my );
-		int mx, my;
-
-		IN_GetMousePos( &mx, &my );
-
-		if( m_hsprCursor == 0 )
-		{
-			char sz[256];
-			sprintf( sz, "sprites/cursor.spr" );
-			m_hsprCursor = SPR_Load( sz );
-		}
-
-		SPR_Set( m_hsprCursor, 250, 250, 250 );
-
-		// Draw the logo at 20 fps
-		SPR_DrawAdditive( 0, mx, my, NULL );
-	}
-	*/
-
 	return 1;
 }
 
@@ -207,16 +199,15 @@ void ScaleColors( int &r, int &g, int &b, int a )
 	b = (int)( b * x );
 }
 
-const unsigned char colors[8][3] =
-{
-{127, 127, 127}, // additive cannot be black
-{255,   0,   0},
-{  0, 255,   0},
-{255, 255,   0},
-{  0,   0, 255},
-{  0, 255, 255},
-{255,   0, 255},
-{240, 180,  24}
+const unsigned char colors[8][3] = {
+	{ 127, 127, 127 }, // additive cannot be black
+	{ 255, 0, 0 },
+	{ 0, 255, 0 },
+	{ 255, 255, 0 },
+	{ 0, 0, 255 },
+	{ 0, 255, 255 },
+	{ 255, 0, 255 },
+	{ 240, 180, 24 }
 };
 
 int CHud::DrawHudString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b )

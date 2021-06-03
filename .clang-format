@@ -29,6 +29,7 @@ IndentCaseLabels: false
 IndentWidth: 4
 Language: Cpp
 MaxEmptyLinesToKeep: 1
+PointerAlignment: Right
 ReflowComments: true
 SortIncludes: false
 SpaceAfterCStyleCast: false

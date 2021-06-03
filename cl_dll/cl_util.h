@@ -150,7 +150,7 @@ inline void PlaySound( int iSound, float vol ) { gEngfuncs.pfnPlaySoundByIndex( 
 
 #define Q_max(a, b)  (((a) > (b)) ? (a) : (b))
 #define Q_min(a, b)  (((a) < (b)) ? (a) : (b))
-#define fabs(x)	   ((x) > 0 ? (x) : 0 - (x))
+#define Q_fabs(x)	   ((x) > 0 ? (x) : 0 - (x))
 
 void ScaleColors( int &r, int &g, int &b, int a );
 
