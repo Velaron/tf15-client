@@ -4,3 +4,7 @@ build/
 .cxx/
 .idea/*
 local.properties
+.project
+.classpath
+.gradle
+.settings

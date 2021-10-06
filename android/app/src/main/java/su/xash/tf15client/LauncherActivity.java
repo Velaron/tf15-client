@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -62,7 +63,7 @@ public class LauncherActivity extends AppCompatActivity {
 			@Override
 			public void onResponse(JSONObject response) {
 				try {
-					String sha = response.getString("sha");
+					String sha = response.getString("sha").substring(0, 7);
 					String version_sha = getPackageManager().getPackageInfo(getPackageName(), 0).versionName.split("-")[1];
 
 					if (version_sha.equals(sha)) {

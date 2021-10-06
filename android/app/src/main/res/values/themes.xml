@@ -2,9 +2,9 @@
 <resources>
 
     <style name="Theme.App" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="colorPrimary">#F74843</item>
+        <item name="colorPrimary">#EBA454</item>
         <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorSecondary">#F74843</item>
+        <item name="colorSecondary">#EBA454</item>
         <item name="colorOnSecondary">#FFFFFF</item>
         <item name="android:colorBackground">#1D1E22</item>
         <item name="colorOnBackground">#FFFFFF</item>
