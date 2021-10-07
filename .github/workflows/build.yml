@@ -30,10 +30,12 @@ jobs:
       - run: cmake -A Win32 -S . -B build
       - run: cmake --build . --config Release
         working-directory: build
-#      - uses: actions/upload-artifact@v2
-#        with:
-#          name: Windows
-#          path: build/cl_dll/Release/client.dll
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Windows
+          path: |
+            build/cl_dll/Release/client.dll
+            build/mainui/Release/menu.dll
   linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -41,14 +43,19 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      - run: sudo apt-get install gcc-multilib g++-multilib cmake ninja-build
+      - run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install gcc-multilib g++-multilib cmake ninja-build libcurl4-openssl-dev:i386 libfontconfig-dev:i386
       - run: |
           export CC="gcc -m32"
           export CXX="g++ -m32"
           cmake -S . -B build -G Ninja
       - run: cmake --build . --config Release
         working-directory: build
-#      - uses: actions/upload-artifact@v2
-#        with:
-#          name: Linux
-#          path: build/cl_dll/Release/client.so
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Linux
+          path: |
+            build/cl_dll/client.so
+            build/mainui/menu.so

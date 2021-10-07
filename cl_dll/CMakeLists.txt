@@ -140,7 +140,20 @@ set(CLDLL_SOURCES
 	vgui_TeamFortressViewport.cpp
 	vgui_teammenu.cpp
 	../game_shared/voice_banmgr.cpp
-	../game_shared/voice_status.cpp)
+	../game_shared/voice_status.cpp
+	ext/update_check.cpp)
+
+find_package(Git)
+if(GIT_FOUND)
+	execute_process(COMMAND "${GIT_EXECUTABLE}" rev-list -n 1 HEAD
+					WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+					OUTPUT_VARIABLE CURRENT_VERSION
+					OUTPUT_STRIP_TRAILING_WHITESPACE
+					RESULT_VARIABLE CURRENT_VERSION_RESULT)
+	string(SUBSTRING ${CURRENT_VERSION} 0 7 CURRENT_VERSION)
+	message(STATUS "Git version: ${CURRENT_VERSION}")
+	add_definitions(-DCURRENT_VERSION=\"${CURRENT_VERSION}\")
+endif()
 
 include_directories(. hl/ ../dlls ../dlls/tfc ../common ../engine ../pm_shared ../game_shared ../public ../vgui_dll/include)
 
@@ -155,7 +168,9 @@ if(GOLDSOURCE_SUPPORT)
 endif()
 
 if(WIN32)
-	target_link_libraries(${CLDLL_LIBRARY} user32.lib winmm.lib)
+	target_link_libraries(${CLDLL_LIBRARY} user32.lib winmm.lib winhttp.lib)
+elseif(UNIX AND NOT ANDROID)
+	target_link_libraries(${CLDLL_LIBRARY} curl)
 endif()
 
 if(BUILD_VGUI)

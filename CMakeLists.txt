@@ -34,12 +34,10 @@ set(CMAKE_CXX_STANDARD 11)
 #--------------
 # USER DEFINES \
 ################\
-option(USE_VGUI "Enable VGUI1. UNDONE" OFF)
-option(USE_VGUI2 "Enable VGUI2. UNDONE" OFF)
 option(USE_VOICEMGR "Enable VOICE MANAGER." OFF)
 option(BUILD_CLIENT "Build client dll" ON)
 option(BUILD_SERVER "Build server dll" OFF)
-option(BUILD_MENU "Build menu dll" OFF)
+option(BUILD_MENU "Build menu dll" ON)
 option(BUILD_VGUI "Build vgui" ON)
 option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" OFF)
 option(GOLDSOURCE_DEFAULT_FLAGS "Build with default flags from Valve's Makefile" OFF)

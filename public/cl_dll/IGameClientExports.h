@@ -26,6 +26,9 @@ public:
 	virtual bool IsPlayerGameVoiceMuted( int playerIndex ) = 0;
 	virtual void MutePlayerGameVoice( int playerIndex ) = 0;
 	virtual void UnmutePlayerGameVoice( int playerIndex ) = 0;
+
+	// custom functions
+	virtual const char *GetVersion( void ) = 0;
 };
 
 #define GAMECLIENTEXPORTS_INTERFACE_VERSION "GameClientExports001"

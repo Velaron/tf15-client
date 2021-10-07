@@ -60,6 +60,13 @@ IParticleMan *g_pParticleMan = NULL;
 void CL_LoadParticleMan( void );
 void CL_UnloadParticleMan( void );
 
+#include "ext/IGameMenuExports.h"
+CSysModule *g_hMainUIModule = NULL;
+IGameMenuExports *g_pMainUI = NULL;
+
+void CL_LoadMainUI( void );
+void CL_UnloadMainUI( void );
+
 extern "C" int g_bhopcap;
 void InitInput( void );
 void EV_HookEvents( void );
@@ -172,6 +179,7 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 
 	EV_HookEvents();
 	// CL_LoadParticleMan();
+	CL_LoadMainUI();
 
 	return 1;
 }
@@ -389,6 +397,45 @@ bool IsXashFWGS()
 	return gMobileEngfuncs != NULL;
 }
 
+void CL_UnloadMainUI( void )
+{
+	Sys_UnloadModule( g_hMainUIModule );
+
+	g_pMainUI = NULL;
+	g_hMainUIModule = NULL;
+}
+
+void CL_LoadMainUI( void )
+{
+	char szDir[MAX_PATH];
+
+#if defined( __ANDROID__ )
+	snprintf( szDir, 1024, "%s/%s", getenv( "XASH3D_GAMELIBDIR" ), MAINUI_DLLNAME );
+#else
+	if ( gEngfuncs.COM_ExpandFilename( MAINUI_DLLNAME, szDir, sizeof( szDir ) ) == false )
+	{
+		CL_UnloadMainUI();
+		return;
+	}
+#endif
+
+	g_hMainUIModule = Sys_LoadModule( szDir );
+	CreateInterfaceFn MainUIFactory = Sys_GetFactory( g_hMainUIModule );
+
+	if ( MainUIFactory == NULL )
+	{
+		CL_UnloadMainUI();
+		return;
+	}
+
+	g_pMainUI = (IGameMenuExports *)MainUIFactory( GAMEMENUEXPORTS_INTERFACE_VERSION, NULL );
+
+	if ( g_pMainUI )
+	{
+		g_pMainUI->Initialize( CreateInterface );
+	}
+}
+
 #include "cl_dll/IGameClientExports.h"
 
 //-----------------------------------------------------------------------------
@@ -429,6 +476,12 @@ public:
 		{
 			GetClientVoiceMgr()->SetPlayerBlockedState( playerIndex, false );
 		}
+	}
+
+	// custom functions
+	virtual const char *GetVersion( void )
+	{
+		return CURRENT_VERSION;
 	}
 };
 

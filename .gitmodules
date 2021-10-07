@@ -1,3 +1,7 @@
 [submodule "vgui_dll"]
 	path = vgui_dll
 	url = https://github.com/Velaron/vgui_dll
+[submodule "mainui"]
+	path = mainui
+	url = https://github.com/Velaron/mainui_cpp
+	branch = tf15-client

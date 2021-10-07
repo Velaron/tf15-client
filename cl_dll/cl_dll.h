@@ -26,8 +26,10 @@
 //		- Handling the custum HUD-update packets
 //
 #pragma once
+
 #ifndef CL_DLL_H
 #define CL_DLL_H
+
 typedef unsigned char byte;
 typedef unsigned short word;
 typedef float vec_t;
@@ -54,6 +56,8 @@ typedef float vec_t;
 #endif
 
 extern cl_enginefunc_t gEngfuncs;
+
 #include "../engine/mobility_int.h"
 extern mobile_engfuncs_t *gMobileEngfuncs;
-#endif
+
+#endif // CL_DLL_H
