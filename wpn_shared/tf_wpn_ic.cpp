@@ -41,7 +41,7 @@ void CTFIncendiaryC::Holster( int skiplocal /* = 0 */ )
 {
 	m_fInReload = 0;
 	m_pPlayer->m_flNextAttack = 0.5f;
-	SendWeaponAnim( RPG_DRAW ); //Velaron: fix?
+	SendWeaponAnim( IC_HOLSTER1 );
 }
 
 void CTFIncendiaryC::Precache( void )
@@ -70,7 +70,7 @@ void CTFIncendiaryC::WeaponIdle( void )
 		else
 		{
 			m_flTimeWeaponIdle = 3.0f;
-			SendWeaponAnim( RPG_FIDGET );
+			SendWeaponAnim( IC_FIDGET );
 		}
 	}
 }
@@ -78,9 +78,9 @@ void CTFIncendiaryC::WeaponIdle( void )
 BOOL CTFIncendiaryC::Deploy( void )
 {
 	if ( m_pPlayer->ammo_rockets )
-		return DefaultDeploy( "models/v_rpg.mdl", "models/p_rpg.mdl", RPG_HOLSTER_UL, "rpg", 1 ); // Velaron: fix enum
+		return DefaultDeploy( "models/v_rpg.mdl", "models/p_rpg.mdl", IC_DRAW1, "rpg", 1 );
 	else
-		return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_rpg.mdl", RPG_RELOAD_START, "rpg", 1 );
+		return DefaultDeploy( "models/v_tfc_rpg.mdl", "models/p_rpg.mdl", IC_DRAW_UL, "rpg", 1 );
 }
 
 BOOL CTFIncendiaryC::AddToPlayer( CBasePlayer *pPlayer )
@@ -116,8 +116,7 @@ void CTFIncendiaryC::PrimaryAttack( void )
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		p_vecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16.0f + gpGlobals->v_right * 8.0f + gpGlobals->v_up * -8.0f;
 		p_vecAngles = m_pPlayer->pev->v_angle;
-		// Velaron: TODO
-		//CTFIncendiaryRocket::CreateRpgRocket( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
+		CTFIncendiaryCRocket::CreateRpgRocket( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		m_pPlayer->ammo_rockets--;
 		m_flTimeWeaponIdle = 1.2f;

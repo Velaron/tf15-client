@@ -123,7 +123,7 @@ typedef unsigned int DWORD;
 #define MOUSE_BUTTON_COUNT 5
 
 // use IN_SetVisibleMouse to set:
-int iVisibleMouse = 0;
+extern int iVisibleMouse;
 
 extern cl_enginefunc_t gEngfuncs;
 

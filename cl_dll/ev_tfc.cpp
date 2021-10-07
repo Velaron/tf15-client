@@ -379,13 +379,14 @@ void EV_TFC_DecalGunshot( pmtrace_t *pTrace, int iBulletType )
 		switch ( iBulletType )
 		{
 		case BULLET_PLAYER_CROWBAR:
-			EV_TFC_DecalTrace( pTrace, EV_TFC_DamageDecal( pTrace->ent, 0 ) );
+			EV_TFC_DecalTrace( pTrace, EV_TFC_DamageDecal( pTrace->ent ) );
 			break;
 		case BULLET_PLAYER_TF_ASSAULT:
-			//	EV_TFC_GunshotDecalTrace( pTrace, "hwshot1" );
-			//	break;
+			// Velaron: find out why this code doesn't run in the original client
+			// EV_TFC_GunshotDecalTrace( pTrace, "hwshot1" );
+			// break;
 		default:
-			EV_TFC_GunshotDecalTrace( pTrace, EV_TFC_DamageDecal( pTrace->ent, 0 ) );
+			EV_TFC_GunshotDecalTrace( pTrace, EV_TFC_DamageDecal( pTrace->ent ) );
 			break;
 		}
 	}
@@ -869,7 +870,7 @@ void EV_FireTFCNailgun( event_args_t *args )
 
 void EV_TFC_NailTouch( struct tempent_s *ent, pmtrace_t *ptr )
 {
-	EV_TFC_GunshotDecalTrace( ptr, EV_TFC_DamageDecal( ptr->ent, 0 ) );
+	EV_TFC_GunshotDecalTrace( ptr, EV_TFC_DamageDecal( ptr->ent ) );
 }
 
 void EV_FireTFCSuperNailgun( event_args_t *args )
@@ -1455,7 +1456,7 @@ void EV_TFC_FireIC( event_args_t *args )
 
 	if ( EV_IsLocal( idx ) )
 	{
-		gEngfuncs.pEventAPI->EV_WeaponAnimation( RPG_HOLSTER, 2 );
+		gEngfuncs.pEventAPI->EV_WeaponAnimation( IC_FIRE2, 2 );
 	}
 
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/sgun1.wav", 0.9f, ATTN_NORM, 0, PITCH_NORM );
@@ -1877,7 +1878,7 @@ void EV_TFC_RailDie( particle_s *particle )
 
 		if ( !EV_IsPlayer( entity ) || EV_TFC_IsAlly( entity, particle->context ) )
 		{
-			EV_TFC_GunshotDecalTrace( &tr, EV_TFC_DamageDecal( entity, 0 ) );
+			EV_TFC_GunshotDecalTrace( &tr, EV_TFC_DamageDecal( entity ) );
 		}
 		else
 		{
@@ -1938,25 +1939,7 @@ void EV_TFC_Tranquilizer( event_args_t *args )
 
 void EV_TFC_TranqNailTouch( tempent_s *ent, pmtrace_t *ptr )
 {
-	physent_t *pe;
-	int entity;
-	char decalname[32];
-
-	entity = gEngfuncs.pEventAPI->EV_IndexFromTrace( ptr );
-
-	if ( !EV_IsPlayer( entity ) )
-	{
-		pe = gEngfuncs.pEventAPI->EV_GetPhysent( ptr->ent );
-
-		if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) )
-		{
-			if ( ptr->fraction != 1.0f )
-			{
-				sprintf( decalname, "{shot%i", gEngfuncs.pfnRandomLong( 0, 4 ) + 1 );
-				EV_TFC_GunshotDecalTrace( ptr, decalname );
-			}
-		}
-	}
+	EV_TFC_GunshotDecalTrace( ptr, EV_TFC_DamageDecal( ptr->ent ) );
 }
 
 void EV_TFC_NailGrenade( event_args_t *args )

@@ -222,6 +222,7 @@ public:
 
 	virtual void ItemPostFrame( void ); // called each frame by the player PostThink
 	// called by CBasePlayerWeapons ItemPostFrame()
+	void DB_LogShots( int nShots );
 	virtual void PrimaryAttack( void ) { return; }        // do "+ATTACK"
 	virtual void SecondaryAttack( void ) { return; }      // do "+ATTACK2"
 	virtual void Reload( void ) { return; }               // do "+RELOAD"
@@ -809,6 +810,20 @@ private:
 	unsigned short m_usFireRPG;
 };
 
+enum incendiaryc_e
+{
+	IC_IDLE = 0,
+	IC_FIDGET = 1,
+	IC_RELOAD = 2,
+	IC_FIRE2 = 3,
+	IC_HOLSTER1 = 4,
+	IC_DRAW1 = 5,
+	IC_HOLSTER2 = 6,
+	IC_DRAW_UL = 7,
+	IC_IDLE_UL = 8,
+	IC_FIDGET_UL = 9
+};
+
 class CTFIncendiaryC : public CBasePlayerWeapon
 {
 public:
@@ -825,6 +840,18 @@ public:
 
 private:
 	unsigned short m_usFireIC;
+};
+
+class CTFIncendiaryCRocket : public CGrenade
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	void RocketTouch( CBaseEntity *pOther );
+	static CTFIncendiaryCRocket *CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFIncendiaryC *pLauncher );
+	void RadiusDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType );
+
+	int m_iTrail;
 };
 
 enum ac_e

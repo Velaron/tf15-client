@@ -188,7 +188,7 @@ void CTFSniperRifle::PrimaryAttack( void )
 	}
 	else
 	{
-		if ( pHit = CBaseEntity::Instance( tr.pHit ) )
+		if ( pHit = CBaseEntity::Instance( tr.pHit ) ) // Velaron: TODO
 		{
 			ClearMultiDamage();
 			pHit->TraceAttack( m_pPlayer->pev, m_fAimedDamage, gpGlobals->v_forward, &tr, DMG_BULLET );

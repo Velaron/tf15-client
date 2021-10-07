@@ -22,14 +22,14 @@ This file contains "stubs" of class member implementations so that we can predic
 ==========================
 */
 
-#include	"extdll.h"
-#include	"util.h"
-#include	"cbase.h"
-#include	"player.h"
-#include	"weapons.h"
-#include	"nodes.h"
-#include	"soundent.h"
-#include	"skill.h"
+#include "extdll.h"
+#include "util.h"
+#include "cbase.h"
+#include "player.h"
+#include "weapons.h"
+#include "nodes.h"
+#include "soundent.h"
+#include "skill.h"
 
 // Globals used by game logic
 const Vector g_vecZero = Vector( 0, 0, 0 );
@@ -116,6 +116,13 @@ void CLaserSpot::Precache( void ) { }
 void CLaserSpot::Revive( void ) { }
 void CLaserSpot::Spawn( void ) { }
 void CLaserSpot::Suspend( float flSuspendTime ) { }
+
+// CTFIncendiaryCRocket Stubs
+void CTFIncendiaryCRocket::Spawn( void ) { }
+void CTFIncendiaryCRocket::Precache( void ) { }
+void CTFIncendiaryCRocket::RocketTouch( CBaseEntity *pOther ) { }
+CTFIncendiaryCRocket *CTFIncendiaryCRocket::CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFIncendiaryC *pLauncher ) { return 0; }
+void CTFIncendiaryCRocket::RadiusDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType ) { }
 
 void UTIL_Remove( CBaseEntity *pEntity ) { }
 struct skilldata_t gSkillData;
@@ -250,8 +257,8 @@ Schedule_t *CBaseMonster::GetSchedule( void ) { return NULL; }
 void CBaseMonster::RunTask( Task_t *pTask ) { }
 void CBaseMonster::StartTask( Task_t *pTask ) { }
 Schedule_t *CBaseMonster::ScheduleFromName( const char *pName ) { return NULL; }
-void CBaseMonster::BecomeDead( void ) {}
-void CBaseMonster::RunAI( void ) {}
+void CBaseMonster::BecomeDead( void ) { }
+void CBaseMonster::RunAI( void ) { }
 void CBaseMonster::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib ) { }
 int CBaseMonster::TakeHealth( float flHealth, int bitsDamageType ) { return 0; }
 int CBaseMonster::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int bitsDamageType ) { return 0; }
@@ -274,7 +281,7 @@ void CBasePlayer::StartObserver( Vector vecPosition, Vector vecViewAngle ) { }
 void CBasePlayer::PlayerUse( void ) { }
 void CBasePlayer::Jump() { }
 void CBasePlayer::Duck() { }
-int  CBasePlayer::Classify( void ) { return 0; }
+int CBasePlayer::Classify( void ) { return 0; }
 void CBasePlayer::PreThink( void ) { }
 void CBasePlayer::CheckTimeBasedDamage() { }
 void CBasePlayer::UpdateGeigerCounter( void ) { }
@@ -366,6 +373,7 @@ void CBasePlayerAmmo::DefaultTouch( CBaseEntity *pOther ) { }
 int CBasePlayerWeapon::ExtractAmmo( CBasePlayerWeapon *pWeapon ) { return 0; }
 int CBasePlayerWeapon::ExtractClipAmmo( CBasePlayerWeapon *pWeapon ) { return 0; }
 void CBasePlayerWeapon::RetireWeapon( void ) { }
-void CSoundEnt::InsertSound( int iType, const Vector &vecOrigin, int iVolume, float flDuration ) {}
-void RadiusDamage( Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, float flRadius, int iClassIgnore, int bitsDamageType ) {}
-void CSprite::AnimateUntilDead( void ) {}
+void CSoundEnt::InsertSound( int iType, const Vector &vecOrigin, int iVolume, float flDuration ) { }
+void RadiusDamage( Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, float flRadius, int iClassIgnore, int bitsDamageType ) { }
+void CSprite::AnimateUntilDead( void ) { }
+void CBasePlayerWeapon::DB_LogShots( int nShots ) {};

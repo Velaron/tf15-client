@@ -36,7 +36,7 @@ void Game_AddObjects( void )
 
 			if ( gEngfuncs.pDemoAPI->IsRecording() )
 			{
-				*(int *)buf = 1;
+				*(int *)buf = 1; // Velaron: TODO
 				*(int *)buf[4] = damage;
 				*(Vector *)buf[8] = viewangles;
 				*(Vector *)buf[20] = origin;

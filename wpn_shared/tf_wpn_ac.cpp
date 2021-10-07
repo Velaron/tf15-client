@@ -117,7 +117,7 @@ void CTFAssaultC::Fire( void )
 		p_VecDirShooting = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 		p_vecSpread = Vector( 0.1f, 0.1f, 0.0f );
 		m_pPlayer->FireBullets( 5, p_vecSrc, p_VecDirShooting, p_vecSpread, 8192.0f, BULLET_PLAYER_TF_ASSAULT, 8, 7, NULL );
-		//DB_LogShots( 1 );
+		DB_LogShots( 1 );
 		m_pPlayer->ammo_shells--;
 	}
 }
