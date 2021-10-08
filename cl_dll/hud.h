@@ -210,7 +210,7 @@ protected:
 	{
 		MAX_STATUSTEXT_LENGTH = 128,
 		MAX_STATUSBAR_VALUES = 8,
-		MAX_STATUSBAR_LINES = 2
+		MAX_STATUSBAR_LINES = 4
 	};
 
 	char m_szStatusText[MAX_STATUSBAR_LINES][MAX_STATUSTEXT_LENGTH]; // a text string describing how the status bar is to be drawn
