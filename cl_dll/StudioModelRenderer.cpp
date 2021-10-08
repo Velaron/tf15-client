@@ -39,23 +39,6 @@
 // Global engine <-> studio model rendering code interface
 engine_studio_api_t IEngineStudio;
 
-/////////////////////
-// Implementation of CStudioModelRenderer.h
-#define LEGS_BONES_COUNT	8
-
-// enumerate all the bones that used for gait animation
-const char *legs_bones[] =
-{
-	"Bip01" ,
-	"Bip01 Pelvis" ,
-	"Bip01 L Thigh" ,
-	"Bip01 L Calf" ,
-	"Bip01 L Foot" ,
-	"Bip01 R Thigh" ,
-	"Bip01 R Calf" ,
-	"Bip01 R Foot"
-};
-
 float g_flSpinUpTime[33];
 float g_flSpinDownTime[33];
 
@@ -786,7 +769,7 @@ StudioSetupBones
 */
 void CStudioModelRenderer::StudioSetupBones( void )
 {
-	int i, j;
+	int i;
 	double f;
 
 	mstudiobone_t *pbones;
@@ -901,11 +884,13 @@ void CStudioModelRenderer::StudioSetupBones( void )
 
 	// calc gait animation
 	if ( m_pPlayerInfo && m_pPlayerInfo->gaitsequence != 0 )
-	{
-		if ( m_pPlayerInfo->gaitsequence >= m_pStudioHeader->numseq )
+	{ 
+		if (m_pPlayerInfo->gaitsequence >=  m_pStudioHeader->numseq) 
 		{
 			m_pPlayerInfo->gaitsequence = 0;
 		}
+
+		int copy = 1;
 
 		pseqdesc = (mstudioseqdesc_t *)( (byte *)m_pStudioHeader + m_pStudioHeader->seqindex ) + m_pPlayerInfo->gaitsequence;
 
@@ -914,20 +899,22 @@ void CStudioModelRenderer::StudioSetupBones( void )
 
 		for ( i = 0; i < m_pStudioHeader->numbones; i++ )
 		{
-			for ( j = 0; j < LEGS_BONES_COUNT; j++ )
+			if ( !strcmp( pbones[i].name, "Bip01 Spine" ) )
 			{
-				if ( !strcmp( pbones[i].name, legs_bones[j] ) )
-					break;
+				copy = 0;
 			}
-
-			if ( j == LEGS_BONES_COUNT )
-				continue;	// not used for legs
-
-			memcpy( pos[i], pos2[i], sizeof( pos[i] ) );
-			memcpy( q[i], q2[i], sizeof( q[i] ) );
+			else if ( !strcmp( pbones[ pbones[i].parent ].name, "Bip01 Pelvis" ) )
+			{
+				copy = 1;
+			}
+				
+			if ( copy )
+			{
+				memcpy( pos[i], pos2[i], sizeof( pos[i] ) );
+				memcpy( q[i], q2[i], sizeof( q[i] ) );
+			}
 		}
 	}
-
 
 	for ( i = 0; i < m_pStudioHeader->numbones; i++ )
 	{
