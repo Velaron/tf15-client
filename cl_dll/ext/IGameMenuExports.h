@@ -32,9 +32,6 @@ public:
 	virtual void GetTextSize( HFont font, const char *text, int *wide, int *height, int size = -1 ) = 0;
 	virtual int GetTextHeight( HFont font, const char *text, int size = -1 ) = 0;
 	virtual int DrawCharacter( HFont font, int ch, int x, int y, int charH, const unsigned int color, bool forceAdditive = false ) = 0;
-
-	// new methods
-	virtual void ShowUpdateDialog( void ) = 0;
 };
 
 #define GAMEMENUEXPORTS_INTERFACE_VERSION "GameMenuExports001"

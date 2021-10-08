@@ -32,8 +32,6 @@
 #include "vgui_ScorePanel.h"
 #include <voice_status.h>
 
-#include "ext/update_check.h"
-
 hud_player_info_t g_PlayerInfoList[MAX_PLAYERS + 1];    // player info from the engine
 extra_player_info_t g_PlayerExtraInfo[MAX_PLAYERS + 1]; // additional player info sent directly to the client dll
 
@@ -322,9 +320,6 @@ int __MsgFunc_AllowSpec( const char *pszName, int iSize, void *pbuf )
 // This is called every time the DLL is loaded
 void CHud::Init( void )
 {
-	// check for updates...
-	CheckForUpdates();
-
 	HOOK_MESSAGE( Logo );
 	HOOK_MESSAGE( ResetHUD );
 	HOOK_MESSAGE( GameMode );

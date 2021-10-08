@@ -46,7 +46,7 @@ jobs:
       - run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install gcc-multilib g++-multilib cmake ninja-build libcurl4-openssl-dev:i386 libfontconfig-dev:i386
+          sudo apt-get install gcc-multilib g++-multilib cmake ninja-build libfontconfig-dev:i386
       - run: |
           export CC="gcc -m32"
           export CXX="g++ -m32"

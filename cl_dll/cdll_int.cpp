@@ -477,12 +477,6 @@ public:
 			GetClientVoiceMgr()->SetPlayerBlockedState( playerIndex, false );
 		}
 	}
-
-	// custom functions
-	virtual const char *GetVersion( void )
-	{
-		return CURRENT_VERSION;
-	}
 };
 
 EXPOSE_SINGLE_INTERFACE( CClientExports, IGameClientExports, GAMECLIENTEXPORTS_INTERFACE_VERSION );
