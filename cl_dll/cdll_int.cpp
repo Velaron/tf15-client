@@ -60,7 +60,7 @@ IParticleMan *g_pParticleMan = NULL;
 void CL_LoadParticleMan( void );
 void CL_UnloadParticleMan( void );
 
-#include "ext/IGameMenuExports.h"
+#include "IGameMenuExports.h"
 CSysModule *g_hMainUIModule = NULL;
 IGameMenuExports *g_pMainUI = NULL;
 
