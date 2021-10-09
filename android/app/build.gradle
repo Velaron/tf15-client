@@ -21,7 +21,7 @@ def getVersionCode = { ->
 }
 
 android {
-	compileSdkVersion = 30
+	compileSdkVersion = 29
 	ndkVersion '23.0.7599858'
 
 	defaultConfig {
@@ -29,7 +29,7 @@ android {
 		versionName getVersionName()
 		versionCode getVersionCode()
 		minSdkVersion 14
-		targetSdkVersion 30
+		targetSdkVersion 29
 
 		externalNativeBuild {
 			ndkBuild {
@@ -66,7 +66,7 @@ android {
 }
 
 dependencies {
-	implementation 'androidx.activity:activity:1.3.1'
+	implementation 'androidx.activity:activity:1.2.4'
 	implementation 'androidx.appcompat:appcompat:1.3.1'
 	implementation 'androidx.fragment:fragment:1.3.6'
 	implementation 'com.google.android.material:material:1.4.0'
