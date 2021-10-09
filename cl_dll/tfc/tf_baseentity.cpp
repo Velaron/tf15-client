@@ -124,6 +124,13 @@ void CTFIncendiaryCRocket::RocketTouch( CBaseEntity *pOther ) { }
 CTFIncendiaryCRocket *CTFIncendiaryCRocket::CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFIncendiaryC *pLauncher ) { return 0; }
 void CTFIncendiaryCRocket::RadiusDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType ) { }
 
+// CTFRpgRocket Stubs
+void CTFRpgRocket::Spawn( void ) { }
+void CTFRpgRocket::Precache( void ) { }
+void CTFRpgRocket::RocketTouch( CBaseEntity *pOther ) { }
+CTFRpgRocket *CTFRpgRocket::CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFRpg *pLauncher ) { return 0; }
+void CTFRpgRocket::RadiusDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType ) { }
+
 void UTIL_Remove( CBaseEntity *pEntity ) { }
 struct skilldata_t gSkillData;
 void UTIL_SetSize( entvars_t *pev, const Vector &vecMin, const Vector &vecMax ) { }

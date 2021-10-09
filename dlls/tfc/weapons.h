@@ -810,6 +810,18 @@ private:
 	unsigned short m_usFireRPG;
 };
 
+class CTFRpgRocket : public CGrenade
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	void RocketTouch( CBaseEntity *pOther );
+	static CTFRpgRocket *CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFRpg *pLauncher );
+	void RadiusDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType );
+
+	int m_iTrail;
+};
+
 enum incendiaryc_e
 {
 	IC_IDLE = 0,

@@ -198,8 +198,7 @@ void CTFRpg::PrimaryAttack( void )
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		p_vecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16.0f + gpGlobals->v_right * 8.0f + gpGlobals->v_up * -8.0f;
 		p_vecAngles = m_pPlayer->pev->v_angle;
-		// Velaron: TODO
-		//CTFRpgRocket::CreateRpgRocket( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
+		CTFRpgRocket::CreateRpgRocket( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		m_fInSpecialReload = 0;
 		m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
