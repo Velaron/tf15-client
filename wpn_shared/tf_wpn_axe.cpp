@@ -298,7 +298,7 @@ BOOL CTFKnife::Deploy( void )
 
 void CTFKnife::PlayAnim( int iAnimType )
 {
-	if ( iAnimType == 0 || iAnimType == 1 ) // Velaron: ANIM_HIT
+	if ( iAnimType == 0 || iAnimType == 1 )
 	{
 		SendWeaponAnim( KNIFE_ATTACK1 );
 	}

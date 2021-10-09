@@ -342,7 +342,7 @@ void EV_TFC_GunshotDecalTrace( pmtrace_t *pTrace, char *name )
 		gEngfuncs.pEfxAPI->R_BulletImpactParticles( pTrace->endpos );
 		iRand = gEngfuncs.pfnRandomLong( 0, 0x7FFF );
 
-		if ( iRand < ( 0x7fff / 2 ) )
+		if ( iRand < ( 0x7FFF / 2 ) )
 		{
 			switch ( iRand % 5 )
 			{

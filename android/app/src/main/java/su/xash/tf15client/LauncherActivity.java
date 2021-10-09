@@ -46,9 +46,36 @@ public class LauncherActivity extends AppCompatActivity {
 					.putExtra("argv", launchParameters.getText())
 					.putExtra("gamelibdir", getApplicationInfo().nativeLibraryDir));
 		});
+
 		launchButton.setEnabled(false);
 
-		checkForUpdates();
+		checkForEngine();
+	}
+
+	private void checkForEngine() {
+		try {
+			getPackageManager().getPackageInfo("su.xash.engine", 0);
+
+			checkForUpdates();
+		} catch (PackageManager.NameNotFoundException e) {
+			new MaterialAlertDialogBuilder(LauncherActivity.this)
+					.setTitle(R.string.engine_not_found)
+					.setMessage(R.string.engine_info)
+					.setCancelable(false)
+					.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+					})
+					.setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							String url = "https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous";
+							startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+						}
+					}).show();
+		}
 	}
 
 	private void checkForUpdates() {

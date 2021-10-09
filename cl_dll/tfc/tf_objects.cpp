@@ -27,25 +27,30 @@ void Game_AddObjects( void )
 		{
 			gEngfuncs.GetViewAngles( viewangles );
 			HUD_GetLastOrg( origin );
+			
+			/*
+			if ( !Bench_InStage( 3 ) )
+			{}
+			*/
 
 			if ( HUD_CreateSniperDot( damage, viewangles, origin, p_dot ) )
 			{
-				//p_target = g_aimorg;
-				// SpotPosition( p_dot, p_target );
+				// p_target = g_aimorg;
+				// Bench_SpotPosition( p_dot, p_target );
 			}
 
 			if ( gEngfuncs.pDemoAPI->IsRecording() )
 			{
-				*(int *)buf = 1; // Velaron: TODO
-				*(int *)buf[4] = damage;
-				*(Vector *)buf[8] = viewangles;
-				*(Vector *)buf[20] = origin;
+				*(int *)buf = TRUE;
+				*(int *)&buf[4] = damage;
+				*(Vector *)&buf[8] = viewangles;
+				*(Vector *)&buf[20] = origin;
 				Demo_WriteBuffer( TYPE_SNIPERDOT, 32, buf );
 			}
 		}
 		else if ( gEngfuncs.pDemoAPI->IsRecording() )
 		{
-			*(int *)buf = 0;
+			*(int *)buf = FALSE;
 			Demo_WriteBuffer( TYPE_SNIPERDOT, 4, buf );
 		}
 	}

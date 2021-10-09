@@ -6,6 +6,9 @@
     <string name="checking_for_updates">Checking for updates...</string>
     <string name="update_required">Update installation is required</string>
     <string name="update_available">An update is required to function properly.</string>
+    <string name="engine_not_found">Xash3D FWGS not installed</string>
+    <string name="engine_info">Xash3D FWGS beta is required to run TF15Client.</string>
     <string name="update">Update</string>
+    <string name="install">Install</string>
     <string name="exit">Exit</string>
 </resources>
