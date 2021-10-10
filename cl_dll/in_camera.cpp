@@ -185,7 +185,8 @@ void DLLEXPORT CAM_Think( void )
 	if ( cam_mousemove )
 	{
 		//get windows cursor position
-		GetCursorPos( &cam_mouse );
+		// GetCursorPos( &cam_mouse );
+		gEngfuncs.GetMousePosition( (int *)&cam_mouse.x, (int *)&cam_mouse.y );
 
 		//check for X delta values and adjust accordingly
 		//eventually adjust YAW based on amount of movement
@@ -571,7 +572,8 @@ void CAM_StartMouseMove( void )
 		{
 			cam_mousemove = 1;
 			iMouseInUse = 1;
-			GetCursorPos( &cam_mouse );
+			// GetCursorPos( &cam_mouse );
+			gEngfuncs.GetMousePosition( (int *)&cam_mouse.x, (int *)&cam_mouse.y );
 
 			if ( ( flSensitivity = gHUD.GetSensitivity() ) != 0 )
 			{
@@ -617,7 +619,8 @@ void CAM_StartDistance( void )
 			cam_distancemove = 1;
 			cam_mousemove = 1;
 			iMouseInUse = 1;
-			GetCursorPos( &cam_mouse );
+			// GetCursorPos( &cam_mouse );
+			gEngfuncs.GetMousePosition( (int *)&cam_mouse.x, (int *)&cam_mouse.y );
 			cam_old_mouse_x = cam_mouse.x * gHUD.GetSensitivity();
 			cam_old_mouse_y = cam_mouse.y * gHUD.GetSensitivity();
 		}

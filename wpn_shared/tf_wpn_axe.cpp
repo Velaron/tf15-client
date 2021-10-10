@@ -52,7 +52,8 @@ int CTFAxe::GetItemInfo( ItemInfo *p )
 	p->pszName = STRING( pev->classname );
 	p->iMaxClip = WEAPON_NOCLIP;
 	p->iId = m_iId = WEAPON_AXE;
-	p->iFlags = 0;
+	// Velaron: not set in original code
+	// p->iFlags = 0;
 	p->iWeight = 0;
 	return 1;
 }
@@ -202,7 +203,8 @@ int CTFSpanner::GetItemInfo( ItemInfo *p )
 	p->pszName = STRING( pev->classname );
 	p->iMaxClip = -1;
 	p->iId = m_iId = WEAPON_SPANNER;
-	p->iFlags = 0;
+	// Velaron: not set in original code
+	// p->iFlags = 0;
 	p->iWeight = 0;
 	return 1;
 }
@@ -284,7 +286,8 @@ int CTFKnife::GetItemInfo( ItemInfo *p )
 	p->iAmmo2 = -1;
 	p->iSlot = 0;
 	p->iPosition = 4;
-	p->iFlags = 0;
+	// Velaron: not set in original code
+	// p->iFlags = 0;
 	p->iMaxClip = -1;
 	p->iId = m_iId = WEAPON_KNIFE;
 	p->iWeight = 0;
@@ -352,7 +355,8 @@ int CTFMedikit::GetItemInfo( ItemInfo *p )
 	p->iMaxClip = -1;
 	p->iSlot = 0;
 	p->iPosition = 1;
-	p->iFlags = 0;
+	// Velaron: not set in original code
+	// p->iFlags = 0;
 	p->iId = m_iId = WEAPON_MEDIKIT;
 	p->iWeight = 0;
 	return 1;
