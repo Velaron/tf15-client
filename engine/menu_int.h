@@ -31,8 +31,12 @@ typedef int		HIMAGE;		// handle to a graphic
 #define PIC_KEEP_SOURCE	(1<<1)		// some images keep source
 #define PIC_NOFLIP_TGA	(1<<2)		// Steam background completely ignore tga attribute 0x20
 
+// flags for COM_ParseFileSafe
+#define PFILE_IGNOREBRACKET (1<<0)
+#define PFILE_HANDLECOLON   (1<<1)
+
 typedef struct ui_globalvars_s
-{	
+{
 	float		time;		// unclamped host.realtime
 	float		frametime;
 
@@ -82,7 +86,7 @@ typedef struct ui_enginefuncs_s
 	const char*	(*pfnCmdArgv)( int argc );
 	const char*	(*pfnCmd_Args)( void );
 
-	// debug messages (in-menu shows only notify)	
+	// debug messages (in-menu shows only notify)
 	void	(*Con_Printf)( const char *fmt, ... );
 	void	(*Con_DPrintf)( const char *fmt, ... );
 	void	(*Con_NPrintf)( int pos, const char *fmt, ... );
@@ -120,7 +124,7 @@ typedef struct ui_enginefuncs_s
 	int	(*pfnCreateMapsList)( int fRefresh );
 	int	(*pfnClientInGame)( void );
 	void	(*pfnClientJoin)( const struct netadr_s adr );
-	
+
 	// parse txt files
 	byte*	(*COM_LoadFile)( const char *filename, int *pLength );
 	char*	(*COM_ParseFile)( char *data, char *token );
@@ -158,8 +162,8 @@ typedef struct ui_enginefuncs_s
 	void	(*pfnHostEndGame)( const char *szFinalMessage );
 
 	// menu interface is freezed at version 0.75
-	// new functions starts here 
-	float	(*pfnRandomFloat)( float flLow, float flHigh );	
+	// new functions starts here
+	float	(*pfnRandomFloat)( float flLow, float flHigh );
 	int		(*pfnRandomLong)( int lLow, int lHigh );
 
 	void	(*pfnSetCursor)( void *hCursor );			// change cursor
@@ -204,7 +208,10 @@ typedef struct ui_extendedfuncs_s {
 	// new engine extended api start here
 	// returns 1 if there are more in list, otherwise 0
 	int (*pfnGetRenderers)( unsigned int num, char *shortName, size_t size1, char *readableName, size_t size2 );
+
 	double (*pfnDoubleTime)( void );
+
+	char *(*pfnParseFile)( char *data, char *buf, const int size, unsigned int flags, int *len );
 } ui_extendedfuncs_t;
 
 // deprecated export from old engine
@@ -236,4 +243,4 @@ typedef int (*UITEXTAPI)( ui_extendedfuncs_t* engfuncs );
 #define PLATFORM_UPDATE_PAGE "PlatformUpdatePage"
 #define GENERIC_UPDATE_PAGE "GenericUpdatePage"
 
-#endif //MENU_INT_H
+#endif//MENU_INT_H
