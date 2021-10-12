@@ -58,44 +58,14 @@ public class LauncherActivity extends AppCompatActivity {
 			PackageInfo info = getPackageManager().getPackageInfo("su.xash.engine", 0);
 
 			if (info.versionCode < XASH_MIN_VERSION) {
-				new MaterialAlertDialogBuilder(LauncherActivity.this)
-						.setTitle(R.string.update_required)
-						.setMessage(getString(R.string.update_available, "Xash3D FWGS"))
-						.setCancelable(false)
-						.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								finish();
-							}
-						})
-						.setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								String url = "https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous";
-								startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
-							}
-						}).show();
+				openDialog("https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous", getString(R.string.update_required),
+						getString(R.string.update_available, "Xash3D FWGS"));
 			} else {
 				checkForUpdates();
 			}
 		} catch (PackageManager.NameNotFoundException e) {
-			new MaterialAlertDialogBuilder(LauncherActivity.this)
-					.setTitle(R.string.engine_not_found)
-					.setMessage(R.string.engine_info)
-					.setCancelable(false)
-					.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-						}
-					})
-					.setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							String url = "https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous";
-							startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
-						}
-					}).show();
+			openDialog("https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous",
+					getString(R.string.engine_not_found), getString(R.string.engine_info));
 		}
 	}
 
@@ -119,23 +89,8 @@ public class LauncherActivity extends AppCompatActivity {
 						launchButton.setEnabled(true);
 					} else {
 						updateNotification.dismiss();
-						new MaterialAlertDialogBuilder(LauncherActivity.this)
-								.setTitle(R.string.update_required)
-								.setMessage(getString(R.string.update_available, "TF15Client"))
-								.setCancelable(false)
-								.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										finish();
-									}
-								})
-								.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										String url = "https://github.com/Velaron/tf15-client/actions";
-										startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
-									}
-								}).show();
+						openDialog("https://github.com/Velaron/tf15-client/actions", getString(R.string.update_required),
+								getString(R.string.update_available, "TF15Client"));
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -153,5 +108,24 @@ public class LauncherActivity extends AppCompatActivity {
 
 		RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
 		requestQueue.add(jsonObjectRequest);
+	}
+
+	private void openDialog(String url, String title, String description) {
+		new MaterialAlertDialogBuilder(LauncherActivity.this)
+				.setTitle(title)
+				.setMessage(description)
+				.setCancelable(false)
+				.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				})
+				.setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+					}
+				}).show();
 	}
 }
