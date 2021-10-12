@@ -3,11 +3,10 @@ package su.xash.tf15client;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -27,6 +26,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LauncherActivity extends AppCompatActivity {
+	private static final int XASH_MIN_VERSION = 1710;
+
 	@Override
 	public void onCreate(Bundle savedInstanceBundle) {
 		super.onCreate(savedInstanceBundle);
@@ -54,9 +55,29 @@ public class LauncherActivity extends AppCompatActivity {
 
 	private void checkForEngine() {
 		try {
-			getPackageManager().getPackageInfo("su.xash.engine", 0);
+			PackageInfo info = getPackageManager().getPackageInfo("su.xash.engine", 0);
 
-			checkForUpdates();
+			if (info.versionCode < XASH_MIN_VERSION) {
+				new MaterialAlertDialogBuilder(LauncherActivity.this)
+						.setTitle(R.string.update_required)
+						.setMessage(getString(R.string.update_available, "Xash3D FWGS"))
+						.setCancelable(false)
+						.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								finish();
+							}
+						})
+						.setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								String url = "https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous";
+								startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)));
+							}
+						}).show();
+			} else {
+				checkForUpdates();
+			}
 		} catch (PackageManager.NameNotFoundException e) {
 			new MaterialAlertDialogBuilder(LauncherActivity.this)
 					.setTitle(R.string.engine_not_found)
@@ -100,7 +121,7 @@ public class LauncherActivity extends AppCompatActivity {
 						updateNotification.dismiss();
 						new MaterialAlertDialogBuilder(LauncherActivity.this)
 								.setTitle(R.string.update_required)
-								.setMessage(R.string.update_available)
+								.setMessage(getString(R.string.update_available, "TF15Client"))
 								.setCancelable(false)
 								.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
 									@Override
