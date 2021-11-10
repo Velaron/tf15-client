@@ -20,7 +20,7 @@
 # SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 2.6.0)
+cmake_minimum_required(VERSION 2.8.12)
 project(server)
 
 set(SVDLL_LIBRARY tfc)
@@ -44,6 +44,7 @@ else()
 endif()
 
 set(SVDLL_SOURCES
+	areadef.cpp
 	airtank.cpp
 	animating.cpp
 	animation.cpp
@@ -53,14 +54,19 @@ set(SVDLL_SOURCES
 	client.cpp
 	combat.cpp
 	crowbar.cpp
+#	dbghelpers.cpp
 	defaultai.cpp
+	demoman.cpp
+	dispenser.cpp
 	doors.cpp
 	effects.cpp
+	engineer.cpp
 	explode.cpp
 	func_break.cpp
 	func_tank.cpp
 	game.cpp
 	gamerules.cpp
+#	genericmonster.cpp
 	ggrenade.cpp
 	globals.cpp
 	h_ai.cpp
@@ -68,10 +74,12 @@ set(SVDLL_SOURCES
 	h_cine.cpp
 	h_cycler.cpp
 	h_export.cpp
-#	handgrenade.cpp
+	handgrenade.cpp
 	healthkit.cpp
 	items.cpp
 	lights.cpp
+#	menu.cpp
+	tfortmap.cpp
 	monsters.cpp
 	monsterstate.cpp
 	mortar.cpp
@@ -86,53 +94,48 @@ set(SVDLL_SOURCES
 	playermonster.cpp
 #	prop.cpp
 #	rpg.cpp
+	pyro.cpp
 	schedule.cpp
 	scripted.cpp
+	sentry.cpp
 	skill.cpp
 	sound.cpp
 	soundent.cpp
 	spectator.cpp
+	spy.cpp
 	squadmonster.cpp
 	subs.cpp
 	talkmonster.cpp
 	teamplay_gamerules.cpp
 	tempmonster.cpp
+	tf_admin.cpp
+	tf_clan.cpp
+	tf_gamerules.cpp
+	tf_item.cpp
+	tf_sbar.cpp
+	tf_wpn_grenades.cpp
+	tf_wpn_nails.cpp
+	tfort.cpp
+	tforttm.cpp
 	triggers.cpp
 	turret.cpp
 	util.cpp
 	weapons.cpp
 	world.cpp
 	xen.cpp
-	tfc/areadef.cpp
-	tfc/demoman.cpp
-	tfc/dispenser.cpp
-	tfc/engineer.cpp
-	tfc/pyro.cpp
-	tfc/sentry.cpp
-	tfc/spy.cpp
-	tfc/teleporter.cpp
-	tfc/tf_admin.cpp
-	tfc/tf_clan.cpp
-	tfc/tf_gamerules.cpp
-	tfc/tf_item.cpp
-	tfc/tf_sbar.cpp
+	teleporter.cpp
 	../wpn_shared/tf_wpn_ac.cpp
 	../wpn_shared/tf_wpn_ar.cpp
 	../wpn_shared/tf_wpn_axe.cpp
 	../wpn_shared/tf_wpn_flame.cpp
 	../wpn_shared/tf_wpn_gl.cpp
-	../wpn_shared/tf_wpn_grenades.cpp
 	../wpn_shared/tf_wpn_ic.cpp
-	../wpn_shared/tf_wpn_nails.cpp
 	../wpn_shared/tf_wpn_ng.cpp
 	../wpn_shared/tf_wpn_railgun.cpp
 	../wpn_shared/tf_wpn_rpg.cpp
 	../wpn_shared/tf_wpn_sg.cpp
 	../wpn_shared/tf_wpn_srifle.cpp
 	../wpn_shared/tf_wpn_tranq.cpp
-	tfc/tfort.cpp
-	tfc/tfortmap.cpp
-	tfc/tforttm.cpp
 	../pm_shared/pm_debug.c
 	../pm_shared/pm_math.c
 	../pm_shared/pm_shared.c

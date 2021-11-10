@@ -610,7 +610,7 @@ void CTalkMonster::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int 
 	// Don't finish that sentence
 	StopTalking();
 	SetUse( NULL );
-	CBaseMonster::Killed( pevAttacker, iGib );
+	CBaseMonster::Killed( pevInflictor, pevAttacker, iGib );
 }
 
 CBaseEntity *CTalkMonster::EnumFriends( CBaseEntity *pPrevious, int listNumber, BOOL bTrace )

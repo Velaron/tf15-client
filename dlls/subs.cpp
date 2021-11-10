@@ -27,6 +27,8 @@
 #include "nodes.h"
 #include "doors.h"
 
+#include "tf_defs.h"
+
 extern CGraph WorldGraph;
 
 extern BOOL FEntIsVisible( entvars_t *pev, entvars_t *pevTarget );
@@ -599,7 +601,7 @@ void CBaseEntity::KeyValue( KeyValueData *pkvd )
 	}
 	else if( FStrEq(pkvd->szKeyName, "playerclass" ) )
 	{
-		playerclass = atoi( pkvd->szValue );
+		pev->playerclass = atoi( pkvd->szValue );
 		pkvd->fHandled = TRUE;
 	}
 	else if( FStrEq(pkvd->szKeyName, "items_allowed" ) )

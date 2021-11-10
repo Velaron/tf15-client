@@ -173,9 +173,9 @@ void CTeamFortress::InitHUD( CBasePlayer *pl )
 		TeamFortress_TeamIncreaseScore( i, 0 );
 	}
 
-	pl->TeamFortress_ExecMapScript();
+	//pl->TeamFortress_ExecMapScript();
 
-	pl->m_bDisplayedMOTD = 0;
+	//pl->m_bDisplayedMOTD = 0;
 
 	if ( CVAR_GET_FLOAT( "sv_cheats" ) == 0.0f )
 	{

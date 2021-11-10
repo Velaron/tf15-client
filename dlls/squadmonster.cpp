@@ -129,7 +129,7 @@ void CSquadMonster::Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int
 		MySquadLeader()->SquadRemove( this );
 	}
 
-	CBaseMonster::Killed( pevAttacker, iGib );
+	CBaseMonster::Killed( pevInflictor, pevAttacker, iGib );
 }
 
 // These functions are still awaiting conversion to CSquadMonster 

@@ -35,18 +35,45 @@ enum handgrenade_e
 	HANDGRENADE_DRAW
 };
 
+class CHandGrenade : public CBasePlayerWeapon
+{
+public:
+	void Spawn( void );
+	void Precache( void );
+	int iItemSlot( void ) { return 5; }
+	int GetItemInfo(ItemInfo *p);
+
+	void PrimaryAttack( void );
+	BOOL Deploy( void );
+	BOOL CanHolster( void );
+	void Holster( int skiplocal = 0 );
+	void WeaponIdle( void );
+	
+	virtual BOOL UseDecrement( void )
+	{ 
+#if defined( CLIENT_WEAPONS )
+		return TRUE;
+#else
+		return FALSE;
+#endif
+	}
+
+	float m_flStartThrow;
+	float m_flReleaseThrow;
+};
+
 LINK_ENTITY_TO_CLASS( weapon_handgrenade, CHandGrenade )
 
 void CHandGrenade::Spawn()
 {
 	Precache();
-	m_iId = WEAPON_HANDGRENADE;
+	m_iId = 12;
 	SET_MODEL( ENT( pev ), "models/w_grenade.mdl" );
 
 #ifndef CLIENT_DLL
 	pev->dmg = gSkillData.plrDmgHandGrenade;
 #endif
-	m_iDefaultAmmo = HANDGRENADE_DEFAULT_GIVE;
+	m_iDefaultAmmo = 5;
 
 	FallInit();// get ready to fall down.
 }
@@ -62,14 +89,14 @@ int CHandGrenade::GetItemInfo( ItemInfo *p )
 {
 	p->pszName = STRING( pev->classname );
 	p->pszAmmo1 = "Hand Grenade";
-	p->iMaxAmmo1 = HANDGRENADE_MAX_CARRY;
+	p->iAmmo1 = 10;
 	p->pszAmmo2 = NULL;
-	p->iMaxAmmo2 = -1;
+	p->iAmmo2 = -1;
 	p->iMaxClip = WEAPON_NOCLIP;
 	p->iSlot = 4;
 	p->iPosition = 0;
-	p->iId = m_iId = WEAPON_HANDGRENADE;
-	p->iWeight = HANDGRENADE_WEIGHT;
+	p->iId = m_iId = 12;
+	p->iWeight = 5;
 	p->iFlags = ITEM_FLAG_LIMITINWORLD | ITEM_FLAG_EXHAUSTIBLE;
 
 	return 1;
@@ -98,7 +125,7 @@ void CHandGrenade::Holster( int skiplocal /* = 0 */ )
 	else
 	{
 		// no more grenades!
-		m_pPlayer->pev->weapons &= ~( 1 << WEAPON_HANDGRENADE );
+		m_pPlayer->pev->weapons &= ~( 1 << 12 );
 		DestroyItem();
 	}
 
