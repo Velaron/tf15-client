@@ -35,6 +35,7 @@ cvar_t tfc_adminpwd = { "tfc_adminpwd", "0", FCVAR_SERVER | FCVAR_PROTECTED };
 cvar_t tfc_balance_teams = { "tfc_balance_teams", "1.0", FCVAR_SERVER };
 cvar_t tfc_balance_scores = { "tfc_balance_scores", "1.0", FCVAR_SERVER };
 cvar_t allow_spectators = { "allow_spectators", "1.0", FCVAR_SERVER };    // 0 prevents players from being spectators
+cvar_t multibyte_only = { "mp_multibyte_only", "0", FCVAR_SERVER };
 cvar_t tfc_spectchat = { "tfc_spectchat", "0", FCVAR_SERVER };
 cvar_t tfc_playerid = { "tfc_playerid", "0", FCVAR_SERVER };
 
@@ -55,7 +56,6 @@ cvar_t forcerespawn	= { "mp_forcerespawn","1", FCVAR_SERVER };
 cvar_t flashlight	= { "mp_flashlight","0", FCVAR_SERVER };
 cvar_t aimcrosshair	= { "mp_autocrosshair","1", FCVAR_SERVER };
 cvar_t decalfrequency	= { "decalfrequency","30", FCVAR_SERVER };
-cvar_t bhopcap		= { "mp_bhopcap", "1", FCVAR_SERVER };
 
 cvar_t cr_scout		= { "cr_scout", "0", FCVAR_SERVER };
 cvar_t cr_sniper	= { "cr_sniper", "0", FCVAR_SERVER };
@@ -104,6 +104,7 @@ void GameDLLInit( void )
 	CVAR_REGISTER( &tfc_autokick_kills );
 
 	CVAR_REGISTER( &allow_spectators );
+	CVAR_REGISTER( &multibyte_only );
 
 	CVAR_REGISTER( &tfc_spectchat );
 	CVAR_REGISTER( &tfc_playerid );
@@ -135,8 +136,6 @@ void GameDLLInit( void )
 	CVAR_REGISTER( &cr_spy );
 	CVAR_REGISTER( &cr_engineer );
 	CVAR_REGISTER( &cr_random );
-
-	CVAR_REGISTER( &bhopcap );
 
 	CVAR_REGISTER( &mp_chattime );
 }

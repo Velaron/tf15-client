@@ -67,7 +67,6 @@ IGameMenuExports *g_pMainUI = NULL;
 void CL_LoadMainUI( void );
 void CL_UnloadMainUI( void );
 
-extern "C" int g_bhopcap;
 void InitInput( void );
 void EV_HookEvents( void );
 void IN_Commands( void );

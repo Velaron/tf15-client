@@ -471,6 +471,7 @@ extern DLL_GLOBAL int			g_Language;
 #define SVC_WEAPONANIM		35
 #define SVC_ROOMTYPE		37
 #define	SVC_DIRECTOR		51
+#define SVC_EXEC			59
 
 // triggers
 #define	SF_TRIGGER_ALLOWMONSTERS	1// monsters allowed to fire this trigger

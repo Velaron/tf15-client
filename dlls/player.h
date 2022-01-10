@@ -310,6 +310,7 @@ public:
 	void SetCustomDecalFrames( int nFrames );
 	int GetCustomDecalFrames( void );
 	
+	void TeamFortress_ExecMapScript( void );
 	void TeamFortress_SetSpeed( void );
 	void TeamFortress_SetSkin( void );
 	BOOL EngineerUse( CBasePlayer *pPlayer );
@@ -336,9 +337,7 @@ public:
 
 	int m_iAutoWepSwitch;
 
-	Vector m_vecLastViewAngles;
-
-	bool m_bSentBhopcap; // If false, the player just joined and needs a bhopcap message.
+	Vector m_vecLastViewAngles;// If false, the player just joined and needs a bhopcap message.
 };
 
 #define AUTOAIM_2DEGREES  0.0348994967025

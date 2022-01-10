@@ -47,8 +47,6 @@ extern DLL_GLOBAL BOOL g_fDrawLines;
 int gEvilImpulse101;
 extern DLL_GLOBAL int g_iSkillLevel, gDisplayTitle;
 
-extern "C" int g_bhopcap;
-
 BOOL gInitHUD = TRUE;
 
 extern void CopyToBodyQue( entvars_t *pev);
@@ -204,7 +202,6 @@ int gmsgAllowSpec;
 int gmsgSpecFade;
 int gmsgResetFade;
 int gmsgGeigerRange;
-int gmsgBhopcap = 0;
 
 void LinkUserMessages( void )
 {
@@ -268,7 +265,6 @@ void LinkUserMessages( void )
 	gmsgVGUIMenu = REG_USER_MSG( "VGUIMenu", -1 );
 	gmsgBuildState = REG_USER_MSG( "BuildSt", 2 );
 	gmsgRandomPC = REG_USER_MSG( "RandomPC", 1 );
-	gmsgBhopcap = REG_USER_MSG( "Bhopcap", 1 );
 }
 
 LINK_ENTITY_TO_CLASS( player, CBasePlayer )
@@ -409,6 +405,22 @@ void CBasePlayer::TeamFortress_SetSkin( void )
 	{
 		
 	}
+}
+
+void CBasePlayer::TeamFortress_ExecMapScript( void )
+{
+	if ( exec_map_scripts )
+	{
+		MESSAGE_BEGIN( MSG_ONE, SVC_EXEC, NULL, pev );
+		WRITE_BYTE( 0 );
+		MESSAGE_END();
+	}
+}
+
+// Velaron: TODO
+void CBasePlayer::TeamFortress_SetSpeed( void )
+{
+
 }
 
 Vector CBasePlayer::GetGunPosition()
@@ -3362,7 +3374,6 @@ void CBasePlayer::ForceClientDllUpdate( void )
 	m_fWeapon = FALSE;          // Force weapon send
 	m_fKnownItem = FALSE;    // Force weaponinit messages.
 	m_fInitHUD = TRUE;		// Force HUD gmsgResetHUD message
-	m_bSentBhopcap = true; // a1ba: Update bhopcap state
 	memset( m_rgAmmoLast, 0, sizeof( m_rgAmmoLast )); // a1ba: Force update AmmoX
 
 
@@ -4126,15 +4137,6 @@ void CBasePlayer::UpdateClientData( void )
 	{
 		UpdateStatusBar();
 		m_flNextSBarUpdateTime = gpGlobals->time + 0.2f;
-	}
-
-	// Send the current bhopcap state.
-	if( !m_bSentBhopcap )
-	{
-		m_bSentBhopcap = true;
-		MESSAGE_BEGIN( MSG_ONE, gmsgBhopcap, NULL, pev );
-			WRITE_BYTE( g_bhopcap );
-		MESSAGE_END();
 	}
 }
 

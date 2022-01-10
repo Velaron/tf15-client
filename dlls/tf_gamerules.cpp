@@ -173,7 +173,7 @@ void CTeamFortress::InitHUD( CBasePlayer *pl )
 		TeamFortress_TeamIncreaseScore( i, 0 );
 	}
 
-	//pl->TeamFortress_ExecMapScript();
+	pl->TeamFortress_ExecMapScript();
 
 	//pl->m_bDisplayedMOTD = 0;
 

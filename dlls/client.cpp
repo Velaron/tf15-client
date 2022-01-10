@@ -40,6 +40,8 @@
 #include "netadr.h"
 #include "pm_shared.h"
 
+#include "tf_defs.h"
+
 extern DLL_GLOBAL ULONG		g_ulModelIndexPlayer;
 extern DLL_GLOBAL BOOL		g_fGameOver;
 extern DLL_GLOBAL int		g_iSkillLevel;
@@ -48,49 +50,13 @@ extern DLL_GLOBAL ULONG		g_ulFrameCount;
 extern void CopyToBodyQue( entvars_t* pev );
 extern int giPrecacheGrunt;
 extern int gmsgSayText;
-extern int gmsgBhopcap;
 
 extern cvar_t allow_spectators;
 extern cvar_t multibyte_only;
 
 extern int g_teamplay;
 
-extern cvar_t bhopcap;
-extern "C" int g_bhopcap;
-
 void LinkUserMessages( void );
-
-static const char *sOldClassModelFiles[] =
-{
-	NULL,
-	"models/player/scout/scout2.mdl",
-	"models/player/sniper/sniper2.mdl",
-	"models/player/soldier/soldier2.mdl",
-	"models/player/demo/demo2.mdl",
-	"models/player/medic/medic2.mdl",
-	"models/player/hvyweapon/hvyweapon2.mdl",
-	"models/player/pyro/pyro2.mdl",
-	"models/player/spy/spy2.mdl",
-	"models/player/engineer/engineer2.mdl",
-	"models/player.mdl",
-	"models/player/civilian/civilian.mdl"
-};
-
-static const char *sNewClassModelFiles[] =
-{
-	NULL,
-	"models/player/scout/scout.mdl",
-	"models/player/sniper/sniper.mdl",
-	"models/player/soldier/soldier.mdl",
-	"models/player/demo/demo.mdl",
-	"models/player/medic/medic.mdl",
-	"models/player/hvyweapon/hvyweapon.mdl",
-	"models/player/pyro/pyro.mdl",
-	"models/player/spy/spy.mdl",
-	"models/player/engineer/engineer.mdl",
-	"models/player.mdl",
-	"models/player/civilian/civilian.mdl"
-};
 
 static const char *sOldWeaponPModels[] =
 {
@@ -880,25 +846,60 @@ void ParmsChangeLevel( void )
 //
 void StartFrame( void )
 {
+	float prematch_time;
+	float ceasefire_time;
 	//ALERT( at_console, "SV_Physics( %g, frametime %g )\n", gpGlobals->time, gpGlobals->frametime );
 
-	if( g_pGameRules )
+	if ( g_pGameRules )
 		g_pGameRules->Think();
 
-	if( g_fGameOver )
+	if ( g_fGameOver )
 		return;
 
 	gpGlobals->teamplay = teamplay.value;
+
+	if ( gpGlobals->maxClients < 8 )
+		gpGlobals->deathmatch = CVAR_GET_FLOAT( "deathmatch" );
+	else
+		gpGlobals->deathmatch = 1.0f;
+
+	if ( ( tfc_balance_teams.value != 0.0f || tfc_balance_scores.value != 0.0f ) && gpGlobals->time > flNextEqualisationCalc )
+	{
+		CalculateTeamEqualiser();
+		flNextEqualisationCalc = gpGlobals->time + 10.0f;
+	}
+
+	if ( cb_prematch_time != 0.0f )
+	{
+		prematch_time = tfc_clanbattle_prematch.value ? tfc_clanbattle_prematch.value * 60.0f : tfc_prematch.value * 60.0f;
+
+		if ( prematch_time != fOldPrematch )
+		{
+			fOldPrematch = prematch_time;
+			g_fNextPrematchAlert = 0.0f;
+			cb_prematch_time = gpGlobals->time + fOldPrematch;
+		}
+
+		Display_Prematch();
+	}
+
+	if ( initial_cease_fire )
+	{
+		ceasefire_time = tfc_clanbattle_ceasefire.value * 60.0f;
+
+		if ( ceasefire_time != fOldCeaseFire )
+		{
+			fOldCeaseFire = ceasefire_time;
+			cb_ceasefire_time = gpGlobals->time + fOldCeaseFire;
+		}
+	}
+
+	if ( last_cease_fire )
+		Check_Ceasefire();
+
 	g_ulFrameCount++;
 
-	int oldBhopcap = g_bhopcap;
-	g_bhopcap = ( g_pGameRules->IsMultiplayer() && bhopcap.value != 0.0f ) ? 1 : 0;
-	if( g_bhopcap != oldBhopcap )
-	{
-		MESSAGE_BEGIN( MSG_ALL, gmsgBhopcap, NULL );
-			WRITE_BYTE( g_bhopcap );
-		MESSAGE_END();
-	}
+	g_iSkillLevel = 1; // Velaron: ?
 }
 
 void ClientPrecache( void )
@@ -1000,6 +1001,7 @@ void ClientPrecache( void )
 
 	PRECACHE_SOUND( "buttons/spark5.wav" );		// hit computer texture
 	PRECACHE_SOUND( "buttons/spark6.wav" );
+	
 	PRECACHE_SOUND( "debris/glass1.wav" );
 	PRECACHE_SOUND( "debris/glass2.wav" );
 	PRECACHE_SOUND( "debris/glass3.wav" );
@@ -1036,10 +1038,10 @@ void ClientPrecache( void )
 
 	size_t i;
 
-	for( i = 1; i < ARRAYSIZE(sOldClassModelFiles); i++ )
+	for( i = 1; i < PC_LASTCLASS; i++ )
 		PRECACHE_MODEL( sOldClassModelFiles[i] );
 
-	for( i = 1; i < ARRAYSIZE(sNewClassModelFiles); i++ )
+	for( i = 1; i < PC_LASTCLASS; i++ )
 		PRECACHE_MODEL( sNewClassModelFiles[i] );
 
 	for( i = 0; i < ARRAYSIZE(sOldWeaponPModels); i++ )
@@ -1051,10 +1053,10 @@ void ClientPrecache( void )
 	Vector modelMins( -43, -14, -49 );
 	Vector modelMaxs( 43, 11, 49 );
 
-	for( i = 1; i < ARRAYSIZE(sOldClassModelFiles); i++ )
+	for( i = 1; i < PC_LASTCLASS; i++ )
 		ENGINE_FORCE_UNMODIFIED( force_model_specifybounds, modelMins, modelMaxs, sOldClassModelFiles[i] );
 
-	for( i = 1; i < ARRAYSIZE(sNewClassModelFiles); i++ )
+	for( i = 1; i < PC_LASTCLASS; i++ )
 		ENGINE_FORCE_UNMODIFIED( force_model_specifybounds, modelMins, modelMaxs, sNewClassModelFiles[i] );
 
 	for( i = 0; i < ARRAYSIZE(sOldWeaponPModels); i++ )
