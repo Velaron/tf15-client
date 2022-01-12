@@ -4,7 +4,7 @@
 #
 
 TFC_SRC_DIR=$(SOURCE_DIR)/cl_dll
-TFC_SERVER_SRC_DIR=$(SOURCE_DIR)/dlls
+TFC_SERVER_SRC_DIR=$(SOURCE_DIR)/wpn_shared
 GAME_SHARED_SRC_DIR=$(SOURCE_DIR)/game_shared
 PM_SHARED_SRC_DIR=$(SOURCE_DIR)/pm_shared
 
@@ -12,13 +12,13 @@ TFC_OBJ_DIR=$(BUILD_OBJ_DIR)/tfc_client
 PUBLIC_OBJ_DIR=$(TFC_OBJ_DIR)/public
 COMMON_OBJ_DIR=$(TFC_OBJ_DIR)/common
 GAME_SHARED_OBJ_DIR=$(TFC_OBJ_DIR)/game_shared
-TFC_SERVER_OBJ_DIR=$(TFC_OBJ_DIR)/server
+TFC_SERVER_OBJ_DIR=$(TFC_OBJ_DIR)/wpn_shared
 PM_SHARED_OBJ_DIR=$(TFC_OBJ_DIR)/pm_shared
 
 CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -DCLIENT_DLL -DCLIENT_WEAPONS -DGOLDSOURCE_SUPPORT -I/usr/include/malloc -D_snwprintf=swprintf \
 		 -DDISABLE_JUMP_ORIGIN -DDISABLE_VEC_ORIGIN
 		 
-INCLUDEDIRS=-I$(TFC_SRC_DIR) -I../dlls -I../tfc -I$(COMMON_SRC_DIR) -I$(PUBLIC_SRC_DIR) -I../pm_shared -I../engine -I../utils/vgui/include -I ../game_shared -I../external
+INCLUDEDIRS=-I$(TFC_SRC_DIR) -I../dlls -I../tfc -I$(COMMON_SRC_DIR) -I$(PUBLIC_SRC_DIR) -I../pm_shared -I../engine -I../vgui_dll/include -I../game_shared -I../external
 
 ifeq ($(OS),Darwin)
 LDFLAGS=$(SHLIBLDFLAGS) $(CPP_LIB) -framework Carbon $(CFG)/vgui.dylib -L. -lSDL2-2.0.0
@@ -91,23 +91,21 @@ TFC_OBJS = \
 	$(TFC_OBJ_DIR)/vgui_TeamFortressViewport.o \
 	$(TFC_OBJ_DIR)/vgui_SpectatorPanel.o \
 	$(TFC_OBJ_DIR)/vgui_teammenu.o \
-	$(TFC_OBJ_DIR)/voice_status.o \
-	$(TFC_OBJ_DIR)/hud_servers.o \
 	
 
 DLL_OBJS = \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_ac.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_ar.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_axe.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_flame.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_gl.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_ic.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_ng.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_railgun.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_rpg.cpp\
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_sg.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_srifle.cpp \
-	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_tranq.cpp \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_ac.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_ar.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_axe.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_flame.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_gl.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_ic.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_ng.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_railgun.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_rpg.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_sg.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_srifle.o \
+	$(TFC_SERVER_OBJ_DIR)/tf_wpn_tranq.o \
 
 
 PUBLIC_OBJS = \
@@ -124,6 +122,7 @@ GAME_SHARED_OBJS = \
 	$(GAME_SHARED_OBJ_DIR)/vgui_scrollbar2.o \
 	$(GAME_SHARED_OBJ_DIR)/vgui_slider2.o \
 	$(GAME_SHARED_OBJ_DIR)/voice_banmgr.o \
+	$(GAME_SHARED_OBJ_DIR)/voice_status.o \
 	
 PM_SHARED_OBJS = \
 	$(PM_SHARED_OBJ_DIR)/pm_debug.o \
@@ -137,18 +136,18 @@ all: client.$(SHLIBEXT)
 client.$(SHLIBEXT): $(TFC_OBJS) $(PUBLIC_OBJS) $(COMMON_OBJS) $(GAME_SHARED_OBJS) $(DLL_OBJS) $(PM_SHARED_OBJS)
 	$(CLINK) -o $(BUILD_DIR)/$@ $(TFC_OBJS) $(PUBLIC_OBJS) $(COMMON_OBJS) $(GAME_SHARED_OBJS) $(DLL_OBJS) $(PM_SHARED_OBJS) $(LDFLAGS) $(CPP_LIB)
 #	p4 edit ../../game/mod/cl_dlls/$@
-	cp $(BUILD_DIR)/$@  ../../game/mod/cl_dlls
-	./gendbg.sh ../../game/mod/cl_dlls/client.$(SHLIBEXT)
+#	cp $(BUILD_DIR)/$@  ../../game/mod/cl_dlls
+	./gendbg.sh $(BUILD_DIR)/$@
 
 $(TFC_OBJ_DIR):
 	mkdir -p $(TFC_OBJ_DIR)
-	mkdir -p $(TFC_OBJ_DIR)/hl
+	mkdir -p $(TFC_OBJ_DIR)/tfc
 	mkdir -p $(TFC_OBJ_DIR)/dlls/wpn_shared
 	mkdir -p $(TFC_OBJ_DIR)/VGUI
 
 $(TFC_SERVER_OBJ_DIR):
 	mkdir -p $(TFC_SERVER_OBJ_DIR)
-	mkdir -p $(TFC_SERVER_OBJ_DIR)/wpn_shared
+#	mkdir -p $(TFC_SERVER_OBJ_DIR)/wpn_shared
 
 $(PUBLIC_OBJ_DIR):
 	mkdir -p $(PUBLIC_OBJ_DIR)

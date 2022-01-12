@@ -8,7 +8,7 @@ if [ "$UNAME" == "Darwin" ]; then
 	exit 0;
 fi
 
-OBJCOPY=/valve/bin/objcopy
+OBJCOPY=objcopy
 
 function usage {
 	echo "$0 /path/to/input/file [-o /path/to/output/file ]"
