@@ -1,0 +1,194 @@
+#
+# launcher Makefile for x86 Linux
+#
+#
+
+TFC_SRC_DIR=$(SOURCE_DIR)/cl_dll
+TFC_SERVER_SRC_DIR=$(SOURCE_DIR)/dlls
+GAME_SHARED_SRC_DIR=$(SOURCE_DIR)/game_shared
+PM_SHARED_SRC_DIR=$(SOURCE_DIR)/pm_shared
+
+TFC_OBJ_DIR=$(BUILD_OBJ_DIR)/tfc_client
+PUBLIC_OBJ_DIR=$(TFC_OBJ_DIR)/public
+COMMON_OBJ_DIR=$(TFC_OBJ_DIR)/common
+GAME_SHARED_OBJ_DIR=$(TFC_OBJ_DIR)/game_shared
+TFC_SERVER_OBJ_DIR=$(TFC_OBJ_DIR)/server
+PM_SHARED_OBJ_DIR=$(TFC_OBJ_DIR)/pm_shared
+
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -DCLIENT_DLL -DCLIENT_WEAPONS -DGOLDSOURCE_SUPPORT -I/usr/include/malloc -D_snwprintf=swprintf \
+		 -DDISABLE_JUMP_ORIGIN -DDISABLE_VEC_ORIGIN
+		 
+INCLUDEDIRS=-I$(TFC_SRC_DIR) -I../dlls -I../tfc -I$(COMMON_SRC_DIR) -I$(PUBLIC_SRC_DIR) -I../pm_shared -I../engine -I../utils/vgui/include -I ../game_shared -I../external
+
+ifeq ($(OS),Darwin)
+LDFLAGS=$(SHLIBLDFLAGS) $(CPP_LIB) -framework Carbon $(CFG)/vgui.dylib -L. -lSDL2-2.0.0
+else
+LDFLAGS=$(SHLIBLDFLAGS) $(CPP_LIB)  -L$(CFG) vgui.so -L. libSDL2-2.0.so.0
+endif
+
+DO_CC=$(CPLUS) $(INCLUDEDIRS) $(CFLAGS) -o $@ -c $<
+DO_PUBLIC_CC=$(CPLUS) $(COMMON_INCLUDEDIRS) $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
+DO_COMMON_CC=$(CPLUS) $(INCLUDEDIRS)  $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
+DO_PM_SHARED_CC=$(CC) $(INCLUDEDIRS)  $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
+
+#####################################################################
+
+TFC_OBJS = \
+	$(TFC_OBJ_DIR)/hud_spectator.o \
+	$(TFC_OBJ_DIR)/ev_tfc.o \
+	$(TFC_OBJ_DIR)/tfc/tf_baseentity.o \
+	$(TFC_OBJ_DIR)/tfc/tf_events.o \
+	$(TFC_OBJ_DIR)/tfc/tf_objects.o \
+	$(TFC_OBJ_DIR)/tfc/tf_weapons.o \
+	$(TFC_OBJ_DIR)/hud.o \
+	$(TFC_OBJ_DIR)/input_goldsource.o \
+	$(TFC_OBJ_DIR)/input_mouse.o \
+	$(TFC_OBJ_DIR)/ammo.o \
+	$(TFC_OBJ_DIR)/ammo_secondary.o \
+	$(TFC_OBJ_DIR)/ammohistory.o \
+	$(TFC_OBJ_DIR)/battery.o \
+	$(TFC_OBJ_DIR)/cdll_int.o \
+	$(TFC_OBJ_DIR)/com_weapons.o \
+	$(TFC_OBJ_DIR)/death.o \
+	$(TFC_OBJ_DIR)/demo.o \
+	$(TFC_OBJ_DIR)/entity.o \
+	$(TFC_OBJ_DIR)/ev_common.o \
+	$(TFC_OBJ_DIR)/events.o \
+	$(TFC_OBJ_DIR)/flashlight.o \
+	$(TFC_OBJ_DIR)/GameStudioModelRenderer.o \
+	$(TFC_OBJ_DIR)/geiger.o \
+	$(TFC_OBJ_DIR)/health.o \
+	$(TFC_OBJ_DIR)/hud_bench.o \
+	$(TFC_OBJ_DIR)/hud_benchtrace.o \
+	$(TFC_OBJ_DIR)/hud_msg.o \
+	$(TFC_OBJ_DIR)/hud_redraw.o \
+	$(TFC_OBJ_DIR)/hud_update.o \
+	$(TFC_OBJ_DIR)/in_camera.o \
+	$(TFC_OBJ_DIR)/input.o \
+	$(TFC_OBJ_DIR)/interpolation.o \
+	$(TFC_OBJ_DIR)/menu.o \
+	$(TFC_OBJ_DIR)/message.o \
+	$(TFC_OBJ_DIR)/parsemsg.o  \
+	$(TFC_OBJ_DIR)/saytext.o \
+	$(TFC_OBJ_DIR)/status_icons.o \
+	$(TFC_OBJ_DIR)/statusbar.o \
+	$(TFC_OBJ_DIR)/studio_util.o \
+	$(TFC_OBJ_DIR)/StudioModelRenderer.o \
+	$(TFC_OBJ_DIR)/text_message.o \
+	$(TFC_OBJ_DIR)/train.o \
+	$(TFC_OBJ_DIR)/tri.o \
+	$(TFC_OBJ_DIR)/util.o \
+	$(TFC_OBJ_DIR)/view.o \
+	$(TFC_OBJ_DIR)/vgui_int.o \
+	$(TFC_OBJ_DIR)/vgui_ClassMenu.o \
+	$(TFC_OBJ_DIR)/vgui_ConsolePanel.o \
+	$(TFC_OBJ_DIR)/vgui_ControlConfigPanel.o \
+	$(TFC_OBJ_DIR)/vgui_CustomObjects.o \
+	$(TFC_OBJ_DIR)/vgui_MOTDWindow.o \
+	$(TFC_OBJ_DIR)/vgui_SchemeManager.o \
+	$(TFC_OBJ_DIR)/vgui_ScorePanel.o \
+	$(TFC_OBJ_DIR)/vgui_ServerBrowser.o \
+	$(TFC_OBJ_DIR)/vgui_TeamFortressViewport.o \
+	$(TFC_OBJ_DIR)/vgui_SpectatorPanel.o \
+	$(TFC_OBJ_DIR)/vgui_teammenu.o \
+	$(TFC_OBJ_DIR)/voice_status.o \
+	$(TFC_OBJ_DIR)/hud_servers.o \
+	
+
+DLL_OBJS = \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_ac.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_ar.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_axe.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_flame.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_gl.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_ic.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_ng.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_railgun.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_rpg.cpp\
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_sg.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_srifle.cpp \
+	$(TFC_SERVER_OBJ_DIR)/../wpn_shared/tf_wpn_tranq.cpp \
+
+
+PUBLIC_OBJS = \
+	$(PUBLIC_OBJ_DIR)/interface.o \
+
+COMMON_OBJS = 
+
+GAME_SHARED_OBJS = \
+	$(GAME_SHARED_OBJ_DIR)/vgui_checkbutton2.o \
+	$(GAME_SHARED_OBJ_DIR)/vgui_grid.o \
+	$(GAME_SHARED_OBJ_DIR)/vgui_helpers.o \
+	$(GAME_SHARED_OBJ_DIR)/vgui_listbox.o \
+	$(GAME_SHARED_OBJ_DIR)/vgui_loadtga.o \
+	$(GAME_SHARED_OBJ_DIR)/vgui_scrollbar2.o \
+	$(GAME_SHARED_OBJ_DIR)/vgui_slider2.o \
+	$(GAME_SHARED_OBJ_DIR)/voice_banmgr.o \
+	
+PM_SHARED_OBJS = \
+	$(PM_SHARED_OBJ_DIR)/pm_debug.o \
+	$(PM_SHARED_OBJ_DIR)/pm_shared.o \
+	$(PM_SHARED_OBJ_DIR)/pm_math.o \
+	
+
+
+all: client.$(SHLIBEXT)
+
+client.$(SHLIBEXT): $(TFC_OBJS) $(PUBLIC_OBJS) $(COMMON_OBJS) $(GAME_SHARED_OBJS) $(DLL_OBJS) $(PM_SHARED_OBJS)
+	$(CLINK) -o $(BUILD_DIR)/$@ $(TFC_OBJS) $(PUBLIC_OBJS) $(COMMON_OBJS) $(GAME_SHARED_OBJS) $(DLL_OBJS) $(PM_SHARED_OBJS) $(LDFLAGS) $(CPP_LIB)
+#	p4 edit ../../game/mod/cl_dlls/$@
+	cp $(BUILD_DIR)/$@  ../../game/mod/cl_dlls
+	./gendbg.sh ../../game/mod/cl_dlls/client.$(SHLIBEXT)
+
+$(TFC_OBJ_DIR):
+	mkdir -p $(TFC_OBJ_DIR)
+	mkdir -p $(TFC_OBJ_DIR)/hl
+	mkdir -p $(TFC_OBJ_DIR)/dlls/wpn_shared
+	mkdir -p $(TFC_OBJ_DIR)/VGUI
+
+$(TFC_SERVER_OBJ_DIR):
+	mkdir -p $(TFC_SERVER_OBJ_DIR)
+	mkdir -p $(TFC_SERVER_OBJ_DIR)/wpn_shared
+
+$(PUBLIC_OBJ_DIR):
+	mkdir -p $(PUBLIC_OBJ_DIR)
+
+$(COMMON_OBJ_DIR):
+	mkdir -p $(COMMON_OBJ_DIR)
+
+$(GAME_SHARED_OBJ_DIR):
+	mkdir -p $(GAME_SHARED_OBJ_DIR)
+
+$(PM_SHARED_OBJ_DIR):
+	mkdir -p $(PM_SHARED_OBJ_DIR)
+
+$(TFC_OBJ_DIR)/%.o: $(TFC_SRC_DIR)/%.cpp $(filter-out $(wildcard  $(TFC_OBJ_DIR)),  $(TFC_OBJ_DIR))
+	$(DO_CC)
+
+$(TFC_SERVER_OBJ_DIR)/%.o: $(TFC_SERVER_SRC_DIR)/%.cpp $(filter-out $(wildcard  $(TFC_SERVER_OBJ_DIR)),  $(TFC_SERVER_OBJ_DIR))
+	$(DO_CC)
+
+$(TFC_OBJ_DIR)/%.o: $(TFC_SRC_DIR)/hl/%.cpp $(filter-out $(wildcard  $(TFC_OBJ_DIR)),  $(TFC_OBJ_DIR))
+	$(DO_CC)
+
+$(TFC_OBJ_DIR)/%.o: $(TFC_SRC_DIR)/dlls/wpn_shared/%.cpp $(filter-out $(wildcard  $(TFC_OBJ_DIR)),  $(TFC_OBJ_DIR))
+	$(DO_CC)
+
+$(TFC_OBJ_DIR)/%.o: $(TFC_SRC_DIR)/VGUI/%.cpp $(filter-out $(wildcard  $(TFC_OBJ_DIR)),  $(TFC_OBJ_DIR))
+	$(DO_CC)
+
+$(PUBLIC_OBJ_DIR)/%.o : $(PUBLIC_SRC_DIR)/%.cpp $(filter-out $(wildcard  $(PUBLIC_OBJ_DIR)),  $(PUBLIC_OBJ_DIR))
+	$(DO_PUBLIC_CC)
+
+$(COMMON_OBJ_DIR)/%.o : $(COMMON_SRC_DIR)/%.cpp $(filter-out $(wildcard  $(COMMON_OBJ_DIR)),  $(COMMON_OBJ_DIR))
+	$(DO_COMMON_CC)
+
+$(GAME_SHARED_OBJ_DIR)/%.o : $(GAME_SHARED_SRC_DIR)/%.cpp $(filter-out $(wildcard  $(GAME_SHARED_OBJ_DIR)),  $(GAME_SHARED_OBJ_DIR))
+	$(DO_COMMON_CC)
+
+$(PM_SHARED_OBJ_DIR)/%.o : $(PM_SHARED_SRC_DIR)/%.c $(filter-out $(wildcard  $(PM_SHARED_OBJ_DIR)),  $(PM_SHARED_OBJ_DIR))
+	$(DO_PM_SHARED_CC)
+
+clean:
+	-rm -rf $(TFC_OBJ_DIR)
+	-rm -f client.$(SHLIBEXT)
