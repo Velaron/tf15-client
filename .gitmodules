@@ -5,3 +5,6 @@
 	path = mainui
 	url = https://github.com/Velaron/mainui_cpp
 	branch = tf15-client
+[submodule "particleman"]
+	path = particleman
+	url = https://github.com/Velaron/OpenHL-Particleman
