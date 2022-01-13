@@ -315,7 +315,11 @@ void CTFKnife::WeaponIdle( void )
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
 		m_flTimeWeaponIdle = 7.5f;
-		SendWeaponAnim( RANDOM_LONG( KNIFE_IDLE1, KNIFE_IDLE2 ) );
+
+		if ( RANDOM_LONG( 0, 1 ) )
+			SendWeaponAnim( KNIFE_IDLE2 );
+		else
+			SendWeaponAnim( KNIFE_IDLE1 );
 	}
 }
 
@@ -383,7 +387,11 @@ void CTFMedikit::WeaponIdle( void )
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
 		m_flTimeWeaponIdle = 7.5f;
-		SendWeaponAnim( RANDOM_LONG( MEDIKIT_IDLE_SHORT, MEDIKIT_IDLE_LONG ) );
+
+		if ( RANDOM_LONG( 0, 1 ) )
+			SendWeaponAnim( MEDIKIT_IDLE_LONG );
+		else
+			SendWeaponAnim( MEDIKIT_IDLE_SHORT );
 	}
 }
 

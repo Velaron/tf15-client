@@ -515,7 +515,7 @@ private:
 	BuildButton *m_pBuildActiveButtons[3];
 
 	// Server Browser
-	//ServerBrowser *m_pServerBrowser;
+	ServerBrowser *m_pServerBrowser;
 
 	int					m_iAllowSpectators;
 
@@ -573,8 +573,7 @@ public:
 	void HideVGUIMenu( void );
 	void HideTopMenu( void );
 
-	// Velaron: TODO
-	//void ToggleServerBrowser( void );
+	void ToggleServerBrowser( void );
 
 	CMenuPanel *CreateTextWindow( int iTextToShow );
 

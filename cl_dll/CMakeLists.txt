@@ -99,6 +99,7 @@ set(CLDLL_SOURCES
 	hud_benchtrace.cpp
 	hud_msg.cpp
 	hud_redraw.cpp
+	hud_servers.cpp
 	hud_spectator.cpp
 	hud_update.cpp
 	in_camera.cpp
@@ -139,6 +140,7 @@ set(CLDLL_SOURCES
 	vgui_MOTDWindow.cpp
 	vgui_SchemeManager.cpp
 	vgui_ScorePanel.cpp
+	vgui_ServerBrowser.cpp
 	vgui_SpectatorPanel.cpp
 	vgui_TeamFortressViewport.cpp
 	vgui_teammenu.cpp
