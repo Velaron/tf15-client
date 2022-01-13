@@ -69,11 +69,15 @@ void IN_Shutdown( void )
 void IN_Init( void )
 {
 #ifdef SUPPORT_GOLDSOURCE_INPUT
-	if ( IsXashFWGS() ) {
+#ifdef TF15CLIENT_ADDITIONS
+	if ( IsXashFWGS() )
+	{
 		gEngfuncs.Con_Printf( "FWGS Xash3D input is in use\n" );
 		currentInput = &fwgsInput;
 	}
-	else {
+	else
+#endif
+	{
 		gEngfuncs.Con_Printf( "GoldSource input is in use\n" );
 		currentInput = &goldSourceInput;
 	}

@@ -5,10 +5,10 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
-#include "port.h"
 #include <dlfcn.h>
 #endif
 
+#ifdef _WIN32
 // For tracking the trace threads
 typedef struct
 {
@@ -42,6 +42,8 @@ struct
 	unsigned char a[8];
 	struct trace_options_s Options;
 } traceReturn;
+
+#endif
 
 /*
 ==============
