@@ -19,8 +19,10 @@
 #include "pm_shared.h"
 #include "voice_status.h"
 
+#ifdef USE_PARTICLEMAN
 #include "particleman.h"
 extern IParticleMan* g_pParticleMan;
+#endif
 
 void Game_AddObjects( void );
 
@@ -317,9 +319,10 @@ void DLLEXPORT HUD_TempEntUpdate(
 
 	gEngfuncs.GetViewAngles( (float *)vAngles );
 
-	
+#ifdef USE_PARTICLEMAN	
 	if ( g_pParticleMan )
 		g_pParticleMan->SetVariables( cl_gravity, vAngles );
+#endif
 
 	// Nothing to simulate
 	if ( !*ppTempEntActive )

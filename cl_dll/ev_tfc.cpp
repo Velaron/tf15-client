@@ -41,7 +41,9 @@
 #define TF_DEFS_ONLY
 #include "tf_defs.h"
 
+#ifdef USE_PARTICLEMAN
 #include "particleman.h"
+#endif
 
 extern engine_studio_api_t IEngineStudio;
 
@@ -2467,6 +2469,7 @@ void DoTeleporterRings( event_args_t *args )
 
 void DoTeleporterParticles( event_args_t *args )
 {
+#ifdef USE_PARTICLEMAN
 	model_s *sprite;
 	Vector p_normal, p_org;
 	CBaseParticle *particle;
@@ -2509,6 +2512,7 @@ void DoTeleporterParticles( event_args_t *args )
 		else
 			particle->m_vVelocity = Vector( 0.0f, 0.0f, (float)( gEngfuncs.pfnRandomLong( -50, 50 ) - 75 ) );
 	}
+#endif
 }
 
 void PlayTeleporterAmbientSound( event_args_t *args )

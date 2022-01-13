@@ -21,8 +21,10 @@
 #include "parsemsg.h"
 #include "r_efx.h"
 
+#ifdef USE_PARTICLEMAN
 #include "particleman.h"
 extern IParticleMan* g_pParticleMan;
+#endif
 
 #define MAX_CLIENTS 32
 
@@ -82,10 +84,11 @@ void CHud::MsgFunc_InitHUD( const char *pszName, int iSize, void *pbuf )
 
 	// catch up on any building events that are going on
 	gEngfuncs.pfnServerCmd( "sendevents" );
-	
+
+#ifdef USE_PARTICLEMAN
 	if ( g_pParticleMan )
 		g_pParticleMan->ResetParticles();
-
+#endif
 }
 
 int CHud::MsgFunc_GameMode( const char *pszName, int iSize, void *pbuf )
