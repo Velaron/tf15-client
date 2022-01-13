@@ -538,9 +538,7 @@ void CBasePlayer::TeamFortress_SetSpeed( void )
 		}
 
 		if ( tfstate & TFSTATE_AIMING && pev->maxspeed > 80.0f )
-		{
 			pev->maxspeed = 80.0f;
-		}
 	}
 }
 

@@ -216,7 +216,10 @@ BOOL CTFSpanner::Deploy( void )
 
 void CTFSpanner::PlayAnim( int iAnimType )
 {
-	SendWeaponAnim( iAnimType ? SPANNER_USE1 : SPANNER_ATTACK1 );
+	if ( iAnimType )
+		SendWeaponAnim( SPANNER_USE1 );
+	else
+		SendWeaponAnim( SPANNER_ATTACK1 );
 }
 
 void CTFSpanner::WeaponIdle( void )
@@ -312,7 +315,11 @@ void CTFKnife::WeaponIdle( void )
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
 		m_flTimeWeaponIdle = 7.5f;
-		SendWeaponAnim( RANDOM_LONG( KNIFE_IDLE1, KNIFE_IDLE2 ) );
+
+		if ( RANDOM_LONG( 0, 1 ) )
+			SendWeaponAnim( KNIFE_IDLE2 );
+		else
+			SendWeaponAnim( KNIFE_IDLE1 );
 	}
 }
 
@@ -369,7 +376,10 @@ BOOL CTFMedikit::Deploy( void )
 
 void CTFMedikit::PlayAnim( int iAnimType )
 {
-	SendWeaponAnim( iAnimType ? MEDIKIT_USE_LONG : MEDIKIT_USE_SHORT );
+	if ( iAnimType )
+		SendWeaponAnim( MEDIKIT_USE_LONG );
+	else
+		SendWeaponAnim( MEDIKIT_USE_SHORT );
 }
 
 void CTFMedikit::WeaponIdle( void )
@@ -377,12 +387,16 @@ void CTFMedikit::WeaponIdle( void )
 	if ( m_flTimeWeaponIdle <= 0.0f )
 	{
 		m_flTimeWeaponIdle = 7.5f;
-		SendWeaponAnim( RANDOM_LONG( MEDIKIT_IDLE_SHORT, MEDIKIT_IDLE_LONG ) );
+
+		if ( RANDOM_LONG( 0, 1 ) )
+			SendWeaponAnim( MEDIKIT_IDLE_LONG );
+		else
+			SendWeaponAnim( MEDIKIT_IDLE_SHORT );
 	}
 }
 
 BOOL CTFMedikit::AxeHit( CBaseEntity *pTarget, Vector *p_vecDir, TraceResult *ptr )
 {
-	//if
+	// if
 	return true;
 }

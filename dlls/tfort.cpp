@@ -91,8 +91,38 @@ char *sGrenadeNames[] =
 	"Caltrop",
 	""
 };
-char *sNewClassModelFiles[12];
-char *sOldClassModelFiles[12];
+
+char *sNewClassModelFiles[] =
+{
+	NULL,
+	"models/player/scout/scout.mdl",
+	"models/player/sniper/sniper.mdl",
+	"models/player/soldier/soldier.mdl",
+	"models/player/demo/demo.mdl",
+	"models/player/medic/medic.mdl",
+	"models/player/hvyweapon/hvyweapon.mdl",
+	"models/player/pyro/pyro.mdl",
+	"models/player/spy/spy.mdl",
+	"models/player/engineer/engineer.mdl",
+	"models/player.mdl",
+	"models/player/civilian/civilian.mdl"
+};
+
+char *sOldClassModelFiles[] =
+{
+	NULL,
+	"models/player/scout/scout2.mdl",
+	"models/player/sniper/sniper2.mdl",
+	"models/player/soldier/soldier2.mdl",
+	"models/player/demo/demo2.mdl",
+	"models/player/medic/medic2.mdl",
+	"models/player/hvyweapon/hvyweapon2.mdl",
+	"models/player/pyro/pyro2.mdl",
+	"models/player/spy/spy2.mdl",
+	"models/player/engineer/engineer2.mdl",
+	"models/player.mdl",
+	"models/player/civilian/civilian.mdl"
+};
 
 char *sTeamSpawnNames[] = 
 {

@@ -30,7 +30,7 @@
 #include "../ricochet/cl_dll/hud_servers.h"
 #include "../ricochet/cl_dll/demo.h"
 #else
-#include "../cl_dll/parsemsg.h"
+#include "../common/parsemsg.h"
 #include "../cl_dll/hud_servers.h"
 #include "../cl_dll/demo.h"
 #endif
@@ -156,6 +156,8 @@ CVoiceStatus::CVoiceStatus()
 	m_bTalking = m_bServerAcked = false;
 
 	memset( m_pBanButtons, 0, sizeof( m_pBanButtons ) );
+
+	m_pParentPanel = NULL;
 
 	m_bServerModEnable = -1;
 

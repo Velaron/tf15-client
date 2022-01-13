@@ -1,17 +1,17 @@
 /***
-*
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*
-*	This product contains software technology licensed from Id
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
-*	All Rights Reserved.
-*
-*   Use, distribution, and modification of this source code and/or resulting
-*   object code is restricted to non-commercial enhancements to products from
-*   Valve LLC.  All other use, distribution, or modification is prohibited
-*   without written permission from Valve LLC.
-*
-****/
+ *
+ *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+ *
+ *	This product contains software technology licensed from Id
+ *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
+ *	All Rights Reserved.
+ *
+ *   Use, distribution, and modification of this source code and/or resulting
+ *   object code is restricted to non-commercial enhancements to products from
+ *   Valve LLC.  All other use, distribution, or modification is prohibited
+ *   without written permission from Valve LLC.
+ *
+ ****/
 
 #include "hud.h"
 #include "cl_util.h"
@@ -40,6 +40,10 @@
 
 #define TF_DEFS_ONLY
 #include "tf_defs.h"
+
+#ifdef USE_PARTICLEMAN
+#include "particleman.h"
+#endif
 
 extern engine_studio_api_t IEngineStudio;
 
@@ -2265,12 +2269,77 @@ char *EV_TFC_LookupDoorSound( int type, int index )
 
 	idx = (char)index;
 
-	if ( idx > 0 )
+	if ( type )
 	{
-		if ( type )
-			sprintf( sound, "doors/doorstop%i.wav", idx );
-		else
-			sprintf( sound, "doors/doormove%i.wav", idx );
+		switch ( idx )
+		{
+		case 1:
+			strcpy( sound, "doors/doorstop1.wav" );
+			break;
+		case 2:
+			strcpy( sound, "doors/doorstop2.wav" );
+			break;
+		case 3:
+			strcpy( sound, "doors/doorstop3.wav" );
+			break;
+		case 4:
+			strcpy( sound, "doors/doorstop4.wav" );
+			break;
+		case 5:
+			strcpy( sound, "doors/doorstop5.wav" );
+			break;
+		case 6:
+			strcpy( sound, "doors/doorstop6.wav" );
+			break;
+		case 7:
+			strcpy( sound, "doors/doorstop7.wav" );
+			break;
+		case 8:
+			strcpy( sound, "doors/doorstop8.wav" );
+			break;
+		default:
+			strcpy( sound, "common/null.wav" );
+			break;
+		}
+	}
+	else
+	{
+		switch ( idx )
+		{
+		case 1:
+			strcpy( sound, "doors/doormove1.wav" );
+			break;
+		case 2:
+			strcpy( sound, "doors/doormove2.wav" );
+			break;
+		case 3:
+			strcpy( sound, "doors/doormove3.wav" );
+			break;
+		case 4:
+			strcpy( sound, "doors/doormove4.wav" );
+			break;
+		case 5:
+			strcpy( sound, "doors/doormove5.wav" );
+			break;
+		case 6:
+			strcpy( sound, "doors/doormove6.wav" );
+			break;
+		case 7:
+			strcpy( sound, "doors/doormove7.wav" );
+			break;
+		case 8:
+			strcpy( sound, "doors/doormove8.wav" );
+			break;
+		case 9:
+			strcpy( sound, "doors/doormove9.wav" );
+			break;
+		case 10:
+			strcpy( sound, "doors/doormove10.wav" );
+			break;
+		default:
+			strcpy( sound, "common/null.wav" );
+			break;
+		}
 	}
 
 	return sound;
@@ -2356,24 +2425,51 @@ qboolean EV_TFC_Spanner( int idx, float *origin, float *forward, float *right, i
 	return true;
 }
 
-// Velaron: todo maybe
+extern float g_fZAdjust;
+
 void EV_TFC_BenchmarkWallMark( pmtrace_t *pTrace, char *name )
 {
+	EV_TFC_DecalTrace( pTrace, name );
 }
 
 void EV_TFC_BenchMarkTrace( pmtrace_t *pTrace )
 {
+	physent_t *pe;
+
+	pe = gEngfuncs.pEventAPI->EV_GetPhysent( pTrace->ent );
+
+	if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) )
+		EV_TFC_BenchmarkWallMark( pTrace, "{dot" );
 }
 
 void EV_Benchmark( event_args_t *args )
 {
-}
+	int idx;
+	Vector origin, angles;
+	Vector forward, right, up;
+	Vector vecSrc, vecDir, vecEnd;
+	pmtrace_t tr;
 
-void EV_TFC_BuildingEvent( event_args_t *args )
-{
-	if ( !args )
+	idx = args->entindex;
+	VectorCopy( args->origin, origin );
+	VectorCopy( args->angles, angles );
+
+	AngleVectors( angles, forward, right, up );
+	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "common/wpn_select.wav", 0.9f, ATTN_NORM, 0, PITCH_NORM );
+	EV_GetGunPosition( args, vecSrc, origin );
+	VectorCopy( forward, vecDir );
+	VectorMA( vecSrc, 2.0f, up, vecSrc );
+	VectorMA( vecSrc, 8192.0f, vecDir, vecEnd );
+	gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
+	gEngfuncs.pEventAPI->EV_PushPMStates();
+	gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );
+	gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
+	gEngfuncs.pEventAPI->EV_PlayerTrace( vecSrc, vecEnd, PM_STUDIO_BOX, -1, &tr );
+
+	if ( tr.fraction != 1.0f && gEngfuncs.GetClientTime() > g_nTime )
 	{
-		return;
+		EV_TFC_BenchMarkTrace( &tr );
+		g_nTime = gEngfuncs.GetClientTime() + 0.05f;
 	}
 }
 
@@ -2445,11 +2541,9 @@ void DoTeleporterRings( event_args_t *args )
 	Vector color;
 
 	if ( !args )
-	{
 		return;
-	}
 
-	if ( args->iparam1 & 4 )
+	if ( args->iparam1 & EV_TELEPORTER_ENTRY )
 	{
 		if ( ++iEntryCount > 6 )
 		{
@@ -2475,19 +2569,56 @@ void DoTeleporterRings( event_args_t *args )
 
 void DoTeleporterParticles( event_args_t *args )
 {
-	// Velaron: TODO ( particleman )
+#ifdef USE_PARTICLEMAN
+	model_s *sprite;
+	Vector p_normal, p_org;
+	CBaseParticle *particle;
+
 	if ( !args )
-	{
 		return;
+
+	sprite = (model_s *)gEngfuncs.GetSpritePointer( SPR_Load( "sprites/particle.spr" ) );
+
+	if ( !sprite )
+		return;
+
+	for ( int i = 0; i < gEngfuncs.pfnRandomLong( 10, 15 ); i++ )
+	{
+		particle = new CBaseParticle();
+
+		p_org = Vector( args->origin[0] + gEngfuncs.pfnRandomLong( -15, 15 ),
+		                args->origin[1] + gEngfuncs.pfnRandomLong( -15, 15 ),
+		                args->bparam2 ? args->origin[2] + 98.0f : args->origin[2] + 12.0f );
+
+		p_normal = Vector( 0.0f, 0.0f, 1.0f );
+
+		particle->InitializeSprite( p_org, p_normal, sprite, 3.0f, 255.0f );
+		particle->m_flGravity = 0.0f;
+		particle->m_iRendermode = 4;
+		particle->m_vAngles = Vector( gEngfuncs.pfnRandomFloat( 0.0f, 255.0f ),
+		                              gEngfuncs.pfnRandomFloat( 0.0f, 255.0f ),
+		                              gEngfuncs.pfnRandomFloat( 0.0f, 255.0f ) );
+		particle->m_flFadeSpeed = 10.0f;
+		particle->m_iFrame = 0;
+		particle->m_flScaleSpeed = 0.0f;
+		particle->SetCollisionFlags( 0x20 );
+		particle->SetRenderFlag( particle->GetRenderFlags() & 0xFFFFFF80 | 0x1C );
+		particle->m_flMass = gEngfuncs.pfnRandomFloat( 0.0, 0.5 );
+		particle->m_vColor = Vector( 0.0f, 255.0f, 0.0f );
+		particle->m_flDieTime = gpGlobals->time + 0.75f;
+
+		if ( !args->bparam2 )
+			particle->m_vVelocity = Vector( 0.0f, 0.0f, (float)( gEngfuncs.pfnRandomLong( -50, 50 ) + 75 ) );
+		else
+			particle->m_vVelocity = Vector( 0.0f, 0.0f, (float)( gEngfuncs.pfnRandomLong( -50, 50 ) - 75 ) );
 	}
+#endif
 }
 
 void PlayTeleporterAmbientSound( event_args_t *args )
 {
 	if ( !args )
-	{
 		return;
-	}
 
 	if ( ( args->fparam2 == 0.0f || args->fparam2 <= gpGlobals->time ) && gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) > 0.98f )
 	{
@@ -2503,78 +2634,82 @@ void AddEvent( eventnode_t *node )
 	if ( !node )
 		return;
 
-	if ( !g_pEventListHead )
+	if ( g_pEventListHead )
+	{
+		while ( last->next )
+			last = last->next;
+
+		node->prev = last;
+		node->next = NULL;
+		last->next = node;
+	}
+	else
 	{
 		g_pEventListHead = node;
-		node->prev = NULL;
-		node->next = NULL;
-		return;
+		node->next = node->prev = NULL;
 	}
-
-	while ( last->next )
-		last = last->next;
-
-	last->next = node;
-	node->prev = last;
-	node->next = NULL;
 }
 
 void RemoveEvent( eventnode_t *node )
 {
+	eventnode_t *prev, *next;
+
 	if ( !node || !g_pEventListHead )
 		return;
 
-	if ( !node->prev )
+	if ( node == g_pEventListHead )
 	{
 		if ( node->next )
 		{
+			g_pEventListHead = node->next;
 			g_pEventListHead->prev = NULL;
 		}
 		else
-		{
 			g_pEventListHead = NULL;
-		}
+
+		free( node->data );
+		free( node );
 	}
 	else
 	{
 		if ( node->next )
 		{
-			node->next->prev = node->prev;
+			if ( node->prev )
+			{
+				next = node->next;
+				prev = node->prev;
+
+				next->prev = prev;
+				prev->next = node->next;
+			}
 		}
 		else
-		{
 			node->prev->next = NULL;
-		}
+
+		free( node->data );
+		free( node );
 	}
-
-	if ( node->prev )
-		node->next->prev = node->prev;
-	else
-		g_pEventListHead = node;
-
-	if ( node->next )
-		node->prev->next = node->next;
-
-	free( node );
 }
 
 eventnode_t *FindEntity( int index )
 {
-	eventnode_t *node;
+	eventnode_t *node = g_pEventListHead;
 
-	for ( node = g_pEventListHead; node && node->data->entindex != index; node = node->next ) { }
+	while ( node )
+	{
+		if ( node->data->entindex == index )
+			break;
+		else
+			node = node->next;
+	}
 
 	return node;
 }
 
 void CheckEventsFinished( eventnode_t *node )
 {
-	if ( node && !node->data->iparam1 && g_pEventListHead )
-	{
-		if ( node == g_pEventListHead )
-		{
-		}
-	}
+	if ( node && !node->data->iparam1 )
+		RemoveEvent( node );
 }
 
 void ClearEventList( void )
@@ -2584,6 +2719,7 @@ void ClearEventList( void )
 	while ( g_pEventListHead )
 	{
 		pNext = g_pEventListHead->next;
+		delete g_pEventListHead->data;
 		delete g_pEventListHead;
 		g_pEventListHead = pNext;
 	}
@@ -2592,47 +2728,120 @@ void ClearEventList( void )
 	g_flNextEventListThink = 0.0f;
 }
 
+void EV_TFC_BuildingEvent( event_args_t *args )
+{
+	eventnode_t *node;
+
+	if ( !args )
+		return;
+
+	node = FindEntity( args->entindex );
+
+	if ( !node )
+	{
+		node = new eventnode_t;
+		memset( node, 0, sizeof( eventnode_t ) );
+		node->data = new event_args_t;
+		memcpy( node->data, args, sizeof( event_args_t ) );
+		AddEvent( node );
+	}
+
+	if ( args->bparam1 == TRUE )
+	{
+		node->data->iparam1 |= args->iparam1;
+		node->data->iparam2 = args->iparam2;
+
+		if ( ( args->iparam1 & 0x200 ) )
+			node->data->bparam2 = args->bparam2;
+
+		if ( ( args->iparam1 & 0x800 ) )
+		{
+			node->data->entindex = (int)args->fparam1;
+			node->data->iparam1 &= ~0x800;
+		}
+	}
+	else if ( ( args->iparam1 & 0x100 ) )
+	{
+		VectorCopy( args->origin, node->data->origin );
+	}
+	else
+	{
+		if ( ( args->iparam1 & 0x400 ) )
+		{
+			RemoveEvent( node );
+			return;
+		}
+
+		node->data->iparam1 &= ~args->iparam1;
+
+		if ( ( args->iparam1 & 0x200 ) )
+			node->data->bparam2 = FALSE;
+
+		if ( !node->data->iparam1 )
+		{
+			RemoveEvent( node );
+			return;
+		}
+	}
+}
+
 void RunEventList( void )
 {
-	/*
-		eventnode_t *ptr;
+	eventnode_t *node;
 
-		if ( g_flNextEventListThink == 0.0f || g_flNextEventListThink <= gpGlobals->time )
+	if ( g_flNextEventListThink == 0.0f || g_flNextEventListThink <= gpGlobals->time )
+	{
+		g_flNextEventListThink = gpGlobals->time + 0.1f;
+
+		if ( !g_pEventListHead )
+			return;
+
+		node = g_pEventListHead;
+
+		while ( node )
 		{
-			ptr = g_pEventListHead;
-			g_flNextEventListThink = gpGlobals->time + 0.1f;
-
-			if ( !ptr ) { return; }
-
-			while ( true )
+			if ( ( node->data->iparam1 & EV_TELEPORTER_AMBIENT ) )
 			{
-				if ( ptr->data->iparam1 & 16 && ( ptr->data->fparam2 == 0.0f || ptr->data->fparam2 <= gpGlobals->time ) )
-				{
-					if ( gEngfuncs.pfnRandomFloat( 0.0f, 1.0f ) > 0.98f )
-					{
-						ptr->data->fparam2 = gpGlobals->time + 6.0f;
-						gEngfuncs.pEventAPI->EV_PlaySound( -1, ptr->data->origin, CHAN_STATIC, "misc/teleport_ready.wav", VOL_NORM, 0.5f, 0, PITCH_NORM );
-					}
-				}
-
-				if ( ptr->data->iparam1 & 128 )
-				{
-					gEngfuncs.pEventAPI->EV_PlaySound( -1, ptr->data->origin, CHAN_STATIC, "misc/teleport_out.wav", VOL_NORM, 0.5f, 0, PITCH_NORM );
-					ptr->data->iparam1 &= ~128;
-					ptr->data->iparam1 |= 4;
-				}
-
-				if ( !( ptr->data->iparam1 & 64 ) )
-				{
-					if ( !( ptr->data->iparam1 & 32 ) )
-					{
-						if ( ptr->data->iparam1 & 1 )
-						{
-							DoSparkSmokeEffect( ptr->data );
-						}
-					}
-				}
+				PlayTeleporterAmbientSound( node->data );
 			}
+
+			if ( ( node->data->iparam1 & EV_TELEPORTER_OUT ) )
+			{
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, node->data->origin, CHAN_STATIC, "misc/teleport_out.wav", VOL_NORM, 0.5f, 0, PITCH_NORM );
+				node->data->iparam1 &= ~EV_TELEPORTER_OUT;
+				node->data->iparam1 |= EV_TELEPORTER_ENTRY;
+			}
+			else if ( ( node->data->iparam1 & EV_TELEPORTER_IN ) )
+			{
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, node->data->origin, CHAN_STATIC, "misc/teleport_in.wav", VOL_NORM, 0.5f, 0, PITCH_NORM );
+				node->data->iparam1 &= ~EV_TELEPORTER_IN;
+				node->data->iparam1 |= EV_TELEPORTER_EXIT;
+			}
+
+			if ( ( node->data->iparam1 & EV_TELEPORTER_READY ) )
+			{
+				gEngfuncs.pEventAPI->EV_PlaySound( -1, node->data->origin, CHAN_STATIC, "misc/teleport_ready.wav", VOL_NORM, 0.5f, 0, PITCH_NORM );
+				node->data->iparam1 &= ~EV_TELEPORTER_READY;
+			}
+
+			if ( ( node->data->iparam1 & EV_TELEPORTER_SPARK ) )
+			{
+				DoSparkSmokeEffect( node->data );
+			}
+
+			if ( ( node->data->iparam1 & EV_TELEPORTER_ENTRY | EV_TELEPORTER_EXIT ) )
+			{
+				DoTeleporterRings( node->data );
+			}
+
+			if ( ( node->data->iparam1 & EV_TELEPORTER_PARTICLES ) )
+			{
+				DoTeleporterParticles( node->data );
+			}
+
+			CheckEventsFinished( node );
+
+			node = node->next;
 		}
-	*/
+	}
 }

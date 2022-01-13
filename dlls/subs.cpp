@@ -577,6 +577,11 @@ void CBaseEntity::DoDrop( Vector *p_vecOrigin )
 {
 }
 
+BOOL CBaseEntity::EngineerUse( CBasePlayer *pPlayer )
+{
+	return FALSE;
+}
+
 void CBaseEntity::KeyValue( KeyValueData *pkvd )
 {
 	if( FStrEq( pkvd->szKeyName, "goal_no" ) )

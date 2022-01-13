@@ -46,6 +46,11 @@ DLL_GLOBAL	short g_sModelIndexBubbles;// holds the index for the bubbles model
 DLL_GLOBAL	short g_sModelIndexBloodDrop;// holds the sprite index for the initial blood
 DLL_GLOBAL	short g_sModelIndexBloodSpray;// holds the sprite index for splattered blood
 
+DLL_GLOBAL short g_sModelIndexNail;
+DLL_GLOBAL short g_sModelIndexNapalm;
+DLL_GLOBAL short g_sModelIndexPlayerFlame;
+DLL_GLOBAL short g_sModelIndexSaveMe;
+
 ItemInfo CBasePlayerItem::ItemInfoArray[MAX_WEAPONS];
 AmmoInfo CBasePlayerItem::AmmoInfoArray[MAX_AMMO_SLOTS];
 
@@ -287,105 +292,75 @@ void UTIL_PrecacheOtherWeapon( const char *szClassname )
 // called by worldspawn
 void W_Precache( void )
 {
-	memset( CBasePlayerItem::ItemInfoArray, 0, sizeof(CBasePlayerItem::ItemInfoArray) );
-	memset( CBasePlayerItem::AmmoInfoArray, 0, sizeof(CBasePlayerItem::AmmoInfoArray) );
+	memset( CBasePlayerItem::ItemInfoArray, 0, sizeof( CBasePlayerItem::ItemInfoArray ) );
+	memset( CBasePlayerItem::AmmoInfoArray, 0, sizeof( CBasePlayerItem::AmmoInfoArray ) );
 	giAmmoIndex = 0;
 
-	// custom items...
+	UTIL_PrecacheOtherWeapon( "tf_weapon_shotgun" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_axe" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_knife" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_medikit" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_spanner" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_ng" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_superng" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_rpg" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_ic" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_flamethrower" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_tranq" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_sniperrifle" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_autorifle" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_railgun" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_ac" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_gl" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_pl" );
+	UTIL_PrecacheOtherWeapon( "tf_weapon_supershotgun" );
 
-	// common world objects
-	UTIL_PrecacheOther( "item_suit" );
-	UTIL_PrecacheOther( "item_healthkit" );
-	UTIL_PrecacheOther( "item_battery" );
-	UTIL_PrecacheOther( "item_antidote" );
-	UTIL_PrecacheOther( "item_security" );
-	UTIL_PrecacheOther( "item_longjump" );
+	UTIL_PrecacheOther( "building_sentrygun" );
+	UTIL_PrecacheOther( "building_dispenser" );
+	UTIL_PrecacheOther( "building_teleporter" );
 
-	// shotgun
-	UTIL_PrecacheOtherWeapon( "weapon_shotgun" );
-	UTIL_PrecacheOther( "ammo_buckshot" );
+	UTIL_PrecacheOther( "tf_weapon_normalgrenade" );
+	UTIL_PrecacheOther( "tf_weapon_genericprimedgrenade" );
+	UTIL_PrecacheOther( "tf_weapon_concussiongrenade" );
+	UTIL_PrecacheOther( "tf_weapon_mirvgrenade" );
+	UTIL_PrecacheOther( "tf_weapon_nailgrenade" );
+	UTIL_PrecacheOther( "tf_weapon_napalmgrenade" );
+	UTIL_PrecacheOther( "tf_weapon_gasgrenade" );
+	UTIL_PrecacheOther( "tf_weapon_empgrenade" );
+	UTIL_PrecacheOther( "tf_weapon_caltropgrenade" );
+	UTIL_PrecacheOther( "tf_weapon_caltrop" );
 
-	// crowbar
-	UTIL_PrecacheOtherWeapon( "weapon_crowbar" );
+	UTIL_PrecacheOther( "weaponbox" );
 
-	// glock
-	UTIL_PrecacheOtherWeapon( "weapon_9mmhandgun" );
-	UTIL_PrecacheOther( "ammo_9mmclip" );
-
-	// mp5
-	UTIL_PrecacheOtherWeapon( "weapon_9mmAR" );
-	UTIL_PrecacheOther( "ammo_9mmAR" );
-	UTIL_PrecacheOther( "ammo_ARgrenades" );
-
-	// 9mm ammo box
-	UTIL_PrecacheOther( "ammo_9mmbox" );
-
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
-	// python
-	UTIL_PrecacheOtherWeapon( "weapon_357" );
-	UTIL_PrecacheOther( "ammo_357" );
-
-	// gauss
-	UTIL_PrecacheOtherWeapon( "weapon_gauss" );
-	UTIL_PrecacheOther( "ammo_gaussclip" );
-
-	// rpg
-	UTIL_PrecacheOtherWeapon( "weapon_rpg" );
-	UTIL_PrecacheOther( "ammo_rpgclip" );
-
-	// crossbow
-	UTIL_PrecacheOtherWeapon( "weapon_crossbow" );
-	UTIL_PrecacheOther( "ammo_crossbow" );
-
-	// egon
-	UTIL_PrecacheOtherWeapon( "weapon_egon" );
-#endif
-	// tripmine
-	UTIL_PrecacheOtherWeapon( "weapon_tripmine" );
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
-	// satchel charge
-	UTIL_PrecacheOtherWeapon( "weapon_satchel" );
-#endif
-	// hand grenade
-	UTIL_PrecacheOtherWeapon("weapon_handgrenade");
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
-	// squeak grenade
-	UTIL_PrecacheOtherWeapon( "weapon_snark" );
-
-	// hornetgun
-	UTIL_PrecacheOtherWeapon( "weapon_hornetgun" );
-
-	if( g_pGameRules->IsDeathmatch() )
-	{
-		UTIL_PrecacheOther( "weaponbox" );// container for dropped deathmatch weapons
-	}
-#endif
-	g_sModelIndexFireball = PRECACHE_MODEL( "sprites/zerogxplode.spr" );// fireball
-	g_sModelIndexWExplosion = PRECACHE_MODEL( "sprites/WXplo1.spr" );// underwater fireball
-	g_sModelIndexSmoke = PRECACHE_MODEL( "sprites/steam1.spr" );// smoke
-	g_sModelIndexBubbles = PRECACHE_MODEL( "sprites/bubble.spr" );//bubbles
-	g_sModelIndexBloodSpray = PRECACHE_MODEL( "sprites/bloodspray.spr" ); // initial blood
-	g_sModelIndexBloodDrop = PRECACHE_MODEL( "sprites/blood.spr" ); // splattered blood 
+	g_sModelIndexFireball = PRECACHE_MODEL( "sprites/explode01.spr" );
+	g_sModelIndexWExplosion = PRECACHE_MODEL( "sprites/WXplo1.spr" );
+	g_sModelIndexSmoke = PRECACHE_MODEL( "sprites/steam1.spr" );
+	g_sModelIndexBubbles = PRECACHE_MODEL( "sprites/bubble.spr" );
+	g_sModelIndexBloodSpray = PRECACHE_MODEL( "sprites/bloodspray.spr" );
+	g_sModelIndexBloodDrop = PRECACHE_MODEL( "sprites/blood.spr" );
+	g_sModelIndexNail = PRECACHE_MODEL( "models/nail.mdl" );
+	g_sModelIndexNapalm = PRECACHE_MODEL( "sprites/explode1.spr" );
+	g_sModelIndexPlayerFlame = PRECACHE_MODEL( "sprites/playerflame.spr" );
+	g_sModelIndexSaveMe = PRECACHE_MODEL( "sprites/saveme.spr" );
 
 	g_sModelIndexLaser = PRECACHE_MODEL( g_pModelNameLaser );
 	g_sModelIndexLaserDot = PRECACHE_MODEL( "sprites/laserdot.spr" );
 
 	// used by explosions
 	PRECACHE_MODEL( "models/grenade.mdl" );
-	PRECACHE_MODEL( "sprites/explode1.spr" );
 
-	PRECACHE_SOUND( "weapons/debris1.wav" );// explosion aftermaths
-	PRECACHE_SOUND( "weapons/debris2.wav" );// explosion aftermaths
-	PRECACHE_SOUND( "weapons/debris3.wav" );// explosion aftermaths
+	PRECACHE_SOUND( "weapons/debris1.wav" ); // explosion aftermaths
+	PRECACHE_SOUND( "weapons/debris2.wav" ); // explosion aftermaths
+	PRECACHE_SOUND( "weapons/debris3.wav" ); // explosion aftermaths
 
-	PRECACHE_SOUND( "weapons/grenade_hit1.wav" );//grenade
-	PRECACHE_SOUND( "weapons/grenade_hit2.wav" );//grenade
-	PRECACHE_SOUND( "weapons/grenade_hit3.wav" );//grenade
+	PRECACHE_SOUND( "weapons/grenade_hit1.wav" ); //grenade
+	PRECACHE_SOUND( "weapons/grenade_hit2.wav" ); //grenade
+	PRECACHE_SOUND( "weapons/grenade_hit3.wav" ); //grenade
 
-	PRECACHE_SOUND( "weapons/bullet_hit1.wav" );	// hit by bullet
-	PRECACHE_SOUND( "weapons/bullet_hit2.wav" );	// hit by bullet
+	PRECACHE_SOUND( "weapons/bullet_hit1.wav" ); // hit by bullet
+	PRECACHE_SOUND( "weapons/bullet_hit2.wav" ); // hit by bullet
 
-	PRECACHE_SOUND( "items/weapondrop1.wav" );// weapon falls to the ground
+	PRECACHE_SOUND( "items/weapondrop1.wav" ); // weapon falls to the ground
 }
 
 TYPEDESCRIPTION	CBasePlayerItem::m_SaveData[] =
@@ -678,6 +653,11 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 	{
 		WeaponIdle();
 	}
+}
+
+void CBasePlayerWeapon::DB_LogShots( int nShots )
+{
+
 }
 
 void CBasePlayerItem::DestroyItem( void )

@@ -54,12 +54,13 @@ void IN_Shutdown( void );
 void V_Init( void );
 void VectorAngles( const float *forward, float *angles );
 int CL_ButtonBits( int );
-/*
-void CL_UnloadParticleMan( void );
-*/
 void ClearEventList( void );
 // xxx need client dll function to get and clear impuse
 extern cvar_t *in_joystick;
+
+#ifdef USE_PARTICLEMAN
+void CL_UnloadParticleMan( void );
+#endif
 
 int in_impulse = 0;
 int in_cancel = 0;
@@ -1173,5 +1174,7 @@ void DLLEXPORT HUD_Shutdown( void )
 
 	ClearEventList();
 
-	//CL_UnloadParticleMan();
+#ifdef USE_PARTICLEMAN
+	CL_UnloadParticleMan();
+#endif
 }

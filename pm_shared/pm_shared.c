@@ -31,7 +31,7 @@
 #include "pm_movevars.h"
 #include "pm_debug.h"
 
-int g_bhopcap = 1;
+#include "com_model.h"
 
 #ifdef CLIENT_DLL
 // Spectator Mode
@@ -2565,9 +2565,6 @@ void PM_Jump( void )
 
 	// In the air now.
 	pmove->onground = -1;
-
-	if( g_bhopcap )
-		PM_PreventMegaBunnyJumping();
 
 	if( tfc )
 	{

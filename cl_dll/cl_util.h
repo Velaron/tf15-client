@@ -182,5 +182,8 @@ b = ulRGB & 0xFF; \
 HSPRITE LoadSprite( const char *pszName );
 
 bool HUD_MessageBox( const char *msg );
+#ifdef TF15CLIENT_ADDITIONS
 bool IsXashFWGS();
 #endif
+
+#endif // CL_UTIL_H

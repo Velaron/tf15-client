@@ -246,6 +246,7 @@ int CHud::DrawHudString( int xpos, int ypos, int iMaxX, const char *szIt, int r,
 
 int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b )
 {
+#ifdef TF15CLIENT_ADDITIONS
 	if ( IsXashFWGS() )
 	{
 		// xash3d: reset unicode state
@@ -272,6 +273,7 @@ int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g
 		return xpos;
 	}
 	else
+#endif
 	{
 		return gHUD.DrawHudString( xpos, ypos, iMaxX, szIt, r, g, b );
 	}

@@ -53,12 +53,15 @@ TeamFortressViewport *gViewPort = NULL;
 
 mobile_engfuncs_t *gMobileEngfuncs = NULL;
 
+#ifdef USE_PARTICLEMAN
 #include "particleman.h"
+
 CSysModule *g_hParticleManModule = NULL;
 IParticleMan *g_pParticleMan = NULL;
 
 void CL_LoadParticleMan( void );
 void CL_UnloadParticleMan( void );
+#endif
 
 #include "IGameMenuExports.h"
 CSysModule *g_hMainUIModule = NULL;
@@ -67,7 +70,6 @@ IGameMenuExports *g_pMainUI = NULL;
 void CL_LoadMainUI( void );
 void CL_UnloadMainUI( void );
 
-extern "C" int g_bhopcap;
 void InitInput( void );
 void EV_HookEvents( void );
 void IN_Commands( void );
@@ -178,7 +180,9 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	memcpy( &gEngfuncs, pEnginefuncs, sizeof( cl_enginefunc_t ) );
 
 	EV_HookEvents();
-	// CL_LoadParticleMan();
+#ifdef USE_PARTICLEMAN
+	CL_LoadParticleMan();
+#endif
 	CL_LoadMainUI();
 
 	return 1;
@@ -329,6 +333,7 @@ void DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf )
 	gHUD.m_Spectator.DirectorMessage( iSize, pbuf );
 }
 
+#ifdef USE_PARTICLEMAN
 void CL_UnloadParticleMan( void )
 {
 	Sys_UnloadModule( g_hParticleManModule );
@@ -368,6 +373,7 @@ void CL_LoadParticleMan( void )
 		g_pParticleMan->AddCustomParticleClassSize( sizeof( CBaseParticle ) );
 	}
 }
+#endif
 
 void DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs )
 {
@@ -380,18 +386,18 @@ void DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs )
 bool HUD_MessageBox( const char *msg )
 {
 	gEngfuncs.Con_Printf( msg ); // just in case
-
+#ifdef TF15CLIENT_ADDITIONS
 	if ( IsXashFWGS() )
 	{
 		gMobileEngfuncs->pfnSys_Warn( msg );
 		return true;
 	}
-
+#endif
 	// TODO: Load SDL2 and call ShowSimpleMessageBox
 
 	return false;
 }
-
+#ifdef TF15CLIENT_ADDITIONS
 bool IsXashFWGS()
 {
 	return gMobileEngfuncs != NULL;
@@ -435,7 +441,7 @@ void CL_LoadMainUI( void )
 		g_pMainUI->Initialize( CreateInterface );
 	}
 }
-
+#endif
 #include "cl_dll/IGameClientExports.h"
 
 //-----------------------------------------------------------------------------

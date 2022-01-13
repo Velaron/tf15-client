@@ -35,6 +35,9 @@
 #include "teamplay_gamerules.h"
 #include "physcallback.h"
 
+#include "tf_gamerules.h"
+#include "tf_defs.h"
+
 extern CGraph WorldGraph;
 extern CSoundEnt *pSoundEnt;
 
@@ -450,12 +453,68 @@ LINK_ENTITY_TO_CLASS( worldspawn, CWorld )
 #define SF_WORLD_FORCETEAM	0x0004		// Force teams
 
 extern DLL_GLOBAL BOOL		g_fGameOver;
-float g_flWeaponCheat; 
+float g_flWeaponCheat;
+
+CGameRules *InstallGameRules( char *szGameName )
+{
+	if ( g_pGameRules )
+	{
+		delete g_pGameRules;
+		g_pGameRules = NULL;
+	}
+
+	if ( !IS_DEDICATED_SERVER() )
+	{
+		SERVER_COMMAND( "exec game.cfg\n" );
+		SERVER_EXECUTE();
+	}
+
+	if ( !strcmp( szGameName, "teamfortress classic" ) )
+	{
+		return new CTeamFortress;
+	}
+	else
+	{
+		ALERT( at_error, "Could not find game rules for game '%s'! Using Half-Life rules\n", szGameName );
+		return new CHalfLifeRules;
+	}
+}
 
 void CWorld::Spawn( void )
 {
+	char *maptext;
+	char *pFile;
+	int length;
+
 	g_fGameOver = FALSE;
 	Precache();
+
+	memset( g_IpStorage, 0, sizeof( g_IpStorage ) );
+
+	CTF_Map = FALSE;
+	birthday = FALSE;
+	christmas = FALSE;
+	team_menu_string = NULL;
+	toggleflags = 0;
+	g_bFirstClient = FALSE;
+	number_of_teams = 0.0f;
+	num_world_flames = 0.0f;
+	TeamFortress_TeamSetColor( 0 );
+
+	memset( teamallies, 0, sizeof( teamallies ) );
+	memset( g_pLastSpawns, 0, sizeof( g_pLastSpawns ) );
+	memset( team_names, 0, sizeof( team_names ) );
+
+	for ( int i = 0; i < 5; i++ )
+		teamadvantage[i] = 1.0f;
+
+	maptext = UTIL_VarArgs( "maps/%s.txt", STRING( gpGlobals->mapname ) );
+	pFile = (char *)LOAD_FILE_FOR_ME( maptext, &length );
+
+	if ( pFile && length )
+		PRECACHE_GENERIC( maptext );
+
+	FREE_FILE( (void *)pFile );
 }
 
 void CWorld::Precache( void )
@@ -469,15 +528,6 @@ void CWorld::Precache( void )
 	CVAR_SET_STRING( "sv_stepsize", "24" );
 #endif
 	CVAR_SET_STRING( "room_type", "0" );// clear DSP
-
-	// Set up game rules
-	if( g_pGameRules )
-	{
-		delete g_pGameRules;
-		g_pGameRules = NULL;
-	}
-
-	// g_pGameRules = InstallGameRules();
 
 	//!!!UNDONE why is there so much Spawn code in the Precache function? I'll just keep it here 
 
@@ -500,11 +550,28 @@ void CWorld::Precache( void )
 	// ok to call this multiple times, calls after first are ignored.
 	SENTENCEG_Init();
 
+	TEXTURETYPE_Init();
+
 	// the area based ambient sounds MUST be the first precache_sounds
 	// player precaches
 	W_Precache();				// get weapon precaches
 
 	ClientPrecache();
+
+	PRECACHE_EVENT( 1, "events/explode/tf_pipe.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_gren.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_engrgren.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_concuss.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_normalgren.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_mirvmain.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_mirv.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_fire.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_burn.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_gas.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_emp.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_nailgren.sc" );
+	PRECACHE_EVENT( 1, "events/explode/tf_ng.sc" );
+	PRECACHE_EVENT( 1, "events/misc/gibs.sc" );
 
 	// sounds used from C physics code
 	PRECACHE_SOUND( "common/null.wav" );// clears sound channels
@@ -531,6 +598,14 @@ void CWorld::Precache( void )
 	PRECACHE_SOUND( "weapons/ric3.wav" );
 	PRECACHE_SOUND( "weapons/ric4.wav" );
 	PRECACHE_SOUND( "weapons/ric5.wav" );
+
+	UTIL_PrecacheOther( "item_suit" );
+	UTIL_PrecacheOther( "item_battery" );
+	UTIL_PrecacheOther( "item_antidote" );
+	UTIL_PrecacheOther( "item_security" );
+	UTIL_PrecacheOther( "item_longjump" );
+
+	PRECACHE_MODEL( "sprites/xflare1.spr" );
 
 	//
 	// Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
@@ -645,6 +720,8 @@ void CWorld::Precache( void )
 
 	pev->spawnflags &= ~SF_WORLD_TITLE;		// g-cont. don't show logo after save\restore
 
+	g_pGameRules = InstallGameRules( "teamfortress classic" );
+
 	// g-cont. moved here so cheats will working on restore level
 	g_flWeaponCheat = CVAR_GET_FLOAT( "sv_cheats" );  // Is the impulse 101 command allowed?
 }
@@ -702,11 +779,6 @@ void CWorld::KeyValue( KeyValueData *pkvd )
 		if( atoi( pkvd->szValue ) )
 			pev->spawnflags |= SF_WORLD_TITLE;
 
-		pkvd->fHandled = TRUE;
-	}
-	else if( FStrEq( pkvd->szKeyName, "mapteams" ) )
-	{
-		pev->team = ALLOC_STRING( pkvd->szValue );
 		pkvd->fHandled = TRUE;
 	}
 	else

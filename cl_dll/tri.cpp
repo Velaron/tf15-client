@@ -17,8 +17,10 @@
 #include "cl_entity.h"
 #include "triangleapi.h"
 
+#ifdef USE_PARTICLEMAN
 #include "particleman.h"
 extern IParticleMan *g_pParticleMan;
+#endif
 
 extern "C"
 {
@@ -49,8 +51,9 @@ Render any triangles with transparent rendermode needs here
 void DLLEXPORT HUD_DrawTransparentTriangles( void )
 {
 	RunEventList();
+
+#ifdef USE_PARTICLEMAN
 	if ( g_pParticleMan )
-	{
 		g_pParticleMan->Update();
-	}
+#endif
 }

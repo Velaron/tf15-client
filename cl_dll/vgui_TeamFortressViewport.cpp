@@ -632,7 +632,7 @@ TeamFortressViewport::TeamFortressViewport( int x, int y, int wide, int tall ) :
 
 	UpdatePlayerMenu( m_PlayerMenu );
 
-	//CreateServerBrowser();
+	CreateServerBrowser();
 }
 
 //-----------------------------------------------------------------------------
@@ -1269,8 +1269,6 @@ CommandButton *TeamFortressViewport::CreateCustomButton( char *pButtonText, char
 
 	return pButton;
 }
-// Velaron: TODO
-/*
 void TeamFortressViewport::ToggleServerBrowser()
 {
 	if ( !m_iInitialized )
@@ -1290,7 +1288,6 @@ void TeamFortressViewport::ToggleServerBrowser()
 
 	UpdateCursorState();
 }
-*/
 
 //=======================================================================
 void TeamFortressViewport::ShowCommandMenu( int menuIndex )
@@ -1687,14 +1684,12 @@ void TeamFortressViewport::CreateScoreBoard( void )
 	m_pScoreBoard->setVisible( false );
 }
 
-/*
 void TeamFortressViewport::CreateServerBrowser( void )
 {
 	m_pServerBrowser = new ServerBrowser( 0, 0, ScreenWidth, ScreenHeight );
 	m_pServerBrowser->setParent( this );
 	m_pServerBrowser->setVisible( false );
 }
-*/
 
 //======================================================================
 // Set the VGUI Menu
@@ -2051,7 +2046,7 @@ void TeamFortressViewport::UpdateOnPlayerInfo()
 void TeamFortressViewport::UpdateCursorState()
 {
 	// Need cursor if any VGUI window is up
-	if ( m_pSpectatorPanel->m_menuVisible || m_pCurrentMenu || m_pTeamMenu->isVisible() /* || m_pServerBrowser->isVisible() */ || GetClientVoiceMgr()->IsInSquelchMode() )
+	if ( m_pSpectatorPanel->m_menuVisible || m_pCurrentMenu || m_pTeamMenu->isVisible() || m_pServerBrowser->isVisible() || GetClientVoiceMgr()->IsInSquelchMode() )
 	{
 		iVisibleMouse = true;
 		App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor( Scheme::scu_arrow ) );

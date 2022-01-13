@@ -1,17 +1,17 @@
 /***
-*
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*
-*	This product contains software technology licensed from Id
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
-*	All Rights Reserved.
-*
-*   Use, distribution, and modification of this source code and/or resulting
-*   object code is restricted to non-commercial enhancements to products from
-*   Valve LLC.  All other use, distribution, or modification is prohibited
-*   without written permission from Valve LLC.
-*
-****/
+ *
+ *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+ *
+ *	This product contains software technology licensed from Id
+ *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
+ *	All Rights Reserved.
+ *
+ *   Use, distribution, and modification of this source code and/or resulting
+ *   object code is restricted to non-commercial enhancements to products from
+ *   Valve LLC.  All other use, distribution, or modification is prohibited
+ *   without written permission from Valve LLC.
+ *
+ ****/
 //
 // hud.cpp
 //
@@ -97,13 +97,13 @@ void ShutdownInput( void );
 extern globalvars_t *gpGlobals;
 const Vector &GetTeamColor( int team_no );
 
-//DECLARE_MESSAGE( m_Logo, Logo )
+// DECLARE_MESSAGE( m_Logo, Logo )
 int __MsgFunc_Logo( const char *pszName, int iSize, void *pbuf )
 {
 	return gHUD.MsgFunc_Logo( pszName, iSize, pbuf );
 }
 
-//DECLARE_MESSAGE( m_Logo, Logo )
+// DECLARE_MESSAGE( m_Logo, Logo )
 int __MsgFunc_ResetHUD( const char *pszName, int iSize, void *pbuf )
 {
 	return gHUD.MsgFunc_ResetHUD( pszName, iSize, pbuf );
@@ -170,7 +170,10 @@ void __CmdFunc_ForceCloseCommandMenu( void )
 
 void __CmdFunc_ToggleServerBrowser( void )
 {
-	//if ( gViewPort ) { gViewPort->ToggleServerBrowser(); } // Velaron: TODO
+	if ( gViewPort )
+	{
+		gViewPort->ToggleServerBrowser();
+	}
 }
 
 int __MsgFunc_ValClass( const char *pszName, int iSize, void *pbuf )
@@ -332,8 +335,7 @@ void CHud::Init( void )
 	HOOK_COMMAND( "-commandmenu", CloseCommandMenu );
 	HOOK_COMMAND( "ForceCloseCommandMenu", ForceCloseCommandMenu );
 	HOOK_COMMAND( "special", InputPlayerSpecial );
-	// Velaron: TODO
-	//HOOK_COMMAND( "togglebrowser", ToggleServerBrowser );
+	HOOK_COMMAND( "togglebrowser", ToggleServerBrowser );
 
 	HOOK_MESSAGE( ValClass );
 	HOOK_MESSAGE( TeamNames );
@@ -459,7 +461,7 @@ void CHud::VidInit( void )
 	// ----------
 	// Load Sprites
 	// ---------
-	//m_hsprFont = LoadSprite("sprites/%d_font.spr");
+	// m_hsprFont = LoadSprite("sprites/%d_font.spr");
 
 	m_hsprLogo = 0;
 	m_hsprCursor = 0;
@@ -732,7 +734,7 @@ void CHud::AddHudElem( CHudBase *phudelem )
 {
 	HUDLIST *pdl, *ptemp;
 
-	//phudelem->Think();
+	// phudelem->Think();
 
 	if ( !phudelem )
 		return;

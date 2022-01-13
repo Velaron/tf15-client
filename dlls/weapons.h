@@ -399,6 +399,9 @@ public:
 	void EXPORT DetonateUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	void EXPORT TumbleThink( void );
 
+	virtual int setBirthdayModel( void );
+	virtual void setModel( void );
+
 	virtual void BounceSound( void );
 	virtual int BloodColor( void ) { return DONT_BLEED; }
 	virtual void Killed( entvars_t *pevInflictor, entvars_t *pevAttacker, int iGib );
