@@ -30,7 +30,7 @@
 #include "../ricochet/cl_dll/hud_servers.h"
 #include "../ricochet/cl_dll/demo.h"
 #else
-#include "../cl_dll/parsemsg.h"
+#include "../common/parsemsg.h"
 #include "../cl_dll/hud_servers.h"
 #include "../cl_dll/demo.h"
 #endif

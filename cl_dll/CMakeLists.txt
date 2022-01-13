@@ -33,6 +33,7 @@ if(HAVE_TGMATH_H)
 	add_definitions(-DHAVE_TGMATH_H)
 endif()
 
+add_definitions(-DTF15CLIENT_ADDITIONS)
 add_definitions(-DCLIENT_WEAPONS -DCLIENT_DLL)
 
 if(NOT MSVC)
@@ -94,6 +95,8 @@ set(CLDLL_SOURCES
 	geiger.cpp
 	health.cpp
 	hud.cpp
+	hud_bench.cpp
+	hud_benchtrace.cpp
 	hud_msg.cpp
 	hud_redraw.cpp
 	hud_spectator.cpp
@@ -106,7 +109,7 @@ set(CLDLL_SOURCES
 	interpolation.cpp
 	menu.cpp
 	message.cpp
-	parsemsg.cpp
+	../common/parsemsg.cpp
 	../pm_shared/pm_debug.c
 	../pm_shared/pm_math.c
 	../pm_shared/pm_shared.c
@@ -139,7 +142,6 @@ set(CLDLL_SOURCES
 	vgui_SpectatorPanel.cpp
 	vgui_TeamFortressViewport.cpp
 	vgui_teammenu.cpp
-	../game_shared/voice_banmgr.cpp
 	../game_shared/voice_status.cpp)
 
 include_directories(. hl/ ../dlls ../dlls/tfc ../common ../engine ../pm_shared ../game_shared ../public ../vgui_dll/include)
@@ -155,7 +157,7 @@ if(GOLDSOURCE_SUPPORT)
 endif()
 
 if(WIN32)
-	target_link_libraries(${CLDLL_LIBRARY} user32.lib winmm.lib)
+	target_link_libraries(${CLDLL_LIBRARY} user32.lib winmm.lib ws2_32.lib)
 endif()
 
 if(BUILD_VGUI)

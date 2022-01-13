@@ -519,6 +519,58 @@ private:
 //
 //-----------------------------------------------------
 //
+
+class CHudBenchmark : public CHudBase
+{
+public:
+	int Init( void );
+	int VidInit( void );
+	int Draw( float flTime );
+
+	void SetScore( float score );
+
+	void Think( void );
+
+	void StartNextSection( int section );
+
+	int MsgFunc_Bench( const char *pszName, int iSize, void *pbuf );
+
+	void CountFrame( float dt );
+
+	int GetObjects( void ) { return m_nObjects; };
+
+	void SetCompositeScore( void );
+
+	void Restart( void );
+
+	int Bench_ScoreForValue( int stage, float raw );
+
+private:
+	float m_fDrawTime;
+	float m_fDrawScore;
+	float m_fAvgScore;
+
+	float m_fSendTime;
+	float m_fReceiveTime;
+
+	int m_nFPSCount;
+	float m_fAverageFT;
+	float m_fAvgFrameRate;
+
+	int m_nSentFinish;
+	float m_fStageStarted;
+
+	float m_StoredLatency;
+	float m_StoredPacketLoss;
+	int m_nStoredHopCount;
+	int m_nTraceDone;
+
+	int m_nObjects;
+
+	int m_nScoreComputed;
+	int m_nCompositeScore;
+};
+
 class CHud
 {
 private:
@@ -592,6 +644,7 @@ public:
 	CHudAmmoSecondary m_AmmoSecondary;
 	CHudTextMessage m_TextMessage;
 	CHudStatusIcons m_StatusIcons;
+	CHudBenchmark m_Benchmark;
 
 	void Init( void );
 	void VidInit( void );

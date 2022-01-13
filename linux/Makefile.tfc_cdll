@@ -68,7 +68,6 @@ TFC_OBJS = \
 	$(TFC_OBJ_DIR)/interpolation.o \
 	$(TFC_OBJ_DIR)/menu.o \
 	$(TFC_OBJ_DIR)/message.o \
-	$(TFC_OBJ_DIR)/parsemsg.o  \
 	$(TFC_OBJ_DIR)/saytext.o \
 	$(TFC_OBJ_DIR)/status_icons.o \
 	$(TFC_OBJ_DIR)/statusbar.o \
@@ -111,7 +110,8 @@ DLL_OBJS = \
 PUBLIC_OBJS = \
 	$(PUBLIC_OBJ_DIR)/interface.o \
 
-COMMON_OBJS = 
+COMMON_OBJS = \
+	$(COMMON_OBJ_DIR)/parsemsg.o  \
 
 GAME_SHARED_OBJS = \
 	$(GAME_SHARED_OBJ_DIR)/vgui_checkbutton2.o \

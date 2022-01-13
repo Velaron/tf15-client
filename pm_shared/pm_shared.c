@@ -31,6 +31,8 @@
 #include "pm_movevars.h"
 #include "pm_debug.h"
 
+#include "com_model.h"
+
 #ifdef CLIENT_DLL
 // Spectator Mode
 int iJumpSpectator;
