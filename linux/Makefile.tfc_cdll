@@ -62,6 +62,7 @@ TFC_OBJS = \
 	$(TFC_OBJ_DIR)/hud_benchtrace.o \
 	$(TFC_OBJ_DIR)/hud_msg.o \
 	$(TFC_OBJ_DIR)/hud_redraw.o \
+	$(TFC_OBJ_DIR)/hud_servers.o \
 	$(TFC_OBJ_DIR)/hud_update.o \
 	$(TFC_OBJ_DIR)/in_camera.o \
 	$(TFC_OBJ_DIR)/input.o \
