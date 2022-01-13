@@ -157,6 +157,8 @@ CVoiceStatus::CVoiceStatus()
 
 	memset( m_pBanButtons, 0, sizeof( m_pBanButtons ) );
 
+	m_pParentPanel = NULL;
+
 	m_bServerModEnable = -1;
 
 	m_pchGameDir = NULL;

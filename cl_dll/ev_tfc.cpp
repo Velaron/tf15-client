@@ -2269,12 +2269,77 @@ char *EV_TFC_LookupDoorSound( int type, int index )
 
 	idx = (char)index;
 
-	if ( idx > 0 )
+	if ( type )
 	{
-		if ( type )
-			sprintf( sound, "doors/doorstop%i.wav", idx );
-		else
-			sprintf( sound, "doors/doormove%i.wav", idx );
+		switch ( idx )
+		{
+		case 1:
+			strcpy( sound, "doors/doorstop1.wav" );
+			break;
+		case 2:
+			strcpy( sound, "doors/doorstop2.wav" );
+			break;
+		case 3:
+			strcpy( sound, "doors/doorstop3.wav" );
+			break;
+		case 4:
+			strcpy( sound, "doors/doorstop4.wav" );
+			break;
+		case 5:
+			strcpy( sound, "doors/doorstop5.wav" );
+			break;
+		case 6:
+			strcpy( sound, "doors/doorstop6.wav" );
+			break;
+		case 7:
+			strcpy( sound, "doors/doorstop7.wav" );
+			break;
+		case 8:
+			strcpy( sound, "doors/doorstop8.wav" );
+			break;
+		default:
+			strcpy( sound, "common/null.wav" );
+			break;
+		}
+	}
+	else
+	{
+		switch ( idx )
+		{
+		case 1:
+			strcpy( sound, "doors/doormove1.wav" );
+			break;
+		case 2:
+			strcpy( sound, "doors/doormove2.wav" );
+			break;
+		case 3:
+			strcpy( sound, "doors/doormove3.wav" );
+			break;
+		case 4:
+			strcpy( sound, "doors/doormove4.wav" );
+			break;
+		case 5:
+			strcpy( sound, "doors/doormove5.wav" );
+			break;
+		case 6:
+			strcpy( sound, "doors/doormove6.wav" );
+			break;
+		case 7:
+			strcpy( sound, "doors/doormove7.wav" );
+			break;
+		case 8:
+			strcpy( sound, "doors/doormove8.wav" );
+			break;
+		case 9:
+			strcpy( sound, "doors/doormove9.wav" );
+			break;
+		case 10:
+			strcpy( sound, "doors/doormove10.wav" );
+			break;
+		default:
+			strcpy( sound, "common/null.wav" );
+			break;
+		}
 	}
 
 	return sound;
@@ -2360,17 +2425,52 @@ qboolean EV_TFC_Spanner( int idx, float *origin, float *forward, float *right, i
 	return true;
 }
 
-// Velaron: todo maybe
+extern float g_fZAdjust;
+
 void EV_TFC_BenchmarkWallMark( pmtrace_t *pTrace, char *name )
 {
+	EV_TFC_DecalTrace( pTrace, name );
 }
 
 void EV_TFC_BenchMarkTrace( pmtrace_t *pTrace )
 {
+	physent_t *pe;
+
+	pe = gEngfuncs.pEventAPI->EV_GetPhysent( pTrace->ent );
+
+	if ( pe && ( pe->solid == SOLID_BSP || pe->movetype == MOVETYPE_PUSHSTEP ) )
+		EV_TFC_BenchmarkWallMark( pTrace, "{dot" );
 }
 
 void EV_Benchmark( event_args_t *args )
 {
+	int idx;
+	Vector origin, angles;
+	Vector forward, right, up;
+	Vector vecSrc, vecDir, vecEnd;
+	pmtrace_t tr;
+
+	idx = args->entindex;
+	VectorCopy( args->origin, origin );
+	VectorCopy( args->angles, angles );
+
+	AngleVectors( angles, forward, right, up );
+	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "common/wpn_select.wav", 0.9f, ATTN_NORM, 0, PITCH_NORM );
+	EV_GetGunPosition( args, vecSrc, origin );
+	VectorCopy( forward, vecDir );
+	VectorMA( vecSrc, 2.0f, up, vecSrc );
+	VectorMA( vecSrc, 8192.0f, vecDir, vecEnd );
+	gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
+	gEngfuncs.pEventAPI->EV_PushPMStates();
+	gEngfuncs.pEventAPI->EV_SetSolidPlayers( idx - 1 );
+	gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
+	gEngfuncs.pEventAPI->EV_PlayerTrace( vecSrc, vecEnd, PM_STUDIO_BOX, -1, &tr );
+
+	if ( tr.fraction != 1.0f && gEngfuncs.GetClientTime() > g_nTime )
+	{
+		EV_TFC_BenchMarkTrace( &tr );
+		g_nTime = gEngfuncs.GetClientTime() + 0.05f;
+	}
 }
 
 void RandomSparkSound( float *origin )

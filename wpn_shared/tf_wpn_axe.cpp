@@ -216,7 +216,10 @@ BOOL CTFSpanner::Deploy( void )
 
 void CTFSpanner::PlayAnim( int iAnimType )
 {
-	SendWeaponAnim( iAnimType ? SPANNER_USE1 : SPANNER_ATTACK1 );
+	if ( iAnimType )
+		SendWeaponAnim( SPANNER_USE1 );
+	else
+		SendWeaponAnim( SPANNER_ATTACK1 );
 }
 
 void CTFSpanner::WeaponIdle( void )
@@ -369,7 +372,10 @@ BOOL CTFMedikit::Deploy( void )
 
 void CTFMedikit::PlayAnim( int iAnimType )
 {
-	SendWeaponAnim( iAnimType ? MEDIKIT_USE_LONG : MEDIKIT_USE_SHORT );
+	if ( iAnimType )
+		SendWeaponAnim( MEDIKIT_USE_LONG );
+	else
+		SendWeaponAnim( MEDIKIT_USE_SHORT );
 }
 
 void CTFMedikit::WeaponIdle( void )
@@ -383,6 +389,6 @@ void CTFMedikit::WeaponIdle( void )
 
 BOOL CTFMedikit::AxeHit( CBaseEntity *pTarget, Vector *p_vecDir, TraceResult *ptr )
 {
-	//if
+	// if
 	return true;
 }
