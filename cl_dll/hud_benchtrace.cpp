@@ -3,7 +3,9 @@
 //  variable
 
 #ifdef _WIN32
+#define HSPRITE HSPRITE_win32
 #include <windows.h>
+#undef HSPRITE
 #else
 #include <dlfcn.h>
 #endif

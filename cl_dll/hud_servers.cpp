@@ -1,6 +1,6 @@
-//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -12,19 +12,23 @@
 #include "hud_servers.h"
 #include "net_api.h"
 #include <string.h>
+#ifdef _WIN32
 #define HSPRITE HSPRITE_win32
 #include <winsock.h>
 #undef HSPRITE
+#else
+#define __cdecl
+#include <arpa/inet.h>
+#endif
+static int context_id;
 
-static int	context_id;
-
-// Default master server address in case we can't read any from woncomm.lst file
+// Default master server address in case we can't read any from valvecomm.lst file
 #define VALVE_MASTER_ADDRESS "half-life.east.won.net"
-#define PORT_MASTER	 27010
-#define PORT_SERVER  27015
+#define PORT_MASTER          27010
+#define PORT_SERVER          27015
 
 // File where we really should look for master servers
-#define MASTER_PARSE_FILE "woncomm.lst"
+#define MASTER_PARSE_FILE "valvecomm.lst"
 
 #define MAX_QUERIES 20
 
@@ -91,7 +95,6 @@ void NET_CALLBACK RulesResponse( struct net_response_s *response )
 		g_pServers->RulesResponse( response );
 	}
 }
-
 /*
 ===================
 PlayersResponse
@@ -106,7 +109,6 @@ void NET_CALLBACK PlayersResponse( struct net_response_s *response )
 		g_pServers->PlayersResponse( response );
 	}
 }
-
 /*
 ===================
 ListResponse
@@ -132,7 +134,7 @@ void CHudServers::ListResponse( struct net_response_s *response )
 		{
 			c++;
 
-			//if( c < 40 )
+			// if ( c < 40 )
 			{
 				// Copy from parsed stuff
 				p = new request_t;
@@ -164,7 +166,7 @@ void CHudServers::ServerResponse( struct net_response_s *response )
 	char *szresponse;
 	request_t *p;
 	server_t *browser;
-	int	len;
+	int len;
 	char sz[32];
 
 	// Remove from active list
@@ -603,9 +605,9 @@ int CompareField( CHudServers::server_t *p1, CHudServers::server_t *p2, const ch
 	return stricmp( sz1, sz2 );
 }
 
-int CALLBACK ServerListCompareFunc( CHudServers::server_t *p1, CHudServers::server_t *p2, const char *fieldname )
+int ServerListCompareFunc( CHudServers::server_t *p1, CHudServers::server_t *p2, const char *fieldname )
 {
-	if ( !p1 || !p2 )  // No meaningful comparison
+	if ( !p1 || !p2 ) // No meaningful comparison
 		return 0;
 
 	int iSortOrder = 1;
@@ -622,8 +624,8 @@ int __cdecl FnServerCompare( const void *elem1, const void *elem2 )
 {
 	CHudServers::server_t *list1, *list2;
 
-	list1 = *( CHudServers::server_t ** )elem1;
-	list2 = *( CHudServers::server_t ** )elem2;
+	list1 = *(CHudServers::server_t **)elem1;
+	list2 = *(CHudServers::server_t **)elem2;
 
 	return ServerListCompareFunc( list1, list2, g_fieldname );
 }
@@ -649,7 +651,7 @@ void CHudServers::SortServers( const char *fieldname )
 
 	server_t **pSortArray;
 
-	pSortArray = new server_t * [c];
+	pSortArray = new server_t *[c];
 	memset( pSortArray, 0, c * sizeof( server_t * ) );
 
 	// Now copy the list into the pSortArray:
@@ -666,11 +668,10 @@ void CHudServers::SortServers( const char *fieldname )
 	size_t nSize = sizeof( server_t * );
 
 	qsort(
-		pSortArray,
-		(size_t)nCount,
-		(size_t)nSize,
-		FnServerCompare
-	);
+	    pSortArray,
+	    (size_t)nCount,
+	    (size_t)nSize,
+	    FnServerCompare );
 
 	// Now rebuild the list.
 	m_pServers = pSortArray[0];
@@ -750,20 +751,20 @@ Loads the master server addresses from file and into the passed in array
 */
 int CHudServers::LoadMasterAddresses( int maxservers, int *count, netadr_t *padr )
 {
-	int			i;
-	char		szMaster[256];
-	char		szMasterFile[256];
+	int i;
+	char szMaster[256];
+	char szMasterFile[256];
 	char *pbuffer = NULL;
-	const char *pstart = NULL;
-	netadr_t	adr;
-	char		szAdr[64];
-	int		nPort;
-	int		nCount = 0;
-	bool		bIgnore;
-	int		nDefaultPort;
+	char *pstart = NULL;
+	netadr_t adr;
+	char szAdr[64];
+	int nPort;
+	int nCount = 0;
+	bool bIgnore;
+	int nDefaultPort;
 
 	// Assume default master and master file
-	strcpy( szMaster, VALVE_MASTER_ADDRESS );    // IP:PORT string
+	strcpy( szMaster, VALVE_MASTER_ADDRESS ); // IP:PORT string
 	strcpy( szMasterFile, MASTER_PARSE_FILE );
 
 	// See if there is a command line override
@@ -850,14 +851,16 @@ int CHudServers::LoadMasterAddresses( int maxservers, int *count, netadr_t *padr
 			}
 		}
 	}
+
 finish_master:
 	if ( !nCount )
 	{
-		sprintf( szMaster, VALVE_MASTER_ADDRESS );    // IP:PORT string
+		sprintf( szMaster, VALVE_MASTER_ADDRESS ); // IP:PORT string
 
 		// Convert to netadr_t
 		if ( NET_API->StringToAdr( szMaster, &adr ) )
 		{
+
 			padr[nCount++] = adr;
 		}
 	}
@@ -885,7 +888,7 @@ void CHudServers::RequestList( void )
 	m_nDone = 0;
 	m_dStarted = m_fElapsed;
 
-	int	count = 0;
+	int count = 0;
 	netadr_t adr;
 
 	if ( !LoadMasterAddresses( 1, &count, &adr ) )
@@ -916,7 +919,8 @@ void CHudServers::RequestBroadcastList( int clearpending )
 	m_nDone = 0;
 	m_dStarted = m_fElapsed;
 
-	netadr_t adr = { 0 };
+	netadr_t adr;
+	memset( &adr, 0, sizeof( adr ) );
 
 	if ( clearpending )
 	{
