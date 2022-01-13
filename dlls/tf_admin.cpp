@@ -28,7 +28,7 @@ void Admin_CeaseFire( void )
                     pIndex->immune_to_check = gpGlobals->time + 10.0;
                     CBasePlayer::TeamFortress_SetSpeed( pIndex );
                 }
-                ++
+                ++playerIndex;
             } while ( gpGlobals->maxclients >= playerIndex );
             
         }
