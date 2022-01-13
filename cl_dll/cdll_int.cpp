@@ -177,7 +177,7 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	memcpy( &gEngfuncs, pEnginefuncs, sizeof( cl_enginefunc_t ) );
 
 	EV_HookEvents();
-	// CL_LoadParticleMan();
+	CL_LoadParticleMan();
 	CL_LoadMainUI();
 
 	return 1;
@@ -379,18 +379,18 @@ void DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs )
 bool HUD_MessageBox( const char *msg )
 {
 	gEngfuncs.Con_Printf( msg ); // just in case
-
+#ifdef TF15CLIENT_ADDITIONS
 	if ( IsXashFWGS() )
 	{
 		gMobileEngfuncs->pfnSys_Warn( msg );
 		return true;
 	}
-
+#endif
 	// TODO: Load SDL2 and call ShowSimpleMessageBox
 
 	return false;
 }
-
+#ifdef TF15CLIENT_ADDITIONS
 bool IsXashFWGS()
 {
 	return gMobileEngfuncs != NULL;
@@ -434,7 +434,7 @@ void CL_LoadMainUI( void )
 		g_pMainUI->Initialize( CreateInterface );
 	}
 }
-
+#endif
 #include "cl_dll/IGameClientExports.h"
 
 //-----------------------------------------------------------------------------

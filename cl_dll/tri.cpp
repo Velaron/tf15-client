@@ -49,6 +49,7 @@ Render any triangles with transparent rendermode needs here
 void DLLEXPORT HUD_DrawTransparentTriangles( void )
 {
 	RunEventList();
+	
 	if ( g_pParticleMan )
 	{
 		g_pParticleMan->Update();
