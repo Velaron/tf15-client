@@ -5,67 +5,6 @@
 #include    "util.h"
 #include    "cdll_dll.h"
 
-void Admin_CeaseFire( void )
-{
-    bool cease_fire;
-
-    if( cease_fire )
-    {
-        cease_fire = false;
-        UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "#Game_resumefire" ) );
-        UTIL_LogPrintf( "World triggered \"Resume_Fire \"\n" );
-
-        if( gpGlobals->maxClients > 0 )
-        {
-            int playerIndex;
-            do
-            {
-                CBasePlayer *pIndex = UTIL_PlayerByIndex( playerIndex );
-                if( pIndex )
-                {
-                    pIndex->pev->iuser4 = 0;
-                    pIndex->tfstate &= ~0x10000u;
-                    pIndex->immune_to_check = gpGlobals->time + 10.0;
-                    CBasePlayer::TeamFortress_SetSpeed( pIndex );
-                }
-                ++playerIndex;
-            } while ( gpGlobals->maxclients >= playerIndex );
-            
-        }
-    }
-    else
-    {
-        cease_fire = true;
-        UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "#Admin_ceasefire" ) );
-        if( gpGlobals->maxClients > 1 )
-        {
-            int playerIndex2;
-            do
-            {
-                CBasePlayer *pIndex2 = UTIL_PlayerByIndex( playerIndex2 );
-                if( gpGlobals->maxClients > 0 )
-                {
-                    pIndex2->pev->iuser4 = 0;
-                    pIndex2->tfstate &= ~0x10000u;
-                    pIndex2->immune_to_check = gpGlobals->time + 10.0;
-                    CBasePlayer::TeamFortress_SetSpeed( pIndex2 );
-                }
-            } while ( gpGlobals->maxclients >= playerIndex2 );
-            
-        }
-    }
-}
-
-void BanPlayer( CBaseEntity *pTarget )
-{
-    g_engfuncs.pfnServerCommand( UTIL_VarArgs( "banid 30 %s kick\n", g_engfuncs.pfnGetPlayerAuthId( pTarget->pev->pContainingEntity ) ) );
-    g_engfuncs.pfnServerCommand( UTIL_VarArgs( "addip 30 %s\n", &gpGlobals->pStringBase[pTarget->ip] ) );
-    if( g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity ) != -1 )
-    {
-        g_engfuncs.pfnServerCommand( UTIL_VarArgs( "kick # %d\n", g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity ) ) );
-    }
-}
-
 void CBasePlayer::Admin_Access( CBasePlayer const *pPlayer , char *pPassword )
 {
     char s;
@@ -86,19 +25,6 @@ void CBasePlayer::Admin_Access( CBasePlayer const *pPlayer , char *pPassword )
     else
     {
         ClientPrint( pPlayer->pev, HUD_PRINTNOTIFY, "#Admin_nopassword" );
-    }
-}
-
-void CBasePlayer::Admin_Changelevel( CBasePlayer const *pPlayer )
-{
-    const char *mapname;
-    char sz[256];
-
-    if( g_engfuncs.pnfCmd_Argc() == 2 )
-    {
-        mapname = g_engfuncs.pnfCmd_Argv();
-        sprintf( sz, "changelevel %s\n", mapname);
-        g_engfuncs.pfnServerCommand( sz );
     }
 }
 
@@ -149,6 +75,35 @@ LABEL_8:
         goto LABEL_9;
 }
 
+void CBasePlayer::Admin_ListIPs( CBasePlayer const *pPlayer )
+{
+    if( TeamFortress_GetNoPlayers() <= 1 )
+    {
+        ClientPrint( pPlayer->pev, HUD_PRINTNOTIFY, "#Admin_gameempty" );
+    }
+    else
+    {
+        int playerIndex;
+
+        if( gpGlobals->maxClients > 0 )
+        {
+            do
+            {
+                CBasePlayer *pIndex = UTIL_PlayerByIndex( playerIndex );
+                if( pIndex )
+                {
+                    ClientPrint( pPlayer->pev, HUD_PRINTNOTIFY, "#Admin_listip", 
+                    &gpGlobals->pStringBase[UTIL_PlayerByIndex( playerIndex )->pev->netname],
+                    &gpGlobals->pStringBase[UTIL_PlayerByIndex( playerIndex )->ip] );
+                ++playerIndex;
+                }
+            }
+            while( gpGlobals->maxClients >= playerIndex );
+        }
+        ClientPrint( pPlayer->pev, HUD_PRINTNOTIFY, "#Admin_endlist" );
+    }
+}
+
 void CBasePlayer::Admin_CycleDeal( CBasePlayer const *pPlayer )
 {
     CBasePlayer *pEntity;
@@ -191,45 +146,6 @@ LABEL_7:
             ClientPrint( pPlayer->pev, HUD_PRINTNOTIFY, "#Admin_kickban", &s[EHANDLE::operator int( &pPlayer->admin_use )->pev-netname], 
             &s[EHANDLE::operator int( &pPlayer->admin_use )->ip] );  
         }
-    }
-}
-
-void CBasePlayer::Admin_DoBan( CBasePlayer const *pPlayer )
-{
-    p_admin_use = &pPlayer->admin_use;
-    if( EHANDLE::operator int( &pPlayer->admin_use ) )
-    {
-        const char pStringBase = gpGlobals->pStringBase;
-        string_t netname = pPlayer->pev->netname;
-        UTIL_ClientPrintAll( HUD_PRINTNOTIFY, "#Admin_ban", &pStringBase[CBaseEntity *EHANDLE::operator->( p_admin_use )->pev->netname], 
-        &pStringBase[netname] );
-
-        char *TeamName = "SPECTATOR";
-
-        if( EHANDLE::operator->(p_admin_use)->team_no )
-        {
-            TeamName = GetTeamName( EHANDLE::operator->(p_admin_use)->team_no )
-        }
-
-        char *TeamName2 = "SPECTATOR";
-        const char *s = gpGlobals->pStringBase;
-
-        if( pPlayer->team_no )
-            TeamName2 = GetTeamName( pPlayer->team_no );
-        
-        UTIL_LogPrintf( "\"%s<%i><%s><%s>\" triggered \"Admin_Ban\" against \"%s<%i><%s><%s>\"\n", 
-        &gpGlobals->pStringBase[pPlayer->pev->netname],
-        g_engfuncs.pfnGetPlayerUserId( pPlayer->pev->pContiningEntity ),
-        g_engfuncs.pfnGetPlayerAuthId( pPlayer->pev->pContiningEntity ),
-        TeamName2,
-        &s[EHANDLE::operator->(p_admin_use)->pev->netname],
-        g_engfuncs.pfnGetPlayerUserId( EHANDLE::operator->(p_admin_use)->pev->pContiningEntity ),
-        v18,
-        TeamName );
-
-        BanPlayer( EHANDLE::operator CBaseEntity *(p_admin_use) );
-        pPlayer->admin_mode = 0;
-        EHANDLE::operator = ( p_admin_use, 0 );
     }
 }
 
@@ -277,32 +193,93 @@ void CBasePlayer::Admin_DoKick( void )
     }
 }
 
-void CBasePlayer::Admin_ListIPs( CBasePlayer const *pPlayer )
+void CBasePlayer::Admin_DoBan( CBasePlayer const *pPlayer )
 {
-    if( TeamFortress_GetNoPlayers() <= 1 )
+    p_admin_use = &pPlayer->admin_use;
+    if( EHANDLE::operator int( &pPlayer->admin_use ) )
     {
-        ClientPrint( pPlayer->pev, HUD_PRINTNOTIFY, "#Admin_gameempty" );
+        const char pStringBase = gpGlobals->pStringBase;
+        string_t netname = pPlayer->pev->netname;
+        UTIL_ClientPrintAll( HUD_PRINTNOTIFY, "#Admin_ban", &pStringBase[CBaseEntity *EHANDLE::operator->( p_admin_use )->pev->netname], 
+        &pStringBase[netname] );
+
+        char *TeamName = "SPECTATOR";
+
+        if( EHANDLE::operator->(p_admin_use)->team_no )
+        {
+            TeamName = GetTeamName( EHANDLE::operator->(p_admin_use)->team_no )
+        }
+
+        char *TeamName2 = "SPECTATOR";
+        const char *s = gpGlobals->pStringBase;
+
+        if( pPlayer->team_no )
+            TeamName2 = GetTeamName( pPlayer->team_no );
+        
+        UTIL_LogPrintf( "\"%s<%i><%s><%s>\" triggered \"Admin_Ban\" against \"%s<%i><%s><%s>\"\n", 
+        &gpGlobals->pStringBase[pPlayer->pev->netname],
+        g_engfuncs.pfnGetPlayerUserId( pPlayer->pev->pContiningEntity ),
+        g_engfuncs.pfnGetPlayerAuthId( pPlayer->pev->pContiningEntity ),
+        TeamName2,
+        &s[EHANDLE::operator->(p_admin_use)->pev->netname],
+        g_engfuncs.pfnGetPlayerUserId( EHANDLE::operator->(p_admin_use)->pev->pContiningEntity ),
+        v18,
+        TeamName );
+
+        BanPlayer( EHANDLE::operator CBaseEntity *(p_admin_use) );
+        pPlayer->admin_mode = 0;
+        EHANDLE::operator = ( p_admin_use, 0 );
     }
-    else
+}
+
+void Admin_CeaseFire( void )
+{
+    bool cease_fire;
+
+    if( cease_fire )
     {
-        int playerIndex;
+        cease_fire = false;
+        UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "#Game_resumefire" ) );
+        UTIL_LogPrintf( "World triggered \"Resume_Fire \"\n" );
 
         if( gpGlobals->maxClients > 0 )
         {
+            int playerIndex;
             do
             {
                 CBasePlayer *pIndex = UTIL_PlayerByIndex( playerIndex );
                 if( pIndex )
                 {
-                    ClientPrint( pPlayer->pev, HUD_PRINTNOTIFY, "#Admin_listip", 
-                    &gpGlobals->pStringBase[UTIL_PlayerByIndex( playerIndex )->pev->netname],
-                    &gpGlobals->pStringBase[UTIL_PlayerByIndex( playerIndex )->ip] );
-                ++playerIndex;
+                    pIndex->pev->iuser4 = 0;
+                    pIndex->tfstate &= ~0x10000u;
+                    pIndex->immune_to_check = gpGlobals->time + 10.0;
+                    CBasePlayer::TeamFortress_SetSpeed( pIndex );
                 }
-            }
-            while( gpGlobals->maxClients >= playerIndex );
+                ++playerIndex;
+            } while ( gpGlobals->maxclients >= playerIndex );
+            
         }
-        ClientPrint( pPlayer->pev, HUD_PRINTNOTIFY, "#Admin_endlist" );
+    }
+    else
+    {
+        cease_fire = true;
+        UTIL_ClientPrintAll( HUD_PRINTNOTIFY, UTIL_VarArgs( "#Admin_ceasefire" ) );
+        if( gpGlobals->maxClients > 1 )
+        {
+            int playerIndex2;
+            do
+            {
+                CBasePlayer *pIndex2 = UTIL_PlayerByIndex( playerIndex2 );
+                if( gpGlobals->maxClients > 0 )
+                {
+                    pIndex2->pev->iuser4 = 0;
+                    pIndex2->tfstate &= ~0x10000u;
+                    pIndex2->immune_to_check = gpGlobals->time + 10.0;
+                    CBasePlayer::TeamFortress_SetSpeed( pIndex2 );
+                }
+            } while ( gpGlobals->maxclients >= playerIndex2 );
+            
+        }
     }
 }
 
@@ -357,5 +334,28 @@ void KickPlayer( CBaseEntity *pTarget )
     if( g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity != -1 ) )
     {
         g_engfuncs.pfnServerCommand( UTIL_VarArgs( "kick # %d\n", g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity ) );
+    }
+}
+
+void BanPlayer( CBaseEntity *pTarget )
+{
+    g_engfuncs.pfnServerCommand( UTIL_VarArgs( "banid 30 %s kick\n", g_engfuncs.pfnGetPlayerAuthId( pTarget->pev->pContainingEntity ) ) );
+    g_engfuncs.pfnServerCommand( UTIL_VarArgs( "addip 30 %s\n", &gpGlobals->pStringBase[pTarget->ip] ) );
+    if( g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity ) != -1 )
+    {
+        g_engfuncs.pfnServerCommand( UTIL_VarArgs( "kick # %d\n", g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity ) ) );
+    }
+}
+
+void CBasePlayer::Admin_Changelevel( CBasePlayer const *pPlayer )
+{
+    const char *mapname;
+    char sz[256];
+
+    if( g_engfuncs.pnfCmd_Argc() == 2 )
+    {
+        mapname = g_engfuncs.pnfCmd_Argv();
+        sprintf( sz, "changelevel %s\n", mapname);
+        g_engfuncs.pfnServerCommand( sz );
     }
 }
