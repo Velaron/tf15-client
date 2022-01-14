@@ -183,6 +183,8 @@ public:
 	CBasePlayerItem *m_pClientActiveItem;  // client version of the active item
 	CBasePlayerItem *m_pLastItem;
 
+
+
 	// shared ammo slots
 	int	m_rgAmmo[MAX_AMMO_SLOTS];
 	int	m_rgAmmoLast[MAX_AMMO_SLOTS];
@@ -314,6 +316,14 @@ public:
 	void TeamFortress_SetSpeed( void );
 	void TeamFortress_SetSkin( void );
 	BOOL EngineerUse( CBasePlayer *pPlayer );
+	void AdminAccess( char *pPassword );
+	void Admin_ListIPs( void );
+	void Admin_CycleDeal( void );
+	void Admin_DoKick( void );
+	void Admin_DoBan( void );
+	void CheckAutoKick( void );
+	void Admin_Changelevel( void );
+	void Admin_CountPlayers( void );
 
 	void TabulateAmmo( void );
 
