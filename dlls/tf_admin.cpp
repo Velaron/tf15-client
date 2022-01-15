@@ -96,8 +96,8 @@ void CBasePlayer::Admin_ListIPs( void )
 				if ( pIndex )
 				{
 					ClientPrint( pev, HUD_PRINTNOTIFY, "#Admin_listip",
-					             &gpGlobals->pStringBase[UTIL_PlayerByIndex( playerIndex )->pev->netname],
-					             &gpGlobals->pStringBase[UTIL_PlayerByIndex( playerIndex )->ip] );
+					&gpGlobals->pStringBase[UTIL_PlayerByIndex( playerIndex )->pev->netname],
+					&gpGlobals->pStringBase[UTIL_PlayerByIndex( playerIndex )->ip] );
 					++playerIndex;
 				}
 			} while ( gpGlobals->maxClients >= playerIndex );
@@ -145,7 +145,7 @@ void CBasePlayer::Admin_CycleDeal( void )
 			}
 			admin_mode = 1;
 			ClientPrint( pev, HUD_PRINTNOTIFY, "#Admin_kickban", STRING( admin_use->pev->netname ),
-			             STRING( admin_use->ip ) );
+			STRING( admin_use->ip ) );
 		}
 	}
 }
@@ -156,7 +156,7 @@ void CBasePlayer::Admin_DoKick( void )
 	{
 		string_t netname = pev->netname;
 		UTIL_ClientPrintAll( HUD_PRINTNOTIFY, "#Admin_kick", STRING( admin_use->pev->netname ),
-		                     STRING( netname ) );
+		STRING( netname ) );
 
 		char *TeamName = "SPECTATOR";
 
@@ -171,21 +171,20 @@ void CBasePlayer::Admin_DoKick( void )
 			TeamName2 = GetTeamName( team_no );
 
 		UTIL_LogPrintf( "\"%s<%i><%s><%s>\" triggered \"Admin_Kick\" against \"%s<%i><%s><%s>\"\n",
-		                STRING( pev->netname ),
-		                GETPLAYERUSERID( pev->pContainingEntity ),
-		                GETPLAYERAUTHID( pev->pContainingEntity ),
-		                TeamName2,
-		                STRING(admin_use->pev->netname),
-		                g_engfuncs.pfnGetPlayerUserId( ENT( admin_use->pev ) ),
-		                GETPLAYERAUTHID( ENT( admin_use->pev ) ),
-		                TeamName );
+		STRING( pev->netname ),
+		GETPLAYERUSERID( pev->pContainingEntity ),
+		GETPLAYERAUTHID( pev->pContainingEntity ),
+		TeamName2,
+		STRING(admin_use->pev->netname),
+		GETPLAYERUSERID( ENT( admin_use->pev ) ),
+		GETPLAYERAUTHID( ENT( admin_use->pev ) ),
+		TeamName );
 
-		if ( g_engfuncs.pfnGetPlayerUserId( admin_use->pev->pContainingEntity ) != -1 )
+		if ( GETPLAYERUSERID( admin_use->pev->pContainingEntity ) != -1 )
 		{
-			g_engfuncs.pfnServerCommand( UTIL_VarArgs( "kick # %d\n",
-			                                           g_engfuncs.pfnGetPlayerUserId( admin_use->pev->pContainingEntity ) ) );
+			SERVER_COMMAND( UTIL_VarArgs( "kick # %d\n",
+			GETPLAYERUSERID( admin_use->pev->pContainingEntity ) ) );
 		}
-
 		admin_mode = 0;
 		admin_use = 0;
 	}
@@ -197,7 +196,7 @@ void CBasePlayer::Admin_DoBan( void )
 	{
 		string_t netname = pev->netname;
 		UTIL_ClientPrintAll( HUD_PRINTNOTIFY, "#Admin_kick", STRING( admin_use->pev->netname ),
-		                     STRING( netname ) );
+		STRING( netname ) );
 
 		char *TeamName = "SPECTATOR";
 
@@ -220,14 +219,14 @@ void CBasePlayer::Admin_DoBan( void )
 			TeamName2 = GetTeamName( team_no );
 
 		UTIL_LogPrintf( "\"%s<%i><%s><%s>\" triggered \"Admin_Ban\" against \"%s<%i><%s><%s>\"\n",
-		                STRING(pev->netname),
-		               	GETPLAYERUSERID( pev->pContainingEntity ),
-		                GETPLAYERAUTHID( pev->pContainingEntity ),
-		                TeamName2,
-		                STRING(admin_use->pev->netname),
-		                g_engfuncs.pfnGetPlayerUserId( ENT( admin_use->pev ) ),
-		                GETPLAYERAUTHID( ENT( admin_use->pev ) ),
-		                TeamName );
+		STRING(pev->netname),
+		GETPLAYERUSERID( pev->pContainingEntity ),
+		GETPLAYERAUTHID( pev->pContainingEntity ),
+		TeamName2,
+		STRING(admin_use->pev->netname),
+		GETPLAYERUSERID( ENT( admin_use->pev ) ),
+		GETPLAYERAUTHID( ENT( admin_use->pev ) ),
+		TeamName );
 
 		BanPlayer( admin_use );
 		admin_mode = 0;
@@ -326,29 +325,29 @@ void CBasePlayer::CheckAutoKick( void )
 		if ( team_no )
 			TeamName = GetTeamName( team_no );
 		UTIL_LogPrintf( "\"<-1><><>\" triggered \"Auto_Kick_For_Tk\" against \"%s<%i><%s><%s>\"\n",
-		                STRING(pev->netname),
-		                g_engfuncs.pfnGetPlayerUserId( pev->pContainingEntity ),
-		                g_engfuncs.pfnGetPlayerAuthId( pev->pContainingEntity ),
-		                TeamName );
+		STRING(pev->netname),
+		GETPLAYERUSERID( pev->pContainingEntity ),
+		GETPLAYERAUTHID( pev->pContainingEntity ),
+		TeamName );
 		BanPlayer( this );
 	}
 }
 
 void KickPlayer( CBaseEntity *pTarget )
 {
-	if ( g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity )!= -1 )
+	if ( GETPLAYERUSERID( pTarget->pev->pContainingEntity )!= -1 )
 	{
-		g_engfuncs.pfnServerCommand( UTIL_VarArgs( "kick # %d\n", g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity ) ) );
+		SERVER_COMMAND( UTIL_VarArgs( "kick # %d\n", GETPLAYERUSERID( pTarget->pev->pContainingEntity ) ) );
 	}
 }
 
 void BanPlayer( CBaseEntity *pTarget )
 {
-	g_engfuncs.pfnServerCommand( UTIL_VarArgs( "banid 30 %s kick\n", g_engfuncs.pfnGetPlayerAuthId( pTarget->pev->pContainingEntity ) ) );
-	g_engfuncs.pfnServerCommand( UTIL_VarArgs( "addip 30 %s\n", &gpGlobals->pStringBase[pTarget->ip] ) );
-	if ( g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity ) != -1 )
+	SERVER_COMMAND( UTIL_VarArgs( "banid 30 %s kick\n", GETPLAYERAUTHID( pTarget->pev->pContainingEntity ) ) );
+	SERVER_COMMAND( UTIL_VarArgs( "addip 30 %s\n", &gpGlobals->pStringBase[pTarget->ip] ) );
+	if ( GETPLAYERUSERID( pTarget->pev->pContainingEntity ) != -1 )
 	{
-		g_engfuncs.pfnServerCommand( UTIL_VarArgs( "kick # %d\n", g_engfuncs.pfnGetPlayerUserId( pTarget->pev->pContainingEntity ) ) );
+		SERVER_COMMAND( UTIL_VarArgs( "kick # %d\n", GETPLAYERUSERID( pTarget->pev->pContainingEntity ) ) );
 	}
 }
 
@@ -361,6 +360,6 @@ void CBasePlayer::Admin_Changelevel( void )
 	{
 		mapname = CMD_ARGV( 1 );
 		sprintf( sz, "changelevel %s\n", mapname );
-		g_engfuncs.pfnServerCommand( sz );
+		SERVER_COMMAND( sz );
 	}
 }
