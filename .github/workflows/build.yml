@@ -6,16 +6,21 @@ jobs:
     name: Android
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout sources
+        uses: actions/checkout@v2
         with:
           submodules: recursive
-      - uses: actions/setup-java@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
         with:
           java-version: 11
-      - uses: android-actions/setup-android@v2
-      - run: ./gradlew assembleDebug
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - name: Build
+        run: ./gradlew assembleDebug
         working-directory: android
-      - uses: actions/upload-artifact@v2
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
         with:
           name: Android
           path: android/app/build/outputs/apk/debug/app-debug.apk
@@ -23,14 +28,19 @@ jobs:
     name: Windows
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout sources
+        uses: actions/checkout@v2
         with:
           submodules: recursive
-      - uses: ilammy/msvc-dev-cmd@v1
-      - run: cmake -A Win32 -S . -B build
-      - run: cmake --build . --config Release
+      - name: Setup Visual Studio
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Configure project
+        run: cmake -A Win32 -S . -B build
+      - name: Build
+        run: cmake --build . --config Release
         working-directory: build
-      - uses: actions/upload-artifact@v2
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
         with:
           name: Windows
           path: |
@@ -40,20 +50,25 @@ jobs:
     name: Linux
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout sources
+        uses: actions/checkout@v2
         with:
           submodules: recursive
-      - run: |
+      - name: Install dependencies
+        run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install gcc-multilib g++-multilib cmake ninja-build libfontconfig-dev:i386
-      - run: |
+      - name: Configure project
+        run: |
           export CC="gcc -m32"
           export CXX="g++ -m32"
           cmake -S . -B build -G Ninja
-      - run: cmake --build . --config Release
+      - name: Build
+        run: cmake --build . --config Release
         working-directory: build
-      - uses: actions/upload-artifact@v2
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
         with:
           name: Linux
           path: |
