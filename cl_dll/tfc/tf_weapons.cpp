@@ -803,7 +803,7 @@ void HUD_SetLastOrg( void )
 
 BOOL HUD_SpotActive( void )
 {
-	return g_Spot.pev->effects >= 0;
+	return !( g_Spot.pev->effects & EF_NODRAW );
 }
 
 /*

@@ -229,7 +229,6 @@ void CTFSniperRifle::PrimaryAttack( void )
 	m_flNextPrimaryAttack = GetNextAttackDelay( 1.5f );
 }
 
-// Velaron: TODO
 void CTFSniperRifle::ItemPostFrame( void )
 {
 	ItemInfo info;
@@ -238,13 +237,34 @@ void CTFSniperRifle::ItemPostFrame( void )
 
 	if ( ( m_pPlayer->pev->button & IN_ATTACK2 ) && ( m_flNextSecondaryAttack <= 0.0f ) )
 	{
-		if ( pszAmmo2() && !m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()] )
+		if ( info.pszAmmo2 && !m_pPlayer->m_rgAmmo[SecondaryAmmoIndex()] )
 		{
 			m_fFireOnEmpty = TRUE;
 		}
 
 		SecondaryAttack();
 		m_pPlayer->pev->button &= ~IN_ATTACK2;
+	}
+	else if ( ( m_pPlayer->m_afButtonReleased & IN_ATTACK ) && m_flNextPrimaryAttack <= 0.0f )
+	{
+		if ( m_pPlayer->tfstate & TFSTATE_AIMING )
+		{
+			m_pPlayer->tfstate &= ~TFSTATE_AIMING;
+			m_pPlayer->TeamFortress_SetSpeed();
+
+			if ( m_pPlayer->pev->flags & FL_ONGROUND )
+				PrimaryAttack();
+			else
+				ClientPrint( m_pPlayer->pev, HUD_PRINTCENTER, "#Sniper_cantfire" );
+
+			m_iSpotActive = FALSE;
+
+			if ( m_pSpot )
+				m_pSpot->Killed( NULL, NULL, GIB_NEVER );
+
+			m_pSpot = NULL;
+			m_fAimedDamage = 0.0f;
+		}
 	}
 	else if ( ( m_pPlayer->pev->button & IN_ATTACK ) && ( m_flNextPrimaryAttack <= 0.0f ) )
 	{
@@ -255,6 +275,7 @@ void CTFSniperRifle::ItemPostFrame( void )
 			if ( m_fAimedDamage < 400.0f )
 			{
 				m_fAimedDamage -= m_fNextAimBonus * 50.0f;
+				m_fNextAimBonus = 0.0f;
 			}
 
 			UpdateSpot();
@@ -270,36 +291,13 @@ void CTFSniperRifle::ItemPostFrame( void )
 			m_flTimeWeaponIdle = 1000.0f;
 		}
 	}
-	else if ( ( m_pPlayer->m_afButtonReleased & IN_ATTACK ) && ( m_flNextPrimaryAttack <= 0.0f ) && ( m_pPlayer->tfstate & TFSTATE_AIMING ) )
-	{
-		m_pPlayer->tfstate &= ~TFSTATE_AIMING;
-		m_pPlayer->TeamFortress_SetSpeed();
-
-		if ( m_pPlayer->pev->flags & FL_ONGROUND )
-		{
-			PrimaryAttack();
-		}
-		else
-		{
-			ClientPrint( m_pPlayer->pev, HUD_PRINTCENTER, "#Sniper_cantfire" );
-		}
-
-		m_iSpotActive = FALSE;
-		m_pSpot = NULL;
-		m_fAimedDamage = 0.0f;
-	}
 	else if ( !( m_pPlayer->pev->button & ( IN_ATTACK | IN_ATTACK2 ) ) )
 	{
 		m_fFireOnEmpty = FALSE;
 
-		if ( IsUseable() && !m_iClip && !( info.iFlags & ITEM_FLAG_NOAUTORELOAD ) && m_flNextPrimaryAttack < 0.0f )
+		if ( !m_iClip && !( info.iFlags & ITEM_FLAG_NOAUTORELOAD ) && m_flNextPrimaryAttack < 0.0f )
 		{
 			Reload();
-			return;
-		}
-		else if ( !( info.iFlags & ITEM_FLAG_NOAUTOSWITCHEMPTY ) && UTIL_GetNextBestWeapon( m_pPlayer, this ) )
-		{
-			m_flNextPrimaryAttack = GetNextAttackDelay( 0.3f );
 			return;
 		}
 
