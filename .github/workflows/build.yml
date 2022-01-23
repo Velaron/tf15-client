@@ -89,7 +89,7 @@ jobs:
           zip -r tf15-client_win32.zip tfc/
           rm -r tfc
           mkdir -p tfc/cl_dlls
-          mv Linux/*/*/*.so tfc/cl_dlls
+          mv Linux/*/*.so tfc/cl_dlls
           tar -czvf tf15-client_linux.tar.gz tfc/
       - name: Remove old release
         uses: dev-drprasad/delete-tag-and-release@v0.2.0
