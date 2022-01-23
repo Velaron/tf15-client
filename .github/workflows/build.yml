@@ -98,16 +98,11 @@ jobs:
           tag_name: continuous
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Update tag
-        uses: richardsimko/update-tag@v1
-        with:
-          tag_name: continuous
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload new release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file_glob: true
           file: tf15-client*
           tag: continuous
           overwrite: true
