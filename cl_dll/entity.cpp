@@ -21,7 +21,7 @@
 
 #ifdef USE_PARTICLEMAN
 #include "particleman.h"
-extern IParticleMan* g_pParticleMan;
+extern IParticleMan *g_pParticleMan;
 #endif
 
 void Game_AddObjects( void );
@@ -319,7 +319,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 
 	gEngfuncs.GetViewAngles( (float *)vAngles );
 
-#ifdef USE_PARTICLEMAN	
+#ifdef USE_PARTICLEMAN
 	if ( g_pParticleMan )
 		g_pParticleMan->SetVariables( cl_gravity, vAngles );
 #endif

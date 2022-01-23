@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose: New version of the slider bar
 //
@@ -16,40 +16,43 @@ using namespace vgui;
 
 namespace
 {
-	class FooDefaultSliderSignal : public InputSignal
+class FooDefaultSliderSignal : public InputSignal
+{
+private:
+	Slider2 *_slider;
+
+public:
+	FooDefaultSliderSignal( Slider2 *slider )
 	{
-	private:
-		Slider2 *_slider;
-	public:
-		FooDefaultSliderSignal( Slider2 *slider )
-		{
-			_slider = slider;
-		}
-	public:
-		void cursorMoved( int x, int y, Panel *panel )
-		{
-			_slider->privateCursorMoved( x, y, panel );
-		}
-		void cursorEntered( Panel *panel ) {}
-		void cursorExited( Panel *panel ) {}
-		void mouseDoublePressed( MouseCode code, Panel *panel ) {}
-		void mousePressed( MouseCode code, Panel *panel )
-		{
-			_slider->privateMousePressed( code, panel );
-		}
-		void mouseReleased( MouseCode code, Panel *panel )
-		{
-			_slider->privateMouseReleased( code, panel );
-		}
-		void mouseWheeled( int delta, Panel *panel ) {}
-		void keyPressed( KeyCode code, Panel *panel ) {}
-		void keyTyped( KeyCode code, Panel *panel ) {}
-		void keyReleased( KeyCode code, Panel *panel ) {}
-		void keyFocusTicked( Panel *panel ) {}
-	};
+		_slider = slider;
+	}
+
+public:
+	void cursorMoved( int x, int y, Panel *panel )
+	{
+		_slider->privateCursorMoved( x, y, panel );
+	}
+	void cursorEntered( Panel *panel ) { }
+	void cursorExited( Panel *panel ) { }
+	void mouseDoublePressed( MouseCode code, Panel *panel ) { }
+	void mousePressed( MouseCode code, Panel *panel )
+	{
+		_slider->privateMousePressed( code, panel );
+	}
+	void mouseReleased( MouseCode code, Panel *panel )
+	{
+		_slider->privateMouseReleased( code, panel );
+	}
+	void mouseWheeled( int delta, Panel *panel ) { }
+	void keyPressed( KeyCode code, Panel *panel ) { }
+	void keyTyped( KeyCode code, Panel *panel ) { }
+	void keyReleased( KeyCode code, Panel *panel ) { }
+	void keyFocusTicked( Panel *panel ) { }
+};
 }
 
-Slider2::Slider2( int x, int y, int wide, int tall, bool vertical ) : Panel( x, y, wide, tall )
+Slider2::Slider2( int x, int y, int wide, int tall, bool vertical ) :
+    Panel( x, y, wide, tall )
 {
 	_vertical = vertical;
 	_dragging = false;
@@ -277,9 +280,9 @@ void Slider2::paintBackground()
 
 		// slider border
 		drawSetColor( 60, 60, 60, 0 );
-		drawFilledRect( 0, _nobPos[0], wide, _nobPos[0] + 1 );      // top
-		drawFilledRect( 0, _nobPos[1], wide, _nobPos[1] + 1 );      // bottom
-		drawFilledRect( 0, _nobPos[0] + 1, 1, _nobPos[1] );         // left
+		drawFilledRect( 0, _nobPos[0], wide, _nobPos[0] + 1 );        // top
+		drawFilledRect( 0, _nobPos[1], wide, _nobPos[1] + 1 );        // bottom
+		drawFilledRect( 0, _nobPos[0] + 1, 1, _nobPos[1] );           // left
 		drawFilledRect( wide - 1, _nobPos[0] + 1, wide, _nobPos[1] ); // right
 	}
 	else
@@ -405,7 +408,6 @@ void Slider2::privateMousePressed( MouseCode code, Panel *panel )
 			_dragStartPos[1] = y;
 		}
 	}
-
 }
 
 void Slider2::privateMouseReleased( MouseCode code, Panel *panel )

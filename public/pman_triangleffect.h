@@ -1,9 +1,5 @@
-#ifndef TRIANGLEEFFECT_H__
-#define TRIANGLEEFFECT_H__
-
-#ifdef _WIN32
-#pragma once
-#endif
+#ifndef __PMAN_TRIANGLEFFECT_H__
+#define __PMAN_TRIANGLEFFECT_H__
 
 #define TRI_COLLIDEWORLD 0x00000020
 #define TRI_COLLIDEALL   0x00001000 // will collide with world and slideboxes
@@ -202,4 +198,4 @@ protected:
 	}
 };
 
-#endif //TRIANGLEEFFECT_H__
+#endif // __PMAN_TRIANGLEFFECT_H__

@@ -36,7 +36,7 @@ int CHudAmmoSecondary::Init( void )
 	m_HUD_ammoicon = 0;
 
 	for ( int i = 0; i < MAX_SEC_AMMO_VALUES; i++ )
-		m_iAmmoAmounts[i] = -1;  // -1 means don't draw this value
+		m_iAmmoAmounts[i] = -1; // -1 means don't draw this value
 
 	Reset();
 
@@ -63,12 +63,12 @@ int CHudAmmoSecondary::Draw( float flTime )
 	UnpackRGB( r, g, b, RGB_YELLOWISH );
 	a = (int)Q_max( MIN_ALPHA, m_fFade );
 	if ( m_fFade > 0 )
-		m_fFade -= ( (float)gHUD.m_flTimeDelta * 20.0f );  // slowly lower alpha to fade out icons
+		m_fFade -= ( (float)gHUD.m_flTimeDelta * 20.0f ); // slowly lower alpha to fade out icons
 	ScaleColors( r, g, b, a );
 
 	AmmoWidth = gHUD.GetSpriteRect( gHUD.m_HUD_number_0 ).right - gHUD.GetSpriteRect( gHUD.m_HUD_number_0 ).left;
 
-	y = ScreenHeight - ( gHUD.m_iFontHeight * 4 );  // this is one font height higher than the weapon ammo values
+	y = ScreenHeight - ( gHUD.m_iFontHeight * 4 ); // this is one font height higher than the weapon ammo values
 	x = ScreenWidth - AmmoWidth;
 
 	if ( m_HUD_ammoicon )

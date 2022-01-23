@@ -1,6 +1,6 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -31,10 +31,10 @@
 #include "tf_defs.h"
 
 // team colors for old TFC models
-#define TEAM1_COLOR		150
-#define TEAM2_COLOR		250
-#define TEAM3_COLOR		45
-#define TEAM4_COLOR		100
+#define TEAM1_COLOR 150
+#define TEAM2_COLOR 250
+#define TEAM3_COLOR 45
+#define TEAM4_COLOR 100
 
 // Global engine <-> studio model rendering code interface
 engine_studio_api_t IEngineStudio;
@@ -60,10 +60,10 @@ void CStudioModelRenderer::Init( void )
 	IEngineStudio.GetModelCounters( &m_pStudioModelCount, &m_pModelsDrawn );
 
 	// Get pointers to engine data structures
-	m_pbonetransform = ( float( * )[MAXSTUDIOBONES][3][4] )IEngineStudio.StudioGetBoneTransform();
-	m_plighttransform = ( float( * )[MAXSTUDIOBONES][3][4] )IEngineStudio.StudioGetLightTransform();
-	m_paliastransform = ( float( * )[3][4] )IEngineStudio.StudioGetAliasTransform();
-	m_protationmatrix = ( float( * )[3][4] )IEngineStudio.StudioGetRotationMatrix();
+	m_pbonetransform = (float( * )[MAXSTUDIOBONES][3][4])IEngineStudio.StudioGetBoneTransform();
+	m_plighttransform = (float( * )[MAXSTUDIOBONES][3][4])IEngineStudio.StudioGetLightTransform();
+	m_paliastransform = (float( * )[3][4])IEngineStudio.StudioGetAliasTransform();
+	m_protationmatrix = (float( * )[3][4])IEngineStudio.StudioGetRotationMatrix();
 }
 
 /*
@@ -141,8 +141,10 @@ void CStudioModelRenderer::StudioCalcBoneAdj( float dadt, float *adj, const byte
 			else
 			{
 				value = ( pcontroller1[i] * dadt + pcontroller2[i] * ( 1.0f - dadt ) ) / 255.0f;
-				if ( value < 0.0f ) value = 0.0f;
-				if ( value > 1.0f ) value = 1.0f;
+				if ( value < 0.0f )
+					value = 0.0f;
+				if ( value > 1.0f )
+					value = 1.0f;
 				value = ( 1.0f - value ) * pbonecontroller[j].start + value * pbonecontroller[j].end;
 			}
 			// Con_DPrintf( "%d %d %f : %f\n", m_pCurrentEntity->curstate.controller[j], m_pCurrentEntity->latched.prevcontroller[j], value, dadt );
@@ -150,7 +152,8 @@ void CStudioModelRenderer::StudioCalcBoneAdj( float dadt, float *adj, const byte
 		else
 		{
 			value = mouthopen / 64.0f;
-			if ( value > 1.0f ) value = 1.0f;
+			if ( value > 1.0f )
+				value = 1.0f;
 			value = ( 1.0f - value ) * pbonecontroller[j].start + value * pbonecontroller[j].end;
 			// Con_DPrintf( "%d %f\n", mouthopen, value );
 		}
@@ -169,7 +172,6 @@ void CStudioModelRenderer::StudioCalcBoneAdj( float dadt, float *adj, const byte
 		}
 	}
 }
-
 
 /*
 ====================
@@ -458,8 +460,7 @@ void CStudioModelRenderer::StudioSetUpTransform( int trivial_accept )
 		// NOTE:  Because we need to interpolate multiplayer characters, the interpolation time limit
 		//  was increased to 1.0 s., which is 2x the max lag we are accounting for.
 
-		if ( ( m_clTime < m_pCurrentEntity->curstate.animtime + 1.0f ) &&
-			( m_pCurrentEntity->curstate.animtime != m_pCurrentEntity->latched.prevanimtime ) )
+		if ( ( m_clTime < m_pCurrentEntity->curstate.animtime + 1.0f ) && ( m_pCurrentEntity->curstate.animtime != m_pCurrentEntity->latched.prevanimtime ) )
 		{
 			f = ( m_clTime - m_pCurrentEntity->curstate.animtime ) / ( m_pCurrentEntity->curstate.animtime - m_pCurrentEntity->latched.prevanimtime );
 			//Con_DPrintf( "%4.2f %.2f %.2f\n", f, m_pCurrentEntity->curstate.animtime, m_clTime );
@@ -483,7 +484,7 @@ void CStudioModelRenderer::StudioSetUpTransform( int trivial_accept )
 		// NOTE:  Because multiplayer lag can be relatively large, we don't want to cap
 		//  f at 1.5 anymore.
 		//if( f > -1.0f && f < 1.5f ) {}
-			//Con_DPrintf( "%.0f %.0f\n",m_pCurrentEntity->msg_angles[0][YAW], m_pCurrentEntity->msg_angles[1][YAW] );
+		//Con_DPrintf( "%.0f %.0f\n",m_pCurrentEntity->msg_angles[0][YAW], m_pCurrentEntity->msg_angles[1][YAW] );
 		for ( i = 0; i < 3; i++ )
 		{
 			float ang1, ang2;
@@ -591,7 +592,7 @@ void CStudioModelRenderer::StudioCalcRotations( float pos[][3], vec4_t *q, mstud
 
 	if ( f > pseqdesc->numframes - 1 )
 	{
-		f = 0.0f;	// bah, fix this bug with changing sequences too fast
+		f = 0.0f; // bah, fix this bug with changing sequences too fast
 	}
 	// BUG ( somewhere else ) but this code should validate this data.
 	// This could cause a crash if the frame # is negative, so we'll go ahead
@@ -689,7 +690,7 @@ void CStudioModelRenderer::StudioFxTransform( cl_entity_t *ent, float transform[
 		float scale;
 
 		scale = 1.0f + ( m_clTime - ent->curstate.animtime ) * 10.0f;
-		if ( scale > 2 )	// Don't blow up more than 200%
+		if ( scale > 2 ) // Don't blow up more than 200%
 			scale = 2;
 		transform[0][1] *= scale;
 		transform[1][1] *= scale;
@@ -833,9 +834,7 @@ void CStudioModelRenderer::StudioSetupBones( void )
 		}
 	}
 
-	if ( m_fDoInterp && m_pCurrentEntity->latched.sequencetime &&
-		( m_pCurrentEntity->latched.sequencetime + 0.2 > m_clTime ) &&
-		( m_pCurrentEntity->latched.prevsequence < m_pStudioHeader->numseq ) )
+	if ( m_fDoInterp && m_pCurrentEntity->latched.sequencetime && ( m_pCurrentEntity->latched.sequencetime + 0.2 > m_clTime ) && ( m_pCurrentEntity->latched.prevsequence < m_pStudioHeader->numseq ) )
 	{
 		// blend from last sequence
 		static float pos1b[MAXSTUDIOBONES][3];
@@ -884,8 +883,8 @@ void CStudioModelRenderer::StudioSetupBones( void )
 
 	// calc gait animation
 	if ( m_pPlayerInfo && m_pPlayerInfo->gaitsequence != 0 )
-	{ 
-		if (m_pPlayerInfo->gaitsequence >=  m_pStudioHeader->numseq) 
+	{
+		if ( m_pPlayerInfo->gaitsequence >= m_pStudioHeader->numseq )
 		{
 			m_pPlayerInfo->gaitsequence = 0;
 		}
@@ -903,11 +902,11 @@ void CStudioModelRenderer::StudioSetupBones( void )
 			{
 				copy = 0;
 			}
-			else if ( !strcmp( pbones[ pbones[i].parent ].name, "Bip01 Pelvis" ) )
+			else if ( !strcmp( pbones[pbones[i].parent].name, "Bip01 Pelvis" ) )
 			{
 				copy = 1;
 			}
-				
+
 			if ( copy )
 			{
 				memcpy( pos[i], pos2[i], sizeof( pos[i] ) );
@@ -1062,7 +1061,7 @@ void CStudioModelRenderer::StudioMergeBones( model_t *m_pSubModel )
 
 #include "pm_shared.h"
 const Vector &GetTeamColor( int team_no );
-#define IS_FIRSTPERSON_SPEC ( g_iUser1 == OBS_IN_EYE || (g_iUser1 && (gHUD.m_Spectator.m_pip->value == INSET_IN_EYE)) )
+#define IS_FIRSTPERSON_SPEC ( g_iUser1 == OBS_IN_EYE || ( g_iUser1 && ( gHUD.m_Spectator.m_pip->value == INSET_IN_EYE ) ) )
 
 int GetRemapColor( int iTeam, bool bTopColor )
 {
@@ -1244,7 +1243,7 @@ int CStudioModelRenderer::StudioDrawModel( int flags )
 
 				if ( pTarget )
 				{
-					// we also need to correct the m_nTopColor and m_nBottomColor for the 
+					// we also need to correct the m_nTopColor and m_nBottomColor for the
 					// view model here. this is separate from the glowshell stuff, but
 					// the same conditions need to be met (this is the view model and we're
 					// in first-person spectator mode)
@@ -1364,7 +1363,7 @@ void CStudioModelRenderer::StudioProcessGait( entity_state_t *pplayer )
 	mstudioseqdesc_t *pseqdesc;
 	float dt;
 	int iBlend;
-	float flYaw;	 // view direction relative to movement
+	float flYaw; // view direction relative to movement
 
 	if ( m_pCurrentEntity->curstate.sequence >= m_pStudioHeader->numseq )
 	{
@@ -1453,8 +1452,7 @@ void CStudioModelRenderer::StudioProcessGait( entity_state_t *pplayer )
 
 extern cvar_t *tfc_newmodels;
 
-const char *sNewClassModelFiles[] =
-{
+const char *sNewClassModelFiles[] = {
 	NULL,
 	"models/player/scout/scout.mdl",
 	"models/player/sniper/sniper.mdl",
@@ -1465,12 +1463,11 @@ const char *sNewClassModelFiles[] =
 	"models/player/pyro/pyro.mdl",
 	"models/player/spy/spy.mdl",
 	"models/player/engineer/engineer.mdl",
-	"models/player/scout/scout.mdl",	// PC_RANDOM
+	"models/player/scout/scout.mdl", // PC_RANDOM
 	"models/player/civilian/civilian.mdl",
 };
 
-const char *sOldClassModelFiles[] =
-{
+const char *sOldClassModelFiles[] = {
 	NULL,
 	"models/player/scout/scout2.mdl",
 	"models/player/sniper/sniper2.mdl",
@@ -1481,14 +1478,13 @@ const char *sOldClassModelFiles[] =
 	"models/player/pyro/pyro2.mdl",
 	"models/player/spy/spy2.mdl",
 	"models/player/engineer/engineer2.mdl",
-	"models/player/scout/scout2.mdl",	// PC_RANDOM
+	"models/player/scout/scout2.mdl", // PC_RANDOM
 	"models/player/civilian/civilian.mdl",
 };
 
 #define NUM_WEAPON_PMODELS 18
 
-const char *sNewWeaponPModels[] =
-{
+const char *sNewWeaponPModels[] = {
 	"models/p_9mmhandgun.mdl",
 	"models/p_crowbar.mdl",
 	"models/p_egon.mdl",
@@ -1509,8 +1505,7 @@ const char *sNewWeaponPModels[] =
 	"models/p_smallshotgun.mdl"
 };
 
-const char *sOldWeaponPModels[] =
-{
+const char *sOldWeaponPModels[] = {
 	"models/p_9mmhandgun2.mdl",
 	"models/p_crowbar2.mdl",
 	"models/p_egon2.mdl",
@@ -1530,7 +1525,6 @@ const char *sOldWeaponPModels[] =
 	"models/p_9mmhandgun2.mdl",
 	"models/p_shotgun2.mdl"
 };
-
 
 int CStudioModelRenderer::ReturnDiguisedClass( int iPlayerIndex )
 {

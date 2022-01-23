@@ -7,14 +7,14 @@
 extern cvar_t *sensitivity;
 extern cvar_t *in_joystick;
 
-extern kbutton_t	in_strafe;
-extern kbutton_t	in_mlook;
-extern kbutton_t	in_speed;
-extern kbutton_t	in_jlook;
-extern kbutton_t	in_forward;
-extern kbutton_t	in_back;
-extern kbutton_t	in_moveleft;
-extern kbutton_t	in_moveright;
+extern kbutton_t in_strafe;
+extern kbutton_t in_mlook;
+extern kbutton_t in_speed;
+extern kbutton_t in_jlook;
+extern kbutton_t in_forward;
+extern kbutton_t in_back;
+extern kbutton_t in_moveleft;
+extern kbutton_t in_moveright;
 
 extern cvar_t *m_pitch;
 extern cvar_t *m_yaw;
@@ -31,17 +31,16 @@ extern cvar_t *cl_pitchspeed;
 extern cvar_t *cl_movespeedkey;
 cvar_t *cl_laddermode;
 
+#define F 1U << 0 // Forward
+#define B 1U << 1 // Back
+#define L 1U << 2 // Left
+#define R 1U << 3 // Right
+#define T 1U << 4 // Forward stop
+#define S 1U << 5 // Side stop
 
-#define F 1U<<0	// Forward
-#define B 1U<<1	// Back
-#define L 1U<<2	// Left
-#define R 1U<<3	// Right
-#define T 1U<<4	// Forward stop
-#define S 1U<<5	// Side stop
-
-#define BUTTON_DOWN		1
-#define IMPULSE_DOWN	2
-#define IMPULSE_UP		4
+#define BUTTON_DOWN  1
+#define IMPULSE_DOWN 2
+#define IMPULSE_UP   4
 
 int CL_IsDead( void );
 extern Vector dead_viewangles;
@@ -196,7 +195,7 @@ void FWGSInput::IN_Move( float frametime, usercmd_t *cmd )
 	if ( viewangles[PITCH] < -cl_pitchup->value )
 		viewangles[PITCH] = -cl_pitchup->value;
 
-	// HACKHACK: change viewangles directly in viewcode, 
+	// HACKHACK: change viewangles directly in viewcode,
 	// so viewangles when player is dead will not be changed on server
 	if ( !CL_IsDead() )
 	{

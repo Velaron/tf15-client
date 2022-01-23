@@ -27,11 +27,11 @@
 #include <string.h>
 
 #ifndef M_PI
-#define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
+#define M_PI 3.14159265358979323846 // matches value in gcc v2 math.h
 #endif
 
 #ifndef M_PI_F
-#define M_PI_F		(float)M_PI
+#define M_PI_F (float)M_PI
 #endif
 extern vec3_t vec3_origin;
 
@@ -42,13 +42,13 @@ vec3_t vec3_origin;
 
 float Length( const float *v )
 {
-	int	i;
-	float	length;
+	int i;
+	float length;
 
 	length = 0.0f;
 	for ( i = 0; i < 3; i++ )
 		length += v[i] * v[i];
-	length = sqrt( length );		// FIXME
+	length = sqrt( length ); // FIXME
 
 	return length;
 }
@@ -87,7 +87,7 @@ float VectorNormalize( float *v )
 	float length, ilength;
 
 	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-	length = sqrt( length );		// FIXME
+	length = sqrt( length ); // FIXME
 
 	if ( length )
 	{

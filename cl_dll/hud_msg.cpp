@@ -23,7 +23,7 @@
 
 #ifdef USE_PARTICLEMAN
 #include "particleman.h"
-extern IParticleMan* g_pParticleMan;
+extern IParticleMan *g_pParticleMan;
 #endif
 
 #define MAX_CLIENTS 32

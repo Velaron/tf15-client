@@ -116,7 +116,7 @@ const char *CHudTextMessage::LookupString( const char *msg, int *msg_dest )
 		{
 			// check to see if titles.txt info overrides msg destination
 			// if clmsg->effect is less than 0, then clmsg->effect holds -1 * message_destination
-			if ( clmsg->effect < 0 )  // 
+			if ( clmsg->effect < 0 ) //
 				*msg_dest = -clmsg->effect;
 		}
 
@@ -164,7 +164,7 @@ int CHudTextMessage::MsgFunc_TextMsg( const char *pszName, int iSize, void *pbuf
 
 	int msg_dest = READ_BYTE();
 
-	#define MSG_BUF_SIZE 128
+#define MSG_BUF_SIZE 128
 	char szBuf[6][MSG_BUF_SIZE];
 
 	strncpy( szBuf[0], LookupString( READ_STRING(), &msg_dest ), MSG_BUF_SIZE - 1 );
@@ -190,7 +190,7 @@ int CHudTextMessage::MsgFunc_TextMsg( const char *pszName, int iSize, void *pbuf
 		CenterPrint( ConvertCRtoNL( psz ) );
 		break;
 	case HUD_PRINTNOTIFY:
-		psz[0] = 1;  // mark this message to go into the notify buffer
+		psz[0] = 1; // mark this message to go into the notify buffer
 		_snprintf( psz + 1, MSG_BUF_SIZE - 1, szBuf[0], szBuf[1], szBuf[2], szBuf[3], szBuf[4] );
 		ConsolePrint( ConvertCRtoNL( psz ) );
 		break;

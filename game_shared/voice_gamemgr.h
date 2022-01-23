@@ -1,13 +1,12 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#ifndef VOICE_GAMEMGR_H
-#define VOICE_GAMEMGR_H
-#pragma once
+#ifndef __VOICE_GAMEMGR_H__
+#define __VOICE_GAMEMGR_H__
 
 #include "voice_common.h"
 
@@ -17,7 +16,7 @@ class CBasePlayer;
 class IVoiceGameMgrHelper
 {
 public:
-	virtual ~IVoiceGameMgrHelper() {}
+	virtual ~IVoiceGameMgrHelper() { }
 
 	// Called each frame to determine which players are allowed to hear each other.	This overrides
 	// whatever squelch settings players have.
@@ -64,4 +63,4 @@ private:
 	int m_nMaxPlayers;
 	double m_UpdateInterval; // How long since the last update.
 };
-#endif // VOICE_GAMEMGR_H
+#endif // __VOICE_GAMEMGR_H__

@@ -1,18 +1,18 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#include"vgui_int.h"
-#include<VGUI_Label.h>
-#include<VGUI_BorderLayout.h>
-#include<VGUI_LineBorder.h>
-#include<VGUI_SurfaceBase.h>
-#include<VGUI_TextEntry.h>
-#include<VGUI_ActionSignal.h>
-#include<string.h>
+#include "vgui_int.h"
+#include <VGUI_Label.h>
+#include <VGUI_BorderLayout.h>
+#include <VGUI_LineBorder.h>
+#include <VGUI_SurfaceBase.h>
+#include <VGUI_TextEntry.h>
+#include <VGUI_ActionSignal.h>
+#include <string.h>
 #include "hud.h"
 #include "cl_util.h"
 #include "camera.h"
@@ -28,45 +28,49 @@
 namespace
 {
 
-	class TexturePanel : public Panel, public ActionSignal
+class TexturePanel : public Panel, public ActionSignal
+{
+private:
+	int _bindIndex;
+	TextEntry *_textEntry;
+
+public:
+	TexturePanel() :
+	    Panel( 0, 0, 256, 276 )
 	{
-	private:
-		int _bindIndex;
-		TextEntry *_textEntry;
-	public:
-		TexturePanel() : Panel( 0, 0, 256, 276 )
-		{
-			_bindIndex = 2700;
-			_textEntry = new TextEntry( "2700", 0, 0, 128, 20 );
-			_textEntry->setParent( this );
-			_textEntry->addActionSignal( this );
-		}
-	public:
-		virtual bool isWithin( int x, int y )
-		{
-			return _textEntry->isWithin( x, y );
-		}
-	public:
-		virtual void actionPerformed( Panel *panel )
-		{
-			char buf[256];
-			_textEntry->getText( 0, buf, 256 );
-			sscanf( buf, "%d", &_bindIndex );
-		}
-	protected:
-		virtual void paintBackground()
-		{
-			Panel::paintBackground();
+		_bindIndex = 2700;
+		_textEntry = new TextEntry( "2700", 0, 0, 128, 20 );
+		_textEntry->setParent( this );
+		_textEntry->addActionSignal( this );
+	}
 
-			int wide, tall;
-			getPaintSize( wide, tall );
+public:
+	virtual bool isWithin( int x, int y )
+	{
+		return _textEntry->isWithin( x, y );
+	}
 
-			drawSetColor( 0, 0, 255, 0 );
-			drawSetTexture( _bindIndex );
-			drawTexturedRect( 0, 19, 257, 257 );
-		}
+public:
+	virtual void actionPerformed( Panel *panel )
+	{
+		char buf[256];
+		_textEntry->getText( 0, buf, 256 );
+		sscanf( buf, "%d", &_bindIndex );
+	}
 
-	};
+protected:
+	virtual void paintBackground()
+	{
+		Panel::paintBackground();
+
+		int wide, tall;
+		getPaintSize( wide, tall );
+
+		drawSetColor( 0, 0, 255, 0 );
+		drawSetTexture( _bindIndex );
+		drawTexturedRect( 0, 19, 257, 257 );
+	}
+};
 
 }
 
@@ -90,14 +94,13 @@ void VGui_Startup()
 	//root->setBorder(new LineBorder());
 	root->setLayout( new BorderLayout( 0 ) );
 
-
 	//root->getSurfaceBase()->setEmulatedCursorVisible(true);
 
 	if ( gViewPort != NULL )
 	{
 		//		root->removeChild(gViewPort);
 
-				// free the memory
+		// free the memory
 		//		delete gViewPort;
 		//		gViewPort = NULL;
 
@@ -113,7 +116,6 @@ void VGui_Startup()
 	TexturePanel* texturePanel=new TexturePanel();
 	texturePanel->setParent(gViewPort);
 	*/
-
 }
 
 void VGui_Shutdown()
@@ -121,8 +123,3 @@ void VGui_Shutdown()
 	delete gViewPort;
 	gViewPort = NULL;
 }
-
-
-
-
-

@@ -1,51 +1,45 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#include"vgui_ConsolePanel.h"
-#include"hud.h"
-#include<VGUI_ActionSignal.h>
-#include<VGUI_TextGrid.h>
-#include<VGUI_TextEntry.h>
-#include<VGUI_EtchedBorder.h>
-#include<VGUI_LoweredBorder.h>
+#include "vgui_ConsolePanel.h"
+#include "hud.h"
+#include <VGUI_ActionSignal.h>
+#include <VGUI_TextGrid.h>
+#include <VGUI_TextEntry.h>
+#include <VGUI_EtchedBorder.h>
+#include <VGUI_LoweredBorder.h>
 
 using namespace vgui;
-
 
 namespace
 {
 
-	class Handler : public ActionSignal
+class Handler : public ActionSignal
+{
+private:
+	ConsolePanel *_consolePanel;
+
+public:
+	Handler( ConsolePanel *consolePanel )
 	{
-	private:
+		_consolePanel = consolePanel;
+	}
 
-		ConsolePanel *_consolePanel;
-
-	public:
-
-		Handler( ConsolePanel *consolePanel )
-		{
-			_consolePanel = consolePanel;
-		}
-
-	public:
-
-		virtual void actionPerformed( Panel *panel )
-		{
-			_consolePanel->doExecCommand();
-		}
-
-	};
+public:
+	virtual void actionPerformed( Panel *panel )
+	{
+		_consolePanel->doExecCommand();
+	}
+};
 
 }
 
-
-
-ConsolePanel::ConsolePanel( int x, int y, int wide, int tall ) : Panel( x, y, wide, tall )
+ConsolePanel::ConsolePanel( int x, int y, int wide, int tall ) :
+    Panel( x, y, wide, tall )
 {
 	setBorder( new EtchedBorder() );
 
@@ -94,8 +88,3 @@ void ConsolePanel::setSize( int wide, int tall )
 	_textGrid->setBounds( 5, 5, wide - 10, tall - 35 );
 	_textEntry->setBounds( 5, tall - 25, wide - 10, 20 );
 }
-
-
-
-
-

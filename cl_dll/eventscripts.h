@@ -1,20 +1,20 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
 // eventscripts.h
-#pragma once
-#if !defined ( EVENTSCRIPTSH )
-#define EVENTSCRIPTSH
+
+#ifndef __EVENTSCRIPTS_H__
+#define __EVENTSCRIPTS_H__
 
 // defaults for clientinfo messages
-#define	DEFAULT_VIEWHEIGHT	28
-#define VEC_DUCK_VIEW 12
+#define DEFAULT_VIEWHEIGHT 28
+#define VEC_DUCK_VIEW      12
 
-#define FTENT_FADEOUT			0x00000080
+#define FTENT_FADEOUT 0x00000080
 
 // Some of these are HL/TFC specific?
 void EV_EjectBrass( float *origin, float *velocity, float rotation, int model, int soundtype );
@@ -27,4 +27,5 @@ void EV_CreateTracer( float *start, float *end );
 struct cl_entity_s *GetEntity( int idx );
 struct cl_entity_s *GetViewEntity( void );
 void EV_MuzzleFlash( void );
-#endif // EVENTSCRIPTSH
+
+#endif // __EVENTSCRIPTS_H__

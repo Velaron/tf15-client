@@ -1,13 +1,12 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#pragma once
-#if !defined( HUD_IFACEH )
-#define HUD_IFACEH
+#ifndef __HUD_IFACE_H__
+#define __HUD_IFACE_H__
 
 #include "exportdef.h"
 // redefine
@@ -15,4 +14,5 @@
 #include "wrect.h"
 #include "../engine/cdll_int.h"
 extern cl_enginefunc_t gEngfuncs;
-#endif
+
+#endif // __HUD_IFACE_H__

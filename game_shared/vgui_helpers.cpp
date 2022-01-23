@@ -1,15 +1,13 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
 #include "vgui_helpers.h"
 
-
 using namespace vgui;
-
 
 void AlignPanel( Panel *pChild, Panel *pParent, int alignment )
 {
@@ -39,7 +37,3 @@ void AlignPanel( Panel *pChild, Panel *pParent, int alignment )
 	else if ( alignment == Label::a_center )
 		pChild->setPos( xCenter, yCenter );
 }
-
-
-
-

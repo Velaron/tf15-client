@@ -21,14 +21,14 @@
 #include "const.h"
 
 // up / down
-#define	PITCH	0
+#define PITCH 0
 // left / right
-#define	YAW	1
+#define YAW 1
 // fall over
-#define	ROLL	2 
+#define ROLL 2
 
 #ifdef _MSC_VER
-#pragma warning(disable : 4244)
+#pragma warning( disable : 4244 )
 #endif
 
 vec3_t vec3_origin = { 0, 0, 0 };
@@ -55,19 +55,19 @@ void AngleVectors( const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up 
 	sr = sin( angle );
 	cr = cos( angle );
 
-	if( forward )
+	if ( forward )
 	{
 		forward[0] = cp * cy;
 		forward[1] = cp * sy;
 		forward[2] = -sp;
 	}
-	if( right )
+	if ( right )
 	{
 		right[0] = ( -1 * sr * sp * cy + -1 * cr * -sy );
 		right[1] = ( -1 * sr * sp * sy + -1 * cr * cy );
 		right[2] = -1 * sr * cp;
 	}
-	if( up )
+	if ( up )
 	{
 		up[0] = ( cr * sp * cy + -sr * -sy );
 		up[1] = ( cr * sp * sy + -sr * cy );
@@ -79,7 +79,7 @@ void AngleVectorsTranspose( const vec3_t angles, vec3_t forward, vec3_t right, v
 {
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
-	
+
 	angle = angles[YAW] * ( M_PI_F * 2.0f / 360.0f );
 	sy = sin( angle );
 	cy = cos( angle );
@@ -90,19 +90,19 @@ void AngleVectorsTranspose( const vec3_t angles, vec3_t forward, vec3_t right, v
 	sr = sin( angle );
 	cr = cos( angle );
 
-	if( forward )
+	if ( forward )
 	{
 		forward[0] = cp * cy;
 		forward[1] = ( sr * sp * cy + cr * -sy );
 		forward[2] = ( cr * sp * cy + -sr * -sy );
 	}
-	if( right )
+	if ( right )
 	{
 		right[0] = cp * sy;
 		right[1] = ( sr * sp * sy + cr * cy );
 		right[2] = ( cr * sp * sy + -sr * cy );
 	}
-	if( up )
+	if ( up )
 	{
 		up[0] = -sp;
 		up[1] = sr * cp;
@@ -110,7 +110,7 @@ void AngleVectorsTranspose( const vec3_t angles, vec3_t forward, vec3_t right, v
 	}
 }
 
-void AngleMatrix( const vec3_t angles, float (*matrix)[4] )
+void AngleMatrix( const vec3_t angles, float ( *matrix )[4] )
 {
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
@@ -174,13 +174,13 @@ void NormalizeAngles( float *angles )
 {
 	int i;
 	// Normalize angles
-	for( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 	{
-		if( angles[i] > 180.0f )
+		if ( angles[i] > 180.0f )
 		{
 			angles[i] -= 360.0f;
 		}
-		else if( angles[i] < -180.0f )
+		else if ( angles[i] < -180.0f )
 		{
 			angles[i] += 360.0f;
 		}
@@ -205,18 +205,18 @@ void InterpolateAngles( float *start, float *end, float *output, float frac )
 	NormalizeAngles( start );
 	NormalizeAngles( end );
 
-	for( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 	{
 		ang1 = start[i];
 		ang2 = end[i];
 
 		d = ang2 - ang1;
-		if( d > 180.0f )
+		if ( d > 180.0f )
 		{
 			d -= 360.0f;
 		}
-		else if( d < -180.0f )
-		{	
+		else if ( d < -180.0f )
+		{
 			d += 360.0f;
 		}
 
@@ -238,11 +238,11 @@ float AngleBetweenVectors( const vec3_t v1, const vec3_t v2 )
 	float l1 = Length( v1 );
 	float l2 = Length( v2 );
 
-	if( !l1 || !l2 )
+	if ( !l1 || !l2 )
 		return 0.0f;
 
 	angle = acos( DotProduct( v1, v2 ) / ( l1 * l2 ) );
-	angle = ( angle  * 180.0f ) / M_PI_F;
+	angle = ( angle * 180.0f ) / M_PI_F;
 
 	return angle;
 }
@@ -258,8 +258,8 @@ int VectorCompare( const vec3_t v1, const vec3_t v2 )
 {
 	int i;
 
-	for( i = 0; i < 3; i++ )
-		if( v1[i] != v2[i] )
+	for ( i = 0; i < 3; i++ )
+		if ( v1[i] != v2[i] )
 			return 0;
 
 	return 1;
@@ -310,9 +310,9 @@ float Length( const vec3_t v )
 	int i;
 	float length = 0.0f;
 
-	for( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 		length += v[i] * v[i];
-	length = sqrt( length );		// FIXME
+	length = sqrt( length ); // FIXME
 
 	return length;
 }
@@ -329,9 +329,9 @@ float VectorNormalize( vec3_t v )
 	float length, ilength;
 
 	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-	length = sqrt( length );		// FIXME
+	length = sqrt( length ); // FIXME
 
-	if( length )
+	if ( length )
 	{
 		ilength = 1.0f / length;
 		v[0] *= ilength;
@@ -359,7 +359,7 @@ void VectorScale( const vec3_t in, vec_t scale, vec3_t out )
 int Q_log2( int val )
 {
 	int answer = 0;
-	while( val >>= 1 )
+	while ( val >>= 1 )
 		answer++;
 	return answer;
 }
@@ -368,18 +368,20 @@ void VectorMatrix( vec3_t forward, vec3_t right, vec3_t up )
 {
 	vec3_t tmp;
 
-	if( forward[0] == 0.0f && forward[1] == 0.0f )
+	if ( forward[0] == 0.0f && forward[1] == 0.0f )
 	{
 		right[0] = 1.0f;
 		right[1] = 0.0f;
 		right[2] = 0.0f;
-		up[0] = -forward[2]; 
+		up[0] = -forward[2];
 		up[1] = 0.0f;
 		up[2] = 0.0f;
 		return;
 	}
 
-	tmp[0] = 0.0f; tmp[1] = 0.0f; tmp[2] = 1.0f;
+	tmp[0] = 0.0f;
+	tmp[1] = 0.0f;
+	tmp[2] = 1.0f;
 	CrossProduct( forward, tmp, right );
 	VectorNormalize( right );
 	CrossProduct( right, forward, up );
@@ -390,10 +392,10 @@ void VectorAngles( const vec3_t forward, vec3_t angles )
 {
 	float tmp, yaw, pitch;
 
-	if( forward[1] == 0.0f && forward[0] == 0.0f )
+	if ( forward[1] == 0.0f && forward[0] == 0.0f )
 	{
 		yaw = 0.0f;
-		if( forward[2] > 0.0f )
+		if ( forward[2] > 0.0f )
 			pitch = 90.0f;
 		else
 			pitch = 270.0f;
@@ -401,12 +403,12 @@ void VectorAngles( const vec3_t forward, vec3_t angles )
 	else
 	{
 		yaw = ( atan2( forward[1], forward[0] ) * 180.0f / M_PI_F );
-		if( yaw < 0.0f )
+		if ( yaw < 0.0f )
 			yaw += 360.0f;
 
 		tmp = sqrt( forward[0] * forward[0] + forward[1] * forward[1] );
 		pitch = ( atan2( forward[2], tmp ) * 180.0f / M_PI_F );
-		if( pitch < 0.0f )
+		if ( pitch < 0.0f )
 			pitch += 360.0f;
 	}
 

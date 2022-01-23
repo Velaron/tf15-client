@@ -1,12 +1,12 @@
-//========= Copyright � 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#if !defined( EV_TFCH )
-#define EV_TFCH
+#ifndef __EV_TFC_H__
+#define __EV_TFC_H__
 
 #define DONT_BLEED         -1
 #define BLOOD_COLOR_RED    247
@@ -259,4 +259,4 @@ extern cvar_t *cl_giblife;
 extern cvar_t *cl_gibvelscale;
 extern cvar_t *cl_localblood;
 
-#endif
+#endif // __EV_TFC_H__

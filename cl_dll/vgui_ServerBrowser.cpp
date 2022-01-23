@@ -1,16 +1,16 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#include<VGUI_HeaderPanel.h>
-#include<VGUI_TablePanel.h>
-#include<VGUI_LineBorder.h>
-#include<VGUI_Label.h>
-#include<VGUI_Button.h>
-#include<VGUI_ActionSignal.h>
+#include <VGUI_HeaderPanel.h>
+#include <VGUI_TablePanel.h>
+#include <VGUI_LineBorder.h>
+#include <VGUI_Label.h>
+#include <VGUI_Button.h>
+#include <VGUI_ActionSignal.h>
 
 #include "hud.h"
 #include "cl_util.h"
@@ -29,370 +29,370 @@ namespace
 
 #define NUM_COLUMNS 5
 
-#define HEADER_SIZE_Y			YRES(18)
+#define HEADER_SIZE_Y YRES( 18 )
 
-	// Column sizes
-#define CSIZE_ADDRESS			XRES(200)
-#define CSIZE_SERVER			XRES(400) 
-#define CSIZE_MAP				XRES(500)
-#define CSIZE_CURRENT			XRES(570)
-#define CSIZE_PING				XRES(640)
+// Column sizes
+#define CSIZE_ADDRESS XRES( 200 )
+#define CSIZE_SERVER  XRES( 400 )
+#define CSIZE_MAP     XRES( 500 )
+#define CSIZE_CURRENT XRES( 570 )
+#define CSIZE_PING    XRES( 640 )
 
-#define CELL_HEIGHT				YRES(15)
+#define CELL_HEIGHT YRES( 15 )
 
-	class ServerBrowserTablePanel;
+class ServerBrowserTablePanel;
 
-	class CBrowser_InputSignal : public InputSignal
+class CBrowser_InputSignal : public InputSignal
+{
+private:
+	ServerBrowserTablePanel *m_pBrowser;
+
+public:
+	CBrowser_InputSignal( ServerBrowserTablePanel *pBrowser )
 	{
-	private:
-		ServerBrowserTablePanel *m_pBrowser;
-	public:
-		CBrowser_InputSignal( ServerBrowserTablePanel *pBrowser )
-		{
-			m_pBrowser = pBrowser;
-		}
+		m_pBrowser = pBrowser;
+	}
 
-		virtual void cursorMoved( int x, int y, Panel *panel ) {};
-		virtual void cursorEntered( Panel *panel ) {};
-		virtual void cursorExited( Panel *Panel ) {};
+	virtual void cursorMoved( int x, int y, Panel *panel ) {};
+	virtual void cursorEntered( Panel *panel ) {};
+	virtual void cursorExited( Panel *Panel ) {};
 
-		virtual void mousePressed( MouseCode code, Panel *panel );
+	virtual void mousePressed( MouseCode code, Panel *panel );
 
-		virtual void mouseDoublePressed( MouseCode code, Panel *panel );
-		virtual void mouseReleased( MouseCode code, Panel *panel ) {};
-		virtual void mouseWheeled( int delta, Panel *panel ) {};
-		virtual void keyPressed( KeyCode code, Panel *panel ) {};
-		virtual void keyTyped( KeyCode code, Panel *panel ) {};
-		virtual void keyReleased( KeyCode code, Panel *panel ) {};
-		virtual void keyFocusTicked( Panel *panel ) {};
-	};
+	virtual void mouseDoublePressed( MouseCode code, Panel *panel );
+	virtual void mouseReleased( MouseCode code, Panel *panel ) {};
+	virtual void mouseWheeled( int delta, Panel *panel ) {};
+	virtual void keyPressed( KeyCode code, Panel *panel ) {};
+	virtual void keyTyped( KeyCode code, Panel *panel ) {};
+	virtual void keyReleased( KeyCode code, Panel *panel ) {};
+	virtual void keyFocusTicked( Panel *panel ) {};
+};
 
-	class ServerBrowserTablePanel : public TablePanel
+class ServerBrowserTablePanel : public TablePanel
+{
+private:
+	Label *m_pLabel;
+	int m_nMouseOverRow;
+
+public:
+	ServerBrowserTablePanel( int x, int y, int wide, int tall, int columnCount ) :
+	    TablePanel( x, y, wide, tall, columnCount )
 	{
-	private:
-		Label *m_pLabel;
-		int					m_nMouseOverRow;
+		m_pLabel = new Label( "", 0, 0 /*,wide, tall*/ );
 
-	public:
+		m_nMouseOverRow = 0;
+	}
 
-		ServerBrowserTablePanel( int x, int y, int wide, int tall, int columnCount ) : TablePanel( x, y, wide, tall, columnCount )
+public:
+	void setMouseOverRow( int row )
+	{
+		m_nMouseOverRow = row;
+	}
+
+	void DoSort( char *sortkey )
+	{
+		// Request server list and refresh servers...
+		SortServers( sortkey );
+	}
+
+	void DoRefresh( void )
+	{
+		// Request server list and refresh servers...
+		ServersList();
+		BroadcastServersList( 0 );
+	}
+
+	void DoBroadcastRefresh( void )
+	{
+		// Request server list and refresh servers...
+		BroadcastServersList( 1 );
+	}
+
+	void DoStop( void )
+	{
+		// Stop requesting
+		ServersCancel();
+	}
+
+	void DoCancel( void )
+	{
+		ClientCmd( "togglebrowser\n" );
+	}
+
+	void DoConnect( void )
+	{
+		const char *info;
+		const char *address;
+		char sz[256];
+
+		info = ServersGetInfo( m_nMouseOverRow );
+		if ( !info )
+			return;
+
+		address = gEngfuncs.pNetAPI->ValueForKey( info, "address" );
+		//gEngfuncs.Con_Printf( "Connecting to %s\n", address );
+
+		sprintf( sz, "connect %s\n", address );
+
+		ClientCmd( sz );
+
+		DoCancel();
+	}
+
+	void DoPing( void )
+	{
+		ServerPing( 0 );
+		ServerRules( 0 );
+		ServerPlayers( 0 );
+	}
+
+	virtual int getRowCount()
+	{
+		int rowcount;
+		int height, width;
+
+		getSize( width, height );
+
+		// Space for buttons
+		height -= YRES( 20 );
+		height = Q_max( 0, height );
+
+		rowcount = height / CELL_HEIGHT;
+
+		return rowcount;
+	}
+
+	virtual int getCellTall( int row )
+	{
+		return CELL_HEIGHT - 2;
+	}
+
+	virtual Panel *getCellRenderer( int column, int row, bool columnSelected, bool rowSelected, bool cellSelected )
+	{
+		const char *info;
+		const char *val, *val2;
+		char sz[32];
+
+		info = ServersGetInfo( row );
+
+		if ( row == m_nMouseOverRow )
 		{
-			m_pLabel = new Label( "", 0, 0 /*,wide, tall*/ );
-
-			m_nMouseOverRow = 0;
+			m_pLabel->setFgColor( 200, 240, 63, 100 );
 		}
-
-	public:
-		void setMouseOverRow( int row )
+		else
 		{
-			m_nMouseOverRow = row;
+			m_pLabel->setFgColor( 255, 255, 255, 0 );
 		}
+		m_pLabel->setBgColor( 0, 0, 0, 200 );
+		m_pLabel->setContentAlignment( vgui::Label::a_west );
+		m_pLabel->setFont( Scheme::sf_primary2 );
 
-		void DoSort( char *sortkey )
+		if ( info )
 		{
-			// Request server list and refresh servers...
-			SortServers( sortkey );
-		}
-
-		void DoRefresh( void )
-		{
-			// Request server list and refresh servers...
-			ServersList();
-			BroadcastServersList( 0 );
-		}
-
-		void DoBroadcastRefresh( void )
-		{
-			// Request server list and refresh servers...
-			BroadcastServersList( 1 );
-		}
-
-		void DoStop( void )
-		{
-			// Stop requesting
-			ServersCancel();
-		}
-
-		void DoCancel( void )
-		{
-			ClientCmd( "togglebrowser\n" );
-		}
-
-		void DoConnect( void )
-		{
-			const char *info;
-			const char *address;
-			char sz[256];
-
-			info = ServersGetInfo( m_nMouseOverRow );
-			if ( !info )
-				return;
-
-			address = gEngfuncs.pNetAPI->ValueForKey( info, "address" );
-			//gEngfuncs.Con_Printf( "Connecting to %s\n", address );
-
-			sprintf( sz, "connect %s\n", address );
-
-			ClientCmd( sz );
-
-			DoCancel();
-		}
-
-		void DoPing( void )
-		{
-			ServerPing( 0 );
-			ServerRules( 0 );
-			ServerPlayers( 0 );
-		}
-
-		virtual int getRowCount()
-		{
-			int rowcount;
-			int height, width;
-
-			getSize( width, height );
-
-			// Space for buttons
-			height -= YRES( 20 );
-			height = Q_max( 0, height );
-
-			rowcount = height / CELL_HEIGHT;
-
-			return rowcount;
-		}
-
-		virtual int getCellTall( int row )
-		{
-			return CELL_HEIGHT - 2;
-		}
-
-		virtual Panel *getCellRenderer( int column, int row, bool columnSelected, bool rowSelected, bool cellSelected )
-		{
-			const char *info;
-			const char *val, *val2;
-			char sz[32];
-
-			info = ServersGetInfo( row );
-
-			if ( row == m_nMouseOverRow )
+			// Fill out with the correct data
+			switch ( column )
 			{
-				m_pLabel->setFgColor( 200, 240, 63, 100 );
-			}
-			else
-			{
-				m_pLabel->setFgColor( 255, 255, 255, 0 );
-			}
-			m_pLabel->setBgColor( 0, 0, 0, 200 );
-			m_pLabel->setContentAlignment( vgui::Label::a_west );
-			m_pLabel->setFont( Scheme::sf_primary2 );
-
-			if ( info )
-			{
-				// Fill out with the correct data
-				switch ( column )
+			case 0:
+				val = gEngfuncs.pNetAPI->ValueForKey( info, "address" );
+				if ( val )
 				{
-				case 0:
-					val = gEngfuncs.pNetAPI->ValueForKey( info, "address" );
-					if ( val )
-					{
-						strncpy( sz, val, 31 );
-						sz[31] = '\0';
-						// Server Name;
-						m_pLabel->setText( sz );
-					}
-					break;
-				case 1:
-					val = gEngfuncs.pNetAPI->ValueForKey( info, "hostname" );
-					if ( val )
-					{
-						strncpy( sz, val, 31 );
-						sz[31] = '\0';
-						// Server Map;
-						m_pLabel->setText( sz );
-					}
-					break;
-				case 2:
-					val = gEngfuncs.pNetAPI->ValueForKey( info, "map" );
-					if ( val )
-					{
-						strncpy( sz, val, 31 );
-						sz[31] = '\0';
-						// Server Name;
-						m_pLabel->setText( sz );
-					}
-					break;
-				case 3:
-					val = gEngfuncs.pNetAPI->ValueForKey( info, "current" );
-					val2 = gEngfuncs.pNetAPI->ValueForKey( info, "max" );
-					if ( val && val2 )
-					{
-						sprintf( sz, "%s/%s", val, val2 );
-						sz[31] = '\0';
-						// Server Map;
-						m_pLabel->setText( sz );
-					}
-					break;
-				case 4:
-					val = gEngfuncs.pNetAPI->ValueForKey( info, "ping" );
-					if ( val )
-					{
-						strncpy( sz, val, 31 );
-						sz[31] = '\0';
-						// Server Name;
-						m_pLabel->setText( sz );
-					}
-					break;
-				default:
-					break;
+					strncpy( sz, val, 31 );
+					sz[31] = '\0';
+					// Server Name;
+					m_pLabel->setText( sz );
 				}
-			}
-			else
-			{
-				if ( !row && !column )
+				break;
+			case 1:
+				val = gEngfuncs.pNetAPI->ValueForKey( info, "hostname" );
+				if ( val )
 				{
-					if ( ServersIsQuerying() )
-					{
-						m_pLabel->setText( "Waiting for servers to respond..." );
-					}
-					else
-					{
-						m_pLabel->setText( "Press 'Refresh' to search for servers..." );
-					}
+					strncpy( sz, val, 31 );
+					sz[31] = '\0';
+					// Server Map;
+					m_pLabel->setText( sz );
+				}
+				break;
+			case 2:
+				val = gEngfuncs.pNetAPI->ValueForKey( info, "map" );
+				if ( val )
+				{
+					strncpy( sz, val, 31 );
+					sz[31] = '\0';
+					// Server Name;
+					m_pLabel->setText( sz );
+				}
+				break;
+			case 3:
+				val = gEngfuncs.pNetAPI->ValueForKey( info, "current" );
+				val2 = gEngfuncs.pNetAPI->ValueForKey( info, "max" );
+				if ( val && val2 )
+				{
+					sprintf( sz, "%s/%s", val, val2 );
+					sz[31] = '\0';
+					// Server Map;
+					m_pLabel->setText( sz );
+				}
+				break;
+			case 4:
+				val = gEngfuncs.pNetAPI->ValueForKey( info, "ping" );
+				if ( val )
+				{
+					strncpy( sz, val, 31 );
+					sz[31] = '\0';
+					// Server Name;
+					m_pLabel->setText( sz );
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			if ( !row && !column )
+			{
+				if ( ServersIsQuerying() )
+				{
+					m_pLabel->setText( "Waiting for servers to respond..." );
 				}
 				else
 				{
-					m_pLabel->setText( "" );
+					m_pLabel->setText( "Press 'Refresh' to search for servers..." );
 				}
 			}
-
-			return m_pLabel;
+			else
+			{
+				m_pLabel->setText( "" );
+			}
 		}
 
-		virtual Panel *startCellEditing( int column, int row )
-		{
-			return null;
-		}
+		return m_pLabel;
+	}
 
-	};
-
-	class ConnectHandler : public ActionSignal
+	virtual Panel *startCellEditing( int column, int row )
 	{
-	private:
-		ServerBrowserTablePanel *m_pBrowser;
+		return null;
+	}
+};
 
-	public:
-		ConnectHandler( ServerBrowserTablePanel *browser )
-		{
-			m_pBrowser = browser;
-		}
+class ConnectHandler : public ActionSignal
+{
+private:
+	ServerBrowserTablePanel *m_pBrowser;
 
-		virtual void actionPerformed( Panel *panel )
-		{
-			m_pBrowser->DoConnect();
-		}
-	};
-
-	class RefreshHandler : public ActionSignal
+public:
+	ConnectHandler( ServerBrowserTablePanel *browser )
 	{
-	private:
-		ServerBrowserTablePanel *m_pBrowser;
+		m_pBrowser = browser;
+	}
 
-	public:
-		RefreshHandler( ServerBrowserTablePanel *browser )
-		{
-			m_pBrowser = browser;
-		}
-
-		virtual void actionPerformed( Panel *panel )
-		{
-			m_pBrowser->DoRefresh();
-		}
-	};
-
-	class BroadcastRefreshHandler : public ActionSignal
+	virtual void actionPerformed( Panel *panel )
 	{
-	private:
-		ServerBrowserTablePanel *m_pBrowser;
+		m_pBrowser->DoConnect();
+	}
+};
 
-	public:
-		BroadcastRefreshHandler( ServerBrowserTablePanel *browser )
-		{
-			m_pBrowser = browser;
-		}
+class RefreshHandler : public ActionSignal
+{
+private:
+	ServerBrowserTablePanel *m_pBrowser;
 
-		virtual void actionPerformed( Panel *panel )
-		{
-			m_pBrowser->DoBroadcastRefresh();
-		}
-	};
-
-	class StopHandler : public ActionSignal
+public:
+	RefreshHandler( ServerBrowserTablePanel *browser )
 	{
-	private:
-		ServerBrowserTablePanel *m_pBrowser;
+		m_pBrowser = browser;
+	}
 
-	public:
-		StopHandler( ServerBrowserTablePanel *browser )
-		{
-			m_pBrowser = browser;
-		}
-
-		virtual void actionPerformed( Panel *panel )
-		{
-			m_pBrowser->DoStop();
-		}
-	};
-
-	class CancelHandler : public ActionSignal
+	virtual void actionPerformed( Panel *panel )
 	{
-	private:
-		ServerBrowserTablePanel *m_pBrowser;
+		m_pBrowser->DoRefresh();
+	}
+};
 
-	public:
-		CancelHandler( ServerBrowserTablePanel *browser )
-		{
-			m_pBrowser = browser;
-		}
+class BroadcastRefreshHandler : public ActionSignal
+{
+private:
+	ServerBrowserTablePanel *m_pBrowser;
 
-		virtual void actionPerformed( Panel *panel )
-		{
-			m_pBrowser->DoCancel();
-		}
-	};
-
-	class PingHandler : public ActionSignal
+public:
+	BroadcastRefreshHandler( ServerBrowserTablePanel *browser )
 	{
-	private:
-		ServerBrowserTablePanel *m_pBrowser;
+		m_pBrowser = browser;
+	}
 
-	public:
-		PingHandler( ServerBrowserTablePanel *browser )
-		{
-			m_pBrowser = browser;
-		}
-
-		virtual void actionPerformed( Panel *panel )
-		{
-			m_pBrowser->DoPing();
-		}
-	};
-
-	class SortHandler : public ActionSignal
+	virtual void actionPerformed( Panel *panel )
 	{
-	private:
-		ServerBrowserTablePanel *m_pBrowser;
+		m_pBrowser->DoBroadcastRefresh();
+	}
+};
 
-	public:
-		SortHandler( ServerBrowserTablePanel *browser )
-		{
-			m_pBrowser = browser;
-		}
+class StopHandler : public ActionSignal
+{
+private:
+	ServerBrowserTablePanel *m_pBrowser;
 
-		virtual void actionPerformed( Panel *panel )
-		{
-			m_pBrowser->DoSort( "map" );
-		}
-	};
+public:
+	StopHandler( ServerBrowserTablePanel *browser )
+	{
+		m_pBrowser = browser;
+	}
+
+	virtual void actionPerformed( Panel *panel )
+	{
+		m_pBrowser->DoStop();
+	}
+};
+
+class CancelHandler : public ActionSignal
+{
+private:
+	ServerBrowserTablePanel *m_pBrowser;
+
+public:
+	CancelHandler( ServerBrowserTablePanel *browser )
+	{
+		m_pBrowser = browser;
+	}
+
+	virtual void actionPerformed( Panel *panel )
+	{
+		m_pBrowser->DoCancel();
+	}
+};
+
+class PingHandler : public ActionSignal
+{
+private:
+	ServerBrowserTablePanel *m_pBrowser;
+
+public:
+	PingHandler( ServerBrowserTablePanel *browser )
+	{
+		m_pBrowser = browser;
+	}
+
+	virtual void actionPerformed( Panel *panel )
+	{
+		m_pBrowser->DoPing();
+	}
+};
+
+class SortHandler : public ActionSignal
+{
+private:
+	ServerBrowserTablePanel *m_pBrowser;
+
+public:
+	SortHandler( ServerBrowserTablePanel *browser )
+	{
+		m_pBrowser = browser;
+	}
+
+	virtual void actionPerformed( Panel *panel )
+	{
+		m_pBrowser->DoSort( "map" );
+	}
+};
 
 }
 
@@ -439,27 +439,27 @@ private:
 	ServerBrowserTablePanel *m_pBrowser;
 
 public:
-	CSBLabel( char *name, char *sortkey ) : Label( name )
+	CSBLabel( char *name, char *sortkey ) :
+	    Label( name )
 	{
 		m_pBrowser = NULL;
 
 		strcpy( m_szSortKey, sortkey );
 
 		int label_bg_r = 120,
-			label_bg_g = 75,
-			label_bg_b = 32,
-			label_bg_a = 200;
+		    label_bg_g = 75,
+		    label_bg_b = 32,
+		    label_bg_a = 200;
 
 		int label_fg_r = 255,
-			label_fg_g = 0,
-			label_fg_b = 0,
-			label_fg_a = 0;
+		    label_fg_g = 0,
+		    label_fg_b = 0,
+		    label_fg_a = 0;
 
 		setContentAlignment( vgui::Label::a_west );
 		setFgColor( label_fg_r, label_fg_g, label_fg_b, label_fg_a );
 		setBgColor( label_bg_r, label_bg_g, label_bg_b, label_bg_a );
 		setFont( Scheme::sf_primary2 );
-
 	}
 
 	void setTable( ServerBrowserTablePanel *browser )
@@ -470,7 +470,8 @@ public:
 	}
 };
 
-ServerBrowser::ServerBrowser( int x, int y, int wide, int tall ) : CTransparentPanel( 100, x, y, wide, tall )
+ServerBrowser::ServerBrowser( int x, int y, int wide, int tall ) :
+    CTransparentPanel( 100, x, y, wide, tall )
 {
 	int i;
 
@@ -565,7 +566,6 @@ ServerBrowser::ServerBrowser( int x, int y, int wide, int tall ) : CTransparentP
 	setPaintBorderEnabled( false );
 	setPaintBackgroundEnabled( false );
 	setPaintEnabled( false );
-
 }
 
 void ServerBrowser::setSize( int wide, int tall )

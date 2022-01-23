@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose:
 //
@@ -13,20 +13,20 @@
 #include "cbase.h"
 #include "player.h"
 
-#define UPDATE_INTERVAL	0.3
+#define UPDATE_INTERVAL 0.3
 
 // These are stored off as CVoiceGameMgr is created and deleted.
-CPlayerBitVec	g_PlayerModEnable;		// Set to 1 for each player if the player wants to use voice in this mod.
-										// (If it's zero, then the server reports that the game rules are saying the
-										// player can't hear anyone).
+CPlayerBitVec g_PlayerModEnable; // Set to 1 for each player if the player wants to use voice in this mod.
+                                 // (If it's zero, then the server reports that the game rules are saying the
+                                 // player can't hear anyone).
 
-CPlayerBitVec	g_BanMasks[VOICE_MAX_PLAYERS];	// Tells which players don't want to hear each other.
-												// These are indexed as clients and each bit represents a client
-												// (so player entity is bit+1).
+CPlayerBitVec g_BanMasks[VOICE_MAX_PLAYERS]; // Tells which players don't want to hear each other.
+                                             // These are indexed as clients and each bit represents a client
+                                             // (so player entity is bit+1).
 
-CPlayerBitVec	g_SentGameRulesMasks[VOICE_MAX_PLAYERS];	// These store the masks we last sent to each client so we can determine if
-CPlayerBitVec	g_SentBanMasks[VOICE_MAX_PLAYERS];			// we need to resend them.
-CPlayerBitVec	g_bWantModEnable;
+CPlayerBitVec g_SentGameRulesMasks[VOICE_MAX_PLAYERS]; // These store the masks we last sent to each client so we can determine if
+CPlayerBitVec g_SentBanMasks[VOICE_MAX_PLAYERS];       // we need to resend them.
+CPlayerBitVec g_bWantModEnable;
 
 cvar_t voice_serverdebug = { "voice_serverdebug", "0" };
 
@@ -179,7 +179,7 @@ bool CVoiceGameMgr::ClientCommand( CBasePlayer *pPlayer, const char *cmd )
 		}
 
 		// Force it to update the masks now.
-		//UpdateMasks();		
+		//UpdateMasks();
 		return true;
 	}
 	else if ( stricmp( cmd, "VModEnable" ) == 0 && CMD_ARGC() >= 2 )
@@ -231,7 +231,7 @@ void CVoiceGameMgr::UpdateMasks()
 			}
 		}
 
-		// If this is different from what the client has, send an update. 
+		// If this is different from what the client has, send an update.
 		if ( gameRulesMask != g_SentGameRulesMasks[iClient] || g_BanMasks[iClient] != g_SentBanMasks[iClient] )
 		{
 			g_SentGameRulesMasks[iClient] = gameRulesMask;

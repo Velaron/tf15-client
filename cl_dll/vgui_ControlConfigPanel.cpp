@@ -1,115 +1,118 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#include<stdio.h>
-#include"vgui_ControlConfigPanel.h"
-#include<VGUI_HeaderPanel.h>
-#include<VGUI_TablePanel.h>
-#include<VGUI_Label.h>
-#include<VGUI_ScrollPanel.h>
-#include<VGUI_Scheme.h>
-#include<VGUI_DataInputStream.h>
-#include<VGUI.h>
-#include<VGUI_TextEntry.h>
+#include <stdio.h>
+#include "vgui_ControlConfigPanel.h"
+#include <VGUI_HeaderPanel.h>
+#include <VGUI_TablePanel.h>
+#include <VGUI_Label.h>
+#include <VGUI_ScrollPanel.h>
+#include <VGUI_Scheme.h>
+#include <VGUI_DataInputStream.h>
+#include <VGUI.h>
+#include <VGUI_TextEntry.h>
 
 using namespace vgui;
 
 namespace
 {
-	class FooTablePanel : public TablePanel
+class FooTablePanel : public TablePanel
+{
+private:
+	Label *_label;
+	TextEntry *_textEntry;
+	ControlConfigPanel *_controlConfigPanel;
+
+public:
+	FooTablePanel( ControlConfigPanel *controlConfigPanel, int x, int y, int wide, int tall, int columnCount ) :
+	    TablePanel( x, y, wide, tall, columnCount )
 	{
-	private:
-		Label *_label;
-		TextEntry *_textEntry;
-		ControlConfigPanel *_controlConfigPanel;
-	public:
-		FooTablePanel( ControlConfigPanel *controlConfigPanel, int x, int y, int wide, int tall, int columnCount ) : TablePanel( x, y, wide, tall, columnCount )
+		_controlConfigPanel = controlConfigPanel;
+		_label = new Label( "You are a dumb monkey", 0, 0, 100, 20 );
+		_label->setBgColor( Scheme::sc_primary3 );
+		_label->setFgColor( Scheme::sc_primary1 );
+		_label->setFont( Scheme::sf_primary3 );
+
+		_textEntry = new TextEntry( "", 0, 0, 100, 20 );
+		//_textEntry->setFont(Scheme::sf_primary3);
+	}
+
+public:
+	virtual int getRowCount()
+	{
+		return _controlConfigPanel->GetCVarCount();
+	}
+	virtual int getCellTall( int row )
+	{
+		return 12;
+	}
+	virtual Panel *getCellRenderer( int column, int row, bool columnSelected, bool rowSelected, bool cellSelected )
+	{
+		char cvar[128], desc[128], bind[128], bindAlt[128];
+		_controlConfigPanel->GetCVar( row, cvar, 128, desc, 128 );
+
+		if ( cellSelected )
 		{
-			_controlConfigPanel = controlConfigPanel;
-			_label = new Label( "You are a dumb monkey", 0, 0, 100, 20 );
+			_label->setBgColor( Scheme::sc_primary1 );
+			_label->setFgColor( Scheme::sc_primary3 );
+		}
+		else if ( rowSelected )
+		{
+			_label->setBgColor( Scheme::sc_primary2 );
+			_label->setFgColor( Scheme::sc_primary1 );
+		}
+		else
+		{
 			_label->setBgColor( Scheme::sc_primary3 );
 			_label->setFgColor( Scheme::sc_primary1 );
-			_label->setFont( Scheme::sf_primary3 );
+		}
 
-			_textEntry = new TextEntry( "", 0, 0, 100, 20 );
-			//_textEntry->setFont(Scheme::sf_primary3);
-		}
-	public:
-		virtual int getRowCount()
+		switch ( column )
 		{
-			return _controlConfigPanel->GetCVarCount();
-		}
-		virtual int getCellTall( int row )
+		case 0:
 		{
-			return 12;
+			_label->setText( desc );
+			_label->setContentAlignment( Label::a_west );
+			break;
 		}
-		virtual Panel *getCellRenderer( int column, int row, bool columnSelected, bool rowSelected, bool cellSelected )
+		case 1:
 		{
-			char cvar[128], desc[128], bind[128], bindAlt[128];
-			_controlConfigPanel->GetCVar( row, cvar, 128, desc, 128 );
+			_controlConfigPanel->GetCVarBind( cvar, bind, 128, bindAlt, 128 );
+			_label->setText( bind );
+			_label->setContentAlignment( Label::a_center );
+			break;
+		}
+		case 2:
+		{
+			_controlConfigPanel->GetCVarBind( cvar, bind, 128, bindAlt, 128 );
+			_label->setText( bindAlt );
+			_label->setContentAlignment( Label::a_center );
+			break;
+		}
+		default:
+		{
+			_label->setText( "" );
+			break;
+		}
+		}
 
-			if ( cellSelected )
-			{
-				_label->setBgColor( Scheme::sc_primary1 );
-				_label->setFgColor( Scheme::sc_primary3 );
-			}
-			else
-				if ( rowSelected )
-				{
-					_label->setBgColor( Scheme::sc_primary2 );
-					_label->setFgColor( Scheme::sc_primary1 );
-				}
-				else
-				{
-					_label->setBgColor( Scheme::sc_primary3 );
-					_label->setFgColor( Scheme::sc_primary1 );
-				}
-
-			switch ( column )
-			{
-			case 0:
-			{
-				_label->setText( desc );
-				_label->setContentAlignment( Label::a_west );
-				break;
-			}
-			case 1:
-			{
-				_controlConfigPanel->GetCVarBind( cvar, bind, 128, bindAlt, 128 );
-				_label->setText( bind );
-				_label->setContentAlignment( Label::a_center );
-				break;
-			}
-			case 2:
-			{
-				_controlConfigPanel->GetCVarBind( cvar, bind, 128, bindAlt, 128 );
-				_label->setText( bindAlt );
-				_label->setContentAlignment( Label::a_center );
-				break;
-			}
-			default:
-			{
-				_label->setText( "" );
-				break;
-			}
-			}
-
-			return _label;
-		}
-		virtual Panel *startCellEditing( int column, int row )
-		{
-			_textEntry->setText( "Goat", strlen( "Goat" ) );
-			_textEntry->requestFocus();
-			return _textEntry;
-		}
-	};
+		return _label;
+	}
+	virtual Panel *startCellEditing( int column, int row )
+	{
+		_textEntry->setText( "Goat", strlen( "Goat" ) );
+		_textEntry->requestFocus();
+		return _textEntry;
+	}
+};
 }
 
-ControlConfigPanel::ControlConfigPanel( int x, int y, int wide, int tall ) : Panel( x, y, wide, tall )
+ControlConfigPanel::ControlConfigPanel( int x, int y, int wide, int tall ) :
+    Panel( x, y, wide, tall )
 {
 	setPaintBorderEnabled( false );
 	setPaintBackgroundEnabled( false );
@@ -209,4 +212,3 @@ void ControlConfigPanel::GetCVarBind( const char *cvar, char *bind, int bindLen,
 void ControlConfigPanel::SetCVarBind( const char *cvar, const char *bind, const char *bindAlt )
 {
 }
-

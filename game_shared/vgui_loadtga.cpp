@@ -1,6 +1,6 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -10,7 +10,6 @@
 #include <VGUI.h>
 #include <VGUI_InputStream.h>
 #include "vgui_loadtga.h"
-
 
 // ---------------------------------------------------------------------- //
 // Helper class for loading tga files.
@@ -24,10 +23,26 @@ public:
 		m_DataLen = m_ReadPos = 0;
 	}
 
-	virtual void  seekStart( bool &success ) { m_ReadPos = 0; success = true; }
-	virtual void  seekRelative( int count, bool &success ) { m_ReadPos += count; success = true; }
-	virtual void  seekEnd( bool &success ) { m_ReadPos = m_DataLen; success = true; }
-	virtual int   getAvailable( bool &success ) { success = false; return 0; } // This is what vgui does for files...
+	virtual void seekStart( bool &success )
+	{
+		m_ReadPos = 0;
+		success = true;
+	}
+	virtual void seekRelative( int count, bool &success )
+	{
+		m_ReadPos += count;
+		success = true;
+	}
+	virtual void seekEnd( bool &success )
+	{
+		m_ReadPos = m_DataLen;
+		success = true;
+	}
+	virtual int getAvailable( bool &success )
+	{
+		success = false;
+		return 0;
+	} // This is what vgui does for files...
 
 	virtual uchar readUChar( bool &success )
 	{
@@ -45,21 +60,21 @@ public:
 		}
 	}
 
-	virtual void  readUChar( uchar *buf, int count, bool &success )
+	virtual void readUChar( uchar *buf, int count, bool &success )
 	{
 		for ( int i = 0; i < count; i++ )
 			buf[i] = readUChar( success );
 	}
 
-	virtual void  close( bool &success )
+	virtual void close( bool &success )
 	{
 		m_pData = NULL;
 		m_DataLen = m_ReadPos = 0;
 	}
 
 	uchar *m_pData;
-	int			m_DataLen;
-	int			m_ReadPos;
+	int m_DataLen;
+	int m_ReadPos;
 };
 
 vgui::BitmapTGA *vgui_LoadTGA( char const *pFilename )

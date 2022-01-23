@@ -35,8 +35,7 @@
 #include "vgui_loadtga.h"
 
 // Arrow filenames
-char *sArrowFilenames[] =
-{
+char *sArrowFilenames[] = {
 	"arrowup",
 	"arrowdn",
 	"arrowlt",
@@ -74,7 +73,8 @@ BitmapTGA *LoadTGAForRes( const char *pImageName )
 
 //===========================================================
 // All TFC Hud buttons are derived from this one.
-CommandButton::CommandButton( const char *text, int x, int y, int wide, int tall, bool bNoHighlight ) : Button( "", x, y, wide, tall )
+CommandButton::CommandButton( const char *text, int x, int y, int wide, int tall, bool bNoHighlight ) :
+    Button( "", x, y, wide, tall )
 {
 	m_iPlayerClass = 0;
 	m_bNoHighlight = bNoHighlight;
@@ -83,7 +83,8 @@ CommandButton::CommandButton( const char *text, int x, int y, int wide, int tall
 	setText( text );
 }
 
-CommandButton::CommandButton( int iPlayerClass, const char *text, int x, int y, int wide, int tall, bool bFlat ) : Button( "", x, y, wide, tall )
+CommandButton::CommandButton( int iPlayerClass, const char *text, int x, int y, int wide, int tall, bool bFlat ) :
+    Button( "", x, y, wide, tall )
 {
 	m_iPlayerClass = iPlayerClass;
 	m_bNoHighlight = false;
@@ -92,7 +93,8 @@ CommandButton::CommandButton( int iPlayerClass, const char *text, int x, int y, 
 	setText( text );
 }
 
-CommandButton::CommandButton( const char *text, int x, int y, int wide, int tall, bool bNoHighlight, bool bFlat ) : Button( "", x, y, wide, tall )
+CommandButton::CommandButton( const char *text, int x, int y, int wide, int tall, bool bNoHighlight, bool bFlat ) :
+    Button( "", x, y, wide, tall )
 {
 	m_iPlayerClass = 0;
 	m_bFlat = bFlat;
@@ -260,7 +262,7 @@ void CommandButton::cursorEntered( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CommandButton::cursorExited( void )
 {
@@ -284,13 +286,12 @@ CCommandMenu *CommandButton::getParentMenu( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: Sets the menu that contains this button
-// Input  : *pParentMenu - 
+// Input  : *pParentMenu -
 //-----------------------------------------------------------------------------
 void CommandButton::setParentMenu( CCommandMenu *pParentMenu )
 {
 	m_pParentMenu = pParentMenu;
 }
-
 
 //===========================================================
 int ClassButton::IsNotValid()
@@ -314,8 +315,7 @@ int ClassButton::IsNotValid()
 	{
 		// Is it the player's current class?
 		if (
-		( gViewPort->IsRandomPC() && m_iPlayerClass == PC_RANDOM ) ||
-			( !gViewPort->IsRandomPC() && ( m_iPlayerClass == g_iPlayerClass ) ) )
+		    ( gViewPort->IsRandomPC() && m_iPlayerClass == PC_RANDOM ) || ( !gViewPort->IsRandomPC() && ( m_iPlayerClass == g_iPlayerClass ) ) )
 			return true;
 	}
 
@@ -324,14 +324,16 @@ int ClassButton::IsNotValid()
 
 //===========================================================
 // Button with Class image beneath it
-CImageLabel::CImageLabel( const char *pImageName, int x, int y ) : Label( "", x, y )
+CImageLabel::CImageLabel( const char *pImageName, int x, int y ) :
+    Label( "", x, y )
 {
 	setContentFitted( true );
 	m_pTGA = LoadTGAForRes( pImageName );
 	setImage( m_pTGA );
 }
 
-CImageLabel::CImageLabel( const char *pImageName, int x, int y, int wide, int tall ) : Label( "", x, y, wide, tall )
+CImageLabel::CImageLabel( const char *pImageName, int x, int y, int wide, int tall ) :
+    Label( "", x, y, wide, tall )
 {
 	setContentFitted( true );
 	m_pTGA = LoadTGAForRes( pImageName );
@@ -389,7 +391,7 @@ void CImageLabel::LoadImage( const char *pImageName )
 	}
 
 	if ( m_pTGA == NULL )
-		return;	// unable to load image
+		return; // unable to load image
 
 	int w, t;
 
@@ -416,7 +418,8 @@ void CCommandMenu::paintBackground()
 //=================================================================================
 // CUSTOM SCROLLPANEL
 //=================================================================================
-CTFScrollButton::CTFScrollButton( int iArrow, const char *text, int x, int y, int wide, int tall ) : CommandButton( text, x, y, wide, tall )
+CTFScrollButton::CTFScrollButton( int iArrow, const char *text, int x, int y, int wide, int tall ) :
+    CommandButton( text, x, y, wide, tall )
 {
 	// Set text color to orange
 	setFgColor( Scheme::sc_primary1 );
@@ -496,7 +499,8 @@ void CTFSlider::paintBackground( void )
 	}
 }
 
-CTFScrollPanel::CTFScrollPanel( int x, int y, int wide, int tall ) : ScrollPanel( x, y, wide, tall )
+CTFScrollPanel::CTFScrollPanel( int x, int y, int wide, int tall ) :
+    ScrollPanel( x, y, wide, tall )
 {
 	ScrollBar *pScrollBar = getVerticalScrollBar();
 	pScrollBar->setButton( new CTFScrollButton( ARROW_UP, "", 0, 0, 16, 16 ), 0 );
@@ -515,7 +519,6 @@ CTFScrollPanel::CTFScrollPanel( int x, int y, int wide, int tall ) : ScrollPanel
 	pScrollBar->setPaintEnabled( false );
 }
 
-
 //=================================================================================
 // CUSTOM HANDLERS
 //=================================================================================
@@ -531,7 +534,7 @@ void CMenuHandler_StringCommandClassSelect::actionPerformed( Panel *panel )
 {
 	CMenuHandler_StringCommand::actionPerformed( panel );
 
-	// THIS IS NOW BEING DONE ON THE TFC SERVER TO AVOID KILLING SOMEONE THEN 
+	// THIS IS NOW BEING DONE ON THE TFC SERVER TO AVOID KILLING SOMEONE THEN
 	// HAVE THE SERVER SAY "SORRY...YOU CAN'T BE THAT CLASS".
 
 #if 0
@@ -540,4 +543,3 @@ void CMenuHandler_StringCommandClassSelect::actionPerformed( Panel *panel )
 		gEngfuncs.pfnClientCmd( "kill" );
 #endif
 }
-

@@ -18,8 +18,8 @@
 //#include "tier1/interface.h"
 //#else
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#ifndef __INTERFACE_H__
+#define __INTERFACE_H__
 
 #if !defined( _WIN32 )
 
@@ -130,5 +130,4 @@ extern void Sys_UnloadModule( CSysModule *pModule );
 
 extern CreateInterfaceFn Sys_GetFactory( CSysModule *pModule );
 
-#endif
-//#endif // MSVC 6.0
+#endif // __INTERFACE_H__

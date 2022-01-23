@@ -29,9 +29,9 @@
 #include "ammohistory.h"
 #include "vgui_TeamFortressViewport.h"
 
-WEAPON *gpActiveSel;	// NULL means off, 1 means just the menu bar, otherwise
-						// this points to the active weapon menu item
-WEAPON *gpLastSel;		// Last weapon menu selection 
+WEAPON *gpActiveSel; // NULL means off, 1 means just the menu bar, otherwise
+                     // this points to the active weapon menu item
+WEAPON *gpLastSel;   // Last weapon menu selection
 
 client_sprite_t *GetSpriteList( client_sprite_t *pList, const char *psz, int iRes, int iCount );
 
@@ -66,7 +66,7 @@ int WeaponsResource::HasAmmo( WEAPON *p )
 		return TRUE;
 
 	return ( p->iAmmoType == -1 ) || p->iClip > 0 || CountAmmo( p->iAmmoType )
-		|| CountAmmo( p->iAmmo2Type ) || ( p->iFlags & WEAPON_FLAGS_SELECTONEMPTY );
+	       || CountAmmo( p->iAmmo2Type ) || ( p->iFlags & WEAPON_FLAGS_SELECTONEMPTY );
 }
 
 void WeaponsResource::LoadWeaponSprites( WEAPON *pWeapon )
@@ -142,7 +142,7 @@ void WeaponsResource::LoadWeaponSprites( WEAPON *pWeapon )
 	}
 	else
 	{
-		pWeapon->hZoomedAutoaim = pWeapon->hZoomedCrosshair;  //default to zoomed crosshair
+		pWeapon->hZoomedAutoaim = pWeapon->hZoomedCrosshair; //default to zoomed crosshair
 		pWeapon->rcZoomedAutoaim = pWeapon->rcZoomedCrosshair;
 	}
 
@@ -225,14 +225,14 @@ WEAPON *WeaponsResource::GetNextActivePos( int iSlot, int iSlotPos )
 
 int giBucketHeight, giBucketWidth, giABHeight, giABWidth; // Ammo Bar width and height
 
-HSPRITE ghsprBuckets;					// Sprite for top row of weapons menu
+HSPRITE ghsprBuckets; // Sprite for top row of weapons menu
 
-DECLARE_MESSAGE( m_Ammo, CurWeapon )	// Current weapon and clip
-DECLARE_MESSAGE( m_Ammo, WeaponList )	// new weapon type
-DECLARE_MESSAGE( m_Ammo, AmmoX )		// update known ammo type's count
-DECLARE_MESSAGE( m_Ammo, AmmoPickup )	// flashes an ammo pickup record
-DECLARE_MESSAGE( m_Ammo, WeapPickup )    // flashes a weapon pickup record
-DECLARE_MESSAGE( m_Ammo, HideWeapon )	// hides the weapon, ammo, and crosshair displays temporarily
+DECLARE_MESSAGE( m_Ammo, CurWeapon )  // Current weapon and clip
+DECLARE_MESSAGE( m_Ammo, WeaponList ) // new weapon type
+DECLARE_MESSAGE( m_Ammo, AmmoX )      // update known ammo type's count
+DECLARE_MESSAGE( m_Ammo, AmmoPickup ) // flashes an ammo pickup record
+DECLARE_MESSAGE( m_Ammo, WeapPickup ) // flashes a weapon pickup record
+DECLARE_MESSAGE( m_Ammo, HideWeapon ) // hides the weapon, ammo, and crosshair displays temporarily
 DECLARE_MESSAGE( m_Ammo, ItemPickup )
 
 DECLARE_COMMAND( m_Ammo, Slot1 )
@@ -253,7 +253,7 @@ DECLARE_COMMAND( m_Ammo, PrevWeapon )
 #define AMMO_SMALL_WIDTH 10
 #define AMMO_LARGE_WIDTH 20
 
-#define HISTORY_DRAW_TIME	"5"
+#define HISTORY_DRAW_TIME "5"
 
 int CHudAmmo::Init( void )
 {
@@ -284,7 +284,7 @@ int CHudAmmo::Init( void )
 	Reset();
 
 	CVAR_CREATE( "hud_drawhistory_time", HISTORY_DRAW_TIME, 0 );
-	CVAR_CREATE( "hud_fastswitch", "0", FCVAR_ARCHIVE );		// controls whether or not weapons can be selected in one keypress
+	CVAR_CREATE( "hud_fastswitch", "0", FCVAR_ARCHIVE ); // controls whether or not weapons can be selected in one keypress
 
 	m_iFlags |= HUD_ACTIVE; //!!!
 
@@ -306,9 +306,11 @@ void CHudAmmo::Reset( void )
 	gHR.Reset();
 
 	//VidInit();
-	wrect_t nullrc = { 0, };
+	wrect_t nullrc = {
+		0,
+	};
 	SetCrosshair( 0, nullrc, 0, 0, 0 ); // reset crosshair
-	m_pWeapon = NULL; // reset last weapon
+	m_pWeapon = NULL;                   // reset last weapon
 }
 
 int CHudAmmo::VidInit( void )
@@ -385,7 +387,6 @@ void CHudAmmo::Think( void )
 
 		PlaySound( "common/wpn_select.wav", 1 );
 	}
-
 }
 
 //
@@ -416,7 +417,7 @@ void WeaponsResource::SelectSlot( int iSlot, int fAdvance, int iDirection )
 	if ( gHUD.m_Menu.m_fMenuDisplayed && ( fAdvance == FALSE ) && ( iDirection == 1 ) )
 	{
 		// menu is overriding slot use commands
-		gHUD.m_Menu.SelectMenuItem( iSlot + 1 );  // slots are one off the key numbers
+		gHUD.m_Menu.SelectMenuItem( iSlot + 1 ); // slots are one off the key numbers
 		return;
 	}
 
@@ -463,8 +464,7 @@ void WeaponsResource::SelectSlot( int iSlot, int fAdvance, int iDirection )
 			p = GetFirstPos( iSlot );
 	}
 
-
-	if ( !p )  // no selection found
+	if ( !p ) // no selection found
 	{
 		// just display the weapon list, unless fastswitch is on just ignore it
 		if ( !fastSwitch )
@@ -482,7 +482,7 @@ void WeaponsResource::SelectSlot( int iSlot, int fAdvance, int iDirection )
 
 //
 // AmmoX  -- Update the count of a known type of ammo
-// 
+//
 int CHudAmmo::MsgFunc_AmmoX( const char *pszName, int iSize, void *pbuf )
 {
 	BEGIN_READ( pbuf, iSize );
@@ -540,7 +540,9 @@ int CHudAmmo::MsgFunc_HideWeapon( const char *pszName, int iSize, void *pbuf )
 
 	if ( gHUD.m_iHideHUDDisplay & ( HIDEHUD_WEAPONS | HIDEHUD_ALL ) )
 	{
-		wrect_t nullrc = { 0, };
+		wrect_t nullrc = {
+			0,
+		};
 		gpActiveSel = NULL;
 		SetCrosshair( 0, nullrc, 0, 0, 0 );
 	}
@@ -553,14 +555,16 @@ int CHudAmmo::MsgFunc_HideWeapon( const char *pszName, int iSize, void *pbuf )
 	return 1;
 }
 
-// 
+//
 //  CurWeapon: Update hud state with the current weapon and clip count. Ammo
-//  counts are updated with AmmoX. Server assures that the Weapon ammo type 
+//  counts are updated with AmmoX. Server assures that the Weapon ammo type
 //  numbers match a real ammo type.
 //
 int CHudAmmo::MsgFunc_CurWeapon( const char *pszName, int iSize, void *pbuf )
 {
-	wrect_t nullrc = { 0, };
+	wrect_t nullrc = {
+		0,
+	};
 	int fOnTarget = FALSE;
 
 	BEGIN_READ( pbuf, iSize );
@@ -605,7 +609,7 @@ int CHudAmmo::MsgFunc_CurWeapon( const char *pszName, int iSize, void *pbuf )
 	else
 		pWeapon->iClip = iClip;
 
-	if ( iState == 0 )	// we're not the current weapon, so update no more
+	if ( iState == 0 ) // we're not the current weapon, so update no more
 		return 1;
 
 	m_pWeapon = pWeapon;
@@ -675,7 +679,10 @@ int CHudAmmo::MsgFunc_WeaponList( const char *pszName, int iSize, void *pbuf )
 void CHudAmmo::SlotInput( int iSlot )
 {
 	// Let the Viewport use it first, for menus
-	if ( gViewPort && gViewPort->SlotInput( iSlot ) ) { return; }
+	if ( gViewPort && gViewPort->SlotInput( iSlot ) )
+	{
+		return;
+	}
 
 	gWR.SelectSlot( iSlot, FALSE, 1 );
 }
@@ -742,7 +749,6 @@ void CHudAmmo::UserCmd_Close( void )
 		ClientCmd( "escape" );
 }
 
-
 // Selects the next item in the weapon menu
 void CHudAmmo::UserCmd_NextWeapon( void )
 {
@@ -778,7 +784,7 @@ void CHudAmmo::UserCmd_NextWeapon( void )
 			pos = 0;
 		}
 
-		slot = 0;  // start looking from the first slot again
+		slot = 0; // start looking from the first slot again
 	}
 
 	gpActiveSel = NULL;
@@ -1010,7 +1016,7 @@ int CHudAmmo::DrawWList( float flTime )
 	int iActiveSlot;
 
 	if ( gpActiveSel == (WEAPON *)1 )
-		iActiveSlot = -1;	// current slot has no weapons
+		iActiveSlot = -1; // current slot has no weapons
 	else
 		iActiveSlot = gpActiveSel->iSlot;
 

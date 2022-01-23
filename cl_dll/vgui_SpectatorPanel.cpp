@@ -43,49 +43,53 @@ void DLLEXPORT HUD_ChatInputPosition( int *x, int *y )
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SpectatorPanel::SpectatorPanel( int x, int y, int wide, int tall ) : Panel( x, y, wide, tall )
+SpectatorPanel::SpectatorPanel( int x, int y, int wide, int tall ) :
+    Panel( x, y, wide, tall )
 {
 }
 
 SpectatorPanel::~SpectatorPanel()
 {
-
 }
 
 void SpectatorPanel::ActionSignal( int cmd )
 {
 	switch ( cmd )
 	{
-	case SPECTATOR_PANEL_CMD_NONE:			break;
+	case SPECTATOR_PANEL_CMD_NONE: break;
 
-	case SPECTATOR_PANEL_CMD_OPTIONS:		gViewPort->ShowCommandMenu( gViewPort->m_SpectatorOptionsMenu );
+	case SPECTATOR_PANEL_CMD_OPTIONS:
+		gViewPort->ShowCommandMenu( gViewPort->m_SpectatorOptionsMenu );
 		break;
 
-	case SPECTATOR_PANEL_CMD_NEXTPLAYER:	gHUD.m_Spectator.FindNextPlayer( true );
+	case SPECTATOR_PANEL_CMD_NEXTPLAYER:
+		gHUD.m_Spectator.FindNextPlayer( true );
 		break;
 
-	case SPECTATOR_PANEL_CMD_PREVPLAYER:	gHUD.m_Spectator.FindNextPlayer( false );
+	case SPECTATOR_PANEL_CMD_PREVPLAYER:
+		gHUD.m_Spectator.FindNextPlayer( false );
 		break;
 
-	case SPECTATOR_PANEL_CMD_PLAYERS:		gViewPort->ShowCommandMenu( gViewPort->m_PlayerMenu );
+	case SPECTATOR_PANEL_CMD_PLAYERS:
+		gViewPort->ShowCommandMenu( gViewPort->m_PlayerMenu );
 		break;
 
-	case SPECTATOR_PANEL_CMD_HIDEMENU:	ShowMenu( false );
+	case SPECTATOR_PANEL_CMD_HIDEMENU:
+		ShowMenu( false );
 		break;
 
-	case SPECTATOR_PANEL_CMD_CAMERA:		gViewPort->ShowCommandMenu( gViewPort->m_SpectatorCameraMenu );
+	case SPECTATOR_PANEL_CMD_CAMERA:
+		gViewPort->ShowCommandMenu( gViewPort->m_SpectatorCameraMenu );
 		break;
 
-	case SPECTATOR_PANEL_CMD_TOGGLE_INSET: gHUD.m_Spectator.SetModes( -1,
-		gHUD.m_Spectator.ToggleInset( false ) );
+	case SPECTATOR_PANEL_CMD_TOGGLE_INSET:
+		gHUD.m_Spectator.SetModes( -1,
+		                           gHUD.m_Spectator.ToggleInset( false ) );
 		break;
 
-
-	default: 	gEngfuncs.Con_DPrintf( "Unknown SpectatorPanel ActionSingal %i.\n", cmd ); break;
+	default: gEngfuncs.Con_DPrintf( "Unknown SpectatorPanel ActionSingal %i.\n", cmd ); break;
 	}
-
 }
-
 
 void SpectatorPanel::Initialize()
 {
@@ -112,8 +116,6 @@ void SpectatorPanel::Initialize()
 	m_ExtraInfo->setPaintBackgroundEnabled( false );
 	m_ExtraInfo->setFgColor( 143, 143, 54, 0 );
 	m_ExtraInfo->setContentAlignment( vgui::Label::a_west );
-
-
 
 	m_TimerImage = new CImageLabel( "timer", 0, 0, 14, 14 );
 	m_TimerImage->setParent( m_TopBorder );
@@ -144,13 +146,12 @@ void SpectatorPanel::Initialize()
 		m_TeamScores[j]->setVisible( false );
 	}
 
-
 	// Initialize command buttons.
-//	m_OptionButton = new ColorButton( CHudTextMessage::BufferedLocaliseTextString( "#SPECT_OPTIONS" ), XRES(15), YRES(6), XRES(OPTIONS_BUTTON_X), YRES(20), false, false );
+	//	m_OptionButton = new ColorButton( CHudTextMessage::BufferedLocaliseTextString( "#SPECT_OPTIONS" ), XRES(15), YRES(6), XRES(OPTIONS_BUTTON_X), YRES(20), false, false );
 	m_OptionButton = new DropDownButton( CHudTextMessage::BufferedLocaliseTextString( "#SPECT_OPTIONS" ), XRES( 15 ), YRES( 6 ), XRES( OPTIONS_BUTTON_X ), YRES( 20 ), false, false );
 	m_OptionButton->setParent( m_BottomBorder );
 	m_OptionButton->setContentAlignment( vgui::Label::a_center );
-	m_OptionButton->setBoundKey( (char)255 );	// special no bound to avoid leading spaces in name 
+	m_OptionButton->setBoundKey( (char)255 ); // special no bound to avoid leading spaces in name
 	m_OptionButton->addActionSignal( new CSpectatorHandler_Command( this, SPECTATOR_PANEL_CMD_OPTIONS ) );
 	m_OptionButton->setUnArmedBorderColor( 59, 58, 34, 48 );
 	m_OptionButton->setArmedBorderColor( 194, 202, 54, 0 );
@@ -160,7 +161,7 @@ void SpectatorPanel::Initialize()
 	m_CamButton = new DropDownButton( CHudTextMessage::BufferedLocaliseTextString( "#CAM_OPTIONS" ), ScreenWidth - ( XRES( CAMOPTIONS_BUTTON_X ) + 15 ), YRES( 6 ), XRES( CAMOPTIONS_BUTTON_X ), YRES( 20 ), false, false );
 	m_CamButton->setParent( m_BottomBorder );
 	m_CamButton->setContentAlignment( vgui::Label::a_center );
-	m_CamButton->setBoundKey( (char)255 );	// special no bound to avoid leading spaces in name 
+	m_CamButton->setBoundKey( (char)255 ); // special no bound to avoid leading spaces in name
 	m_CamButton->addActionSignal( new CSpectatorHandler_Command( this, SPECTATOR_PANEL_CMD_CAMERA ) );
 	m_CamButton->setUnArmedBorderColor( 59, 58, 34, 48 );
 	m_CamButton->setArmedBorderColor( 194, 202, 54, 0 );
@@ -171,7 +172,7 @@ void SpectatorPanel::Initialize()
 	m_PrevPlayerButton = new CImageButton( "arrowleft", XRES( 15 + OPTIONS_BUTTON_X + 15 ), YRES( 6 ), XRES( 24 ), YRES( 20 ), false, false );
 	m_PrevPlayerButton->setParent( m_BottomBorder );
 	m_PrevPlayerButton->setContentAlignment( vgui::Label::a_center );
-	m_PrevPlayerButton->setBoundKey( (char)255 );	// special no bound to avoid leading spaces in name 
+	m_PrevPlayerButton->setBoundKey( (char)255 ); // special no bound to avoid leading spaces in name
 	m_PrevPlayerButton->addActionSignal( new CSpectatorHandler_Command( this, SPECTATOR_PANEL_CMD_PREVPLAYER ) );
 	m_PrevPlayerButton->setUnArmedBorderColor( 59, 58, 34, 48 );
 	m_PrevPlayerButton->setArmedBorderColor( 194, 202, 54, 0 );
@@ -182,7 +183,7 @@ void SpectatorPanel::Initialize()
 	m_NextPlayerButton = new CImageButton( "arrowright", ( ScreenWidth - ( XRES( CAMOPTIONS_BUTTON_X ) + 15 ) ) - XRES( 24 + 15 ), YRES( 6 ), XRES( 24 ), YRES( 20 ), false, false );
 	m_NextPlayerButton->setParent( m_BottomBorder );
 	m_NextPlayerButton->setContentAlignment( vgui::Label::a_center );
-	m_NextPlayerButton->setBoundKey( (char)255 );	// special no bound to avoid leading spaces in name 
+	m_NextPlayerButton->setBoundKey( (char)255 ); // special no bound to avoid leading spaces in name
 	m_NextPlayerButton->addActionSignal( new CSpectatorHandler_Command( this, SPECTATOR_PANEL_CMD_NEXTPLAYER ) );
 	m_NextPlayerButton->setUnArmedBorderColor( 59, 58, 34, 48 );
 	m_NextPlayerButton->setArmedBorderColor( 194, 202, 54, 0 );
@@ -194,24 +195,23 @@ void SpectatorPanel::Initialize()
 	float flLabelSize = ( ( ScreenWidth - ( XRES( CAMOPTIONS_BUTTON_X ) + 15 ) ) - XRES( 24 + 15 ) ) - XRES( ( 15 + OPTIONS_BUTTON_X + 15 ) + 38 );
 
 	m_BottomMainButton = new DropDownButton( "Spectator Bottom",
-		XRES( ( 15 + OPTIONS_BUTTON_X + 15 ) + 31 ), YRES( 6 ), flLabelSize, YRES( 20 ),
-		false, false );
+	                                         XRES( ( 15 + OPTIONS_BUTTON_X + 15 ) + 31 ), YRES( 6 ), flLabelSize, YRES( 20 ),
+	                                         false, false );
 
 	m_BottomMainButton->setParent( m_BottomBorder );
 	m_BottomMainButton->setPaintBackgroundEnabled( false );
 	m_BottomMainButton->setFgColor( Scheme::sc_primary1 );
 	m_BottomMainButton->setContentAlignment( vgui::Label::a_center );
 	m_BottomMainButton->setBorder( new LineBorder( Color( 59, 58, 34, 48 ) ) );
-	m_BottomMainButton->setBoundKey( (char)255 );	// special no bound to avoid leading spaces in name 
+	m_BottomMainButton->setBoundKey( (char)255 ); // special no bound to avoid leading spaces in name
 	m_BottomMainButton->addActionSignal( new CSpectatorHandler_Command( this, SPECTATOR_PANEL_CMD_PLAYERS ) );
 	m_BottomMainButton->setUnArmedBorderColor( 59, 58, 34, 48 );
 	m_BottomMainButton->setArmedBorderColor( 194, 202, 54, 0 );
 	m_BottomMainButton->setUnArmedColor( 143, 143, 54, 0 );
 	m_BottomMainButton->setArmedColor( 194, 202, 54, 0 );
 
-
 	m_BottomMainLabel = new Label( "Spectator Bottom",
-		XRES( ( 15 + OPTIONS_BUTTON_X + 15 ) + 31 ), YRES( 6 ), flLabelSize, YRES( 20 ) );
+	                               XRES( ( 15 + OPTIONS_BUTTON_X + 15 ) + 31 ), YRES( 6 ), flLabelSize, YRES( 20 ) );
 
 	m_BottomMainLabel->setParent( m_BottomBorder );
 	m_BottomMainLabel->setPaintBackgroundEnabled( false );
@@ -229,7 +229,6 @@ void SpectatorPanel::Initialize()
 	m_InsetViewButton->setUnArmedColor( 143, 143, 54, 0 );
 	m_InsetViewButton->setArmedColor( 194, 202, 54, 0 );
 
-
 	m_menuVisible = false;
 	m_insetVisible = false;
 	//	m_HideButton->setVisible(false);
@@ -241,16 +240,19 @@ void SpectatorPanel::Initialize()
 	m_ExtraInfo->setVisible( false );
 	m_Separator->setVisible( false );
 	m_TimerImage->setVisible( false );
-
 }
 
 void SpectatorPanel::ShowMenu( bool isVisible )
 {
 	//	m_HideButton->setVisible(isVisible);	m_HideButton->setArmed( false );
-	m_OptionButton->setVisible( isVisible );		m_OptionButton->setArmed( false );
-	m_CamButton->setVisible( isVisible );			m_CamButton->setArmed( false );
-	m_NextPlayerButton->setVisible( isVisible );	m_NextPlayerButton->setArmed( false );
-	m_PrevPlayerButton->setVisible( isVisible );	m_PrevPlayerButton->setArmed( false );
+	m_OptionButton->setVisible( isVisible );
+	m_OptionButton->setArmed( false );
+	m_CamButton->setVisible( isVisible );
+	m_CamButton->setArmed( false );
+	m_NextPlayerButton->setVisible( isVisible );
+	m_NextPlayerButton->setArmed( false );
+	m_PrevPlayerButton->setVisible( isVisible );
+	m_PrevPlayerButton->setArmed( false );
 
 	if ( !isVisible )
 	{
@@ -288,7 +290,6 @@ void SpectatorPanel::ShowMenu( bool isVisible )
 
 	gViewPort->UpdateCursorState();
 }
-
 
 const char *GetSpectatorLabel( int iMode )
 {
@@ -342,7 +343,7 @@ void SpectatorPanel::EnableInsetView( bool isEnabled )
 			m_TopBanner->setVisible( false );
 
 		m_InsetViewButton->setBounds( XRES( x - 1 ), YRES( y ),
-			XRES( wide + 2 ), YRES( tall ) );
+		                              XRES( wide + 2 ), YRES( tall ) );
 		m_InsetViewButton->setVisible( true );
 	}
 	else
@@ -368,9 +369,6 @@ void SpectatorPanel::EnableInsetView( bool isEnabled )
 
 	m_CamButton->setText( CHudTextMessage::BufferedLocaliseTextString( GetSpectatorLabel( g_iUser1 ) ) );
 }
-
-
-
 
 void SpectatorPanel::Update()
 {

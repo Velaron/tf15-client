@@ -1,10 +1,5 @@
-#ifndef PARTICLEMEM_H__
-#define PARTICLEMEM_H__
-
-#ifdef _WIN32
-#pragma once
-#endif
-
+#ifndef __PMAN_PARTICLEMEM_H__
+#define __PMAN_PARTICLEMEM_H__
 #include <vector>
 
 class CCoreTriangleEffect;
@@ -192,4 +187,4 @@ public:
 	visibleparticles_t *m_pVisibleParticles;
 };
 
-#endif //PARTICLEMEM_H__
+#endif // __PMAN_PARTICLEMEM_H__

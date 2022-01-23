@@ -28,7 +28,7 @@ DECLARE_MESSAGE( m_Message, HudText )
 DECLARE_MESSAGE( m_Message, GameTitle )
 
 // 1 Global client_textmessage_t for custom messages that aren't in the titles.txt
-client_textmessage_t	g_pCustomMessage;
+client_textmessage_t g_pCustomMessage;
 const char *g_pCustomName = "Custom";
 char g_pCustomText[1024];
 
@@ -86,7 +86,6 @@ float CHudMessage::FadeBlend( float fadein, float fadeout, float hold, float loc
 	return fadeBlend;
 }
 
-
 int CHudMessage::XPosition( float x, int width, int totalWidth )
 {
 	int xPos;
@@ -98,7 +97,7 @@ int CHudMessage::XPosition( float x, int width, int totalWidth )
 	else
 	{
 		if ( x < 0.0f )
-			xPos = ( 1.0f + x ) * ScreenWidth - totalWidth;	// Alight right
+			xPos = ( 1.0f + x ) * ScreenWidth - totalWidth; // Alight right
 		else
 			xPos = x * ScreenWidth;
 	}
@@ -115,14 +114,14 @@ int CHudMessage::YPosition( float y, int height )
 {
 	int yPos;
 
-	if ( y == -1 )	// Centered?
+	if ( y == -1 ) // Centered?
 		yPos = ( ScreenHeight - height ) * 0.5f;
 	else
 	{
 		// Alight bottom?
 		if ( y < 0 )
-			yPos = ( 1.0f + y ) * ScreenHeight - height;	// Alight bottom
-		else // align top
+			yPos = ( 1.0f + y ) * ScreenHeight - height; // Alight bottom
+		else                                             // align top
 			yPos = y * ScreenHeight;
 	}
 
@@ -142,7 +141,7 @@ void CHudMessage::MessageScanNextChar( void )
 	srcRed = m_parms.pMessage->r1;
 	srcGreen = m_parms.pMessage->g1;
 	srcBlue = m_parms.pMessage->b1;
-	blend = 0;	// Pure source
+	blend = 0; // Pure source
 
 	switch ( m_parms.pMessage->effect )
 	{
@@ -157,7 +156,7 @@ void CHudMessage::MessageScanNextChar( void )
 		if ( m_parms.charTime > m_parms.time )
 		{
 			srcRed = srcGreen = srcBlue = 0;
-			blend = 0;	// pure source
+			blend = 0; // pure source
 		}
 		else
 		{
@@ -170,7 +169,7 @@ void CHudMessage::MessageScanNextChar( void )
 			}
 			else if ( deltaTime > m_parms.pMessage->fxtime )
 			{
-				blend = 0;	// pure dest
+				blend = 0; // pure dest
 			}
 			else
 			{
@@ -207,7 +206,6 @@ void CHudMessage::MessageScanStart( void )
 	case 0:
 		m_parms.fadeTime = m_parms.pMessage->fadein + m_parms.pMessage->holdtime;
 
-
 		if ( m_parms.time < m_parms.pMessage->fadein )
 		{
 			m_parms.fadeBlend = ( ( m_parms.pMessage->fadein - m_parms.time ) * ( 1.0f / m_parms.pMessage->fadein ) * 255 );
@@ -220,7 +218,7 @@ void CHudMessage::MessageScanStart( void )
 				m_parms.fadeBlend = 255; // Pure dest (off)
 		}
 		else
-			m_parms.fadeBlend = 0;	// Pure source (on)
+			m_parms.fadeBlend = 0; // Pure source (on)
 		m_parms.charTime = 0;
 
 		if ( m_parms.pMessage->effect == 1 && ( rand() % 100 ) < 10 )
@@ -236,7 +234,6 @@ void CHudMessage::MessageScanStart( void )
 		break;
 	}
 }
-
 
 void CHudMessage::MessageDrawScan( client_textmessage_t *pMessage, float time )
 {
@@ -288,7 +285,7 @@ void CHudMessage::MessageDrawScan( client_textmessage_t *pMessage, float time )
 			m_parms.lineLength++;
 			pText++;
 		}
-		pText++;		// Skip LF
+		pText++; // Skip LF
 
 		m_parms.x = XPosition( pMessage->x, m_parms.width, m_parms.totalWidth );
 
@@ -354,7 +351,7 @@ int CHudMessage::Draw( float fTime )
 		{
 			// pMessage = m_pMessages[i];
 			if ( m_startTime[i] > gHUD.m_flTime )
-				m_startTime[i] = gHUD.m_flTime + m_parms.time - m_startTime[i] + 0.2f;	// Server takes 0.2 seconds to spawn, adjust for this
+				m_startTime[i] = gHUD.m_flTime + m_parms.time - m_startTime[i] + 0.2f; // Server takes 0.2 seconds to spawn, adjust for this
 		}
 	}
 
@@ -430,7 +427,7 @@ void CHudMessage::MessageAdd( const char *pName, float time )
 				g_pCustomMessage.g2 = 110;
 				g_pCustomMessage.b2 = 0;
 				g_pCustomMessage.a2 = 0;
-				g_pCustomMessage.x = -1.0f;		// Centered
+				g_pCustomMessage.x = -1.0f; // Centered
 				g_pCustomMessage.y = 0.7f;
 				g_pCustomMessage.fadein = 0.01f;
 				g_pCustomMessage.fadeout = 1.5f;

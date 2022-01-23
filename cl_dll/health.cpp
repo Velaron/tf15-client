@@ -32,13 +32,12 @@
 DECLARE_MESSAGE( m_Health, Health )
 DECLARE_MESSAGE( m_Health, Damage )
 
-#define PAIN_NAME "sprites/%d_pain.spr"
+#define PAIN_NAME   "sprites/%d_pain.spr"
 #define DAMAGE_NAME "sprites/%d_dmg.spr"
 
 int giDmgHeight, giDmgWidth;
 
-int giDmgFlags[NUM_DMG_TYPES] =
-{
+int giDmgFlags[NUM_DMG_TYPES] = {
 	DMG_POISON,
 	DMG_ACID,
 	DMG_FREEZE | DMG_SLOWFREEZE,
@@ -119,8 +118,8 @@ int CHudHealth::MsgFunc_Damage( const char *pszName, int iSize, void *pbuf )
 {
 	BEGIN_READ( pbuf, iSize );
 
-	int armor = READ_BYTE();	// armor
-	int damageTaken = READ_BYTE();	// health
+	int armor = READ_BYTE();       // armor
+	int damageTaken = READ_BYTE(); // health
 	long bitsDamage = READ_LONG(); // damage bits
 
 	vec3_t vecFrom;
@@ -306,7 +305,7 @@ int CHudHealth::DrawPain( float flTime )
 	int x, y, a, shade;
 
 	// TODO:  get the shift value of the health
-	a = 255;	// max brightness until then
+	a = 255; // max brightness until then
 
 	float fFade = gHUD.m_flTimeDelta * 2;
 
@@ -402,8 +401,8 @@ int CHudHealth::DrawDamage( float flTime )
 
 			pdmg->fExpire = Q_min( flTime + DMG_IMAGE_LIFE, pdmg->fExpire );
 
-			if ( pdmg->fExpire <= flTime		// when the time has expired
-				&& a < 40 )						// and the flash is at the low point of the cycle
+			if ( pdmg->fExpire <= flTime // when the time has expired
+			     && a < 40 )             // and the flash is at the low point of the cycle
 			{
 				pdmg->fExpire = 0;
 
@@ -416,10 +415,9 @@ int CHudHealth::DrawDamage( float flTime )
 					pdmg = &m_dmg[j];
 					if ( ( pdmg->y ) && ( pdmg->y < y ) )
 						pdmg->y += giDmgHeight;
-
 				}
 
-				m_bitsDamage &= ~giDmgFlags[i];  // clear the bits
+				m_bitsDamage &= ~giDmgFlags[i]; // clear the bits
 			}
 		}
 	}

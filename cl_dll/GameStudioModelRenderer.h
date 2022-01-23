@@ -1,13 +1,12 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#pragma once
-#if !defined( GAMESTUDIOMODELRENDERER_H )
-#define GAMESTUDIOMODELRENDERER_H
+#ifndef __GAMESTUDIOMODELRENDERER_H__
+#define __GAMESTUDIOMODELRENDERER_H__
 
 /*
 ====================
@@ -21,4 +20,4 @@ public:
 	CGameStudioModelRenderer( void );
 };
 
-#endif // GAMESTUDIOMODELRENDERER_H
+#endif // __GAMESTUDIOMODELRENDERER_H__

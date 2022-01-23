@@ -1,13 +1,12 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#pragma once
-#if !defined( DEMOH )
-#define DEMOH
+#ifndef __DEMO_H__
+#define __DEMO_H__
 
 // Types of demo messages we can write/parse
 enum
@@ -23,4 +22,5 @@ extern int g_demosniperdamage;
 extern float g_demosniperorg[3];
 extern float g_demosniperangles[3];
 extern float g_demozoom;
-#endif
+
+#endif // __DEMO_H__

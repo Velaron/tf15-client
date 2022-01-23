@@ -1,15 +1,14 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
 // Camera.h  --  defines and such for a 3rd person camera
 // NOTE: must include quakedef.h first
-#pragma once
-#ifndef _CAMERA_H_
-#define _CAMERA_H_
+#ifndef __CAMERA_H__
+#define __CAMERA_H__
 
 // pitch, yaw, dist
 extern vec3_t cam_ofs;
@@ -20,4 +19,5 @@ void CAM_Init( void );
 void CAM_ClearStates( void );
 void CAM_StartMouseMove( void );
 void CAM_EndMouseMove( void );
-#endif // _CAMERA_H_
+
+#endif // __CAMERA_H__

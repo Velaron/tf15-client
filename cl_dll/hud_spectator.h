@@ -5,9 +5,8 @@
 // $NoKeywords: $
 //=============================================================================
 
-#pragma once
-#ifndef HUD_SPECTATOR_H
-#define HUD_SPECTATOR_H
+#ifndef __HUD_SPECTATOR_H__
+#define __HUD_SPECTATOR_H__
 
 #include "cl_entity.h"
 #include "interpolation.h"
@@ -150,4 +149,5 @@ private:
 
 	cameraWayPoint_t m_CamPath[MAX_CAM_WAYPOINTS];
 };
-#endif // SPECTATOR_H
+
+#endif // __HUD_SPECTATOR_H__

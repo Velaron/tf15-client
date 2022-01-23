@@ -12,12 +12,13 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#pragma once
-#ifndef PM_DEBUG_H
-#define PM_DEBUG_H
+
+#ifndef __PM_DEBUG_H__
+#define __PM_DEBUG_H__
 
 void PM_ViewEntity( void );
 void PM_DrawBBox( vec3_t mins, vec3_t maxs, vec3_t origin, int pcolor, float life );
 void PM_ParticleLine( vec3_t start, vec3_t end, int pcolor, float life, float vert );
 void PM_ShowClipBox( void );
-#endif//PM_DEBUG_H
+
+#endif // __PM_DEBUG_H__

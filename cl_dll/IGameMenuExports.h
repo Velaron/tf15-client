@@ -1,9 +1,7 @@
-#pragma once
+#ifndef __IGAMEMENUEXPORTS_H__
+#define __IGAMEMENUEXPORTS_H__
 
-#ifndef GAME_MENU_INT_H
-#define GAME_MENU_INT_H
-
-#include "interface.h"
+#include "../public/interface.h"
 #include "../mainui/font/FontRenderer.h"
 
 #if defined( _WIN32 )
@@ -36,4 +34,4 @@ public:
 
 #define GAMEMENUEXPORTS_INTERFACE_VERSION "GameMenuExports001"
 
-#endif // GAME_MENU_INT_H
+#endif // __IGAMEMENUEXPORTS_H__

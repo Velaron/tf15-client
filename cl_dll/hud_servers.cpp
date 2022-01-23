@@ -768,7 +768,7 @@ int CHudServers::LoadMasterAddresses( int maxservers, int *count, netadr_t *padr
 	strcpy( szMasterFile, MASTER_PARSE_FILE );
 
 	// See if there is a command line override
-	i = gEngfuncs.CheckParm( "-comm", (const char**)&pstart );
+	i = gEngfuncs.CheckParm( "-comm", (const char **)&pstart );
 	if ( i && pstart )
 	{
 		strcpy( szMasterFile, pstart );

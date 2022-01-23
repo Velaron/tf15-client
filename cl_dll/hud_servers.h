@@ -1,13 +1,12 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#if !defined( HUD_SERVERSH )
-#define HUD_SERVERSH
-#pragma once
+#ifndef __HUD_SERVERS_H__
+#define __HUD_SERVERS_H__
 
 #define NET_CALLBACK /* */
 
@@ -37,4 +36,5 @@ int ServersGetCount( void );
 const char *ServersGetInfo( int server );
 int ServersIsQuerying( void );
 void SortServers( const char *fieldname );
-#endif // HUD_SERVERSH
+
+#endif // __HUD_SERVERS_H__

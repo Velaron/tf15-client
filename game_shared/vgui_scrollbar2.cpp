@@ -1,57 +1,58 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
-
 
 #include "vgui_scrollbar2.h"
 #include "vgui_slider2.h"
 #include "vgui_loadtga.h"
 
-#include<VGUI_IntChangeSignal.h>
-#include<VGUI_Button.h>
-#include<VGUI_ActionSignal.h>
-#include<VGUI_LineBorder.h>
+#include <VGUI_IntChangeSignal.h>
+#include <VGUI_Button.h>
+#include <VGUI_ActionSignal.h>
+#include <VGUI_LineBorder.h>
 
 using namespace vgui;
 
-
 namespace
 {
-	class FooDefaultScrollBarIntChangeSignal : public IntChangeSignal
+class FooDefaultScrollBarIntChangeSignal : public IntChangeSignal
+{
+public:
+	FooDefaultScrollBarIntChangeSignal( ScrollBar2 *scrollBar )
 	{
-	public:
-		FooDefaultScrollBarIntChangeSignal( ScrollBar2 *scrollBar )
-		{
-			_scrollBar = scrollBar;
-		}
-		virtual void intChanged( int value, Panel *panel )
-		{
-			_scrollBar->fireIntChangeSignal();
-		}
-	protected:
-		ScrollBar2 *_scrollBar;
-	};
+		_scrollBar = scrollBar;
+	}
+	virtual void intChanged( int value, Panel *panel )
+	{
+		_scrollBar->fireIntChangeSignal();
+	}
 
-	class FooDefaultButtonSignal : public ActionSignal
+protected:
+	ScrollBar2 *_scrollBar;
+};
+
+class FooDefaultButtonSignal : public ActionSignal
+{
+public:
+	ScrollBar2 *_scrollBar;
+	int _buttonIndex;
+
+public:
+	FooDefaultButtonSignal( ScrollBar2 *scrollBar, int buttonIndex )
 	{
-	public:
-		ScrollBar2 *_scrollBar;
-		int        _buttonIndex;
-	public:
-		FooDefaultButtonSignal( ScrollBar2 *scrollBar, int buttonIndex )
-		{
-			_scrollBar = scrollBar;
-			_buttonIndex = buttonIndex;
-		}
-	public:
-		virtual void actionPerformed( Panel *panel )
-		{
-			_scrollBar->doButtonPressed( _buttonIndex );
-		}
-	};
+		_scrollBar = scrollBar;
+		_buttonIndex = buttonIndex;
+	}
+
+public:
+	virtual void actionPerformed( Panel *panel )
+	{
+		_scrollBar->doButtonPressed( _buttonIndex );
+	}
+};
 
 }
 
@@ -65,7 +66,8 @@ private:
 	LineBorder m_Border;
 
 public:
-	ScrollBarButton( const char *filename, int x, int y, int wide, int tall ) : m_Border( Color( 60, 60, 60, 0 ) ), Button( "", x, y, wide, tall )
+	ScrollBarButton( const char *filename, int x, int y, int wide, int tall ) :
+	    m_Border( Color( 60, 60, 60, 0 ) ), Button( "", x, y, wide, tall )
 	{
 		Image *image = vgui_LoadTGA( filename );
 		if ( image )
@@ -88,18 +90,16 @@ public:
 	}
 };
 
-
-
-
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
-// Input  : x - 
-//			y - 
-//			wide - 
-//			tall - 
-//			vertical - 
+// Input  : x -
+//			y -
+//			wide -
+//			tall -
+//			vertical -
 //-----------------------------------------------------------------------------
-ScrollBar2::ScrollBar2( int x, int y, int wide, int tall, bool vertical ) : Panel( x, y, wide, tall )
+ScrollBar2::ScrollBar2( int x, int y, int wide, int tall, bool vertical ) :
+    Panel( x, y, wide, tall )
 {
 	_slider = null;
 	_button[0] = null;
@@ -259,7 +259,6 @@ void ScrollBar2::doButtonPressed( int buttonIndex )
 	{
 		_slider->setValue( _slider->getValue() + _buttonPressedScrollValue );
 	}
-
 }
 
 void ScrollBar2::setButtonPressedScrollValue( int value )

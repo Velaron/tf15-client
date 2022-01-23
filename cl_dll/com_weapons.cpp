@@ -43,8 +43,8 @@ Log debug messages to file ( appends )
 */
 void COM_Log( const char *pszFile, const char *fmt, ... )
 {
-	va_list		argptr;
-	char		string[1024];
+	va_list argptr;
+	char string[1024];
 	FILE *fp;
 	const char *pfilename;
 
@@ -127,7 +127,7 @@ Directly queue up an event on the client
 =====================
 */
 void HUD_PlaybackEvent( int flags, const edict_t *pInvoker, unsigned short eventindex, float delay,
-	const float *origin, const float *angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 )
+                        const float *origin, const float *angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 )
 {
 	vec3_t org;
 	vec3_t ang;
@@ -166,8 +166,7 @@ float UTIL_WeaponTimeBase( void )
 
 static unsigned int glSeed = 0;
 
-unsigned int seed_table[256] =
-{
+unsigned int seed_table[256] = {
 	28985, 27138, 26457, 9451, 17764, 10909, 28790, 8716, 6361, 4853, 17798, 21977, 19643, 20662, 10834, 20103,
 	27067, 28634, 18623, 25849, 8576, 26234, 23887, 18228, 32587, 4836, 3306, 1811, 3035, 24559, 18399, 315,
 	26766, 907, 24102, 12370, 9674, 2972, 10472, 16492, 22683, 11529, 27968, 30406, 13213, 2319, 23620, 16823,

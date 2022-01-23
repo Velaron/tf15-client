@@ -29,18 +29,18 @@
 
 extern float *GetClientColor( int clientIndex );
 
-#define MAX_LINES	5
-#define MAX_CHARS_PER_LINE	256  /* it can be less than this, depending on char size */
+#define MAX_LINES          5
+#define MAX_CHARS_PER_LINE 256 /* it can be less than this, depending on char size */
 
 // allow 20 pixels on either side of the text
-#define MAX_LINE_WIDTH  ( ScreenWidth - 40 )
-#define LINE_START  10
+#define MAX_LINE_WIDTH ( ScreenWidth - 40 )
+#define LINE_START     10
 static float SCROLL_SPEED = 5;
 
 static char g_szLineBuffer[MAX_LINES + 1][MAX_CHARS_PER_LINE];
 static float *g_pflNameColors[MAX_LINES + 1];
 static int g_iNameLengths[MAX_LINES + 1];
-static float flScrollTime = 0;  // the time at which the lines next scroll up
+static float flScrollTime = 0; // the time at which the lines next scroll up
 
 static int Y_START = 0;
 static int line_height = 0;
@@ -153,7 +153,7 @@ int CHudSayText::MsgFunc_SayText( const char *pszName, int iSize, void *pbuf )
 {
 	BEGIN_READ( pbuf, iSize );
 
-	int client_index = READ_BYTE();		// the client who spoke the message
+	int client_index = READ_BYTE(); // the client who spoke the message
 	SayTextPrint( READ_STRING(), iSize - 1, client_index );
 
 	return 1;
@@ -257,10 +257,10 @@ void CHudSayText::EnsureTextFitsInOneLineAndWrapIfHaveTo( int line )
 			char buf[2];
 			buf[1] = 0;
 
-			if ( *x == ' ' && x != g_szLineBuffer[line] )  // store each line break,  except for the very first character
+			if ( *x == ' ' && x != g_szLineBuffer[line] ) // store each line break,  except for the very first character
 				last_break = x;
 
-			buf[0] = *x;  // get the length of the current character
+			buf[0] = *x; // get the length of the current character
 			GetConsoleStringSize( buf, &tmp_len, &line_height );
 			length += tmp_len;
 

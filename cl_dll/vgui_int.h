@@ -1,12 +1,12 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#ifndef VGUI_INT_H
-#define VGUI_INT_H
+#ifndef __VGUI_INT_H__
+#define __VGUI_INT_H__
 
 extern "C"
 {
@@ -17,5 +17,4 @@ extern "C"
 	void VGui_ViewportPaintBackground( int extents[4] );
 }
 
-
-#endif
+#endif // __VGUI_INT_H__

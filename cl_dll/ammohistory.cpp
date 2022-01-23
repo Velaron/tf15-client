@@ -16,7 +16,6 @@
 //  ammohistory.cpp
 //
 
-
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
@@ -28,11 +27,11 @@
 
 HistoryResource gHR;
 
-#define AMMO_PICKUP_GAP ( gHR.iHistoryGap + 5 )
-#define AMMO_PICKUP_PICK_HEIGHT		( 32 + ( gHR.iHistoryGap * 2 ) )
-#define AMMO_PICKUP_HEIGHT_MAX		( ScreenHeight - 100 )
+#define AMMO_PICKUP_GAP         ( gHR.iHistoryGap + 5 )
+#define AMMO_PICKUP_PICK_HEIGHT ( 32 + ( gHR.iHistoryGap * 2 ) )
+#define AMMO_PICKUP_HEIGHT_MAX  ( ScreenHeight - 100 )
 
-#define MAX_ITEM_NAME	32
+#define MAX_ITEM_NAME 32
 int HISTORY_DRAW_TIME = 5;
 
 // keep a list of items
@@ -46,7 +45,7 @@ struct ITEM_INFO
 void HistoryResource::AddToHistory( int iType, int iId, int iCount )
 {
 	if ( iType == HISTSLOT_AMMO && !iCount )
-		return;  // no amount, so don't add
+		return; // no amount, so don't add
 
 	if ( ( ( ( AMMO_PICKUP_GAP * iCurrentHistorySlot ) + AMMO_PICKUP_PICK_HEIGHT ) > AMMO_PICKUP_HEIGHT_MAX ) || ( iCurrentHistorySlot >= MAX_HISTORY ) )
 	{
@@ -55,7 +54,7 @@ void HistoryResource::AddToHistory( int iType, int iId, int iCount )
 		iCurrentHistorySlot = 0;
 	}
 
-	HIST_ITEM *freeslot = &rgAmmoHistory[iCurrentHistorySlot++];  // default to just writing to the first slot
+	HIST_ITEM *freeslot = &rgAmmoHistory[iCurrentHistorySlot++]; // default to just writing to the first slot
 	HISTORY_DRAW_TIME = CVAR_GET_FLOAT( "hud_drawhistory_time" );
 
 	freeslot->type = iType;
@@ -76,12 +75,12 @@ void HistoryResource::AddToHistory( int iType, const char *szName, int iCount )
 		iCurrentHistorySlot = 0;
 	}
 
-	HIST_ITEM *freeslot = &rgAmmoHistory[iCurrentHistorySlot++];  // default to just writing to the first slot
+	HIST_ITEM *freeslot = &rgAmmoHistory[iCurrentHistorySlot++]; // default to just writing to the first slot
 
 	// I am really unhappy with all the code in this file
 	int i = gHUD.GetSpriteIndex( szName );
 	if ( i == -1 )
-		return;  // unknown sprite name, don't add it to history
+		return; // unknown sprite name, don't add it to history
 
 	freeslot->iId = i;
 	freeslot->type = iType;
@@ -132,7 +131,7 @@ int HistoryResource::DrawAmmoHistory( float flTime )
 				// Draw the pic
 				int ypos = ScreenHeight - ( AMMO_PICKUP_PICK_HEIGHT + ( AMMO_PICKUP_GAP * i ) );
 				int xpos = ScreenWidth - 24;
-				if ( spr && *spr )    // weapon isn't loaded yet so just don't draw the pic
+				if ( spr && *spr ) // weapon isn't loaded yet so just don't draw the pic
 				{
 					// the dll has to make sure it has sent info the weapons you need
 					SPR_Set( *spr, r, g, b );
@@ -149,13 +148,13 @@ int HistoryResource::DrawAmmoHistory( float flTime )
 				WEAPON *weap = gWR.GetWeapon( rgAmmoHistory[i].iId );
 
 				if ( !weap )
-					return 1;  // we don't know about the weapon yet, so don't draw anything
+					return 1; // we don't know about the weapon yet, so don't draw anything
 
 				int r, g, b;
 				UnpackRGB( r, g, b, RGB_YELLOWISH );
 
 				if ( !gWR.HasAmmo( weap ) )
-					UnpackRGB( r, g, b, RGB_REDISH );	// if the weapon doesn't have ammo, display it as red
+					UnpackRGB( r, g, b, RGB_REDISH ); // if the weapon doesn't have ammo, display it as red
 
 				float scale = ( rgAmmoHistory[i].DisplayTime - flTime ) * 80;
 				ScaleColors( r, g, b, Q_min( scale, 255 ) );
@@ -170,7 +169,7 @@ int HistoryResource::DrawAmmoHistory( float flTime )
 				int r, g, b;
 
 				if ( !rgAmmoHistory[i].iId )
-					continue;  // sprite not loaded
+					continue; // sprite not loaded
 
 				wrect_t rect = gHUD.GetSpriteRect( rgAmmoHistory[i].iId );
 

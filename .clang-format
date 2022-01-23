@@ -30,7 +30,7 @@ IndentWidth: 4
 Language: Cpp
 MaxEmptyLinesToKeep: 1
 PointerAlignment: Right
-ReflowComments: true
+ReflowComments: false
 SortIncludes: false
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false

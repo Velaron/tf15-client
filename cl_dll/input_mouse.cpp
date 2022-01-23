@@ -16,7 +16,7 @@ AbstractInput *currentInput = &goldSourceInput;
 #else
 AbstractInput *currentInput = &fwgsInput;
 #endif
-extern "C"  void DLLEXPORT IN_ClientMoveEvent( float forwardmove, float sidemove )
+extern "C" void DLLEXPORT IN_ClientMoveEvent( float forwardmove, float sidemove )
 {
 	currentInput->IN_ClientMoveEvent( forwardmove, sidemove );
 }

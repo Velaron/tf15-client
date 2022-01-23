@@ -13,11 +13,8 @@
 **
 ******************************************************************************/
 
-#ifndef INTERPOLATION_H
-#define INTERPOLATION_H
-#ifdef _WIN32
-#pragma once
-#endif
+#ifndef __INTERPOLATION_H__
+#define __INTERPOLATION_H__
 
 //  interpolation class
 class CInterpolation
@@ -50,4 +47,4 @@ protected:
 	bool m_SmoothEnd;
 };
 
-#endif // INTERPOLATION_H
+#endif // __INTERPOLATION_H__

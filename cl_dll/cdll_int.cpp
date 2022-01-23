@@ -30,9 +30,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "netadr.h"
-
-#undef INTERFACE_H
-#include "../public/interface.h"
+#include "interface.h"
 
 extern "C"
 {
@@ -42,10 +40,8 @@ extern "C"
 #include <string.h>
 #include "hud_servers.h"
 #include "vgui_int.h"
-#include "interface.h"
 
 #include "vgui_TeamFortressViewport.h"
-#include "../public/interface.h"
 
 cl_enginefunc_t gEngfuncs;
 CHud gHUD;

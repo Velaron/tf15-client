@@ -1,17 +1,14 @@
-//========= Copyright � 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
 
-#ifndef IGAMECLIENTEXPORTS_H
-#define IGAMECLIENTEXPORTS_H
-#ifdef _WIN32
-#pragma once
-#endif
+#ifndef __IGAMECLIENTEXPORTS_H__
+#define __IGAMECLIENTEXPORTS_H__
 
-#include "interface.h"
+#include "../interface.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: Exports a set of functions for the GameUI interface to interact with the game client
@@ -30,4 +27,4 @@ public:
 
 #define GAMECLIENTEXPORTS_INTERFACE_VERSION "GameClientExports001"
 
-#endif // IGAMECLIENTEXPORTS_H
+#endif // __IGAMECLIENTEXPORTS_H__

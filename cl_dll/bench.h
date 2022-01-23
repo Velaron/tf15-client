@@ -1,6 +1,5 @@
-#if !defined( BENCH_H )
-#define BENCH_H
-#pragma once
+#ifndef __BENCH_H__
+#define __BENCH_H__
 
 #define FIRST_STAGE  1
 #define SECOND_STAGE 2
@@ -23,4 +22,4 @@ void Bench_AddObjects( void );
 void Bench_SetViewAngles( int recalc_wander, float *viewangles, float frametime, struct usercmd_s *cmd );
 void Bench_SetViewOrigin( float *vieworigin, float frametime );
 
-#endif // BENCH_H
+#endif // __BENCH_H__
