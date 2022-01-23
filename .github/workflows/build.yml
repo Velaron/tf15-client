@@ -76,6 +76,7 @@ jobs:
             build/mainui/menu.so
   release:
     name: Release
+    runs-on: ubuntu-latest
     needs: [android, windows, linux]
     steps:
       - name: Fetch artifacts
