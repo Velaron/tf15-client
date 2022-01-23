@@ -13,10 +13,8 @@ jobs:
         with:
           java-version: 11
       - uses: android-actions/setup-android@v2
-      - uses: github/codeql-action/init@v1
       - run: ./gradlew assembleDebug
         working-directory: android
-      - uses: github/codeql-action/analyze@v1
       - uses: actions/upload-artifact@v2
         with:
           name: Android
@@ -29,11 +27,9 @@ jobs:
         with:
           submodules: recursive
       - uses: ilammy/msvc-dev-cmd@v1
-      - uses: github/codeql-action/init@v1
       - run: cmake -A Win32 -S . -B build
       - run: cmake --build . --config Release
         working-directory: build
-      - uses: github/codeql-action/analyze@v1
       - uses: actions/upload-artifact@v2
         with:
           name: Windows
@@ -51,14 +47,12 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt-get update
           sudo apt-get install gcc-multilib g++-multilib cmake ninja-build libfontconfig-dev:i386
-      - uses: github/codeql-action/init@v1
       - run: |
           export CC="gcc -m32"
           export CXX="g++ -m32"
           cmake -S . -B build -G Ninja
       - run: cmake --build . --config Release
         working-directory: build
-      - uses: github/codeql-action/analyze@v1
       - uses: actions/upload-artifact@v2
         with:
           name: Linux
