@@ -47,6 +47,9 @@ jobs:
       - name: Build
         run: cmake --build . --config Release
         working-directory: build
+      - name: Generate extras.pak
+        run: python makepak.py pak/ extras.pak
+        working-directory: android/app
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -54,6 +57,7 @@ jobs:
           path: |
             build/cl_dll/Release/client.dll
             build/mainui/Release/menu.dll
+            android/app/extras.pak
   linux:
     name: Linux
     runs-on: ubuntu-latest
@@ -75,6 +79,9 @@ jobs:
       - name: Build
         run: cmake --build . --config Release
         working-directory: build
+      - name: Generate extras.pak
+        run: python makepak.py pak/ extras.pak
+        working-directory: android/app
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -82,6 +89,7 @@ jobs:
           path: |
             build/cl_dll/client.so
             build/mainui/menu.so
+            android/app/extras.pak
   release:
     name: Release
     runs-on: ubuntu-latest
