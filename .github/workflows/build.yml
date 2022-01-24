@@ -17,13 +17,13 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
       - name: Build
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleRelease
         working-directory: android
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: Android
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
   windows:
     name: Windows
     runs-on: windows-latest
@@ -83,7 +83,7 @@ jobs:
         uses: actions/download-artifact@v2
       - name: Repackage binaries
         run: |
-          mv Android/app-debug.apk tf15-client.apk
+          mv Android/app-release-unsigned.apk tf15-client.apk
           mkdir -p tfc/cl_dlls
           mv Windows/*/*/*.dll tfc/cl_dlls
           zip -r tf15-client_win32.zip tfc/
