@@ -89,7 +89,7 @@ public class LauncherActivity extends AppCompatActivity {
 						launchButton.setEnabled(true);
 					} else {
 						updateNotification.dismiss();
-						openDialog("https://github.com/Velaron/tf15-client/actions", getString(R.string.update_required),
+						openDialog("https://github.com/Velaron/tf15-client/releases/tag/continuous", getString(R.string.update_required),
 								getString(R.string.update_available, "TF15Client"));
 					}
 				} catch (JSONException e) {
