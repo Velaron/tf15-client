@@ -1,5 +1,5 @@
-# TF15-Client [![Build Status](https://github.com/Velaron/tf15-client/actions/workflows/build.yml/badge.svg)](https://github.com/Velaron/tf15-client/actions)
-Team Fortress Classic reverse-engineered. <img align="right" width="128" height="128" src="https://github.com/Velaron/tf15-client/raw/master/android/app/src/main/ic_launcher-playstore.png" alt="TF15-Client" />
+# TF15-Client [![Build Status](https://github.com/Velaron/tf15-client/actions/workflows/build.yml/badge.svg)](https://github.com/Velaron/tf15-client/actions) <img align="right" width="128" height="128" src="https://github.com/Velaron/tf15-client/raw/master/android/app/src/main/ic_launcher-playstore.png" alt="TF15-Client" />
+Team Fortress Classic reverse-engineered.
 
 ## Donate
 [![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/velaron)
