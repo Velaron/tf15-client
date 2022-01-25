@@ -457,7 +457,7 @@ BOOL CTFMedikit::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr
 
 	if ( ( pTarget->tfstate & TFSTATE_TRANQUILISED ) )
 	{
-		Timer = pTarget->FindTimer( TF_TIMER_HALLUCINATION );
+		Timer = pTarget->FindTimer( TF_TIMER_TRANQUILISATION );
 
 		UTIL_ClientPrintAll( HUD_PRINTNOTIFY,
 		                     "#Medic_curetranq",
