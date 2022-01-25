@@ -7,7 +7,6 @@
 #include "player.h"
 #include "gamerules.h"
 
-#define TF_DEFS_ONLY
 #include "tf_defs.h"
 
 LINK_ENTITY_TO_CLASS( tf_weapon_axe, CTFAxe )
@@ -395,8 +394,119 @@ void CTFMedikit::WeaponIdle( void )
 	}
 }
 
-BOOL CTFMedikit::AxeHit( CBaseEntity *pTarget, Vector *p_vecDir, TraceResult *ptr )
+BOOL CTFMedikit::AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr )
 {
-	// if
-	return true;
+	CBaseEntity *Timer;
+	Vector p_VecSpot;
+
+	if ( !FClassnameIs( pTarget->pev, "player" ) )
+		return FALSE;
+
+	if ( pTarget->pev->health <= 0.0f )
+	{
+		ClearMultiDamage();
+
+		pTarget->TraceAttack( m_pPlayer->pev, 10.0f, p_vecDir, ptr, DMG_CLUB );
+
+		ApplyMultiDamage( m_pPlayer->pev, m_pPlayer->pev );
+
+		if ( !( pTarget->tfstate & TFSTATE_INFECTED )
+		     && pTarget->pev->playerclass != PC_MEDIC
+		     && cb_prematch_time <= gpGlobals->time )
+		{
+			pTarget->tfstate |= TFSTATE_INFECTED;
+			pTarget->infection_team_no = m_pPlayer->team_no;
+		}
+
+		return TRUE;
+	}
+
+	Timer = pTarget->FindTimer( TF_TIMER_CONCUSSION );
+
+	if ( Timer )
+	{
+		UTIL_ClientPrintAll( HUD_PRINTNOTIFY,
+		                     "#Medic_cureconc",
+		                     STRING( m_pPlayer->pev->netname ),
+		                     STRING( pTarget->pev->netname ) );
+
+		if ( Timer->team_no != m_pPlayer->team_no )
+			m_pPlayer->TF_AddFrags( 1 );
+
+		Timer->pev->nextthink = gpGlobals->time;
+		Timer->SetThink( &CBaseEntity::SUB_Remove );
+	}
+
+	if ( ( pTarget->tfstate & TFSTATE_HALLUCINATING ) )
+	{
+		Timer = pTarget->FindTimer( TF_TIMER_HALLUCINATION );
+
+		UTIL_ClientPrintAll( HUD_PRINTNOTIFY,
+		                     "#Medic_curehalluc",
+		                     STRING( m_pPlayer->pev->netname ),
+		                     STRING( pTarget->pev->netname ) );
+
+		if ( Timer->team_no != m_pPlayer->team_no )
+			m_pPlayer->TF_AddFrags( 1 );
+
+		pTarget->tfstate &= ~TFSTATE_HALLUCINATING;
+
+		Timer->pev->nextthink = gpGlobals->time;
+		Timer->SetThink( &CBaseEntity::SUB_Remove );
+	}
+
+	if ( ( pTarget->tfstate & TFSTATE_TRANQUILISED ) )
+	{
+		Timer = pTarget->FindTimer( TF_TIMER_HALLUCINATION );
+
+		UTIL_ClientPrintAll( HUD_PRINTNOTIFY,
+		                     "#Medic_curetranq",
+		                     STRING( m_pPlayer->pev->netname ),
+		                     STRING( pTarget->pev->netname ) );
+
+		if ( Timer->team_no != m_pPlayer->team_no )
+			m_pPlayer->TF_AddFrags( 1 );
+
+		pTarget->tfstate &= ~TFSTATE_TRANQUILISED;
+		( (CBasePlayer *)pTarget )->TeamFortress_SetSpeed();
+
+		Timer->pev->nextthink = gpGlobals->time;
+		Timer->SetThink( &CBaseEntity::SUB_Remove );
+	}
+
+	if ( ( pTarget->tfstate & TFSTATE_INFECTED ) )
+	{
+		p_VecSpot = pTarget->pev->origin;
+		SpawnBlood( p_VecSpot, pTarget->BloodColor(), (int)( pTarget->pev->health * 0.5f ) );
+	}
+
+	if ( pTarget->numflames > 0.0f )
+	{
+		UTIL_ClientPrintAll( HUD_PRINTNOTIFY,
+		                     "#Medic_curefire",
+		                     STRING( m_pPlayer->pev->netname ),
+		                     STRING( pTarget->pev->netname ) );
+
+		pTarget->numflames = 0.0f;
+
+		PLAYBACK_EVENT_FULL( 0, ENT( m_pPlayer->pev ), m_usSteamShot, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+	}
+
+	if ( pTarget->pev->max_health > pTarget->pev->health )
+	{
+		PLAYBACK_EVENT_FULL( 0, ENT( m_pPlayer->pev ), m_usNormalShot, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+
+		pTarget->TakeHealth( 200.0f, 0 );
+	}
+	else if ( pTarget->pev->max_health + 50.0f > pTarget->pev->health )
+	{
+		PLAYBACK_EVENT_FULL( 0, ENT( m_pPlayer->pev ), m_usSuperShot, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+
+		pTarget->TakeHealth( 5.0f, DMG_IGNORE_MAXHEALTH );
+
+		if ( !( pTarget->items & IT_SUPERHEALTH ) )
+			pTarget->items |= IT_SUPERHEALTH;
+	}
+
+	return TRUE;
 }

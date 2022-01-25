@@ -537,7 +537,7 @@ void CBasePlayer::TeamFortress_SetSpeed( void )
 		case PC_CIVILIAN: pev->maxspeed = PC_CIVILIAN_MAXSPEED; break;
 		}
 
-		if ( tfstate & TFSTATE_AIMING && pev->maxspeed > 80.0f )
+		if ( ( tfstate & TFSTATE_AIMING ) && pev->maxspeed > 80.0f )
 			pev->maxspeed = 80.0f;
 	}
 }
@@ -831,7 +831,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	// FIXME, make this a method in each weapon?  where you pass in an entity_state_t *?
 	switch ( from->client.m_iId )
 	{
-	case WEAPON_BIOWEAPON:
+	case WEAPON_MEDIKIT:
 		pWeapon = &g_Medkit;
 		break;
 	case WEAPON_SPANNER:

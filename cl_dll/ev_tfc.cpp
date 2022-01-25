@@ -2245,10 +2245,10 @@ qboolean EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, in
 	cl_entity_t *pEnt;
 
 	if ( !EV_IsPlayer( entity ) )
-		return false;
+		return FALSE;
 
 	if ( EV_TFC_IsAlly( idx, entity ) )
-		return true;
+		return TRUE;
 
 	EV_TFC_TraceAttack( idx, 10.0f, vecDir, ptr );
 
@@ -2257,7 +2257,7 @@ qboolean EV_TFC_Medkit( int idx, float *origin, float *forward, float *right, in
 	if ( pEnt->curstate.playerclass != PC_MEDIC )
 		gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_VOICE, "player/death2.wav", VOL_NORM, ATTN_NORM, 0, PITCH_NORM );
 
-	return true;
+	return TRUE;
 }
 
 char *EV_TFC_LookupDoorSound( int type, int index )

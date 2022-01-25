@@ -314,6 +314,7 @@ public:
 	void TeamFortress_SetSpeed( void );
 	void TeamFortress_SetSkin( void );
 	BOOL EngineerUse( CBasePlayer *pPlayer );
+	void TF_AddFrags( int iFrags );
 
 	void TabulateAmmo( void );
 

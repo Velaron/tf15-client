@@ -544,7 +544,7 @@ public:
 	BOOL Deploy( void );
 	void PlayAnim( int iAnimType );
 	void WeaponIdle( void );
-	BOOL AxeHit( CBaseEntity *pTarget, Vector *p_vecDir, TraceResult *ptr );
+	BOOL AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr );
 
 private:
 	unsigned short m_usNormalShot;

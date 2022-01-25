@@ -39,6 +39,8 @@ globalvars_t *gpGlobals;
 
 ItemInfo CBasePlayerItem::ItemInfoArray[MAX_WEAPONS];
 
+float cb_prematch_time;
+
 void EMIT_SOUND_DYN( edict_t *entity, int channel, const char *sample, float volume, float attenuation, int flags, int pitch ) { }
 
 // CBaseEntity Stubs
@@ -333,7 +335,7 @@ int CBasePlayer::GetCustomDecalFrames( void ) { return -1; }
 void CBasePlayer::DropPlayerItem( char *pszItemName ) { }
 BOOL CBasePlayer::HasPlayerItem( CBasePlayerItem *pCheckItem ) { return FALSE; }
 BOOL CBasePlayer::SwitchWeapon( CBasePlayerItem *pWeapon ) { return FALSE; }
-BOOL EngineerUse( CBasePlayer *pPlayer ) { return TRUE; }
+BOOL CBasePlayer::EngineerUse( CBasePlayer *pPlayer ) { return TRUE; }
 Vector CBasePlayer::GetGunPosition( void ) { return g_vecZero; }
 const char *CBasePlayer::TeamID( void ) { return ""; }
 int CBasePlayer::GiveAmmo( int iCount, const char *szName, int iMax ) { return 0; }
@@ -385,4 +387,7 @@ void CBasePlayerWeapon::RetireWeapon( void ) { }
 void CSoundEnt::InsertSound( int iType, const Vector &vecOrigin, int iVolume, float flDuration ) { }
 void RadiusDamage( Vector vecSrc, entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, float flRadius, int iClassIgnore, int bitsDamageType ) { }
 void CSprite::AnimateUntilDead( void ) { }
-void CBasePlayerWeapon::DB_LogShots( int nShots ) {};
+void CBasePlayerWeapon::DB_LogShots( int nShots ) { }
+
+void CBasePlayer::TF_AddFrags( int iFrags ) { }
+CBaseEntity *CBaseEntity::FindTimer( int iTimerType ) { return NULL; }
