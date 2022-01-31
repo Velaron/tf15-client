@@ -95,23 +95,22 @@ void CTFTranq::PrimaryAttack( void )
 	{
 		PlayEmptySound();
 		m_flNextPrimaryAttack = GetNextAttackDelay( 0.2f );
-	}
-	else
-	{
-		m_pPlayer->m_iWeaponVolume = 600;
-		m_pPlayer->m_iWeaponFlash = 256;
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireTranquilizer, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
-		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
-		p_vecOrigin = m_pPlayer->GetGunPosition();
-		p_vecAngles = m_pPlayer->pev->v_angle;
-		//CTFNailgunNail::CreateTranqNail( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
-		m_pPlayer->ammo_shells--;
 
-		if ( m_pPlayer->ammo_nails < 0 )
-			m_pPlayer->ammo_nails = 0;
-
-		m_flTimeWeaponIdle = 12.5f;
-		m_flNextPrimaryAttack = GetNextAttackDelay( 1.5f );
+		return;
 	}
+
+	m_pPlayer->m_iWeaponVolume = NORMAL_GUN_VOLUME;
+	m_pPlayer->m_iWeaponFlash = NORMAL_GUN_FLASH;
+	PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireTranquilizer, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+	m_pPlayer->pev->effects |= EF_MUZZLEFLASH;
+	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	UTIL_MakeVectors( m_pPlayer->pev->v_angle );
+	p_vecAngles = m_pPlayer->pev->v_angle;
+	p_vecOrigin = m_pPlayer->GetGunPosition();
+	// Velaron: TODO
+	// CTFNailgunNail::CreateTranqNail( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
+	DB_LogShots( 1 );
+	m_pPlayer->ammo_shells--;
+	m_flTimeWeaponIdle = 12.5f;
+	m_flNextPrimaryAttack = GetNextAttackDelay( 1.5f );
 }

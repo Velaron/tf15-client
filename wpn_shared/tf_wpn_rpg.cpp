@@ -189,27 +189,28 @@ void CTFRpg::PrimaryAttack( void )
 {
 	Vector p_vecOrigin, p_vecAngles;
 
-	if ( m_iClip )
-	{
-		m_pPlayer->m_iWeaponVolume = LOUD_GUN_VOLUME;
-		m_pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
-		PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireRPG, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
-		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
-		p_vecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16.0f + gpGlobals->v_right * 8.0f + gpGlobals->v_up * -8.0f;
-		p_vecAngles = m_pPlayer->pev->v_angle;
-		CTFRpgRocket::CreateRpgRocket( p_vecOrigin, p_vecAngles, m_pPlayer, this );
-		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
-		m_fInSpecialReload = 0;
-		m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
-		m_iClip--;
-		m_flTimeWeaponIdle = 0.8f;
-		m_flNextPrimaryAttack = GetNextAttackDelay( 0.8f );
-		ResetEmptySound();
-	}
-	else
+	if ( !m_iClip )
 	{
 		PlayEmptySound();
 		Reload();
+		
+		return;
 	}
+
+	m_pPlayer->m_iWeaponVolume = LOUD_GUN_VOLUME;
+	m_pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
+	PLAYBACK_EVENT_FULL( FEV_NOTHOST, ENT( m_pPlayer->pev ), m_usFireRPG, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
+	UTIL_MakeVectors( m_pPlayer->pev->v_angle );
+	p_vecAngles = m_pPlayer->pev->v_angle;
+	p_vecOrigin = ( gpGlobals->v_forward * 16.0f ) + m_pPlayer->GetGunPosition() + ( gpGlobals->v_right * 8.0f ) + ( gpGlobals->v_up * -8.0f );
+	CTFRpgRocket::CreateRpgRocket( p_vecOrigin, p_vecAngles, m_pPlayer, this );
+	DB_LogShots( 1 );
+	UTIL_MakeVectors( m_pPlayer->pev->v_angle );
+	m_fInSpecialReload = 0;
+	m_pPlayer->tfstate &= ~TFSTATE_RELOADING;
+	m_iClip--;
+	m_flTimeWeaponIdle = 0.8f;
+	m_flNextPrimaryAttack = GetNextAttackDelay( 0.8f );
+	ResetEmptySound();
 }

@@ -159,7 +159,7 @@ void CTFAxe::PrimaryAttack( void )
 
 BOOL CTFAxe::Deploy( void )
 {
-	if ( m_pPlayer->pev->playerclass == PC_CIVILIAN )
+	if ( m_pPlayer && m_pPlayer->pev->playerclass == PC_CIVILIAN )
 		return DefaultDeploy( "models/v_umbrella.mdl", "models/p_umbrella.mdl", CROWBAR_DRAW, "crowbar", 1 );
 	else
 		return DefaultDeploy( "models/v_tfc_crowbar.mdl", "models/p_crowbar.mdl", CROWBAR_DRAW, "crowbar", 1 );
