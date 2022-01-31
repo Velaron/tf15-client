@@ -64,6 +64,7 @@ void CBaseEntity::KeyValue( KeyValueData * ) { }
 void CBaseEntity::TeamFortress_EMPExplode( entvars_t *pevGren, float damage, float radius ) { }
 void CBaseEntity::TeamFortress_CalcEMPDmgRad( float &dmg, float &rad ) { }
 void CBaseEntity::TeamFortress_TakeEMPBlast( entvars_t *pevGren ) { }
+void CBaseEntity::TeamFortress_EMPRemove( void ) { }
 void CBaseEntity::TeamFortress_TakeConcussionBlast( entvars_t *pevGren, float bouncemax ) { }
 void CBaseEntity::Timer_Tranquilisation( void ) { }
 CBaseEntity *CBaseEntity::CreateTimer( int iTimerType ) { return NULL; }
@@ -134,14 +135,14 @@ void CLaserSpot::Suspend( float flSuspendTime ) { }
 void CTFIncendiaryCRocket::Spawn( void ) { }
 void CTFIncendiaryCRocket::Precache( void ) { }
 void CTFIncendiaryCRocket::RocketTouch( CBaseEntity *pOther ) { }
-CTFIncendiaryCRocket *CTFIncendiaryCRocket::CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFIncendiaryC *pLauncher ) { return 0; }
+CTFIncendiaryCRocket *CTFIncendiaryCRocket::CreateRpgRocket( Vector p_vecOrigin, Vector p_vecAngles, CBaseEntity *pOwner, CTFIncendiaryC *pLauncher ) { return 0; }
 void CTFIncendiaryCRocket::RadiusDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType ) { }
 
 // CTFRpgRocket Stubs
 void CTFRpgRocket::Spawn( void ) { }
 void CTFRpgRocket::Precache( void ) { }
 void CTFRpgRocket::RocketTouch( CBaseEntity *pOther ) { }
-CTFRpgRocket *CTFRpgRocket::CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFRpg *pLauncher ) { return 0; }
+CTFRpgRocket *CTFRpgRocket::CreateRpgRocket( Vector p_vecOrigin, Vector p_vecAngles, CBaseEntity *pOwner, CTFRpg *pLauncher ) { return 0; }
 void CTFRpgRocket::RadiusDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType ) { }
 
 void UTIL_Remove( CBaseEntity *pEntity ) { }
@@ -398,6 +399,7 @@ void CBasePlayer::TF_AddFrags( int iFrags ) { }
 void CBasePlayer::PainSound( void ) { }
 void CBasePlayer::TeamFortress_CalcEMPDmgRad( float &damage, float &radius ) { }
 void CBasePlayer::TeamFortress_TakeEMPBlast( entvars_t *pevGren ) { }
+void CBasePlayer::TeamFortress_EMPRemove( void ) { }
 void CBasePlayer::TeamFortress_TakeConcussionBlast( entvars_t *pevGren, float bouncemax ) { }
 void CBasePlayer::TeamFortress_Concuss( entvars_t *pevGren ) { }
 

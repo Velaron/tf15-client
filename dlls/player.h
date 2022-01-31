@@ -402,6 +402,7 @@ public:
 	void TeamFortress_TeamShowMemberClasses( void );
 	virtual void TeamFortress_CalcEMPDmgRad( float &damage, float &radius );
 	virtual void TeamFortress_TakeEMPBlast( entvars_t *pevGren );
+	virtual void TeamFortress_EMPRemove( void );
 	virtual void TeamFortress_TakeConcussionBlast( entvars_t *pevGren, float bouncemax );
 	virtual void TeamFortress_Concuss( entvars_t *pevGren );
 

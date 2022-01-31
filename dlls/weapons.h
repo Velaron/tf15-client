@@ -820,7 +820,7 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	void RocketTouch( CBaseEntity *pOther );
-	static CTFRpgRocket *CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFRpg *pLauncher );
+	static CTFRpgRocket *CreateRpgRocket( Vector p_vecOrigin, Vector p_vecAngles, CBaseEntity *pOwner, CTFRpg *pLauncher );
 	void RadiusDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType );
 
 	int m_iTrail;
@@ -864,7 +864,7 @@ public:
 	void Spawn( void );
 	void Precache( void );
 	void RocketTouch( CBaseEntity *pOther );
-	static CTFIncendiaryCRocket *CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFIncendiaryC *pLauncher );
+	static CTFIncendiaryCRocket *CreateRpgRocket( Vector p_vecOrigin, Vector p_vecAngles, CBaseEntity *pOwner, CTFIncendiaryC *pLauncher );
 	void RadiusDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float flDamage, int iClassIgnore, int bitsDamageType );
 
 	int m_iTrail;

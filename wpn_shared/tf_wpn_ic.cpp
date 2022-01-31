@@ -116,7 +116,7 @@ void CTFIncendiaryC::PrimaryAttack( void )
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		p_vecOrigin = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16.0f + gpGlobals->v_right * 8.0f + gpGlobals->v_up * -8.0f;
 		p_vecAngles = m_pPlayer->pev->v_angle;
-		CTFIncendiaryCRocket::CreateRpgRocket( &p_vecOrigin, &p_vecAngles, m_pPlayer, this );
+		CTFIncendiaryCRocket::CreateRpgRocket( p_vecOrigin, p_vecAngles, m_pPlayer, this );
 		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
 		m_pPlayer->ammo_rockets--;
 		m_flTimeWeaponIdle = 1.2f;

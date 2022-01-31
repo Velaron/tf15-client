@@ -2372,7 +2372,7 @@ void EV_TFC_GibVelocityCheck( float *vel )
 	}
 }
 
-int EV_TFC_PlayKnifeAnim( int iAnimType )
+inline int EV_TFC_PlayKnifeAnim( int iAnimType )
 {
 	switch ( iAnimType )
 	{
@@ -2382,7 +2382,7 @@ int EV_TFC_PlayKnifeAnim( int iAnimType )
 	}
 }
 
-int EV_TFC_PlayMedkitAnim( int iAnimType )
+inline int EV_TFC_PlayMedkitAnim( int iAnimType )
 {
 	switch ( iAnimType )
 	{
@@ -2392,7 +2392,7 @@ int EV_TFC_PlayMedkitAnim( int iAnimType )
 	}
 }
 
-int EV_TFC_PlaySpannerAnim( int iAnimType )
+inline int EV_TFC_PlaySpannerAnim( int iAnimType )
 {
 	switch ( iAnimType )
 	{
@@ -2402,7 +2402,7 @@ int EV_TFC_PlaySpannerAnim( int iAnimType )
 	}
 }
 
-void EV_TFC_PlayAxeAnim( int idx, int classid, int iAnimType )
+inline void EV_TFC_PlayAxeAnim( int idx, int classid, int iAnimType )
 {
 	if ( EV_IsLocal( idx ) )
 	{

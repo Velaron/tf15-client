@@ -4,12 +4,12 @@
 #include "weapons.h"
 
 // Velaron: TODO
-CTFIncendiaryCRocket *CTFIncendiaryCRocket::CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFIncendiaryC *pLauncher )
+CTFIncendiaryCRocket *CTFIncendiaryCRocket::CreateRpgRocket( Vector p_vecOrigin, Vector p_vecAngles, CBaseEntity *pOwner, CTFIncendiaryC *pLauncher )
 { 
 	return 0;
 }
 
-CTFRpgRocket *CTFRpgRocket::CreateRpgRocket( Vector *p_vecOrigin, Vector *p_vecAngles, CBaseEntity *pOwner, CTFRpg *pLauncher )
+CTFRpgRocket *CTFRpgRocket::CreateRpgRocket( Vector p_vecOrigin, Vector p_vecAngles, CBaseEntity *pOwner, CTFRpg *pLauncher )
 {
 	return 0;
 }
