@@ -310,6 +310,7 @@ CLaserSpot *CLaserSpot::CreateSpot( void )
 	return &g_Spot;
 }
 
+#if 0
 /*
 =====================
 CBaseEntity::FireBulletsPlayer
@@ -345,6 +346,7 @@ Vector CBaseEntity::FireBulletsPlayer( ULONG cShots, Vector vecSrc, Vector vecDi
 
 	return Vector( x * vecSpread.x, y * vecSpread.y, 0.0f );
 }
+#endif
 
 /*
 =====================

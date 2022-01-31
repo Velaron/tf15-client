@@ -1468,6 +1468,7 @@ void CBaseEntity::FireBullets( ULONG cShots, Vector vecSrc, Vector vecDirShootin
 	ApplyMultiDamage( pev, pevAttacker );
 }
 
+#if 0
 /*
 ================
 FireBullets
@@ -1555,6 +1556,7 @@ Vector CBaseEntity::FireBulletsPlayer( ULONG cShots, Vector vecSrc, Vector vecDi
 
 	return Vector( x * vecSpread.x, y * vecSpread.y, 0.0 );
 }
+#endif
 
 void CBaseEntity::TraceBleed( float flDamage, Vector vecDir, TraceResult *ptr, int bitsDamageType )
 {

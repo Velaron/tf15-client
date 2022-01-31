@@ -68,6 +68,7 @@ void CBaseEntity::TeamFortress_TakeConcussionBlast( entvars_t *pevGren, float bo
 void CBaseEntity::Timer_Tranquilisation( void ) { }
 CBaseEntity *CBaseEntity::CreateTimer( int iTimerType ) { return NULL; }
 CBaseEntity *CBaseEntity::FindTimer( int iTimerType ) { return NULL; }
+void CBaseEntity::TeamFortress_Concuss( entvars_t *pevGren ) { }
 
 // CBaseDelay Stubs
 void CBaseDelay::KeyValue( struct KeyValueData_s * ) { }
