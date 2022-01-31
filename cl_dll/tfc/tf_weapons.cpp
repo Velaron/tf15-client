@@ -37,6 +37,9 @@
 
 #include "entity_types.h"
 
+#include "bench.h"
+#include "com_model.h"
+
 extern globalvars_t *gpGlobals;
 extern int g_iUser1;
 
@@ -709,60 +712,70 @@ int HUD_NeedSpot( int *damage )
 int HUD_CreateSniperDot( int damage, Vector p_viewangles, Vector p_origin, float *dotorigin )
 {
 	static cl_entity_t dot;
+	static float fLastTime, fZAdjust;
 	int index;
 	Vector forward, right, up;
 	Vector farpoint;
 	pmtrace_t tr;
 	int contents;
-	qboolean ret = FALSE;
 
 	memset( &dot, 0, sizeof( cl_entity_t ) );
-	// if ( !Bench_Active() )
-	dot.model = gEngfuncs.CL_LoadModel( "sprites/laserdot.spr", &index );
 
-	if ( dot.model && gEngfuncs.GetLocalPlayer() )
+	if ( !Bench_Active() )
+		dot.model = gEngfuncs.CL_LoadModel( "sprites/laserdot.spr", &index );
+	else
+		dot.model = gEngfuncs.CL_LoadModel( "sprites/ppdemodot.spr", &index );
+
+	if ( !dot.model || !gEngfuncs.GetLocalPlayer() )
+		return FALSE;
+
+	dot.curstate.modelindex = index;
+	dot.curstate.movetype = MOVETYPE_NONE;
+	dot.curstate.solid = SOLID_NOT;
+	dot.curstate.rendermode = kRenderGlow;
+	dot.curstate.renderfx = kRenderFxNoDissipation;
+	dot.curstate.renderamt = damage;
+
+	gEngfuncs.pfnAngleVectors( p_viewangles, forward, right, up );
+
+	farpoint = forward * 8192.0f + p_origin;
+
+	gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
+	gEngfuncs.pEventAPI->EV_PushPMStates();
+	gEngfuncs.pEventAPI->EV_SetSolidPlayers( gEngfuncs.GetLocalPlayer()->index - 1 );
+	gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
+	gEngfuncs.pEventAPI->EV_PlayerTrace( p_origin, farpoint, PM_STUDIO_BOX, -1, &tr );
+
+	if ( tr.fraction != 1.0f )
 	{
-		dot.curstate.modelindex = index;
-		dot.curstate.movetype = MOVETYPE_NONE;
-		dot.curstate.solid = SOLID_NOT;
-		dot.curstate.rendermode = kRenderGlow;
-		dot.curstate.renderfx = kRenderFxNoDissipation;
-		dot.curstate.renderamt = damage;
+		contents = gEngfuncs.PM_PointContents( tr.endpos, 0 );
 
-		gEngfuncs.pfnAngleVectors( p_viewangles, forward, right, up );
-
-		farpoint = forward * 8192.0f + p_origin;
-
-		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
-		gEngfuncs.pEventAPI->EV_PushPMStates();
-		gEngfuncs.pEventAPI->EV_SetSolidPlayers( gEngfuncs.GetLocalPlayer()->index - 1 );
-		gEngfuncs.pEventAPI->EV_SetTraceHull( 2 );
-		gEngfuncs.pEventAPI->EV_PlayerTrace( p_origin, farpoint, PM_STUDIO_BOX, -1, &tr );
-
-		if ( tr.fraction != 1.0f )
+		if ( contents != CONTENTS_SKY && ( contents == CONTENTS_WATER ) == ( gEngfuncs.PM_PointContents( p_origin, 0 ) == CONTENTS_WATER ) )
 		{
-			contents = gEngfuncs.PM_PointContents( tr.endpos, 0 );
-
-			if ( contents != CONTENTS_SKY && ( contents == CONTENTS_WATER ) == ( gEngfuncs.PM_PointContents( p_origin, 0 ) == CONTENTS_WATER ) )
+			// Velaron: TODO
+			if ( Bench_Active() && Bench_InStage( THIRD_STAGE ) )
 			{
-				/*
-				if ( Bench_Active() && Bench_InStage( 3 ) )
+				if ( Bench_GetPowerPlay() )
 				{
-				}
-				*/
-				dot.origin = tr.endpos;
-				dot.curstate.origin = tr.endpos;
-				dot.prevstate = dot.curstate;
-				gEngfuncs.CL_CreateVisibleEntity( ET_NORMAL, &dot );
-				dotorigin = dot.origin;
-				ret = TRUE;
-			}
-		}
 
-		gEngfuncs.pEventAPI->EV_PopPMStates();
+				}
+				else
+				{
+
+				}
+			}
+
+			dot.origin = tr.endpos;
+			dot.curstate.origin = tr.endpos;
+			dot.prevstate = dot.curstate;
+			gEngfuncs.CL_CreateVisibleEntity( ET_NORMAL, &dot );
+			*(Vector *)dotorigin = dot.origin;
+		}
 	}
 
-	return ret;
+	gEngfuncs.pEventAPI->EV_PopPMStates();
+
+	return TRUE;
 }
 
 /*
@@ -1040,10 +1053,10 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 		{
 			if ( HUD_SpotActive() )
 			{
-				if ( !CL_IsDead() && cmd->buttons & IN_ATTACK )
+				if ( !CL_IsDead() && ( cmd->buttons & IN_ATTACK ) )
 				{
 					g_laserdot.laserdotactive = true;
-					g_laserdot.laserdotintensity = 0.25 * pWeapon->m_fAimedDamage + 150.0;
+					g_laserdot.laserdotintensity = 0.25f * pWeapon->m_fAimedDamage + 150.0f;
 				}
 			}
 		}

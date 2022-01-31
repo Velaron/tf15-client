@@ -126,22 +126,22 @@ void CTFSniperRifle::UpdateSpot( void )
 	Vector vecSrc, vecEnd;
 	TraceResult tr;
 
-	if ( m_iSpotActive )
-	{
-		if ( !m_pSpot )
-		{
-			m_pSpot = CLaserSpot::CreateSpot();
-			m_pSpot->pev->flags |= FL_SKIPLOCALHOST;
-			m_pSpot->pev->owner = ENT( m_pPlayer->pev );
-		}
+	if ( !m_iSpotActive )
+		return;
 
-		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
-		vecSrc = m_pPlayer->GetGunPosition();
-		vecEnd = vecSrc + gpGlobals->v_forward * 8192.0f;
-		UTIL_TraceLine( vecSrc, vecEnd, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
-		UTIL_SetOrigin( m_pSpot->pev, tr.vecEndPos );
-		m_pSpot->pev->renderamt = 0.25f * m_fAimedDamage + 150.0f;
+	if ( !m_pSpot )
+	{
+		m_pSpot = CLaserSpot::CreateSpot();
+		m_pSpot->pev->flags |= FL_SKIPLOCALHOST;
+		m_pSpot->pev->owner = ENT( m_pPlayer->pev );
 	}
+
+	UTIL_MakeVectors( m_pPlayer->pev->v_angle );
+	vecSrc = m_pPlayer->GetGunPosition();
+	vecEnd = vecSrc + gpGlobals->v_forward * 8192.0f;
+	UTIL_TraceLine( vecSrc, vecEnd, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
+	UTIL_SetOrigin( m_pSpot->pev, tr.vecEndPos );
+	m_pSpot->pev->renderamt = 0.25f * m_fAimedDamage + 150.0f;
 }
 
 void CTFSniperRifle::WeaponIdle( void )
@@ -162,9 +162,9 @@ void CTFSniperRifle::PrimaryAttack( void )
 {
 	Vector vecSrc, vecEnd, anglesAim;
 	TraceResult tr;
-	CBaseEntity *pHit;
-	int vol, maxvol;
-	BOOL player;
+	CBaseEntity *pEnt;
+	int volume;
+	BOOL is_player, gib;
 
 	if ( m_pPlayer->ammo_shells <= 0 )
 	{
@@ -188,44 +188,51 @@ void CTFSniperRifle::PrimaryAttack( void )
 	}
 	else
 	{
-		if ( pHit = CBaseEntity::Instance( tr.pHit ) ) // Velaron: TODO
+		if ( tr.pHit )
 		{
-			ClearMultiDamage();
-			pHit->TraceAttack( m_pPlayer->pev, m_fAimedDamage, gpGlobals->v_forward, &tr, DMG_BULLET );
+			pEnt = CBaseEntity::Instance( tr.pHit );
 
-			if ( m_pPlayer->deathtype )
-				deathtype = m_pPlayer->deathtype;
-
-			ApplyMultiDamage( pev, m_pPlayer->pev );
-			m_pPlayer->deathtype = 0;
-			player = FClassnameIs( pHit->pev, "player" );
-			vol = maxvol = player ? 100 : 90;
-
-			if ( vecEnd.Length() < 1024.0f )
+			if ( pEnt )
 			{
-				vol = vol * ( 1.0f - vecEnd.Length() / 1024.0f );
-				if ( vol > maxvol )
+				ClearMultiDamage();
+
+				pEnt->TraceAttack( m_pPlayer->pev, m_fAimedDamage, gpGlobals->v_forward, &tr, DMG_BULLET );
+
+				if ( m_pPlayer->deathtype )
+					deathtype = m_pPlayer->deathtype;
+
+				ApplyMultiDamage( pev, m_pPlayer->pev );
+
+				m_pPlayer->deathtype = 0;
+
+				is_player = FClassnameIs( pEnt->pev, "player" );
+				volume = is_player ? 85 : 60;
+
+				if ( ( tr.vecEndPos - vecSrc ).Length() < 1024.0f )
 				{
-					vol = maxvol;
+					volume += ( is_player ? 15 : 30 ) * ( 1.0f - vecEnd.Length() / 1024.0f );
+					volume = Q_min( volume, is_player ? 100 : 90 );
 				}
-			}
 
-			if ( player )
-			{
-				if ( pHit->pev->health < -40.0f )
+				if ( is_player )
 				{
-					vol = 0;
+					gib = pEnt->pev->health < -40.0f;
+
+					if ( gib )
+						volume = 0;
+
+					PLAYBACK_EVENT_FULL( FEV_SERVER | FEV_HOSTONLY, ENT( m_pPlayer->pev ), m_usSniperHit, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, volume, 0, 1, gib );
 				}
-				PLAYBACK_EVENT_FULL( FEV_SERVER | FEV_HOSTONLY, ENT( m_pPlayer->pev ), m_usSniperHit, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, vol, 0, 1, pHit->pev->health < -40.0f );
-			}
-			else
-			{
-				PLAYBACK_EVENT_FULL( FEV_GLOBAL | FEV_SERVER | FEV_HOSTONLY, ENT( m_pPlayer->pev ), m_usSniperHit, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, vol, 0, 0, 0 );
+				else
+				{
+					PLAYBACK_EVENT_FULL( FEV_GLOBAL | FEV_SERVER | FEV_HOSTONLY, ENT( m_pPlayer->pev ), m_usSniperHit, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, volume, 0, 0, 0 );
+				}
 			}
 		}
 	}
 
 	m_pPlayer->ammo_shells--;
+	DB_LogShots( 1 );
 	m_flNextPrimaryAttack = GetNextAttackDelay( 1.5f );
 }
 

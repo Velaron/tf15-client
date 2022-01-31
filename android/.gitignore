@@ -2,7 +2,7 @@
 build/
 .externalNativeBuild
 .cxx/
-.idea/*
+.idea/
 local.properties
 .project
 .classpath

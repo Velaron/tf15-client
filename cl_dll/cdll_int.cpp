@@ -63,8 +63,10 @@ void CL_UnloadParticleMan( void );
 CSysModule *g_hMainUIModule = NULL;
 IGameMenuExports *g_pMainUI = NULL;
 
+#ifdef TF15CLIENT_ADDITIONS
 void CL_LoadMainUI( void );
 void CL_UnloadMainUI( void );
+#endif // TF15CLIENT_ADDITIONS
 
 void InitInput( void );
 void EV_HookEvents( void );
@@ -179,7 +181,10 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 #ifdef USE_PARTICLEMAN
 	CL_LoadParticleMan();
 #endif
+
+#ifdef TF15CLIENT_ADDITIONS
 	CL_LoadMainUI();
+#endif // TF15CLIENT_ADDITIONS
 
 	return 1;
 }
@@ -437,7 +442,7 @@ void CL_LoadMainUI( void )
 		g_pMainUI->Initialize( CreateInterface );
 	}
 }
-#endif
+#endif // TF15CLIENT_ADDITIONS
 #include "cl_dll/IGameClientExports.h"
 
 //-----------------------------------------------------------------------------

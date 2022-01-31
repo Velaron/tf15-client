@@ -18,6 +18,7 @@
 #include "pmtrace.h"
 #include "pm_shared.h"
 #include "voice_status.h"
+#include "bench.h"
 
 #ifdef USE_PARTICLEMAN
 #include "particleman.h"
@@ -243,7 +244,7 @@ Gives us a chance to add additional entities to the render this frame
 */
 void DLLEXPORT HUD_CreateEntities( void )
 {
-	// Bench_AddObjects();
+	Bench_AddObjects();
 
 	Game_AddObjects();
 

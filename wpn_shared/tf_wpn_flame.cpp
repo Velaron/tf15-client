@@ -23,14 +23,14 @@ void CTFFlamethrower::Spawn( void )
 
 int CTFFlamethrower::GetItemInfo( ItemInfo *p )
 {
-	p->iSlot = 3;
-	p->iPosition = 2;
 	p->pszAmmo1 = "uranium";
+	p->pszName = STRING( pev->classname );
 	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_cells : 200;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
-	p->pszName = STRING( pev->classname );
 	p->iMaxClip = WEAPON_NOCLIP;
+	p->iSlot = 3;
+	p->iPosition = 2;
 	p->iId = m_iId = WEAPON_FLAMETHROWER;
 	p->iFlags = 0;
 	p->iWeight = 20;

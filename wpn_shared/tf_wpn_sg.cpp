@@ -44,16 +44,16 @@ void CTFShotgun::Precache( void )
 
 int CTFShotgun::GetItemInfo( ItemInfo *p )
 {
-	p->iSlot = 1;
-	p->iPosition = 3;
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
 	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_shells : 200;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
+	p->iSlot = 1;
+	p->iPosition = 3;
+	p->iFlags = 0;
 	p->iMaxClip = m_iMaxClipSize;
 	p->iId = m_iId = WEAPON_TF_SHOTGUN;
-	p->iFlags = 0;
 	p->iWeight = 15;
 	return 1;
 }
@@ -245,16 +245,16 @@ void CTFSuperShotgun::Precache( void )
 
 int CTFSuperShotgun::GetItemInfo( ItemInfo *p )
 {
-	p->iSlot = 2;
-	p->iPosition = 2;
 	p->pszAmmo1 = "buckshot";
 	p->pszName = STRING( pev->classname );
 	p->iAmmo1 = m_pPlayer ? m_pPlayer->maxammo_shells : 200;
 	p->pszAmmo2 = NULL;
 	p->iAmmo2 = -1;
+	p->iSlot = 2;
+	p->iPosition = 2;
+	p->iFlags = 0;
 	p->iMaxClip = m_iMaxClipSize;
 	p->iId = m_iId = WEAPON_SUPER_SHOTGUN;
-	p->iFlags = 0;
 	p->iWeight = 15;
 	return 1;
 }

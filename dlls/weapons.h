@@ -457,6 +457,7 @@ class CTFAxe : public CCrowbar
 public:
 	virtual void Spawn( void );
 	virtual void Precache( void );
+	int iItemSlot( void ) { return 1; }
 	void Smack( void );
 	virtual BOOL AxeHit( CBaseEntity *pTarget, Vector p_vecDir, TraceResult *ptr );
 	virtual int GetItemInfo( ItemInfo *p );

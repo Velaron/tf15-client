@@ -61,6 +61,14 @@ void CBaseEntity::UpdateOnRemove( void ) { }
 void CBaseEntity::SUB_Remove( void ) { }
 void CBaseEntity::KeyValue( KeyValueData * ) { }
 
+void CBaseEntity::TeamFortress_EMPExplode( entvars_t *pevGren, float damage, float radius ) { }
+void CBaseEntity::TeamFortress_CalcEMPDmgRad( float &dmg, float &rad ) { }
+void CBaseEntity::TeamFortress_TakeEMPBlast( entvars_t *pevGren ) { }
+void CBaseEntity::TeamFortress_TakeConcussionBlast( entvars_t *pevGren, float bouncemax ) { }
+void CBaseEntity::Timer_Tranquilisation( void ) { }
+CBaseEntity *CBaseEntity::CreateTimer( int iTimerType ) { return NULL; }
+CBaseEntity *CBaseEntity::FindTimer( int iTimerType ) { return NULL; }
+
 // CBaseDelay Stubs
 void CBaseDelay::KeyValue( struct KeyValueData_s * ) { }
 int CBaseDelay::Restore( class CRestore & ) { return 1; }
@@ -315,7 +323,7 @@ void CBasePlayer::ForceClientDllUpdate( void ) { }
 void CBasePlayer::ImpulseCommands() { }
 void CBasePlayer::CheatImpulseCommands( int iImpulse ) { }
 int CBasePlayer::AddPlayerItem( CBasePlayerItem *pItem ) { return FALSE; }
-int CBasePlayer::RemovePlayerItem( CBasePlayerItem *pItem, bool bCallHoster ) { return FALSE; }
+int CBasePlayer::RemovePlayerItem( CBasePlayerItem *pItem ) { return FALSE; }
 void CBasePlayer::ItemPreFrame() { }
 void CBasePlayer::ItemPostFrame() { }
 int CBasePlayer::AmmoInventory( int iAmmoIndex ) { return -1; }
@@ -336,11 +344,7 @@ void CBasePlayer::DropPlayerItem( char *pszItemName ) { }
 BOOL CBasePlayer::HasPlayerItem( CBasePlayerItem *pCheckItem ) { return FALSE; }
 BOOL CBasePlayer::SwitchWeapon( CBasePlayerItem *pWeapon ) { return FALSE; }
 BOOL CBasePlayer::EngineerUse( CBasePlayer *pPlayer ) { return TRUE; }
-Vector CBasePlayer::GetGunPosition( void ) { return g_vecZero; }
-const char *CBasePlayer::TeamID( void ) { return ""; }
-int CBasePlayer::GiveAmmo( int iCount, const char *szName, int iMax ) { return 0; }
-void CBasePlayer::AddPoints( int score, BOOL bAllowNegativeScore ) { }
-void CBasePlayer::AddPointsToTeam( int score, BOOL bAllowNegativeScore ) { }
+int CBasePlayer::GiveAmmo( int iCount, const char *szName, int iMax, int *pIndex ) { return -1; }
 
 void ClearMultiDamage( void ) { }
 void ApplyMultiDamage( entvars_t *pevInflictor, entvars_t *pevAttacker ) { }
@@ -390,4 +394,17 @@ void CSprite::AnimateUntilDead( void ) { }
 void CBasePlayerWeapon::DB_LogShots( int nShots ) { }
 
 void CBasePlayer::TF_AddFrags( int iFrags ) { }
-CBaseEntity *CBaseEntity::FindTimer( int iTimerType ) { return NULL; }
+void CBasePlayer::PainSound( void ) { }
+void CBasePlayer::TeamFortress_CalcEMPDmgRad( float &damage, float &radius ) { }
+void CBasePlayer::TeamFortress_TakeEMPBlast( entvars_t *pevGren ) { }
+void CBasePlayer::TeamFortress_TakeConcussionBlast( entvars_t *pevGren, float bouncemax ) { }
+void CBasePlayer::TeamFortress_Concuss( entvars_t *pevGren ) { }
+
+// CTFNailgunNail stubs
+// Velaron: TODO
+
+// CTFFlamethrowerBurst stubs
+// Velaron: TODO
+
+// CTFGrenade stubs
+// Velaron: TODO

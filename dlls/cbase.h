@@ -375,8 +375,10 @@ public:
 	void Timer_Infection();
 	void CheckBelowBuilding( int iDist );
 	int CheckArea( CBaseEntity *pIgnore );
-	void TeamFortress_CalcEMPDmgRad( float dmg, float rad );
+	void TeamFortress_CalcEMPDmgRad( float &dmg, float &rad );
 	void TeamFortress_EMPExplode( entvars_t *pevGren, float damage, float radius );
+	void TeamFortress_TakeEMPBlast( entvars_t *pevGren );
+	void TeamFortress_TakeConcussionBlast( entvars_t *pevGren, float bouncemax );
 
 	int nextpc;
 	int lastpc;

@@ -120,7 +120,7 @@ extern "C"
 	void EV_TFC_Assault_Spin( struct event_args_s *args );
 	void EV_TFC_Assault_StartSpin( struct event_args_s *args );
 	void EV_TFC_AxeDecal( struct event_args_s *args );
-	void EV_TFC_BuildingEvent( event_args_t *args );
+	void EV_TFC_BuildingEvent( struct event_args_s *args );
 	void EV_TFC_NapalmFire( struct event_args_s *args );
 	void EV_TFC_MirvGrenadeMain( struct event_args_s *args );
 	void EV_TFC_MirvGrenade( struct event_args_s *args );
@@ -130,9 +130,9 @@ extern "C"
 	void EV_TFC_Railgun( struct event_args_s *args );
 	void EV_TFC_Tranquilizer( struct event_args_s *args );
 	void EV_TFC_NailGrenade( struct event_args_s *args );
-	void EV_TFC_Knife( event_args_s *args );
-	void EV_TFC_Gibs( event_args_s *args );
-	void EV_Benchmark( event_args_t *args );
+	void EV_TFC_Knife( struct event_args_s *args );
+	void EV_TFC_Gibs( struct event_args_s *args );
+	void EV_Benchmark( struct event_args_s *args );
 	void EV_TrainPitchAdjust( struct event_args_s *args );
 }
 
@@ -1431,7 +1431,7 @@ void EV_FireTFCSniper( event_args_t *args )
 	}
 }
 
-void EV_TFC_SniperHit( event_args_s *args )
+void EV_TFC_SniperHit( event_args_t *args )
 {
 	int idx;
 	float volume;
