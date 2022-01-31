@@ -2402,7 +2402,7 @@ inline int EV_TFC_PlaySpannerAnim( int iAnimType )
 	}
 }
 
-inline void EV_TFC_PlayAxeAnim( int idx, int classid, int iAnimType )
+void EV_TFC_PlayAxeAnim( int idx, int classid, int iAnimType )
 {
 	if ( EV_IsLocal( idx ) )
 	{
