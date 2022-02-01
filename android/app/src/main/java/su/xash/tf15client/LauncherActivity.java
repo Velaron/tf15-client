@@ -44,13 +44,14 @@ public class LauncherActivity extends AppCompatActivity {
 				.putExtra("argv", launchParameters.getText())
 				.putExtra("gamelibdir", getApplicationInfo().nativeLibraryDir)));
 
-		launchButton.setEnabled(false);
-
 		ExtendedFloatingActionButton donateButton = findViewById(R.id.donateButton);
 		donateButton.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW)
 				.setData(Uri.parse("https://www.buymeacoffee.com/velaron"))));
 
-		checkForEngine();
+		if (!BuildConfig.DEBUG) {
+			launchButton.setEnabled(false);
+			checkForEngine();
+		}
 	}
 
 	private void checkForEngine() {
