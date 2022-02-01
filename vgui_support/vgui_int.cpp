@@ -25,20 +25,17 @@ from your version.
 
 #include "vgui_main.h"
 #include "xash3d_types.h"
-#include "exportdef.h"
-
-namespace vgui_support
-{
+namespace vgui_support {
 
 vguiapi_t *g_api;
 
-Panel *rootpanel = NULL;
-CEngineSurface *surface = NULL;
-CEngineApp staticApp;
+Panel	*rootpanel = NULL;
+CEngineSurface	*surface = NULL;
+CEngineApp          staticApp;
 
 void VGui_Startup( int width, int height )
 {
-	if ( rootpanel )
+	if( rootpanel )
 	{
 		rootpanel->setSize( width, height );
 		return;
@@ -49,7 +46,7 @@ void VGui_Startup( int width, int height )
 	rootpanel->setPaintBorderEnabled( false );
 	rootpanel->setPaintBackgroundEnabled( false );
 	rootpanel->setVisible( true );
-	rootpanel->setCursor( new Cursor( Cursor::dc_none ) );
+	rootpanel->setCursor( new Cursor( Cursor::dc_none ));
 
 	staticApp.start();
 	staticApp.setMinimumTickMillisInterval( 0 );
@@ -57,10 +54,11 @@ void VGui_Startup( int width, int height )
 	surface = new CEngineSurface( rootpanel );
 	rootpanel->setSurfaceBaseTraverse( surface );
 
+
 	//ASSERT( rootpanel->getApp() != NULL );
 	//ASSERT( rootpanel->getSurfaceBase() != NULL );
 
-	g_api->DrawInit();
+	g_api->DrawInit ();
 }
 
 void VGui_Shutdown( void )
@@ -80,24 +78,23 @@ void VGui_Paint( void )
 
 	//if( cls.state != ca_active || !rootpanel )
 	//	return;
-	if ( !g_api->IsInGame() || !rootpanel )
+	if( !g_api->IsInGame() || !rootpanel )
 		return;
 
 	// setup the base panel to cover the screen
 	Panel *pVPanel = surface->getEmbeddedPanel();
-	if ( !pVPanel )
-		return;
+	if( !pVPanel ) return;
 	//SDL_GetWindowSize(host.hWnd, &w, &h);
 	//host.input_enabled = rootpanel->isVisible();
-	rootpanel->getSize( w, h );
+	rootpanel->getSize(w, h);
 	EnableScissor( true );
 
-	staticApp.externalTick();
+	staticApp.externalTick ();
 
 	pVPanel->setBounds( 0, 0, w, h );
 	pVPanel->repaint();
 
-	// paint everything
+	// paint everything 
 	pVPanel->paintTraverse();
 
 	EnableScissor( false );
@@ -112,7 +109,7 @@ void *VGui_GetPanel( void )
 #define InitAPI InitVGUISupportAPI
 #endif
 
-extern "C" DLLEXPORT void InitAPI( vguiapi_t *api )
+extern "C" EXPORT void InitAPI(vguiapi_t * api)
 {
 	g_api = api;
 	g_api->Startup = VGui_Startup;

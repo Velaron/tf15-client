@@ -12,8 +12,8 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#ifndef __VGUI_API_H__
-#define __VGUI_API_H__
+#ifndef VGUI_API_H
+#define VGUI_API_H
 
 #include "xash3d_types.h"
 
@@ -21,15 +21,15 @@ GNU General Public License for more details.
 
 typedef struct
 {
-	vec2_t point;
-	vec2_t coord;
+	vec2_t	point;
+	vec2_t	coord;
 } vpoint_t;
 
 // C-Style VGUI enums
 
 enum VGUI_MouseCode
 {
-	MOUSE_LEFT = 0,
+	MOUSE_LEFT=0,
 	MOUSE_RIGHT,
 	MOUSE_MIDDLE,
 	MOUSE_LAST
@@ -37,7 +37,7 @@ enum VGUI_MouseCode
 
 enum VGUI_KeyCode
 {
-	KEY_0 = 0,
+	KEY_0=0,
 	KEY_1,
 	KEY_2,
 	KEY_3,
@@ -145,13 +145,13 @@ enum VGUI_KeyCode
 
 enum VGUI_KeyAction
 {
-	KA_TYPED = 0,
+	KA_TYPED=0,
 	KA_PRESSED,
 	KA_RELEASED
 };
 enum VGUI_MouseAction
 {
-	MA_PRESSED = 0,
+	MA_PRESSED=0,
 	MA_RELEASED,
 	MA_DOUBLE,
 	MA_WHEEL
@@ -176,36 +176,35 @@ enum VGUI_DefaultCursor
 	dc_last
 };
 
-typedef struct vguiapi_s
+typedef struct  vguiapi_s
 {
 	qboolean initialized;
-	void ( *DrawInit )( void );
-	void ( *DrawShutdown )( void );
-	void ( *SetupDrawingText )( int *pColor );
-	void ( *SetupDrawingRect )( int *pColor );
-	void ( *SetupDrawingImage )( int *pColor );
-	void ( *BindTexture )( int id );
-	void ( *EnableTexture )( qboolean enable );
-	void ( *CreateTexture )( int id, int width, int height );
-	void ( *UploadTexture )( int id, const char *buffer, int width, int height );
-	void ( *UploadTextureBlock )( int id, int drawX, int drawY, const byte *rgba, int blockWidth, int blockHeight );
-	void ( *DrawQuad )( const vpoint_t *ul, const vpoint_t *lr );
-	void ( *GetTextureSizes )( int *width, int *height );
-	int ( *GenerateTexture )( void );
-	void *( *EngineMalloc )( size_t size );
-	void ( *CursorSelect )( enum VGUI_DefaultCursor cursor );
-	byte ( *GetColor )( int i, int j );
-	qboolean ( *IsInGame )( void );
-	void ( *SetVisible )( qboolean state );
-	void ( *GetCursorPos )( int *x, int *y );
-	int ( *ProcessUtfChar )( int ch );
-	void ( *Startup )( int width, int height );
-	void ( *Shutdown )( void );
-	void *( *GetPanel )( void );
-	void ( *Paint )( void );
-	void ( *Mouse )( enum VGUI_MouseAction action, int code );
-	void ( *Key )( enum VGUI_KeyAction action, enum VGUI_KeyCode code );
-	void ( *MouseMove )( int x, int y );
+	void	(*DrawInit)( void );
+	void	(*DrawShutdown)( void );
+	void	(*SetupDrawingText)( int *pColor );
+	void	(*SetupDrawingRect)( int *pColor );
+	void	(*SetupDrawingImage)( int *pColor );
+	void	(*BindTexture)( int id );
+	void	(*EnableTexture)( qboolean enable );
+	void	(*CreateTexture)( int id, int width, int height );
+	void	(*UploadTexture)( int id, const char *buffer, int width, int height );
+	void	(*UploadTextureBlock)( int id, int drawX, int drawY, const byte *rgba, int blockWidth, int blockHeight );
+	void	(*DrawQuad)( const vpoint_t *ul, const vpoint_t *lr );
+	void	(*GetTextureSizes)( int *width, int *height );
+	int		(*GenerateTexture)( void );
+	void	*(*EngineMalloc)( size_t size );
+	void	(*CursorSelect)( enum VGUI_DefaultCursor cursor );
+	byte		(*GetColor)( int i, int j );
+	qboolean	(*IsInGame)( void );
+	void  (*Unused)( void );
+	void	(*GetCursorPos)( int *x, int *y );
+	int		(*ProcessUtfChar)( int ch );
+	void	(*Startup)( int width, int height );
+	void	(*Shutdown)( void );
+	void	*(*GetPanel)( void );
+	void	(*Paint)( void );
+	void	(*Mouse)(enum VGUI_MouseAction action, int code );
+	void	(*Key)(enum VGUI_KeyAction action,enum VGUI_KeyCode code );
+	void	(*MouseMove)( int x, int y );
 } vguiapi_t;
-
-#endif // __VGUI_API_H__
+#endif // VGUI_API_H

@@ -33,7 +33,6 @@
 #include "weapons.h"
 #include "gamerules.h"
 #include "teamplay_gamerules.h"
-#include "physcallback.h"
 
 #include "tf_gamerules.h"
 #include "tf_defs.h"

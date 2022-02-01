@@ -14,8 +14,10 @@ LINK_ENTITY_TO_CLASS( tf_weapon_sniperrifle, CTFSniperRifle )
 
 void CTFSniperRifle::Spawn( void )
 {
-	Precache();
 	m_fAimedDamage = 0.0f;
+
+	Precache();
+	
 	m_iId = WEAPON_SNIPER_RIFLE;
 	m_iDefaultAmmo = 5;
 	m_fNextAimBonus = -1.0f;
