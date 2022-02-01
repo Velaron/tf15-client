@@ -389,8 +389,7 @@ public:
 	void TeamFortress_InitStatusBar( void );
 	void TeamFortress_UpdateStatusBar( void );
 
-	// Velaron: TODO
-	// CBaseEntity *GetTeleporter
+	CBaseEntity *GetTeleporter( int type );
 
 	BOOL IsLegalClass( int pc );
 	void TeamFortress_DisplayLegalClasses( void );
@@ -406,8 +405,7 @@ public:
 	virtual void TeamFortress_TakeConcussionBlast( entvars_t *pevGren, float bouncemax );
 	virtual void TeamFortress_Concuss( entvars_t *pevGren );
 
-	// Velaron: TODO
-	// void ExplodeOldPipebomb
+	void ExplodeOldPipebomb( BOOL bAll, BOOL bForceDetonation );
 
 	void RemovePipebombs( void );
 	void Engineer_RemoveBuildings( void );
@@ -415,22 +413,34 @@ public:
 	void Ignite( int tno );
 	void TF_AddFrags( int iFrags );
 
-	/*
-	// Velaron: TODO
 	void ResetMenu( void );
 	void Player_Menu( void );
 	void Menu_MapBriefing( void );
 	void Menu_Team( void );
 	void Menu_Class( void );
 	void Menu_RepeatHelp( void );
-
-	void Menu_DoBindings_Input
-	void Menu_Input
-
+	void Menu_DoBindings_Input( float inp );
+	void Menu_Input( float inp );
 	void Menu_Intro( void );
-	...
-	*/
-
+	void Menu_ClassHelp( void );
+	void Menu_ClassHelp_Input( float inp );
+	void Menu_Spy( void );
+	void Menu_Spy_Input( float inp );
+	void Menu_Spy_Skin( void );
+	void Menu_Spy_Skin_Input( float inp );
+	void Menu_Spy_Color( void );
+	void Menu_Spy_Color_Input( float inp );
+	void Menu_Engineer( void );
+	void Menu_Engineer_Input( float inp );
+	void Menu_EngineerFix_Dispenser( void );
+	void Menu_EngineerFix_Dispenser_Input( float inp );
+	void Menu_EngineerFix_SentryGun( void );
+	void Menu_EngineerFix_SentryGun_Input( float inp );
+	void Menu_EngineerFix_Mortar( void );
+	void Menu_EngineerFix_Mortar_Input( float inp );
+	void Menu_Dispenser( void );
+	void Menu_Dispenser_Input( float inp );
+	
 	void CleanupOnPlayerDisconnection( void );
 	void TeamFortress_RemoveTimers( void );
 	void TeamFortress_SetupRespawn( BOOL bSuicided );
@@ -438,20 +448,19 @@ public:
 	void TeamFortress_PrimeGrenade( int iWhichType );
 	void TeamFortress_ThrowPrimedGrenade( void );
 
-	// Velaron:TODO
-	// void TeamFortress_SetDetpack
-	// void TeamFortress_DetpackStop
-	// BOOL TeamFortress_RemoveDetpacks
-	// void TeamFortress_RemoveLiveGrenades
-	// void TeamFortress_RemoveRockets
-	// void RemoveOwnedEnt
-	// void TeamFortress_EngineerBuild
-	// void TeamFortress_Build
+	void TeamFortress_SetDetpack( int iTimer );
+	void TeamFortress_DetpackStop( void );
+	BOOL TeamFortress_RemoveDetpacks( void );
+	void TeamFortress_RemoveLiveGrenades( void );
+	void TeamFortress_RemoveRockets( void );
+	void RemoveOwnedEnt( const char *pEntName );
+	void TeamFortress_EngineerBuild( int iBuildingNo );
+	void TeamFortress_Build( int iBuildingID );
 
 	void Spy_RemoveDisguise( void );
 
-	// Velaron: TODO
-	// void TeamFortress_SpyFeignDeath
+	void TeamFortress_SpyFeignDeath( BOOL bSilent );
+
 	void ForceRespawn( void );
 	void DropGoalItems( void );
 	void UseSpecialSkill( void );
@@ -463,11 +472,11 @@ public:
 	void TeamFortress_SpyGoUndercover( void );
 	void TeamFortress_SpyCalcName( void );
 
-	// Velaron: TODO
-	// void TeamFortress_SpyChangeColor
-	// void TeamFortress_SpyChangeSkin
-	// void TeamFortress_SpyDisguiseEnemy
-	// void TeamFortress_SpyDisguise
+	void TeamFortress_SpyChangeColor( int iTeamNo );
+	void TeamFortress_SpyChangeSkin( int iClass );
+	void TeamFortress_SpyDisguiseEnemy( BOOL bEnemy, int iClass );
+	void TeamFortress_SpyDisguise( int iTeam, int iClass );
+
 	void CheckUncoveringSpies( CBasePlayer *pPlayer );
 	virtual BOOL EngineerUse( CBasePlayer *pPlayer );
 	void TeamFortress_Discard( void );
@@ -475,9 +484,8 @@ public:
 	void TeamFortress_SaveMe( void );
 	void TeamFortress_DisplayDetectionItems( void );
 
-	// Velaron: TODO
-	// void DisplayLocalItemStatus
-	// void AdminAccess
+	void DisplayLocalItemStatus( CBaseEntity *pGoal );
+	void AdminAccess( const char *pPassword );
 	void Admin_CountPlayers( void );
 	void Admin_ListIPs( void );
 	void Admin_CycleDeal( void );

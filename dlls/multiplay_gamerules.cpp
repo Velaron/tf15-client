@@ -307,30 +307,25 @@ BOOL CHalfLifeMultiplay::IsCoOp( void )
 //=========================================================
 BOOL CHalfLifeMultiplay::FShouldSwitchWeapon( CBasePlayer *pPlayer, CBasePlayerItem *pWeapon )
 {
-	if( !pWeapon->CanDeploy() )
+	if ( !pWeapon->CanDeploy() )
 	{
 		// that weapon can't deploy anyway.
 		return FALSE;
 	}
 
-	if( !pPlayer->m_pActiveItem )
+	if ( !pPlayer->m_pActiveItem )
 	{
 		// player doesn't have an active item!
 		return TRUE;
 	}
 
-	if( !pPlayer->m_iAutoWepSwitch )
-	{
-		return FALSE;
-	}
-
-	if( !pPlayer->m_pActiveItem->CanHolster() )
+	if ( !pPlayer->m_pActiveItem->CanHolster() )
 	{
 		// can't put away the active item.
 		return FALSE;
 	}
 
-	if( pWeapon->iWeight() > pPlayer->m_pActiveItem->iWeight() )
+	if ( pWeapon->iWeight() > pPlayer->m_pActiveItem->iWeight() )
 	{
 		return TRUE;
 	}

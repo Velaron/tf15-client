@@ -406,9 +406,7 @@ public:
 	void item_tfgoal_touch( CBaseEntity *pOther );
 	void tfgoal_touch( CBaseEntity *pOther );
 
-	// Velaron: TODO
-	// void DoDrop( Vector *p_vecOrigin );
-	// void DoDrop( Vector vecOrigin );
+	void DoDrop( Vector p_vecOrigin );
 
 	CBaseEntity *FindTeamSpawnPoint( void );
 

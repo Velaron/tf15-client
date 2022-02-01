@@ -238,18 +238,13 @@ BOOL CHalfLifeRules::IsCoOp( void )
 //=========================================================
 BOOL CHalfLifeRules::FShouldSwitchWeapon( CBasePlayer *pPlayer, CBasePlayerItem *pWeapon )
 {
-	if( !pPlayer->m_pActiveItem )
+	if ( !pPlayer->m_pActiveItem )
 	{
 		// player doesn't have an active item!
 		return TRUE;
 	}
 
-	if( !pPlayer->m_iAutoWepSwitch )
-	{
-		return FALSE;
-	}
-
-	if( !pPlayer->m_pActiveItem->CanHolster() )
+	if ( !pPlayer->m_pActiveItem->CanHolster() )
 	{
 		return FALSE;
 	}
