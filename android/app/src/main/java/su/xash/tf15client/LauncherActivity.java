@@ -21,11 +21,13 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 public class LauncherActivity extends AppCompatActivity {
 	private static final int XASH_MIN_VERSION = 1710;
 	private static final String COMMITS_URL = "https://api.github.com/repos/Velaron/tf15-client/commits/master";
+	private static final String RUNS_URL = "https://api.github.com/repos/Velaron/tf15-client/actions/runs";
 	private static final String APK_URL = "https://github.com/Velaron/tf15-client/releases/download/continuous/tf15-client.apk";
 
 	@SuppressLint("SetTextI18n")
@@ -95,27 +97,40 @@ public class LauncherActivity extends AppCompatActivity {
 		Snackbar updateNotification = Snackbar.make(contextView, R.string.checking_for_updates, Snackbar.LENGTH_INDEFINITE).setAnchorView(launchButton);
 		updateNotification.show();
 
-		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, COMMITS_URL, null, response -> {
-			try {
-				String sha = response.getString("sha").substring(0, 7);
-				String version_sha = BuildConfig.COMMIT_SHA;
+		RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-				if (!version_sha.equals(sha)) {
-					new MaterialAlertDialogBuilder(LauncherActivity.this)
-							.setTitle(R.string.update_required)
-							.setMessage(getString(R.string.update_available, getString(R.string.app_name)))
-							.setCancelable(true)
-							.setNegativeButton(R.string.later, null)
-							.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(APK_URL)))).show();
-				}
+		JsonObjectRequest commitsRequest = new JsonObjectRequest(Request.Method.GET, COMMITS_URL, null, commitsResponse -> {
+			try {
+				String sha = commitsResponse.getString("sha").substring(0, 7);
+
+				JsonObjectRequest runsRequest = new JsonObjectRequest(Request.Method.GET, RUNS_URL, null, runsResponse -> {
+					try {
+						JSONArray workflowRuns = runsResponse.getJSONArray("workflow_runs");
+						String status = workflowRuns.getJSONObject(0).getString("status");
+						String conclusion = workflowRuns.getJSONObject(0).getString("conclusion");
+
+						if (!BuildConfig.COMMIT_SHA.equals(sha) && status.equals("completed") && conclusion.equals("success")) {
+							new MaterialAlertDialogBuilder(LauncherActivity.this)
+									.setTitle(R.string.update_required)
+									.setMessage(getString(R.string.update_available, getString(R.string.app_name)))
+									.setCancelable(true)
+									.setNegativeButton(R.string.later, null)
+									.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(APK_URL)))).show();
+						}
+
+						updateNotification.dismiss();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}, error -> updateNotification.dismiss());
+
+				requestQueue.add(runsRequest);
+
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-		}, error -> updateNotification.setText(R.string.update_check_error));
+		}, error -> updateNotification.dismiss());
 
-		updateNotification.dismiss();
-
-		RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-		requestQueue.add(jsonObjectRequest);
+		requestQueue.add(commitsRequest);
 	}
 }
