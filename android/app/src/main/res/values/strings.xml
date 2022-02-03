@@ -8,8 +8,10 @@
     <string name="update_available">An update for %1$s is required to function properly.</string>
     <string name="engine_not_found">Xash3D FWGS not installed</string>
     <string name="engine_info">Xash3D FWGS beta is required to run TF15Client.</string>
-    <string name="update">Update</string>
-    <string name="install">Install</string>
-    <string name="exit">Exit</string>
+    <string name="update">UPDATE</string>
+    <string name="install">INSTALL</string>
+    <string name="exit">EXIT</string>
     <string name="donate">DONATE</string>
+    <string name="update_check_error">Error checking for updates.</string>
+    <string name="later">LATER</string>
 </resources>

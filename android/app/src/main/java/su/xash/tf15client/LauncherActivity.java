@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,8 @@ import org.json.JSONException;
 
 public class LauncherActivity extends AppCompatActivity {
 	private static final int XASH_MIN_VERSION = 1710;
+	private static final String COMMITS_URL = "https://api.github.com/repos/Velaron/tf15-client/commits/master";
+	private static final String APK_URL = "https://github.com/Velaron/tf15-client/releases/download/continuous/tf15-client.apk";
 
 	@SuppressLint("SetTextI18n")
 	@Override
@@ -49,8 +52,15 @@ public class LauncherActivity extends AppCompatActivity {
 				.setData(Uri.parse("https://www.buymeacoffee.com/velaron"))));
 
 		if (!BuildConfig.DEBUG) {
-			launchButton.setEnabled(false);
 			checkForEngine();
+		}
+	}
+
+	private String getEngineDownloadUrl() {
+		if (!Build.SUPPORTED_ABIS[0].contains("64")) {
+			return "https://github.com/FWGS/xash3d-fwgs/releases/download/continuous/xashdroid-32.apk";
+		} else {
+			return "https://github.com/FWGS/xash3d-fwgs/releases/download/continuous/xashdroid-64.apk";
 		}
 	}
 
@@ -59,58 +69,53 @@ public class LauncherActivity extends AppCompatActivity {
 			PackageInfo info = getPackageManager().getPackageInfo("su.xash.engine", 0);
 
 			if (info.versionCode < XASH_MIN_VERSION) {
-				openDialog("https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous", getString(R.string.update_required),
-						getString(R.string.update_available, "Xash3D FWGS"));
+				new MaterialAlertDialogBuilder(LauncherActivity.this)
+						.setTitle(R.string.update_required)
+						.setMessage(getString(R.string.update_available, "Xash3D FWGS"))
+						.setCancelable(true)
+						.setNegativeButton(R.string.later, null)
+						.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getEngineDownloadUrl())))).show();
 			} else {
 				checkForUpdates();
 			}
 		} catch (PackageManager.NameNotFoundException e) {
-			openDialog("https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous",
-					getString(R.string.engine_not_found), getString(R.string.engine_info));
+			new MaterialAlertDialogBuilder(LauncherActivity.this)
+					.setTitle(R.string.engine_not_found)
+					.setMessage(R.string.engine_info)
+					.setCancelable(true)
+					.setNegativeButton(R.string.later, null)
+					.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getEngineDownloadUrl())))).show();
 		}
 	}
 
 	private void checkForUpdates() {
-		String url = "https://api.github.com/repos/Velaron/tf15-client/commits/master";
 		CoordinatorLayout contextView = findViewById(R.id.coordinatorLayout);
 		ExtendedFloatingActionButton launchButton = findViewById(R.id.launchButton);
 
 		Snackbar updateNotification = Snackbar.make(contextView, R.string.checking_for_updates, Snackbar.LENGTH_INDEFINITE).setAnchorView(launchButton);
 		updateNotification.show();
 
-		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, COMMITS_URL, null, response -> {
 			try {
 				String sha = response.getString("sha").substring(0, 7);
-				String version_sha = getPackageManager().getPackageInfo(getPackageName(), 0).versionName.split("-")[1];
+				String version_sha = BuildConfig.COMMIT_SHA;
 
-				if (version_sha.equals(sha)) {
-					updateNotification.dismiss();
-					launchButton.setEnabled(true);
-				} else {
-					updateNotification.dismiss();
-					openDialog("https://github.com/Velaron/tf15-client/releases/tag/continuous", getString(R.string.update_required),
-							getString(R.string.update_available, "TF15Client"));
+				if (!version_sha.equals(sha)) {
+					new MaterialAlertDialogBuilder(LauncherActivity.this)
+							.setTitle(R.string.update_required)
+							.setMessage(getString(R.string.update_available, getString(R.string.app_name)))
+							.setCancelable(true)
+							.setNegativeButton(R.string.later, null)
+							.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(APK_URL)))).show();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
-			} catch (PackageManager.NameNotFoundException e) {
-				e.printStackTrace();
 			}
-		}, error -> {
-			updateNotification.dismiss();
-			launchButton.setEnabled(true);
-		});
+		}, error -> updateNotification.setText(R.string.update_check_error));
+
+		updateNotification.dismiss();
 
 		RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
 		requestQueue.add(jsonObjectRequest);
-	}
-
-	private void openDialog(String url, String title, String description) {
-		new MaterialAlertDialogBuilder(LauncherActivity.this)
-				.setTitle(title)
-				.setMessage(description)
-				.setCancelable(false)
-				.setNegativeButton(R.string.exit, (dialog, which) -> finish())
-				.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)))).show();
 	}
 }
