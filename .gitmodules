@@ -7,4 +7,4 @@
 	branch = tf15-client
 [submodule "particleman"]
 	path = particleman
-	url = https://github.com/Velaron/OpenHL-Particleman
+	url = https://github.com/Velaron/particleman
