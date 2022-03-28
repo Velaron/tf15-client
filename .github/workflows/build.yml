@@ -9,6 +9,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           submodules: recursive
       - name: Setup Java
         uses: actions/setup-java@v1
@@ -39,6 +40,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           submodules: recursive
       - name: Setup Visual Studio
         uses: ilammy/msvc-dev-cmd@v1
@@ -65,6 +67,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           submodules: recursive
       - name: Install dependencies
         run: |
