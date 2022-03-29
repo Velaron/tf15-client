@@ -70,6 +70,17 @@ public class LauncherActivity extends AppCompatActivity {
 		try {
 			PackageInfo info = getPackageManager().getPackageInfo("su.xash.engine", 0);
 
+			if (!info.applicationInfo.nativeLibraryDir.contains("64")
+					&& Build.SUPPORTED_ABIS[0].contains("64")) {
+				new MaterialAlertDialogBuilder(LauncherActivity.this)
+						.setTitle(R.string.engine_wrong_abi)
+						.setMessage(R.string.engine_abi)
+						.setCancelable(true)
+						.setNegativeButton(R.string.exit, (dialog, which) -> finish())
+						.setPositiveButton(R.string.install, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getEngineDownloadUrl())))).show();
+				return;
+			}
+
 			if (info.versionCode < XASH_MIN_VERSION) {
 				new MaterialAlertDialogBuilder(LauncherActivity.this)
 						.setTitle(R.string.update_required)
@@ -77,9 +88,10 @@ public class LauncherActivity extends AppCompatActivity {
 						.setCancelable(true)
 						.setNegativeButton(R.string.later, null)
 						.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getEngineDownloadUrl())))).show();
-			} else {
-				checkForUpdates();
+				return;
 			}
+
+			checkForUpdates();
 		} catch (PackageManager.NameNotFoundException e) {
 			new MaterialAlertDialogBuilder(LauncherActivity.this)
 					.setTitle(R.string.engine_not_found)
