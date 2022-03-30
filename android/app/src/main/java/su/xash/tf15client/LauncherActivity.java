@@ -9,7 +9,6 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -30,12 +29,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LauncherActivity extends AppCompatActivity {
+	private RequestQueue mRequestQueue;
+
 	private static final String COMMITS_URL = "https://api.github.com/repos/Velaron/tf15-client/commits/master";
 	private static final String RUNS_URL = "https://api.github.com/repos/Velaron/tf15-client/actions/runs?branch=master";
 	private static final String APK_URL = "https://github.com/Velaron/tf15-client/releases/download/continuous/tf15-client.apk";
 
 	private static final String ENGINE_COMMITS_URL = "https://api.github.com/repos/FWGS/xash3d-fwgs/commits/master";
 	private static final String ENGINE_RUNS_URL = "https://api.github.com/repos/FWGS/xash3d-fwgs/actions/runs?branch=master";
+
+	private interface VolleyCallback {
+		void onFinished(boolean result);
+	}
 
 	@SuppressLint("SetTextI18n")
 	@Override
@@ -61,6 +66,7 @@ public class LauncherActivity extends AppCompatActivity {
 				.setData(Uri.parse("https://www.buymeacoffee.com/velaron"))));
 
 		if (!BuildConfig.DEBUG) {
+			mRequestQueue = Volley.newRequestQueue(this);
 			checkForEngine();
 		}
 	}
@@ -74,41 +80,66 @@ public class LauncherActivity extends AppCompatActivity {
 	}
 
 	private void checkForEngine() {
+		CoordinatorLayout contextView = findViewById(R.id.coordinatorLayout);
+		ExtendedFloatingActionButton launchButton = findViewById(R.id.launchButton);
+		launchButton.setEnabled(false);
+
+		if (checkEngineABI()) {
+			Snackbar updateNotification = Snackbar.make(contextView, R.string.checking_for_updates, Snackbar.LENGTH_INDEFINITE).setAnchorView(launchButton);
+			updateNotification.show();
+
+			checkForEngineUpdates(result -> {
+				if (result) {
+					checkForUpdates(result1 -> {
+						updateNotification.dismiss();
+						if (result1)
+							launchButton.setEnabled(true);
+					});
+				} else {
+					updateNotification.dismiss();
+				}
+			});
+		}
+	}
+
+	private void showUpdateDialog(String title, String message, Uri url) {
+		new MaterialAlertDialogBuilder(LauncherActivity.this)
+				.setTitle(title)
+				.setMessage(message)
+				.setCancelable(true)
+				.setNegativeButton(R.string.exit, (dialog, which) -> finish())
+				.setPositiveButton(R.string.install, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(url))).show();
+	}
+
+
+	private boolean checkEngineABI() {
 		try {
 			PackageInfo info = getPackageManager().getPackageInfo("su.xash.engine", 0);
 
 			if (!info.applicationInfo.nativeLibraryDir.contains("64")
 					&& Build.SUPPORTED_ABIS[0].contains("64")) {
-				new MaterialAlertDialogBuilder(LauncherActivity.this)
-						.setTitle(R.string.engine_wrong_abi)
-						.setMessage(R.string.engine_abi)
-						.setCancelable(true)
-						.setNegativeButton(R.string.exit, (dialog, which) -> finish())
-						.setPositiveButton(R.string.install, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getEngineDownloadUrl())))).show();
-				return;
-			}
+				showUpdateDialog(
+						getString(R.string.engine_wrong_abi),
+						getString(R.string.engine_abi),
+						Uri.parse(getEngineDownloadUrl())
+				);
 
-			checkForEngineUpdates();
-			checkForUpdates();
+				return false;
+			}
 		} catch (PackageManager.NameNotFoundException e) {
-			new MaterialAlertDialogBuilder(LauncherActivity.this)
-					.setTitle(R.string.engine_not_found)
-					.setMessage(R.string.engine_info)
-					.setCancelable(true)
-					.setNegativeButton(R.string.later, null)
-					.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getEngineDownloadUrl())))).show();
+			showUpdateDialog(
+					getString(R.string.engine_not_found),
+					getString(R.string.engine_info),
+					Uri.parse(getEngineDownloadUrl())
+			);
+
+			return false;
 		}
+
+		return true;
 	}
 
-	private void checkForEngineUpdates() {
-		CoordinatorLayout contextView = findViewById(R.id.coordinatorLayout);
-		ExtendedFloatingActionButton launchButton = findViewById(R.id.launchButton);
-
-		Snackbar updateNotification = Snackbar.make(contextView, R.string.checking_for_updates, Snackbar.LENGTH_INDEFINITE).setAnchorView(launchButton);
-		updateNotification.show();
-
-		RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-
+	private void checkForEngineUpdates(final VolleyCallback callback) {
 		JsonObjectRequest commitsRequest = new JsonObjectRequest(Request.Method.GET, ENGINE_COMMITS_URL, null, commitsResponse -> {
 			try {
 				String sha = commitsResponse.getString("sha").substring(0, 7);
@@ -131,42 +162,36 @@ public class LauncherActivity extends AppCompatActivity {
 							if (m.find()) {
 								String engineCommitHash = m.group();
 
-								if (engineCommitHash.equals(sha) && status.equals("completed") && conclusion.equals("success")) {
-									new MaterialAlertDialogBuilder(LauncherActivity.this)
-											.setTitle(R.string.update_required)
-											.setMessage(getString(R.string.update_available, "Xash3D FWGS"))
-											.setCancelable(true)
-											.setNegativeButton(R.string.later, null)
-											.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(getEngineDownloadUrl())))).show();
+								if (!engineCommitHash.equals(sha) && status.equals("completed") && conclusion.equals("success")) {
+									showUpdateDialog(
+											getString(R.string.update_required),
+											getString(R.string.update_available, "Xash3D FWGS"),
+											Uri.parse(getEngineDownloadUrl())
+									);
+
+									callback.onFinished(false);
 								}
 							}
 						}
 
-						updateNotification.dismiss();
+						callback.onFinished(true);
 					} catch (JSONException | PackageManager.NameNotFoundException e) {
 						e.printStackTrace();
+						callback.onFinished(true);
 					}
-				}, error -> updateNotification.dismiss());
+				}, error -> callback.onFinished(true));
 
-				requestQueue.add(runsRequest);
-
+				mRequestQueue.add(runsRequest);
 			} catch (JSONException e) {
 				e.printStackTrace();
+				callback.onFinished(true);
 			}
-		}, error -> updateNotification.dismiss());
+		}, error -> callback.onFinished(true));
 
-		requestQueue.add(commitsRequest);
+		mRequestQueue.add(commitsRequest);
 	}
 
-	private void checkForUpdates() {
-		CoordinatorLayout contextView = findViewById(R.id.coordinatorLayout);
-		ExtendedFloatingActionButton launchButton = findViewById(R.id.launchButton);
-
-		Snackbar updateNotification = Snackbar.make(contextView, R.string.checking_for_updates, Snackbar.LENGTH_INDEFINITE).setAnchorView(launchButton);
-		updateNotification.show();
-
-		RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-
+	private void checkForUpdates(final VolleyCallback callback) {
 		JsonObjectRequest commitsRequest = new JsonObjectRequest(Request.Method.GET, COMMITS_URL, null, commitsResponse -> {
 			try {
 				String sha = commitsResponse.getString("sha").substring(0, 7);
@@ -178,27 +203,29 @@ public class LauncherActivity extends AppCompatActivity {
 						String conclusion = workflowRuns.getJSONObject(0).getString("conclusion");
 
 						if (!BuildConfig.COMMIT_SHA.equals(sha) && status.equals("completed") && conclusion.equals("success")) {
-							new MaterialAlertDialogBuilder(LauncherActivity.this)
-									.setTitle(R.string.update_required)
-									.setMessage(getString(R.string.update_available, getString(R.string.app_name)))
-									.setCancelable(true)
-									.setNegativeButton(R.string.later, null)
-									.setPositiveButton(R.string.update, (dialog, which) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(APK_URL)))).show();
+							showUpdateDialog(
+									getString(R.string.update_required),
+									getString(R.string.update_available, getString(R.string.app_name)),
+									Uri.parse(APK_URL)
+							);
+
+							callback.onFinished(false);
 						}
 
-						updateNotification.dismiss();
+						callback.onFinished(true);
 					} catch (JSONException e) {
 						e.printStackTrace();
+						callback.onFinished(true);
 					}
-				}, error -> updateNotification.dismiss());
+				}, error -> callback.onFinished(true));
 
-				requestQueue.add(runsRequest);
-
+				mRequestQueue.add(runsRequest);
 			} catch (JSONException e) {
 				e.printStackTrace();
+				callback.onFinished(true);
 			}
-		}, error -> updateNotification.dismiss());
+		}, error -> callback.onFinished(true));
 
-		requestQueue.add(commitsRequest);
+		mRequestQueue.add(commitsRequest);
 	}
 }
