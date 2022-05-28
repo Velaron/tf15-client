@@ -1048,7 +1048,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	if ( g_runfuncs )
 	{
-		g_laserdot.laserdotactive = false;
+		g_laserdot.laserdotactive = FALSE;
 		g_laserdot.laserdotintensity = 0;
 
 		if ( to->client.m_iId == WEAPON_SNIPER_RIFLE )
@@ -1057,15 +1057,11 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 			{
 				if ( !CL_IsDead() && ( cmd->buttons & IN_ATTACK ) )
 				{
-					g_laserdot.laserdotactive = true;
+					g_laserdot.laserdotactive = TRUE;
 					g_laserdot.laserdotintensity = 0.25f * pWeapon->m_fAimedDamage + 150.0f;
 				}
 			}
 		}
-	}
-	else
-	{
-		g_laserdot.laserdotactive = false;
 	}
 
 	to->playerstate.playerclass = player.pev->playerclass;
@@ -1218,6 +1214,6 @@ void _DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state_s
 #endif
 	{
 		to->client.fov = g_lastFOV;
-		g_laserdot.laserdotactive = 0;
+		g_laserdot.laserdotactive = FALSE;
 	}
 }
