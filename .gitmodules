@@ -8,3 +8,6 @@
 [submodule "particleman"]
 	path = particleman
 	url = https://github.com/Velaron/particleman
+[submodule "vgui_support"]
+	path = vgui_support
+	url = https://github.com/Velaron/vgui_support
