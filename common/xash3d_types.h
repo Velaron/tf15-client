@@ -4,12 +4,17 @@
 
 #include "build.h"
 
+#if XASH_IRIX
+#include <port.h>
+#endif
+
 #if XASH_WIN32
 #include <wchar.h> // off_t
 #endif // _WIN32
 
 #include <sys/types.h> // off_t
 #include STDINT_H
+#include <assert.h>
 
 typedef unsigned char byte;
 typedef int		sound_t;
@@ -22,7 +27,12 @@ typedef byte		rgba_t[4];	// unsigned byte colorpack
 typedef byte		rgb_t[3];		// unsigned byte colorpack
 typedef vec_t		matrix3x4[3][4];
 typedef vec_t		matrix4x4[4][4];
+
+#if XASH_64BIT
 typedef uint32_t        poolhandle_t;
+#else
+typedef void*           poolhandle_t;
+#endif
 
 #undef true
 #undef false
@@ -66,21 +76,48 @@ typedef uint64_t longtime_t;
 #define ColorIndex( c )	((( c ) - '0' ) & 7 )
 
 #if defined(__GNUC__)
-#ifdef __i386__
-#define EXPORT __attribute__ ((visibility ("default"),force_align_arg_pointer))
-#define GAME_EXPORT __attribute((force_align_arg_pointer))
-#else
-#define EXPORT __attribute__ ((visibility ("default")))
-#define GAME_EXPORT
-#endif
+	#ifdef __i386__
+		#define EXPORT __attribute__ ((visibility ("default"),force_align_arg_pointer))
+		#define GAME_EXPORT __attribute((force_align_arg_pointer))
+	#else
+		#define EXPORT __attribute__ ((visibility ("default")))
+		#define GAME_EXPORT
+	#endif
+	#define _format(x) __attribute__((format(printf, x, x+1)))
+	#define NORETURN __attribute__((noreturn))
 #elif defined(_MSC_VER)
-#define EXPORT          __declspec( dllexport )
-#define GAME_EXPORT
+	#define EXPORT          __declspec( dllexport )
+	#define GAME_EXPORT
+	#define _format(x)
+	#define NORETURN
 #else
-#define EXPORT
-#define GAME_EXPORT
+	#define EXPORT
+	#define GAME_EXPORT
+	#define _format(x)
+	#define NORETURN
 #endif
 
+#if ( __GNUC__ >= 3 )
+	#define unlikely(x) __builtin_expect(x, 0)
+	#define likely(x)   __builtin_expect(x, 1)
+#elif defined( __has_builtin )
+	#if __has_builtin( __builtin_expect )
+		#define unlikely(x) __builtin_expect(x, 0)
+		#define likely(x)   __builtin_expect(x, 1)
+	#else
+		#define unlikely(x) (x)
+		#define likely(x)   (x)
+	#endif
+#else
+	#define unlikely(x) (x)
+	#define likely(x)   (x)
+#endif
+
+#if defined( static_assert ) // C11 static_assert
+#define STATIC_ASSERT static_assert
+#else
+#define STATIC_ASSERT( x, y ) extern int _static_assert_##__LINE__[( x ) ? 1 : -1]
+#endif
 
 #ifdef XASH_BIG_ENDIAN
 #define LittleLong(x) (((int)(((x)&255)<<24)) + ((int)((((x)>>8)&255)<<16)) + ((int)(((x)>>16)&255)<<8) + (((x) >> 24)&255))
@@ -116,7 +153,6 @@ typedef unsigned int	dword;
 typedef unsigned int	uint;
 typedef char		string[MAX_STRING];
 typedef struct file_s	file_t;		// normal file
-typedef struct wfile_s	wfile_t;		// wad file
 typedef struct stream_s	stream_t;		// sound stream for background music playing
 typedef off_t fs_offset_t;
 #if XASH_WIN32
@@ -139,7 +175,7 @@ typedef struct dll_info_s
 	void		*link;	// hinstance of loading library
 } dll_info_t;
 
-typedef void (*setpair_t)( const char *key, const void *value, void *buffer, void *numpairs );
+typedef void (*setpair_t)( const char *key, const void *value, const void *buffer, void *numpairs );
 
 // config strings are a general means of communication from
 // the server to all connected clients.

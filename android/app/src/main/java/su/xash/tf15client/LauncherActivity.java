@@ -175,7 +175,7 @@ public class LauncherActivity extends AppCompatActivity {
 						}
 
 						callback.onFinished(true);
-					} catch (JSONException | PackageManager.NameNotFoundException e) {
+					} catch (JSONException | PackageManager.NameNotFoundException | Resources.NotFoundException e) {
 						e.printStackTrace();
 						callback.onFinished(true);
 					}

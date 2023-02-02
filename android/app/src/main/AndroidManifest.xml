@@ -4,6 +4,10 @@
 	android:versionCode="1"
 	android:versionName="1.0">
 
+	<queries>
+		<package android:name="su.xash.engine" />
+	</queries>
+
 	<uses-permission android:name="android.permission.INTERNET" />
 	
 	<application
