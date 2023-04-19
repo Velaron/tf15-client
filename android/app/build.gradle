@@ -1,46 +1,32 @@
+import java.time.LocalDateTime
+import java.time.Month
+import java.time.temporal.ChronoUnit
+
 apply plugin: 'com.android.application'
-
-def getVersionCode = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        workingDir '../'
-        commandLine 'git', 'rev-list', '--count', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim().toInteger()
-}
-
-def getVersionName = { ->
-    return '1.0.' + getVersionCode()
-}
-
-def getCommitSha = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        workingDir '../'
-        commandLine 'git', 'rev-list', '-n', '1', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim().take(7)
-}
 
 android {
     compileSdk 33
-    ndkVersion '25.1.8937393'
+    ndkVersion '25.2.9519653'
+    buildToolsVersion '33.0.2'
+    namespace 'su.xash.tf15client'
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
 
     defaultConfig {
         applicationId 'su.xash'
         applicationIdSuffix 'tf15client'
-        versionName getVersionName()
-        versionCode getVersionCode()
-        minSdkVersion 21
+        versionName '0.99'
+        versionCode getBuildNum()
+        minSdkVersion 16
         targetSdk 33
 
-        buildConfigField "String", "COMMIT_SHA", "\"${getCommitSha()}\""
-
         externalNativeBuild {
-            ndkBuild {
-                arguments "V=1"
+            cmake {
+                version '3.22.1'
             }
         }
     }
@@ -59,10 +45,13 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
+            shrinkResources false
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
         release {
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -76,18 +65,20 @@ android {
     lint {
         abortOnError false
     }
+
+    aaptOptions {
+        noCompress ''
+    }
 }
 
 dependencies {
-    implementation 'androidx.activity:activity:1.6.1'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'androidx.fragment:fragment:1.5.5'
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
 }
 
-task makePak(type: Exec) {
-    commandLine 'python', 'makepak.py', 'pak/', 'src/main/assets/extras.pak'
+static def getBuildNum() {
+    LocalDateTime now = LocalDateTime.now()
+    LocalDateTime releaseDate = LocalDateTime.of(2018, Month.DECEMBER, 7, 0, 0, 0)
+    int qBuildNum = releaseDate.until(now, ChronoUnit.DAYS)
+    int minuteOfDay = now.getHour() * 60 + now.getMinute()
+    return qBuildNum * 10000 + minuteOfDay
 }
-
-preBuild.dependsOn(makePak)

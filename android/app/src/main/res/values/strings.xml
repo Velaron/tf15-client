@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TF15Client</string>
-    <string name="launch">LAUNCH</string>
-    <string name="launch_parameters">COMMAND-LINE ARGUMENTS</string>
-    <string name="checking_for_updates">Checking for updates...</string>
-    <string name="update_required">Update installation is required</string>
-    <string name="update_available">An update for %1$s is required to function properly.</string>
-    <string name="engine_not_found">Xash3D FWGS not installed</string>
-    <string name="engine_info">Xash3D FWGS beta is required to run TF15Client.</string>
-    <string name="update">UPDATE</string>
-    <string name="install">INSTALL</string>
-    <string name="exit">EXIT</string>
-    <string name="donate">DONATE</string>
-    <string name="update_check_error">Error checking for updates.</string>
-    <string name="later">LATER</string>
-    <string name="engine_wrong_abi">Xash3D FWGS 64-bit version required</string>
-    <string name="engine_abi">A 32-bit version of engine is installed on your device, xashdroid64 is required to run properly.</string>
 </resources>
