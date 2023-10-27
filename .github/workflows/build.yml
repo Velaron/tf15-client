@@ -24,10 +24,11 @@ jobs:
         uses: android-actions/setup-android@v2
       - name: Build
         run: ./gradlew assembleRelease
+        working-directory: android
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/apk/release
+          releaseDirectory: android/app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -36,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: android
-          path: app/build/outputs/apk/release/app-release-unsigned-signed.apk
+          path: android/app/build/outputs/apk/release/app-release-unsigned-signed.apk
   windows:
     name: Windows
     runs-on: windows-latest
