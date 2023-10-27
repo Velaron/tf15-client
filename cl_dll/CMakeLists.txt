@@ -146,7 +146,7 @@ set(CLDLL_SOURCES
 	vgui_teammenu.cpp
 	../game_shared/voice_status.cpp)
 
-include_directories(. hl/ ../dlls ../dlls/tfc ../common ../engine ../pm_shared ../game_shared ../public ../vgui_dll/include)
+include_directories(. hl/ ../dlls ../dlls/tfc ../common ../engine ../pm_shared ../game_shared ../public ../3rdparty/vgui_dll/include)
 
 if(ANDROID)
 	add_library(${CLDLL_LIBRARY} MODULE ${CLDLL_SOURCES} $<TARGET_OBJECTS:vgui_support>)

@@ -1,5 +1,8 @@
 name: Build
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   android:
@@ -7,65 +10,82 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: recursive
       - name: Setup Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
           java-version: 11
+          distribution: 'temurin'
+          cache: gradle
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
       - name: Build
         run: ./gradlew assembleRelease
-        working-directory: android
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: android/app/build/outputs/apk/release
+          releaseDirectory: app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: Android
-          path: android/app/build/outputs/apk/release/app-release-unsigned-signed.apk
+          name: android
+          path: app/build/outputs/apk/release/app-release-unsigned-signed.apk
   windows:
     name: Windows
     runs-on: windows-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: recursive
       - name: Setup Visual Studio
         uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
       - name: Configure project
         run: cmake -A Win32 -S . -B build
       - name: Build
         run: cmake --build . --config Release
         working-directory: build
+      - name: Setup Visual Studio (x64)
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Configure project (x64)
+        run: cmake -A Win64 -S . -B build
+      - name: Build (x64)
+        run: cmake --build . --config Release
+        working-directory: build
       - name: Generate extras.pak
-        run: python makepak.py pak/ extras.pak
-        working-directory: android/app
+        run: Compress-Archive -Path android/app/src/main/assets/* -Destination build/extras.pk3 -CompressionLevel NoCompression
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: Windows
+          name: win32-i386
           path: |
-            build/cl_dll/Release/client.dll
-            build/mainui/Release/menu.dll
-            android/app/extras.pak
+            build/3rdparty/mainui_cpp/menu.dll
+            build/cl_dll/client.dll
+            build/extras.pk3
+      - name: Upload artifacts (x64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: win32-amd64
+          path: |
+            build/3rdparty/mainui_cpp/menu_amd64.dll
+            build/cl_dll/client_amd64.dll
+            build/extras.pk3
   linux:
     name: Linux
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           submodules: recursive
@@ -73,59 +93,96 @@ jobs:
         run: |
           sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install gcc-multilib g++-multilib cmake ninja-build libfontconfig-dev:i386
+          sudo apt-get install libatomic1:i386 libgcc-s1:i386 libstdc++6:i386 gcc-multilib g++-multilib cmake ninja-build libfontconfig-dev:i386 libfontconfig-dev
       - name: Configure project
         run: |
           export CC="gcc -m32"
           export CXX="g++ -m32"
-          cmake -S . -B build -G Ninja
+          cmake --preset "linux-release-x86"
       - name: Build
-        run: cmake --build . --config Release
+        run: cmake --build .
         working-directory: build
       - name: Generate extras.pak
-        run: python makepak.py pak/ extras.pak
-        working-directory: android/app
+        run: zip -0 -r build/extras.pk3 android/app/src/main/assets
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: Linux
+          name: linux-i386
           path: |
+            build/3rdparty/mainui_cpp/menu.so
             build/cl_dll/client.so
-            build/mainui/menu.so
-            android/app/extras.pak
+            build/extras.pk3
+      - name: Clean up
+        run: rm -rf *
+        working-directory: build
+      - name: Configure project (x64)
+        run: cmake --preset "linux-release-x64"
+      - name: Build (x64)
+        run: cmake --build .
+        working-directory: build
+      - name: Generate extras.pak
+        run: zip -0 -r build/extras.pk3 android/app/src/main/assets
+      - name: Upload artifacts (x64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-amd64
+          path: |
+            build/3rdparty/mainui_cpp/menu_amd64.so
+            build/cl_dll/client_amd64.so
+            build/extras.pk3
   release:
     name: Release
     runs-on: ubuntu-latest
     needs: [android, windows, linux]
     steps:
       - name: Fetch artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
       - name: Repackage binaries
         run: |
-          mv Android/app-release-unsigned-signed.apk tf15-client.apk
+          mv android/app-release-unsigned-signed.apk tf15-client.apk
+
+          mkdir -p tfc/dlls
           mkdir -p tfc/cl_dlls
-          mv Windows/build/*/*/*.dll tfc/cl_dlls
-          mv Windows/android/app/extras.pak tfc/
-          zip -r tf15-client_win32.zip tfc/
+          mv win32-i386/3rdparty/mainui_cpp/menu.dll tfc/cl_dlls
+          mv win32-i386/cl_dll/client.dll tfc/cl_dlls
+          mv win32-i386/extras.pk3 tfc
+          zip -r tf15-client_win32_i386.zip tfc/
           rm -r tfc
+
+          mkdir -p tfc/dlls
           mkdir -p tfc/cl_dlls
-          mv Linux/build/*/*.so tfc/cl_dlls
-          mv Linux/android/app/extras.pak tfc/
-          tar -czvf tf15-client_linux.tar.gz tfc/
+          mv win32-amd64/3rdparty/mainui_cpp/menu_amd64.dll tfc/cl_dlls
+          mv win32-amd64/cl_dll/client_amd64.dll tfc/cl_dlls
+          mv win32-amd64/extras.pk3 tfc
+          zip -r tf15-client_win32_amd64.zip tfc/
+          rm -r tfc
+
+          mkdir -p tfc/dlls
+          mkdir -p tfc/cl_dlls
+          mv linux-i386/3rdparty/mainui_cpp/menu.so tfc/cl_dlls
+          mv linux-i386/cl_dll/client.so tfc/cl_dlls
+          mv linux-i386/extras.pk3 tfc
+          tar -czvf tf15-client_linux_i386.tar.gz tfc/
+          rm -r tfc
+
+          mkdir -p tfc/dlls
+          mkdir -p tfc/cl_dlls
+          mv linux-amd64/3rdparty/mainui_cpp/menu_amd64.so tfc/cl_dlls
+          mv linux-amd64/cl_dll/client_amd64.so tfc/cl_dlls
+          mv linux-amd64/extras.pk3 tfc
+          tar -czvf tf15-client_linux_amd64.tar.gz tfc/
       - name: Remove old release
-        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        uses: dev-drprasad/delete-tag-and-release@v1.0
         with:
-          delete_release: true
           tag_name: continuous
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          delete_release: true
+          github_token: ${{ github.token }}
       - name: Upload new release
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
           file: tf15-client*
           tag: continuous
           overwrite: true
           prerelease: true
-          release_name: TF15-Client developer build
+          release_name: TF15Client development build

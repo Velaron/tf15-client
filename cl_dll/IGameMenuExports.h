@@ -2,7 +2,7 @@
 #define __IGAMEMENUEXPORTS_H__
 
 #include "../public/interface.h"
-#include "../mainui/font/FontRenderer.h"
+#include "../3rdparty/mainui_cpp/font/FontRenderer.h"
 
 #if defined( _WIN32 )
 #define MAINUI_DLLNAME "cl_dlls/menu.dll"
