@@ -17,7 +17,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: 11
+          java-version: 17
           distribution: 'temurin'
           cache: gradle
       - name: Setup Android SDK
@@ -40,6 +40,10 @@ jobs:
   windows:
     name: Windows
     runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: ['x86', 'amd64']
+      fail-fast: false
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -49,35 +53,22 @@ jobs:
       - name: Setup Visual Studio
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: x86
+          arch: ${{ matrix.arch }}
       - name: Configure project
-        run: cmake -A Win32 -S . -B build
+        run: cmake --preset "win32-release-${{ matrix.arch }}"
       - name: Build
-        run: cmake --build . --config Release
+        run: cmake --build .
         working-directory: build
-      - name: Setup Visual Studio (x64)
-        uses: ilammy/msvc-dev-cmd@v1
-      - name: Configure project (x64)
-        run: cmake -A Win64 -S . -B build
-      - name: Build (x64)
-        run: cmake --build . --config Release
-        working-directory: build
-      - name: Generate extras.pak
+      - name: Generate extras.pk3
         run: Compress-Archive -Path android/app/src/main/assets/* -Destination build/extras.pk3 -CompressionLevel NoCompression
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: win32-i386
+          name: win32-${{ matrix.arch }}
           path: |
             build/3rdparty/mainui_cpp/menu.dll
-            build/cl_dll/client.dll
-            build/extras.pk3
-      - name: Upload artifacts (x64)
-        uses: actions/upload-artifact@v3
-        with:
-          name: win32-amd64
-          path: |
             build/3rdparty/mainui_cpp/menu_amd64.dll
+            build/cl_dll/client.dll
             build/cl_dll/client_amd64.dll
             build/extras.pk3
   linux:
@@ -98,11 +89,11 @@ jobs:
         run: |
           export CC="gcc -m32"
           export CXX="g++ -m32"
-          cmake --preset "linux-release-x86"
+          cmake --preset "linux-release-i386"
       - name: Build
         run: cmake --build .
         working-directory: build
-      - name: Generate extras.pak
+      - name: Generate extras.pk3
         run: zip -0 -r build/extras.pk3 android/app/src/main/assets
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -116,11 +107,11 @@ jobs:
         run: rm -rf *
         working-directory: build
       - name: Configure project (x64)
-        run: cmake --preset "linux-release-x64"
+        run: cmake --preset "linux-release-amd64"
       - name: Build (x64)
         run: cmake --build .
         working-directory: build
-      - name: Generate extras.pak
+      - name: Generate extras.pk3
         run: zip -0 -r build/extras.pk3 android/app/src/main/assets
       - name: Upload artifacts (x64)
         uses: actions/upload-artifact@v3
@@ -137,6 +128,13 @@ jobs:
     steps:
       - name: Fetch artifacts
         uses: actions/download-artifact@v3
+      - name: Remove old release
+        uses: dev-drprasad/delete-tag-and-release@v1.0
+        with:
+          tag_name: continuous
+          delete_release: true
+          github_token: ${{ secrets.REPO_TOKEN }}
+          repo: Velaron/cs16-client
       - name: Repackage binaries
         run: |
           mv android/app-release-unsigned-signed.apk tf15-client.apk
@@ -171,12 +169,12 @@ jobs:
           mv linux-amd64/cl_dll/client_amd64.so tfc/cl_dlls
           mv linux-amd64/extras.pk3 tfc
           tar -czvf tf15-client_linux_amd64.tar.gz tfc/
-      - name: Remove old release
-        uses: dev-drprasad/delete-tag-and-release@v1.0
+
+          sleep 60s
+      - name: Purge artifacts
+        uses: geekyeggo/delete-artifact@v2
         with:
-          tag_name: continuous
-          delete_release: true
-          github_token: ${{ github.token }}
+          name: "*"
       - name: Upload new release
         uses: svenstaro/upload-release-action@v2
         with:
