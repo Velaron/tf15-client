@@ -135,7 +135,6 @@ jobs:
           tag_name: continuous
           delete_release: true
           github_token: ${{ secrets.REPO_TOKEN }}
-          repo: Velaron/cs16-client
       - name: Repackage binaries
         run: |
           mv android/app-release-unsigned-signed.apk tf15-client.apk
