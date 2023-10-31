@@ -103,7 +103,9 @@ jobs:
         run: cmake --build .
         working-directory: build
       - name: Generate extras.pk3
-        run: zip -0 -r build/extras.pk3 android/app/src/main/assets
+        run: |
+          ls build
+          zip -0 -r build/extras.pk3 android/app/src/main/assets
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
