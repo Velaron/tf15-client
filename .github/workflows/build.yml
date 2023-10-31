@@ -104,7 +104,7 @@ jobs:
         working-directory: build
       - name: Generate extras.pk3
         run: |
-          ls build
+          ls -R build
           zip -0 -r build/extras.pk3 android/app/src/main/assets
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

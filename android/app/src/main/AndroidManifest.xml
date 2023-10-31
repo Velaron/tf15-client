@@ -11,7 +11,7 @@
 
         <meta-data
             android:name="su.xash.engine.gamedir"
-            android:value="cstrike" />
+            android:value="tfc" />
 
         <activity
             android:name=".MainActivity"
