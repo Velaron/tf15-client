@@ -120,7 +120,7 @@ jobs:
     needs: [android, windows, linux]
     steps:
       - name: Fetch artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
       - name: Remove old release
         uses: dev-drprasad/delete-tag-and-release@v1.0
         with:
