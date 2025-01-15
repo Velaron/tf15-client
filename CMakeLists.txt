@@ -20,49 +20,44 @@
 # SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 2.8.12)
-
-# Install custom module path
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-
-include(VSForceXPToolchain) # Force XP toolchain for Visual Studio
-
+cmake_minimum_required(VERSION 3.5)
 project(tf15-client)
 
 set(CMAKE_CXX_STANDARD 11)
+
+# Install custom module path
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(EXTRAS_DIR "${CMAKE_CURRENT_BINARY_DIR}/extras")
+
+# Force XP toolchain for Visual Studio
+include(VSForceXPToolchain)
 
 #--------------
 # USER DEFINES \
 ################\
 option(USE_VOICEMGR "Enable VOICE MANAGER." OFF)
+
 option(BUILD_CLIENT "Build client dll" ON)
 option(BUILD_SERVER "Build server dll" OFF)
 option(BUILD_MENU "Build menu dll" ON)
 option(BUILD_VGUI "Build vgui" ON)
 option(BUILD_PMAN "Build particleman" OFF)
+
 option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" OFF)
 option(GOLDSOURCE_DEFAULT_FLAGS "Build with default flags from Valve's Makefile" OFF)
+
 set(GAME_DIR "tfc" CACHE STRING "Gamedir path")
-set(SERVER_INSTALL_DIR "dlls" CACHE STRING "Where put server dll")
+#set(SERVER_INSTALL_DIR "dlls" CACHE STRING "Where put server dll")
 set(CLIENT_INSTALL_DIR "cl_dlls" CACHE STRING "Where put client dll")
-set(MENU_INSTALL_DIR "cl_dlls" CACHE STRING "Where to put menu dll")
-set(SERVER_LIBRARY_NAME "tfc" CACHE STRING "Library name for Linux/MacOS/Windows")
+#set(SERVER_LIBRARY_NAME "tfc" CACHE STRING "Library name for Linux/MacOS/Windows")
 
 #-----------------
 # MAIN BUILD CODE \
 ###################\
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-
 # Xash3D FWGS Library Naming Scheme compliance
 # see documentation: https://github.com/FWGS/xash3d-fwgs/blob/master/Documentation/library-naming.md
 include(LibraryNaming)
-
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-	message(STATUS "Building for 64 Bit")
-else()
-	message(STATUS "Building for 32 Bit")
-endif()
 
 if(MINGW)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc")
@@ -112,6 +107,16 @@ if(BUILD_PMAN)
 	add_subdirectory(3rdparty/particleman)
 endif()
 
-if(NOT BUILD_SERVER AND NOT BUILD_CLIENT)
-	error("Nothing to build")
+include(GenerateExtras)
+
+if(WIN32)
+	set(CPACK_GENERATOR "ZIP")
+	set(CPACK_PACKAGE_FILE_NAME "TF15Client-${CMAKE_SYSTEM_NAME}-${CMAKE_CXX_COMPILER_ARCHITECTURE_ID}")
+else()
+	set(CPACK_GENERATOR "TGZ")
+	set(CPACK_PACKAGE_FILE_NAME "TF15Client-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 endif()
+
+set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+
+include(CPack)

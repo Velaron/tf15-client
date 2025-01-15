@@ -20,10 +20,8 @@
 # SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.5)
 project(client)
-
-include(FWGSLib)
 
 set(CLDLL_LIBRARY client)
 
@@ -166,23 +164,16 @@ if(BUILD_VGUI)
 	target_link_libraries(${CLDLL_LIBRARY} vgui)
 endif()
 
-if(APPLE OR WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-	set(CLDLL_NAME "client")
-	set_target_properties(${CLDLL_LIBRARY} PROPERTIES
-		OUTPUT_NAME ${CLDLL_NAME}
-		PREFIX "")
-endif()
-
-fwgs_set_default_properties(${CLDLL_LIBRARY})
+set_target_postfix(${CLDLL_LIBRARY})
 
 install(TARGETS ${CLDLL_LIBRARY}
-	DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}/"
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-	    GROUP_READ GROUP_EXECUTE
-		WORLD_READ WORLD_EXECUTE)
+        DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}/"
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+        GROUP_READ GROUP_EXECUTE
+        WORLD_READ WORLD_EXECUTE)
 
 # Install PDB file on Windows
-if(WIN32 AND MSVC)
-	install(FILES $<TARGET_PDB_FILE:${CLDLL_LIBRARY}>
-		DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}/" OPTIONAL)
+if(MSVC)
+    install(FILES $<TARGET_PDB_FILE:${CLDLL_LIBRARY}>
+            DESTINATION "${GAME_DIR}/${CLIENT_INSTALL_DIR}/" OPTIONAL)
 endif()

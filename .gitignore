@@ -13,7 +13,7 @@ _deps
 # VS Code
 .vscode/
 .cache/
-build
+build/
 
 # Visual Studio
 .vs/
@@ -29,5 +29,3 @@ local.properties
 .classpath
 .gradle
 .settings
-release/
-*.tasks

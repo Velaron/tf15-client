@@ -5,57 +5,26 @@ import java.time.temporal.ChronoUnit
 apply plugin: 'com.android.application'
 
 android {
-    ndkVersion '26.0.10792818'
     namespace 'su.xash.tf15client'
-
-    packagingOptions {
-        jniLibs {
-            useLegacyPackaging true
-        }
-    }
+    ndkVersion = "27.2.12479018"
+    compileSdk 35
 
     defaultConfig {
-        applicationId 'su.xash'
-        applicationIdSuffix 'tf15client'
+        applicationId 'su.xash.tf15client'
         versionName '0.99'
-        minSdkVersion 19
-        targetSdk 34
-        compileSdk 34
+        versionCode getBuildNum()
+        minSdkVersion 21
+        targetSdk 35
+    }
 
-        externalNativeBuild {
-            cmake {
-                version '3.22.1'
-            }
-        }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     externalNativeBuild {
         cmake {
             version '3.22.1'
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    buildTypes {
-        debug {
-            minifyEnabled false
-            shrinkResources false
-            debuggable true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-        release {
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
-
-    externalNativeBuild {
-        cmake {
             path file('../../CMakeLists.txt')
         }
     }
@@ -64,13 +33,32 @@ android {
         abortOnError false
     }
 
-    aaptOptions {
-        noCompress += ''
+    androidResources {
+        noCompress += ""
     }
-}
 
-dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    sourceSets {
+        main {
+            assets {
+                srcDirs += "${project.projectDir}/../../3rdparty/tf15client-extras"
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled = false
+            shrinkResources = false
+            debuggable = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+
+        release {
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
 }
 
 static def getBuildNum() {

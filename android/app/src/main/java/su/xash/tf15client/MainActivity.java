@@ -6,27 +6,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 
-public class MainActivity extends AppCompatActivity {
-    ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        if (result.getResultCode() != Activity.RESULT_OK) {
-            Log.e(TAG, result.toString());
-        }
-    });
-
-    private static final String TAG = "MainActivity";
-
+public class MainActivity extends Activity {
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         String pkg = "su.xash.engine.test";
@@ -38,17 +22,14 @@ public class MainActivity extends AppCompatActivity {
                 pkg = "su.xash.engine";
                 getPackageManager().getPackageInfo(pkg, 0);
             } catch (PackageManager.NameNotFoundException ex) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=su.xash.engine")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 finish();
                 return;
             }
         }
 
-        mActivityResultLauncher.launch(new Intent().setComponent(new ComponentName(pkg, "su.xash.engine.XashActivity"))
-//                don't set yet because it breaks getCallingPackage
-//                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .putExtra("gamedir", "tfc")
-                .putExtra("gamelibdir", getApplicationInfo().nativeLibraryDir)
+        startActivity(new Intent().setComponent(new ComponentName(pkg, "su.xash.engine.XashActivity")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK).putExtra("gamedir", "tfc").putExtra("gamelibdir", getApplicationInfo().nativeLibraryDir)
+//                .putExtra("argv", "-dev 2 -log")
                 .putExtra("package", getPackageName()));
         finish();
     }
