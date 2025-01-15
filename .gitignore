@@ -18,3 +18,16 @@ build
 # Visual Studio
 .vs/
 CMakeSettings.json
+
+# IntelliJ IDEA
+.gradle/
+.externalNativeBuild
+.cxx/
+.idea/
+local.properties
+.project
+.classpath
+.gradle
+.settings
+release/
+*.tasks
