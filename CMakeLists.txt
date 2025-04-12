@@ -47,9 +47,9 @@ option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" OFF)
 option(GOLDSOURCE_DEFAULT_FLAGS "Build with default flags from Valve's Makefile" OFF)
 
 set(GAME_DIR "tfc" CACHE STRING "Gamedir path")
-#set(SERVER_INSTALL_DIR "dlls" CACHE STRING "Where put server dll")
+set(SERVER_INSTALL_DIR "dlls" CACHE STRING "Where put server dll")
 set(CLIENT_INSTALL_DIR "cl_dlls" CACHE STRING "Where put client dll")
-#set(SERVER_LIBRARY_NAME "tfc" CACHE STRING "Library name for Linux/MacOS/Windows")
+set(SERVER_LIBRARY_NAME "tfc" CACHE STRING "Library name for Linux/MacOS/Windows")
 
 #-----------------
 # MAIN BUILD CODE \
