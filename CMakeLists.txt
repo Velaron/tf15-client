@@ -92,6 +92,11 @@ else()
 	add_definitions(-D_CRT_SILENCE_NONCONFORMING_TGMATH_H -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
+if(VITA)
+	message(STATUS "Building for PS Vita")
+	add_compile_options(-fno-use-cxa-atexit)
+endif()
+
 if(BUILD_CLIENT)
 	add_subdirectory(cl_dll)
 endif()
@@ -104,12 +109,18 @@ if(BUILD_MENU)
 	add_subdirectory(3rdparty/mainui_cpp)
 endif()
 
-if(ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8)
-	set(VGUI_STATIC ON CACHE BOOL "" FORCE)
-	add_subdirectory(3rdparty/vgui_dll)
+# check for platforms that aren't natively supported by VGUI
+if(ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8 OR VITA)
+    set(VGUI_STATIC ON CACHE BOOL "" FORCE)
+    add_subdirectory(3rdparty/vgui_dll)
 
     set(XASH_SDK ${CMAKE_CURRENT_SOURCE_DIR})
     add_subdirectory(3rdparty/vgui_support)
+
+    if(VITA)
+        target_compile_options(vgui PRIVATE -fPIC)
+        target_compile_options(vgui_support PRIVATE -fPIC)
+    endif()
 elseif(BUILD_VGUI)
     add_subdirectory(3rdparty/vgui_dll)
 endif()
@@ -144,9 +155,21 @@ install(
 	DESTINATION ${GAME_DIR}
 )
 
+# copy pre-generated config files to psvita bundle
+if(VITA)
+	install(FILES 
+		"${CMAKE_CURRENT_BINARY_DIR}/config.cfg" 
+		"${CMAKE_CURRENT_BINARY_DIR}/video.cfg" 
+		"${CMAKE_CURRENT_BINARY_DIR}/opengl.cfg" 
+		DESTINATION "${GAME_DIR}/")
+endif()
+
 if(WIN32)
 	set(CPACK_GENERATOR "ZIP")
 	set(CPACK_PACKAGE_FILE_NAME "TF15Client-${CMAKE_SYSTEM_NAME}-${CMAKE_CXX_COMPILER_ARCHITECTURE_ID}")
+elseif(VITA)
+	set(CPACK_GENERATOR "ZIP")
+	set(CPACK_PACKAGE_FILE_NAME "TF15Client-PSVita")
 else()
 	set(CPACK_GENERATOR "TGZ")
 	set(CPACK_PACKAGE_FILE_NAME "TF15Client-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")

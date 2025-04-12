@@ -69,6 +69,7 @@ Then you can use another oneliner to query all variables:
 #undef XASH_IRIX
 #undef XASH_JS
 #undef XASH_LINUX
+#undef XASH_LINUX_UNKNOWN
 #undef XASH_LITTLE_ENDIAN
 #undef XASH_MIPS
 #undef XASH_MOBILE_PLATFORM

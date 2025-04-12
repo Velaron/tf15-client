@@ -23,8 +23,11 @@
 #include "windows.h"
 #undef HSPRITE
 #else
-#define MAX_PATH PATH_MAX
 #include <limits.h>
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+#define MAX_PATH PATH_MAX
 #endif
 
 #include "hud.h"

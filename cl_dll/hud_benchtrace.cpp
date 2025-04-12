@@ -2,11 +2,13 @@
 // Functions for spawning a thread to get a hopcount to a particular ip address and returning the result in a specified
 //  variable
 
+#include "build.h"
+
 #ifdef _WIN32
 #define HSPRITE HSPRITE_win32
 #include <windows.h>
 #undef HSPRITE
-#else
+#elif XASH_LINUX == 1
 #include <dlfcn.h>
 #endif
 
