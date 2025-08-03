@@ -20,7 +20,7 @@
 # SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 project(tf15-client)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -32,6 +32,15 @@ set(EXTRAS_DIR "${CMAKE_CURRENT_BINARY_DIR}/extras")
 # Force XP toolchain for Visual Studio
 include(VSForceXPToolchain)
 
+# for extras packaging
+find_package(Python COMPONENTS Interpreter REQUIRED)
+
+if (Python_FOUND)
+	message(STATUS "Python interpreter found: ${Python_EXECUTABLE}")
+else()
+	message(FATAL_ERROR "Python not found. Please install Python.")
+endif()
+
 #--------------
 # USER DEFINES \
 ################\
@@ -42,6 +51,7 @@ option(BUILD_SERVER "Build server dll" OFF)
 option(BUILD_MENU "Build menu dll" ON)
 option(BUILD_VGUI "Build vgui" ON)
 option(BUILD_PMAN "Build particleman" OFF)
+option(VGUI_STATIC "Build vgui as a static library." OFF)
 
 option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" OFF)
 option(GOLDSOURCE_DEFAULT_FLAGS "Build with default flags from Valve's Makefile" OFF)
@@ -81,7 +91,6 @@ else()
 	add_definitions(-D_CRT_SILENCE_NONCONFORMING_TGMATH_H -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-
 if(BUILD_CLIENT)
 	add_subdirectory(cl_dll)
 endif()
@@ -96,7 +105,8 @@ endif()
 
 if(BUILD_VGUI)
 	add_subdirectory(3rdparty/vgui_dll)
-	if(ANDROID)
+
+	if(ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8)
 		set(XASH_SDK ${CMAKE_CURRENT_SOURCE_DIR})
 		add_subdirectory(3rdparty/vgui_support)
 	endif()
@@ -107,7 +117,30 @@ if(BUILD_PMAN)
 	add_subdirectory(3rdparty/particleman)
 endif()
 
-include(GenerateExtras)
+set(EXTRAS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/tf15client-extras")
+file(GLOB_RECURSE EXTRAS_FILES "${EXTRAS_DIR}/*")
+
+set(EXTRAS_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/extras.pk3")
+
+add_custom_command(
+	OUTPUT ${EXTRAS_OUTPUT}
+	COMMAND ${Python_EXECUTABLE}
+			${CMAKE_CURRENT_SOURCE_DIR}/scripts/pack_extras.py
+			${EXTRAS_DIR}
+			${EXTRAS_OUTPUT}
+	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/pack_extras.py
+			${EXTRAS_FILES}
+	COMMENT "Generating extras.pk3..."
+)
+
+add_custom_target(generate_extras ALL
+	DEPENDS ${EXTRAS_OUTPUT}
+)
+
+install(
+	FILES "${EXTRAS_OUTPUT}"
+	DESTINATION ${GAME_DIR}
+)
 
 if(WIN32)
 	set(CPACK_GENERATOR "ZIP")

@@ -1,6 +1,6 @@
 [submodule "vgui_dll"]
 	path = 3rdparty/vgui_dll
-	url = https://github.com/Velaron/vgui_dll
+	url = https://github.com/Velaron/openvgui
 [submodule "mainui"]
 	path = 3rdparty/mainui_cpp
 	url = https://github.com/Velaron/mainui_cpp

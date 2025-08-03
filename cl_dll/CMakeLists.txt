@@ -20,7 +20,7 @@
 # SOFTWARE.
 #
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 project(client)
 
 set(CLDLL_LIBRARY client)
@@ -146,7 +146,7 @@ set(CLDLL_SOURCES
 
 include_directories(. hl/ ../dlls ../dlls/tfc ../common ../engine ../pm_shared ../game_shared ../public ../3rdparty/vgui_dll/include)
 
-if(ANDROID)
+if(ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8)
 	add_library(${CLDLL_LIBRARY} MODULE ${CLDLL_SOURCES} $<TARGET_OBJECTS:vgui_support>)
 else()
 	add_library(${CLDLL_LIBRARY} MODULE ${CLDLL_SOURCES})

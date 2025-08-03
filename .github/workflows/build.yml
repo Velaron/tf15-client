@@ -45,7 +45,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        arch: ['x86']
+        arch: ['x86', 'amd64']
       fail-fast: false
     steps:
       - name: Checkout sources
