@@ -41,6 +41,8 @@ else()
 	message(FATAL_ERROR "Python not found. Please install Python.")
 endif()
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 #--------------
 # USER DEFINES \
 ################\
