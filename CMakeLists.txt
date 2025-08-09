@@ -43,6 +43,8 @@ endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+cmake_policy(SET CMP0077 OLD)
+
 #--------------
 # USER DEFINES \
 ################\
@@ -51,9 +53,8 @@ option(USE_VOICEMGR "Enable VOICE MANAGER." OFF)
 option(BUILD_CLIENT "Build client dll" ON)
 option(BUILD_SERVER "Build server dll" OFF)
 option(BUILD_MENU "Build menu dll" ON)
-option(BUILD_VGUI "Build vgui" ON)
+option(BUILD_VGUI "Build vgui" OFF)
 option(BUILD_PMAN "Build particleman" OFF)
-option(VGUI_STATIC "Build vgui as a static library." OFF)
 
 option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" OFF)
 option(GOLDSOURCE_DEFAULT_FLAGS "Build with default flags from Valve's Makefile" OFF)
@@ -105,14 +106,14 @@ if(BUILD_MENU)
 	add_subdirectory(3rdparty/mainui_cpp)
 endif()
 
-if(BUILD_VGUI)
-	set(VGUI_STATIC ON CACHE BOOL "" FORCE)
-	add_subdirectory(3rdparty/vgui_dll)
+if(ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(VGUI_STATIC ON)
+    add_subdirectory(3rdparty/vgui_dll)
 
-	if(ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8)
-		set(XASH_SDK ${CMAKE_CURRENT_SOURCE_DIR})
-		add_subdirectory(3rdparty/vgui_support)
-	endif()
+    set(XASH_SDK ${CMAKE_CURRENT_SOURCE_DIR})
+    add_subdirectory(3rdparty/vgui_support)
+elseif(BUILD_VGUI)
+    add_subdirectory(3rdparty/vgui_dll)
 endif()
 
 if(BUILD_PMAN)
