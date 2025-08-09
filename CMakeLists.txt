@@ -106,6 +106,7 @@ if(BUILD_MENU)
 endif()
 
 if(BUILD_VGUI)
+	set(VGUI_STATIC ON CACHE BOOL "" FORCE)
 	add_subdirectory(3rdparty/vgui_dll)
 
 	if(ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8)
