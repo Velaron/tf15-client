@@ -2,39 +2,42 @@ import java.time.LocalDateTime
 import java.time.Month
 import java.time.temporal.ChronoUnit
 
-apply plugin: 'com.android.application'
+apply plugin: "com.android.application"
 
 android {
-    namespace 'su.xash.tf15client'
-    ndkVersion = "27.2.12479018"
-    compileSdk 35
+    namespace = "su.xash.tf15client"
+    ndkVersion = "28.2.13676358"
+    compileSdk = 36
 
     defaultConfig {
-        applicationId 'su.xash.tf15client'
-        versionName '0.99'
-        versionCode getBuildNum()
-        minSdkVersion 21
-        targetSdk 35
+        applicationId = "su.xash.tf15client"
+        versionName = "0.99"
+        versionCode = getBuildNum()
+        minSdk = 21
+        targetSdk = 36
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     externalNativeBuild {
         cmake {
-            version '3.22.1'
-            path file('../../CMakeLists.txt')
+            version = "3.22.1"
+            path file("../../CMakeLists.txt")
         }
     }
 
     lint {
-        abortOnError false
+        abortOnError = false
     }
 
-    androidResources {
-        noCompress += ""
+    packaging {
+        jniLibs {
+            keepDebugSymbols.add("**/*.so")
+            useLegacyPackaging = true
+        }
     }
 
     sourceSets {
@@ -47,8 +50,6 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled = false
-            shrinkResources = false
             debuggable = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
