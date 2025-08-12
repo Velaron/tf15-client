@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - new-mod-api
 
 jobs:
   android:
@@ -23,23 +24,23 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
       - name: Build
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleGitContinuous
         working-directory: android
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: android/app/build/outputs/apk/debug
+          releaseDirectory: android/app/build/outputs/apk/git/continuous
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "34.0.0"
+          BUILD_TOOLS_VERSION: "36.0.0"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Android
-          path: android/app/build/outputs/apk/debug/app-debug-signed.apk
+          path: android/app/build/outputs/apk/git/continuous/app-git-continuous-unsigned-signed.apk
   windows:
     name: Windows
     runs-on: windows-latest
@@ -115,12 +116,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: continuous
+          tag_name: ${{ github.ref_name == 'main' && 'continuous' || format('continuous-{0}', github.ref_name) }}
           delete_release: true
           repo: ${{ env.GITHUB_REPOSITORY }}
       - name: Prepare release
         run: |
-          mv Android/app-debug-signed.apk TF15Client-Android.apk
+          mv Android/app-git-continuous-unsigned-signed.apk CS16Client-Android.apk
 
           mv */*.zip .
           mv */*.tar.gz .
@@ -137,7 +138,7 @@ jobs:
           repo_token: ${{ secrets.REPO_TOKEN }}
           file_glob: true
           file: TF15Client-*
-          tag: continuous
+          tag: ${{ github.ref_name == 'main' && 'continuous' || format('continuous-{0}', github.ref_name) }}
           overwrite: true
           prerelease: true
           release_name: TF15Client development build

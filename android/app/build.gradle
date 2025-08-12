@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "su.xash.tf15client"
-        versionName = "0.99"
+        versionName = "0.99" + getGitHash()
         versionCode = getBuildNum()
         minSdk = 21
         targetSdk = 36
@@ -51,14 +51,40 @@ android {
     buildTypes {
         debug {
             debuggable = true
+            applicationIdSuffix = ".test"
+
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
 
         release {
             minifyEnabled = true
             shrinkResources = true
+
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+
+        create("continuous") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".test"
+        }
+    }
+
+    flavorDimensions += "version"
+
+    productFlavors {
+        create("googlePlay") {
+            dimension = "version"
+            buildConfigField("Boolean", "IS_GOOGLE_PLAY_BUILD", "true")
+        }
+
+        create("git") {
+            dimension = "version"
+            buildConfigField("Boolean", "IS_GOOGLE_PLAY_BUILD", "false")
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -68,4 +94,13 @@ static def getBuildNum() {
     int qBuildNum = releaseDate.until(now, ChronoUnit.DAYS)
     int minuteOfDay = now.getHour() * 60 + now.getMinute()
     return qBuildNum * 10000 + minuteOfDay
+}
+
+def getGitHash() {
+    Process process = new ProcessBuilder("git", "rev-parse", "--short", "HEAD").directory(project.rootDir)
+            .redirectErrorStream(true).start()
+    InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream())
+    BufferedReader bufferedReader = new BufferedReader(inputStreamReader)
+
+    return bufferedReader.getText().trim()
 }
