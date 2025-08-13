@@ -97,8 +97,10 @@ static def getBuildNum() {
 }
 
 def getGitHash() {
-    Process process = new ProcessBuilder("git", "rev-parse", "--short", "HEAD").directory(project.rootDir)
-            .redirectErrorStream(true).start()
+    Process process = new ProcessBuilder("git", "rev-parse", "--short", "HEAD")
+            .directory(project.rootDir)
+            .redirectErrorStream(true)
+            .start()
     InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream())
     BufferedReader bufferedReader = new BufferedReader(inputStreamReader)
 

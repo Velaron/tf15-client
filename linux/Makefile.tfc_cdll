@@ -18,7 +18,7 @@ PM_SHARED_OBJ_DIR=$(TFC_OBJ_DIR)/pm_shared
 CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -DCLIENT_DLL -DCLIENT_WEAPONS -DGOLDSOURCE_SUPPORT -I/usr/include/malloc -D_snwprintf=swprintf \
 		 -DDISABLE_JUMP_ORIGIN -DDISABLE_VEC_ORIGIN
 		 
-INCLUDEDIRS=-I$(TFC_SRC_DIR) -I../dlls -I../tfc -I$(COMMON_SRC_DIR) -I$(PUBLIC_SRC_DIR) -I../pm_shared -I../engine -I../vgui_dll/include -I../game_shared -I../external
+INCLUDEDIRS=-I$(TFC_SRC_DIR) -I../dlls -I../tfc -I$(COMMON_SRC_DIR) -I$(PUBLIC_SRC_DIR) -I../pm_shared -I../engine -I../3rdparty/vgui_dll/include -I../game_shared -I../external
 
 ifeq ($(OS),Darwin)
 LDFLAGS=$(SHLIBLDFLAGS) $(CPP_LIB) -framework Carbon $(CFG)/vgui.dylib -L. -lSDL2-2.0.0

@@ -108,10 +108,10 @@ if(ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8)
 	set(VGUI_STATIC ON CACHE BOOL "" FORCE)
 	add_subdirectory(3rdparty/vgui_dll)
 
-    set(XASH_SDK ${CMAKE_CURRENT_SOURCE_DIR})
-    add_subdirectory(3rdparty/vgui_support)
+	set(XASH_SDK ${CMAKE_CURRENT_SOURCE_DIR})
+	add_subdirectory(3rdparty/vgui_support)
 elseif(BUILD_VGUI)
-    add_subdirectory(3rdparty/vgui_dll)
+	add_subdirectory(3rdparty/vgui_dll)
 endif()
 
 if(BUILD_PMAN)
@@ -119,30 +119,32 @@ if(BUILD_PMAN)
 	add_subdirectory(3rdparty/particleman)
 endif()
 
-set(EXTRAS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/tf15client-extras")
-file(GLOB_RECURSE EXTRAS_FILES "${EXTRAS_DIR}/*")
-
-set(EXTRAS_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/extras.pk3")
-
-add_custom_command(
-	OUTPUT ${EXTRAS_OUTPUT}
-	COMMAND ${Python_EXECUTABLE}
-			${CMAKE_CURRENT_SOURCE_DIR}/scripts/pack_extras.py
-			${EXTRAS_DIR}
-			${EXTRAS_OUTPUT}
-	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/pack_extras.py
-			${EXTRAS_FILES}
-	COMMENT "Generating extras.pk3..."
-)
-
-add_custom_target(generate_extras ALL
-	DEPENDS ${EXTRAS_OUTPUT}
-)
-
-install(
-	FILES "${EXTRAS_OUTPUT}"
-	DESTINATION ${GAME_DIR}
-)
+if(NOT ANDROID)
+	set(EXTRAS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/tf15client-extras")
+	file(GLOB_RECURSE EXTRAS_FILES "${EXTRAS_DIR}/*")
+	
+	set(EXTRAS_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/extras.pk3")
+	
+	add_custom_command(
+		OUTPUT ${EXTRAS_OUTPUT}
+		COMMAND ${Python_EXECUTABLE}
+				${CMAKE_CURRENT_SOURCE_DIR}/scripts/pack_extras.py
+				${EXTRAS_DIR}
+				${EXTRAS_OUTPUT}
+		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/pack_extras.py
+				${EXTRAS_FILES}
+		COMMENT "Generating extras.pk3..."
+	)
+	
+	add_custom_target(generate_extras ALL
+		DEPENDS ${EXTRAS_OUTPUT}
+	)
+	
+	install(
+		FILES "${EXTRAS_OUTPUT}"
+		DESTINATION ${GAME_DIR}
+	)
+endif()
 
 if(WIN32)
 	set(CPACK_GENERATOR "ZIP")
