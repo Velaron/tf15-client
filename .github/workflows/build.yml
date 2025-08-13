@@ -116,7 +116,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name == 'main' && 'continuous' || format('continuous-{0}', github.ref_name) }}
+          tag_name: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
           delete_release: true
           repo: ${{ env.GITHUB_REPOSITORY }}
       - name: Prepare release
@@ -138,7 +138,7 @@ jobs:
           repo_token: ${{ secrets.REPO_TOKEN }}
           file_glob: true
           file: TF15Client-*
-          tag: ${{ github.ref_name == 'main' && 'continuous' || format('continuous-{0}', github.ref_name) }}
+          tag: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
           overwrite: true
           prerelease: true
           release_name: TF15Client development build
