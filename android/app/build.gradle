@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "su.xash.tf15client"
-        versionName = "0.99" + getGitHash()
+        versionName = "0.99-" + getGitHash()
         versionCode = getBuildNum()
         minSdk = 21
         targetSdk = 36
