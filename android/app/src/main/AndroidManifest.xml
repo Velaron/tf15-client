@@ -10,10 +10,6 @@
 		android:roundIcon="@mipmap/ic_launcher"
 		tools:targetApi="r">
 
-		<meta-data
-			android:name="su.xash.engine.gamedir"
-			android:value="tfc" />
-
 		<activity
 			android:name=".MainActivity"
 			android:exported="true">
