@@ -121,7 +121,7 @@ jobs:
           repo: ${{ env.GITHUB_REPOSITORY }}
       - name: Prepare release
         run: |
-          mv Android/app-git-continuous-unsigned-signed.apk CS16Client-Android.apk
+          mv Android/app-git-continuous-unsigned-signed.apk TF15Client-Android.apk
 
           mv */*.zip .
           mv */*.tar.gz .
