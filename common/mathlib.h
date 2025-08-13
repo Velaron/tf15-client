@@ -16,17 +16,27 @@
 #pragma once
 #ifndef MATHLIB_H
 #define MATHLIB_H
+
+#include "build.h"
+
 #ifndef __cplusplus
 #include <math.h>
 #ifdef HAVE_TGMATH_H
+
+#if XASH_PSVITA != 1
 #include <tgmath.h>
+#endif
+
 #endif // HAVE_TGMATH_H
+
 #else // __cplusplus
+
 #if HAVE_CMATH
 #include <cmath>
 #else
 #include <math.h>
 #endif
+
 #endif // __cplusplus
 
 typedef float vec_t;

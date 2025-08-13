@@ -104,10 +104,54 @@ jobs:
         with:
           name: ${{ runner.os }}-${{ matrix.arch }}
           path: build/*.tar.gz
+  psvita:
+    name: PS Vita
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Install dependencies
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install libatomic1 libgcc-s1 \
+            libstdc++6 gcc-multilib g++-multilib cmake \
+            ninja-build libfontconfig-dev
+          sudo apt-get install cmake=3.28.3-1build7
+          sudo ln -sf /usr/bin/cmake /usr/local/bin/cmake
+      - name: Setup VitaSDK
+        run: |
+          chmod +x scripts/setup_psvita_sdk.sh
+          scripts/setup_psvita_sdk.sh
+          echo "VITASDK=/usr/local/vitasdk" >> $GITHUB_ENV
+          echo "$VITASDK/bin" >> $GITHUB_PATH
+      - name: Configure project
+        run: cmake --preset "psvita-debug"
+      - name: Build
+        run: cmake --build .
+        working-directory: build
+      - name: Write configuration files
+        run: |
+          pushd build
+          chmod +x ${{ github.workspace }}/scripts/write_psvita_configs.sh
+          ${{ github.workspace }}/scripts/write_psvita_configs.sh
+          popd
+      - name: Package
+        run: cpack --config CPackConfig.cmake
+        working-directory: build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PSVita
+          path: build/*.zip
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [android, windows, linux]
+    needs: [android, windows, linux, psvita]
     steps:
       - name: Fetch artifacts
         uses: actions/download-artifact@v4
