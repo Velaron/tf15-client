@@ -43,8 +43,6 @@ endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-cmake_policy(SET CMP0077 OLD)
-
 #--------------
 # USER DEFINES \
 ################\
@@ -107,8 +105,8 @@ if(BUILD_MENU)
 endif()
 
 if(ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(VGUI_STATIC ON)
-    add_subdirectory(3rdparty/vgui_dll)
+	set(VGUI_STATIC ON CACHE BOOL "" FORCE)
+	add_subdirectory(3rdparty/vgui_dll)
 
     set(XASH_SDK ${CMAKE_CURRENT_SOURCE_DIR})
     add_subdirectory(3rdparty/vgui_support)
